@@ -29,11 +29,9 @@ object StandardScaler {
 }
 
 private class StandardScaler(name: String, val withStd: Boolean, val withMean: Boolean)
-  extends Transformer[Double, Moments, (Double, Double)](name) {
+  extends OneDimensional[Double, Moments, (Double, Double)](name) {
   override val aggregator: Aggregator[Double, Moments, (Double, Double)] =
     Aggregators.from[Double](Moments(_)).to(r => (r.mean, r.stddev))
-  override def featureDimension(c: (Double, Double)): Int = 1
-  override def featureNames(c: (Double, Double)): Seq[String] = Seq(name)
   override def buildFeatures(a: Option[Double], c: (Double, Double),
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
