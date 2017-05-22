@@ -64,6 +64,12 @@ object TransformerSpec extends Properties("transformer") {
     test(Identity("id"), xs, Seq("id"), xs.map(Seq(_)), Seq(0.0))
   }
 
+  property("max abs") = Prop.forAll { xs: Seq[Double] =>
+    val max = xs.map(math.abs).max
+    val expected = xs.map(x => Seq(x / max))
+    test(MaxAbsScaler("max_abs"), xs, Seq("max_abs"), expected, Seq(0.0))
+  }
+
   property("min max") = Prop.forAll { xs: Seq[Double] =>
     val (min, max) = (xs.min, xs.max)
     val delta = max - min
