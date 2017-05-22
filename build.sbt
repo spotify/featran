@@ -17,6 +17,7 @@
 
 val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
+val commonsMathVersion = "3.6.1"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.1"
 val scioVersion = "0.3.1"
@@ -90,6 +91,7 @@ lazy val core: Project = Project(
   description := "Feature transformers - Scio",
   libraryDependencies ++= Seq(
     "com.twitter" %% "algebird-core" % algebirdVersion,
+    "org.apache.commons" % "commons-math3" % commonsMathVersion,
     "org.scalanlp" %% "breeze" % breezeVersion,
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
   )

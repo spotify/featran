@@ -107,6 +107,16 @@ object TransformerSpec extends Properties("transformer") {
     test(OneHotEncoder("one_hot"), xs, names, expected, missing)
   }
 
+  private val polyGen = Gen.choose(2, 4)
+    .flatMap(n => Gen.listOfN(100, Gen.listOfN(n, Arbitrary.arbDouble.arbitrary).map(_.toArray)))
+  property("poly") = Prop.forAll(polyGen, Gen.choose(2, 4)) { (xs, degree) =>
+    val dim = PolynomialExpansion.expand(xs.head, degree).length
+    val names = (1 to dim).map("poly_" + _)
+    val expected = xs.map(v => PolynomialExpansion.expand(v, degree).toSeq)
+    val missing = (1 to dim).map(_ => 0.0)
+    test(PolynomialExpansion("poly", degree), xs, names, expected, missing)
+  }
+
   def meanAndStddev(xs: Seq[Double]): (Double, Double) = {
     // breeze.stats.stddev is sample stddev
     val mean = breeze.stats.mean(xs)

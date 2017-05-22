@@ -86,4 +86,14 @@ object Aggregators {
       override def present(reduction: B): C = g(reduction)
     }
   }
+
+  val arrayLength: Aggregator[Array[Double], Int, Int] = new Aggregator[Array[Double], Int, Int] {
+    override def prepare(input: Array[Double]): Int = input.length
+    override def semigroup: Semigroup[Int] = Semigroup.from { (x, y) =>
+      require(x == y)
+      x
+    }
+    override def present(reduction: Int): Int = reduction
+  }
+
 }
