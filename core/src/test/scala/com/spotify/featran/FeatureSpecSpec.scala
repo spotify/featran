@@ -17,6 +17,7 @@
 
 package com.spotify.featran
 
+import com.spotify.featran.transformers._
 import org.scalacheck._
 
 object FeatureSpecSpec extends Properties("FeatureSpec") {
@@ -31,7 +32,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     Gen.listOfN(100, genRecord)
   }
 
-  private val id = Transformers.identity("id")
+  private val id = Identity("id")
 
   property("required") = Prop.forAll { xs: Seq[Record] =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
@@ -65,8 +66,8 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
 
   property("composite") = Prop.forAll { xs: Seq[Record] =>
     val f = FeatureSpec.of[Record]
-      .required(_.d)(Transformers.identity("id1"))
-      .optional(_.optD, Some(0.5))(Transformers.identity("id2"))
+      .required(_.d)(Identity("id1"))
+      .optional(_.optD, Some(0.5))(Identity("id2"))
       .extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id1", "id2")),

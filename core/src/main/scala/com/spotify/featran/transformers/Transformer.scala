@@ -18,7 +18,10 @@
 package com.spotify.featran.transformers
 
 import com.spotify.featran.FeatureBuilder
-import com.twitter.algebird.Aggregator
+import com.twitter.algebird.{Aggregator, Semigroup}
+
+// TODO: port more transformers from Spark
+// https://spark.apache.org/docs/2.1.0/ml-features.html
 
 abstract class Transformer[A, B, C](val name: String) extends Serializable {
 
@@ -52,4 +55,35 @@ abstract class Transformer[A, B, C](val name: String) extends Serializable {
     case None => fb.skip()
   }
 
+}
+
+private abstract class OneDimensional[A, B, C](name: String) extends Transformer[A, B, C](name) {
+  override def featureDimension(c: C): Int = 1
+  override def featureNames(c: C): Seq[String] = Seq(name)
+}
+
+private abstract class MapOne[A](name: String, val default: Double = 0.0)
+  extends OneDimensional[A, Unit, Unit](name) {
+  override val aggregator: Aggregator[A, Unit, Unit] = Aggregators.unit[A]
+  override def buildFeatures(a: Option[A], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
+    case Some(x) => fb.add(map(x))
+    case None => fb.add(default)
+  }
+  def map(a: A): Double
+}
+
+object Aggregators {
+  def unit[A]: Aggregator[A, Unit, Unit] = from[A](_ => ()).to(_ => ())
+
+  def from[A]: From[A] = new From[A]
+  class From[A] extends Serializable {
+    def apply[B: Semigroup](f: A => B): FromSemigroup[A, B] = new FromSemigroup[A, B](f)
+  }
+  class FromSemigroup[A, B: Semigroup](f: A => B) extends Serializable {
+    def to[C](g: B => C): Aggregator[A, B, C] = new Aggregator[A, B, C] {
+      override def prepare(input: A): B = f(input)
+      override def semigroup: Semigroup[B] = implicitly[Semigroup[B]]
+      override def present(reduction: B): C = g(reduction)
+    }
+  }
 }

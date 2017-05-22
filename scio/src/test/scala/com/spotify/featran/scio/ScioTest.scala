@@ -18,6 +18,7 @@
 package com.spotify.featran.scio
 
 import com.spotify.featran._
+import com.spotify.featran.transformers._
 import com.spotify.scio.testing._
 
 class ScioTest extends PipelineSpec {
@@ -27,8 +28,8 @@ class ScioTest extends PipelineSpec {
   "FeatureSpec" should "work with Scio" in {
     runWithContext { sc =>
       val f = FeatureSpec.of[(String, Int)]
-        .required(_._1)(Transformers.oneHotEncoder("one_hot"))
-        .required(_._2.toDouble)(Transformers.minMax("min_max"))
+        .required(_._1)(OneHotEncoder("one_hot"))
+        .required(_._2.toDouble)(MinMaxScaler("min_max"))
         .extract(sc.parallelize(data))
       f.featureNames should containSingleValue (Seq(
         "one_hot_a",

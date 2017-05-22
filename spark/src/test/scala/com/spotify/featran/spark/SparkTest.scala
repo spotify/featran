@@ -17,7 +17,8 @@
 
 package com.spotify.featran.spark
 
-import com.spotify.featran.{FeatureSpec, Transformers}
+import com.spotify.featran._
+import com.spotify.featran.transformers._
 import org.apache.spark.SparkContext
 import org.scalatest._
 
@@ -28,8 +29,8 @@ class SparkTest extends FlatSpec with Matchers {
   "FeatureSpec" should "work with Spark" in {
     val sc = new SparkContext("local[4]", "test")
     val f = FeatureSpec.of[(String, Int)]
-      .required(_._1)(Transformers.oneHotEncoder("one_hot"))
-      .required(_._2.toDouble)(Transformers.minMax("min_max"))
+      .required(_._1)(OneHotEncoder("one_hot"))
+      .required(_._2.toDouble)(MinMaxScaler("min_max"))
       .extract(sc.parallelize(data))
     f.featureNames.collect() shouldBe Array(Seq(
       "one_hot_a",

@@ -24,8 +24,6 @@ import scala.reflect.ClassTag
 
 package object featran {
 
-  object Transformers extends transformers.Transformers
-
   implicit object SeqCollectionType extends CollectionType[Seq] {
     override def map[A, B: ClassTag](ma: Seq[A], f: (A) => B): Seq[B] = ma.map(f)
     override def reduce[A](ma: Seq[A], f: (A, A) => A): Seq[A] = Seq(ma.reduce(f))

@@ -21,7 +21,7 @@ import com.spotify.featran._
 import org.scalacheck._
 import org.scalacheck.Prop.BooleanOperators
 
-object TransformerSpec extends Properties("Transformer") {
+object TransformerSpec extends Properties("transformer") {
 
   implicit def seq[T](implicit arb: Arbitrary[T]): Arbitrary[Seq[T]] =
     Arbitrary(Gen.listOfN(100, arb.arbitrary))
@@ -52,24 +52,23 @@ object TransformerSpec extends Properties("Transformer") {
 
   property("binarizer") = Prop.forAll { xs: Seq[Double] =>
     val expected = xs.map(x => Seq(if (x > 0.0) 1.0 else 0.0))
-    test(Transformers.binarizer("id"), xs, Seq("id"), expected, Seq(0.0))
+    test(Binarizer("id"), xs, Seq("id"), expected, Seq(0.0))
   }
 
   property("binarizer params") = Prop.forAll { (xs: Seq[Double], threshold: Double) =>
     val expected = xs.map(x => Seq(if (x > threshold) 1.0 else 0.0))
-    test(Transformers.binarizer("id", threshold), xs, Seq("id"), expected, Seq(0.0))
+    test(Binarizer("id", threshold), xs, Seq("id"), expected, Seq(0.0))
   }
 
   property("identity") = Prop.forAll { xs: Seq[Double] =>
-    test(Transformers.identity("id"), xs, Seq("id"), xs.map(Seq(_)), Seq(0.0))
+    test(Identity("id"), xs, Seq("id"), xs.map(Seq(_)), Seq(0.0))
   }
 
   property("min max") = Prop.forAll { xs: Seq[Double] =>
     val (min, max) = (xs.min, xs.max)
     val delta = max - min
     val expected = xs.map(x => Seq((x - min) / delta))
-    val f = FeatureSpec.of[Double].required(identity)(Transformers.minMax("min_max")).extract(xs)
-    test(Transformers.minMax("min_max"), xs, Seq("min_max"), expected, Seq(0.0))
+    test(MinMaxScaler("min_max"), xs, Seq("min_max"), expected, Seq(0.0))
   }
 
   property("min max params") = Prop.forAll { (xs: Seq[Double], x: Double, y: Double) =>
@@ -81,7 +80,7 @@ object TransformerSpec extends Properties("Transformer") {
     val (min, max) = (xs.min, xs.max)
     val delta = max - min
     val expected = xs.map(x => Seq((x - min) / delta * (maxP - minP) + minP))
-    test(Transformers.minMax("min_max", minP, maxP), xs, Seq("min_max"), expected, Seq(minP))
+    test(MinMaxScaler("min_max", minP, maxP), xs, Seq("min_max"), expected, Seq(minP))
   }
 
   private val nHotGen = Gen.listOfN(100, Gen.listOfN(10, Gen.alphaStr))
@@ -90,7 +89,7 @@ object TransformerSpec extends Properties("Transformer") {
     val names = cats.map("n_hot_" + _)
     val expected = xs.map(s => cats.map(c => if (s.contains(c)) 1.0 else 0.0))
     val missing = cats.map(_ => 0.0)
-    test(Transformers.nHotEncoder("n_hot"), xs, names, expected, missing)
+    test(NHotEncoder("n_hot"), xs, names, expected, missing)
   }
 
   private val oneHotGen = Gen.listOfN(100, Gen.alphaStr)
@@ -99,7 +98,7 @@ object TransformerSpec extends Properties("Transformer") {
     val names = cats.map("one_hot_" + _)
     val expected = xs.map(s => cats.map(c => if (s == c) 1.0 else 0.0))
     val missing = cats.map(_ => 0.0)
-    test(Transformers.oneHotEncoder("one_hot"), xs, names, expected, missing)
+    test(OneHotEncoder("one_hot"), xs, names, expected, missing)
   }
 
   def meanAndStddev(xs: Seq[Double]): (Double, Double) = {
@@ -111,31 +110,31 @@ object TransformerSpec extends Properties("Transformer") {
   property("standard") = Prop.forAll { xs: Seq[Double] =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev + mean))
-    test(Transformers.standard("std"), xs, Seq("std"), expected, Seq(mean))
+    test(StandardScaler("std"), xs, Seq("std"), expected, Seq(mean))
   }
 
   property("standard true true") = Prop.forAll { xs: Seq[Double] =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev))
-    test(Transformers.standard("std", true, true), xs, Seq("std"), expected, Seq(0.0))
+    test(StandardScaler("std", true, true), xs, Seq("std"), expected, Seq(0.0))
   }
 
   property("standard true false") = Prop.forAll { xs: Seq[Double] =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev + mean))
-    test(Transformers.standard("std", true, false), xs, Seq("std"), expected, Seq(mean))
+    test(StandardScaler("std", true, false), xs, Seq("std"), expected, Seq(mean))
   }
 
   property("standard false true") = Prop.forAll { xs: Seq[Double] =>
     val (mean, _) = meanAndStddev(xs)
     val expected = xs.map(x => Seq(x - mean))
-    test(Transformers.standard("std", false, true), xs, Seq("std"), expected, Seq(0.0))
+    test(StandardScaler("std", false, true), xs, Seq("std"), expected, Seq(0.0))
   }
 
   property("standard false false") = Prop.forAll { xs: Seq[Double] =>
     val (mean, _) = meanAndStddev(xs)
     val expected = xs.map(Seq(_))
-    test(Transformers.standard("std", false, false), xs, Seq("std"), expected, Seq(mean))
+    test(StandardScaler("std", false, false), xs, Seq("std"), expected, Seq(mean))
   }
 
 }
