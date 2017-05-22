@@ -52,12 +52,6 @@ trait Transformers {
 // Utilities
 //================================================================================
 
-private class UnitAggregator[T] extends Aggregator[T, Unit, Unit] {
-  override def prepare(input: T): Unit = ()
-  override def semigroup: Semigroup[Unit] = Semigroup.from[Unit] { case(_, _) => () }
-  override def present(reduction: Unit): Unit = ()
-}
-
 private abstract class OneDimensional[A, B, C](name: String) extends Transformer[A, B, C](name) {
   override def featureDimension(c: C): Int = 1
   override def featureNames(c: C): Seq[String] = Seq(name)
@@ -65,12 +59,28 @@ private abstract class OneDimensional[A, B, C](name: String) extends Transformer
 
 private abstract class MapOne[A](name: String, val default: Double = 0.0)
   extends OneDimensional[A, Unit, Unit](name) {
-  override val aggregator: Aggregator[A, Unit, Unit] = new UnitAggregator[A]
+  override val aggregator: Aggregator[A, Unit, Unit] = Aggregators.unit[A]
   override def buildFeatures(a: Option[A], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) => fb.add(map(x))
     case None => fb.add(default)
   }
   def map(a: A): Double
+}
+
+object Aggregators {
+  def unit[A]: Aggregator[A, Unit, Unit] = from[A](_ => ()).to(_ => ())
+
+  def from[A]: From[A] = new From[A]
+  class From[A] extends Serializable {
+    def apply[B: Semigroup](f: A => B): FromSemigroup[A, B] = new FromSemigroup[A, B](f)
+  }
+  class FromSemigroup[A, B: Semigroup](f: A => B) extends Serializable {
+    def to[C](g: B => C): Aggregator[A, B, C] = new Aggregator[A, B, C] {
+      override def prepare(input: A): B = f(input)
+      override def semigroup: Semigroup[B] = implicitly[Semigroup[B]]
+      override def present(reduction: B): C = g(reduction)
+    }
+  }
 }
 
 //================================================================================
@@ -88,13 +98,7 @@ private class Identity(name: String) extends MapOne[Double](name) {
 private class MinMaxScaler(name: String, val min: Double, val max: Double)
   extends OneDimensional[Double, (Min[Double], Max[Double]), (Double, Double)](name) {
   override val aggregator: Aggregator[Double, (Min[Double], Max[Double]), (Double, Double)] =
-    new Aggregator[Double, (Min[Double], Max[Double]), (Double, Double)] {
-      override def prepare(input: Double): (Min[Double], Max[Double]) = (Min(input), Max(input))
-      override def semigroup: Semigroup[(Min[Double], Max[Double])] =
-        implicitly[Semigroup[(Min[Double], Max[Double])]]
-      override def present(reduction: (Min[Double], Max[Double])): (Double, Double) =
-        (reduction._1.get, reduction._2.get - reduction._1.get)
-    }
+    Aggregators.from[Double](x => (Min(x), Max(x))).to(r => (r._1.get, r._2.get - r._1.get))
   override def buildFeatures(a: Option[Double], c: (Double, Double),
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) => fb.add((x - c._1) / c._2 * (max - min) + min)
@@ -105,11 +109,7 @@ private class MinMaxScaler(name: String, val min: Double, val max: Double)
 private class NHotEncoder(name: String)
   extends Transformer[Seq[String], Set[String], Array[String]](name) {
   override val aggregator: Aggregator[Seq[String], Set[String], Array[String]] =
-    new Aggregator[Seq[String], Set[String], Array[String]] {
-      override def prepare(input: Seq[String]): Set[String] = input.toSet
-      override def semigroup: Semigroup[Set[String]] = Semigroup.from(_ ++ _)
-      override def present(reduction: Set[String]): Array[String] = reduction.toArray.sorted
-    }
+    Aggregators.from[Seq[String]](_.toSet).to(_.toArray.sorted)
   override def featureDimension(c: Array[String]): Int = c.length
   override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
   override def buildFeatures(a: Option[Seq[String]], c: Array[String],
