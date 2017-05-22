@@ -27,8 +27,9 @@ object TransformerSpec extends Properties("Transformer") {
     Arbitrary(Gen.listOfN(100, arb.arbitrary))
 
   // Double.NaN != Double.NaN
+  // Also map to float to workaround precision error
   private def safeCompare(xs: Seq[Array[Double]], ys: Seq[Seq[Double]]) = {
-    def d2e(x: Double): Either[Int, Double] = if (x.isNaN) Left(0) else Right(x)
+    def d2e(x: Double): Either[Int, Float] = if (x.isNaN) Left(0) else Right(x.toFloat)
     xs.map(_.toSeq.map(d2e)) == ys.map(_.map(d2e))
   }
 
@@ -99,6 +100,42 @@ object TransformerSpec extends Properties("Transformer") {
     val expected = xs.map(s => cats.map(c => if (s == c) 1.0 else 0.0))
     val missing = cats.map(_ => 0.0)
     test(Transformers.oneHotEncoder("one_hot"), xs, names, expected, missing)
+  }
+
+  def meanAndStddev(xs: Seq[Double]): (Double, Double) = {
+    // breeze.stats.stddev is sample stddev
+    val mean = breeze.stats.mean(xs)
+    (mean, math.sqrt(xs.map(x => math.pow(x - mean, 2)).sum / xs.size))
+  }
+
+  property("standard") = Prop.forAll { xs: Seq[Double] =>
+    val (mean, stddev) = meanAndStddev(xs)
+    val expected = xs.map(x => Seq((x - mean) / stddev + mean))
+    test(Transformers.standard("std"), xs, Seq("std"), expected, Seq(mean))
+  }
+
+  property("standard true true") = Prop.forAll { xs: Seq[Double] =>
+    val (mean, stddev) = meanAndStddev(xs)
+    val expected = xs.map(x => Seq((x - mean) / stddev))
+    test(Transformers.standard("std", true, true), xs, Seq("std"), expected, Seq(0.0))
+  }
+
+  property("standard true false") = Prop.forAll { xs: Seq[Double] =>
+    val (mean, stddev) = meanAndStddev(xs)
+    val expected = xs.map(x => Seq((x - mean) / stddev + mean))
+    test(Transformers.standard("std", true, false), xs, Seq("std"), expected, Seq(mean))
+  }
+
+  property("standard false true") = Prop.forAll { xs: Seq[Double] =>
+    val (mean, _) = meanAndStddev(xs)
+    val expected = xs.map(x => Seq(x - mean))
+    test(Transformers.standard("std", false, true), xs, Seq("std"), expected, Seq(0.0))
+  }
+
+  property("standard false false") = Prop.forAll { xs: Seq[Double] =>
+    val (mean, _) = meanAndStddev(xs)
+    val expected = xs.map(Seq(_))
+    test(Transformers.standard("std", false, false), xs, Seq("std"), expected, Seq(mean))
   }
 
 }

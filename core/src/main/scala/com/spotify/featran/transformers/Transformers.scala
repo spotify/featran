@@ -46,6 +46,12 @@ trait Transformers {
   def oneHotEncoder(name: String): Transformer[String, Set[String], Array[String]] =
     new OneHotEncoder(name)
 
+  // Missing value = if (withMean) 0.0 else mean
+  def standard(name: String,
+               withStd: Boolean = true,
+               withMean: Boolean = false): Transformer[Double, Moments, (Double, Double)] =
+    new StandardScaler(name, withStd, withMean)
+
 }
 
 //================================================================================
@@ -122,13 +128,30 @@ private class NHotEncoder(name: String)
 private class OneHotEncoder(name: String)
   extends Transformer[String, Set[String], Array[String]](name) {
   override val aggregator: Aggregator[String, Set[String], Array[String]] =
-    new Aggregator[String, Set[String], Array[String]] {
-      override def prepare(input: String): Set[String] = Set(input)
-      override def semigroup: Semigroup[Set[String]] = Semigroup.from(_ ++ _)
-      override def present(reduction: Set[String]): Array[String] = reduction.toArray.sorted
-    }
+    Aggregators.from[String](Set(_)).to(_.toArray.sorted)
   override def featureDimension(c: Array[String]): Int = c.length
   override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
   override def buildFeatures(a: Option[String], c: Array[String], fb: FeatureBuilder[_]): Unit =
     c.foreach(s => if (a.contains(s)) fb.add(1.0) else fb.skip())
+}
+
+private class StandardScaler(name: String, val withStd: Boolean, val withMean: Boolean)
+  extends Transformer[Double, Moments, (Double, Double)](name) {
+  override val aggregator: Aggregator[Double, Moments, (Double, Double)] =
+    Aggregators.from[Double](Moments(_)).to(r => (r.mean, r.stddev))
+  override def featureDimension(c: (Double, Double)): Int = 1
+  override def featureNames(c: (Double, Double)): Seq[String] = Seq(name)
+  override def buildFeatures(a: Option[Double], c: (Double, Double),
+                             fb: FeatureBuilder[_]): Unit = a match {
+    case Some(x) =>
+      val r = (withStd, withMean) match {
+        case (true, true) => (x - c._1) / c._2
+        case (true, false) => (x - c._1) / c._2 + c._1
+        case (false, true) => x - c._1
+        case (false, false) => x
+      }
+      fb.add(r)
+    case None => fb.add(if (withMean) 0.0 else c._1)
+  }
+
 }
