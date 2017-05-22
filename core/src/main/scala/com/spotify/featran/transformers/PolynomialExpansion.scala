@@ -69,6 +69,7 @@ object PolynomialExpansion {
 
 private class PolynomialExpansion(name: String, val degree: Int)
   extends Transformer[Array[Double], Int, Int](name) {
+  require(degree >= 1, "degree must be >= 1")
   override val aggregator: Aggregator[Array[Double], Int, Int] = Aggregators.arrayLength
   override def featureDimension(c: Int): Int = PolynomialExpansion.getPolySize(c, degree) - 1
   override def featureNames(c: Int): Seq[String] = (1 to featureDimension(c)).map(name + "_" + _)

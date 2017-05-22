@@ -30,6 +30,8 @@ object MinMaxScaler {
 
 private class MinMaxScaler(name: String, val min: Double, val max: Double)
   extends OneDimensional[Double, (Min[Double], Max[Double]), (Double, Double)](name) {
+  require(max > min, "max must be > min")
+
   override val aggregator: Aggregator[Double, (Min[Double], Max[Double]), (Double, Double)] =
     Aggregators.from[Double](x => (Min(x), Max(x))).to(r => (r._1.get, r._2.get - r._1.get))
   override def buildFeatures(a: Option[Double], c: (Double, Double),
