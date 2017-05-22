@@ -111,9 +111,9 @@ object TransformerSpec extends Properties("transformer") {
     .flatMap(n => Gen.listOfN(100, Gen.listOfN(n, Arbitrary.arbDouble.arbitrary).map(_.toArray)))
   property("poly") = Prop.forAll(polyGen, Gen.choose(2, 4)) { (xs, degree) =>
     val dim = PolynomialExpansion.expand(xs.head, degree).length
-    val names = (1 to dim).map("poly_" + _)
+    val names = (0 until dim).map("poly_" + _)
     val expected = xs.map(v => PolynomialExpansion.expand(v, degree).toSeq)
-    val missing = (1 to dim).map(_ => 0.0)
+    val missing = (0 until dim).map(_ => 0.0)
     test(PolynomialExpansion("poly", degree), xs, names, expected, missing)
   }
 
