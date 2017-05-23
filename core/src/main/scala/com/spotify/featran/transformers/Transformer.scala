@@ -25,6 +25,8 @@ import com.twitter.algebird.{Aggregator, Semigroup}
 
 abstract class Transformer[-A, B, C](val name: String) extends Serializable {
 
+  require(name != null && name.nonEmpty, "name cannot be null or empty")
+
   val aggregator: Aggregator[A, B, C]
 
   // number of generated features

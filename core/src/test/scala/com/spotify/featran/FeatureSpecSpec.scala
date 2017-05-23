@@ -20,16 +20,14 @@ package com.spotify.featran
 import com.spotify.featran.transformers._
 import org.scalacheck._
 
+import scala.util.Try
+
 object FeatureSpecSpec extends Properties("FeatureSpec") {
 
   case class Record(d: Double, optD: Option[Double])
 
   implicit val arbSeqRecord: Arbitrary[Seq[Record]] = Arbitrary {
-    val genRecord = for {
-      d <- Arbitrary.arbDouble.arbitrary
-      o <- Arbitrary.arbOption[Double].arbitrary
-    } yield Record(d, o)
-    Gen.listOfN(100, genRecord)
+    Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(Record.tupled))
   }
 
   private val id = Identity("id")
@@ -72,6 +70,24 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     Prop.all(
       f.featureNames == Seq(Seq("id1", "id2")),
       f.featureValues[Array[Double]].map(_.toSeq) == xs.map(r => Seq(r.d, r.optD.getOrElse(0.5))))
+  }
+
+  property("names") = Prop.forAll(Gen.alphaStr) { s =>
+    val msg = if (s == null || s.isEmpty) {
+      "requirement failed: name cannot be null or empty"
+    } else {
+      "requirement failed: duplicate transformer names: " + s
+    }
+    val t = Try {
+      FeatureSpec.of[Record]
+        .required(_.d)(Identity(s))
+        .optional(_.optD)(Identity(s))
+        .extract(Seq.empty[Record])
+    }
+    Prop.all(
+      t.isFailure,
+      t.failed.get.isInstanceOf[IllegalArgumentException],
+      t.failed.get.getMessage == msg)
   }
 
 }

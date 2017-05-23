@@ -83,6 +83,19 @@ private class Feature[T, A, B, C](val f: T => Option[A],
 class FeatureSpec[T] private (private val features: Array[Feature[T, _, _, _]])
   extends Serializable {
 
+  {
+    val (_, dups) = features
+      .foldLeft((Set.empty[String], Set.empty[String])) { case ((u, d), f) =>
+        val n = f.transformer.name
+        if (u.contains(n)) {
+          (u, d + n)
+        } else {
+          (u + n, d)
+        }
+      }
+    require(dups.isEmpty, "duplicate transformer names: " + dups.mkString(", "))
+  }
+
   import FeatureSpec.ARRAY
 
   private val n = features.length
