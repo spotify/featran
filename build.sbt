@@ -18,15 +18,17 @@
 val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
 val commonsMathVersion = "3.6.1"
+val hadoopVersion = "2.8.0"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.1"
+val scaldingVersion = "0.17.0"
 val scioVersion = "0.3.1"
 val sparkVersion = "2.1.1"
 
 val commonSettings = Seq(
   organization := "com.spotify",
   name := "featran",
-  description := "Feature transformers",
+  description := "Feature Transformers",
   scalaVersion := "2.11.11",
   scalacOptions ++= Seq("-target:jvm-1.7", "-deprecation", "-feature", "-unchecked"),
   javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked")
@@ -78,6 +80,7 @@ lazy val root: Project = Project(
   commonSettings ++ noPublishSettings
 ).aggregate(
   core,
+  scalding,
   scio,
   spark
 )
@@ -88,7 +91,7 @@ lazy val core: Project = Project(
 ).settings(
   moduleName := "featran-core",
   commonSettings,
-  description := "Feature transformers - Scio",
+  description := "Feature Transformers",
   libraryDependencies ++= Seq(
     "com.twitter" %% "algebird-core" % algebirdVersion,
     "org.apache.commons" % "commons-math3" % commonsMathVersion,
@@ -97,13 +100,28 @@ lazy val core: Project = Project(
   )
 )
 
+lazy val scalding: Project = Project(
+  "scalding",
+  file("scalding")
+).settings(
+  moduleName := "featran-scalding",
+  commonSettings,
+  description := "Feature Transformers - Scalding",
+  resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
+  libraryDependencies ++= Seq(
+    "com.twitter" %% "scalding-core" % scaldingVersion,
+    "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
+    "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+  )
+).dependsOn(core)
+
 lazy val scio: Project = Project(
   "scio",
   file("scio")
 ).settings(
   moduleName := "featran-scio",
   commonSettings,
-  description := "Feature transformers",
+  description := "Feature Transformers - Scio",
   libraryDependencies ++= Seq(
     "com.spotify" %% "scio-core" % scioVersion,
     "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -116,7 +134,7 @@ lazy val spark: Project = Project(
 ).settings(
   moduleName := "featran-spark",
   commonSettings,
-  description := "Feature transformers - Spark",
+  description := "Feature Transformers - Spark",
   libraryDependencies ++= Seq(
     "org.apache.spark" %% "spark-core" % sparkVersion,
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
