@@ -23,7 +23,7 @@ import com.twitter.algebird.{Aggregator, Semigroup}
 // TODO: port more transformers from Spark
 // https://spark.apache.org/docs/2.1.0/ml-features.html
 
-abstract class Transformer[A, B, C](val name: String) extends Serializable {
+abstract class Transformer[-A, B, C](val name: String) extends Serializable {
 
   val aggregator: Aggregator[A, B, C]
 
