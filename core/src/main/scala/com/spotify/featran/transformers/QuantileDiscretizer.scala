@@ -50,7 +50,8 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
   override def buildFeatures(a: Option[Double], c: JTreeMap[Double, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
-      val offset = c.higherEntry(x).getValue
+      val e = c.higherEntry(x)
+      val offset = if (e == null) numBuckets - 1 else e.getValue
       (0 until numBuckets).foreach(i => if(i == offset) fb.add(1.0) else fb.skip())
     case None => (0 until numBuckets).foreach(_ => fb.skip())
   }
