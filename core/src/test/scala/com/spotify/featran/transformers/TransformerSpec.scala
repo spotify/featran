@@ -17,6 +17,8 @@
 
 package com.spotify.featran.transformers
 
+import java.util.{TreeMap => JTreeMap}
+
 import com.spotify.featran._
 import org.scalacheck._
 import org.scalacheck.Prop.BooleanOperators
@@ -115,6 +117,23 @@ object TransformerSpec extends Properties("transformer") {
     val expected = xs.map(v => PolynomialExpansion.expand(v, degree).toSeq)
     val missing = (0 until dim).map(_ => 0.0)
     test(PolynomialExpansion("poly", degree), xs, names, expected, missing)
+  }
+
+  private val quantileGen = Gen.listOfN(100, Gen.posNum[Double])
+  property("quantile") = Prop.forAll(quantileGen, Gen.oneOf(2, 4, 5)) { (xs, numBuckets) =>
+    val m = new JTreeMap[Double, Int]()
+    for (i <- 1 until numBuckets) {
+      val offset = xs.size / numBuckets * i
+      m.put(xs(offset), i - 1)
+    }
+    m.put(Double.PositiveInfinity, numBuckets - 1)
+    val expected = xs.map { x =>
+      (0 until numBuckets).map(i => if (i == m.higherEntry(x).getValue) 1.0 else 0.0)
+    }
+    val names = (0 until numBuckets).map("quantile_" + _)
+    val missing = (0 until numBuckets).map(_ => 0.0)
+    test(QuantileDiscretizer("quantile", numBuckets), xs, names, expected, missing)
+    true
   }
 
   def meanAndStddev(xs: Seq[Double]): (Double, Double) = {
