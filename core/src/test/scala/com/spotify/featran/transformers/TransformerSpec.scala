@@ -62,6 +62,23 @@ object TransformerSpec extends Properties("transformer") {
     test(Binarizer("id", threshold), xs, Seq("id"), expected, Seq(0.0))
   }
 
+  private val splitsGen = Gen.choose(3, 10)
+    .flatMap(n => Gen.listOfN(n, Arbitrary.arbDouble.arbitrary))
+  property("bucketizer") = Prop.forAll(seq[Double].arbitrary, splitsGen) { (xs, sp) =>
+    val splits = sp.toArray.sorted
+    val names = (0 until splits.length - 1).map("bucketizer_" + _)
+    val missing = (0 until splits.length - 1).map(_ => 0.0)
+    val expected = xs.map { x =>
+      val offset = splits.indexWhere(x < _) - 1
+      if (offset >= 0) {
+        (0 until splits.length - 1).map(i => if (i == offset) 1.0 else 0.0)
+      } else {
+        missing
+      }
+    }
+    test(Bucketizer("bucketizer", splits), xs, names, expected, missing)
+  }
+
   property("identity") = Prop.forAll { xs: Seq[Double] =>
     test(Identity("id"), xs, Seq("id"), xs.map(Seq(_)), Seq(0.0))
   }
