@@ -36,21 +36,21 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
-      f.featureValues[Array[Double]].map(_.toSeq) == xs.map(r => Seq(r.d)))
+      f.featureValues[Seq[Double]] == xs.map(r => Seq(r.d)))
   }
 
   property("optional") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec.of[Record].optional(_.optD)(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
-      f.featureValues[Array[Double]].map(_.toSeq) == xs.map(r => Seq(r.optD.getOrElse(0.0))))
+      f.featureValues[Seq[Double]] == xs.map(r => Seq(r.optD.getOrElse(0.0))))
   }
 
   property("default") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec.of[Record].optional(_.optD, Some(0.5))(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
-      f.featureValues[Array[Double]].map(_.toSeq) == xs.map(r => Seq(r.optD.getOrElse(0.5))))
+      f.featureValues[Seq[Double]] == xs.map(r => Seq(r.optD.getOrElse(0.5))))
   }
 
   property("nones") = Prop.forAll { xs: List[Record] =>
@@ -59,7 +59,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       .extract(xs.map(_.copy(optD = None)))
     Prop.all(
       f.featureNames == Seq(Seq("id")),
-      f.featureValues[Array[Double]].map(_.toSeq) == xs.map(r => Seq(0.5)))
+      f.featureValues[Seq[Double]] == xs.map(r => Seq(0.5)))
   }
 
   property("composite") = Prop.forAll { xs: List[Record] =>
@@ -69,7 +69,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       .extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id1", "id2")),
-      f.featureValues[Array[Double]].map(_.toSeq) == xs.map(r => Seq(r.d, r.optD.getOrElse(0.5))))
+      f.featureValues[Seq[Double]] == xs.map(r => Seq(r.d, r.optD.getOrElse(0.5))))
   }
 
   property("names") = Prop.forAll(Gen.alphaStr) { s =>
@@ -93,14 +93,13 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   property("seq") = Prop.forAll(Gen.listOfN(100, Arbitrary.arbitrary[Double])) { xs =>
     val fs = FeatureSpec.of[Double].required(identity)(Identity("id"))
     Prop.all(
-      fs.extract(xs).featureValues[Array[Double]].map(_.head) == xs,
-      fs.extract(xs.toBuffer).featureValues[Array[Double]].map(_.head) == xs,
-      fs.extract(xs.toIndexedSeq).featureValues[Array[Double]].map(_.head) == xs,
-      fs.extract(xs.toVector).featureValues[Array[Double]].map(_.head) == xs.toVector,
-      fs.extract(xs.asInstanceOf[Iterable[Double]]).featureValues[Array[Double]].map(_.head) == xs,
-      fs.extract(xs.asInstanceOf[Seq[Double]]).featureValues[Array[Double]].map(_.head) == xs,
-      fs.extract(xs.asInstanceOf[Traversable[Double]])
-        .featureValues[Array[Double]].map(_.head) == xs)
+      fs.extract(xs).featureValues[Seq[Double]].map(_.head) == xs,
+      fs.extract(xs.toBuffer).featureValues[Seq[Double]].map(_.head) == xs,
+      fs.extract(xs.toIndexedSeq).featureValues[Seq[Double]].map(_.head) == xs,
+      fs.extract(xs.toVector).featureValues[Seq[Double]].map(_.head) == xs.toVector,
+      fs.extract(xs.asInstanceOf[Iterable[Double]]).featureValues[Seq[Double]].map(_.head) == xs,
+      fs.extract(xs.asInstanceOf[Seq[Double]]).featureValues[Seq[Double]].map(_.head) == xs,
+      fs.extract(xs.asInstanceOf[Traversable[Double]]).featureValues[Seq[Double]].map(_.head) == xs)
   }
 
 }

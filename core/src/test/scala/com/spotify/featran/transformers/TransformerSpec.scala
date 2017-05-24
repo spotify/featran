@@ -30,9 +30,9 @@ object TransformerSpec extends Properties("transformer") {
 
   // Double.NaN != Double.NaN
   // Also map to float to workaround precision error
-  private def safeCompare(xs: List[Array[Double]], ys: List[Seq[Double]]) = {
+  private def safeCompare(xs: List[Seq[Double]], ys: List[Seq[Double]]) = {
     def d2e(x: Double): Either[Int, Float] = if (x.isNaN) Left(0) else Right(x.toFloat)
-    xs.map(_.toSeq.map(d2e)) == ys.map(_.map(d2e))
+    xs.map(_.map(d2e)) == ys.map(_.map(d2e))
   }
 
   private def test[T](t: Transformer[T, _, _],
@@ -48,8 +48,8 @@ object TransformerSpec extends Properties("transformer") {
     Prop.all(
       "required names" |: f1.featureNames == Seq(names),
       "optional names" |: f2.featureNames == Seq(names),
-      "required values" |: safeCompare(f1.featureValues[Array[Double]], expected),
-      "optional values" |: safeCompare(f2.featureValues[Array[Double]], expected :+ missing))
+      "required values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
+      "optional values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing))
   }
 
   property("binarizer") = Prop.forAll { xs: List[Double] =>

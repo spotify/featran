@@ -39,12 +39,12 @@ class SparkTest extends FlatSpec with Matchers {
       "one_hot_d",
       "one_hot_e",
       "min_max"))
-    f.featureValues[Array[Double]].collect() should contain theSameElementsAs Array(
-      Array(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
-      Array(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
-      Array(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
-      Array(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
-      Array(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
+    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs Array(
+      Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
+      Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
+      Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
+      Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
+      Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
     sc.stop()
   }
 }
