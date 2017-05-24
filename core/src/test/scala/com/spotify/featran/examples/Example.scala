@@ -39,7 +39,7 @@ object Example {
   } yield Record(b, f, d1, d2, s1, s2)
 
   // Random generator for Seq[Record]
-  val recordsGen: Gen[Seq[Record]] = Gen.listOfN(20, recordGen)
+  val recordsGen: Gen[List[Record]] = Gen.listOfN(20, recordGen)
 
   // scalastyle:off method.length
   def main(args: Array[String]): Unit = {

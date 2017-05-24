@@ -19,15 +19,32 @@ package com.spotify
 
 import breeze.linalg.{DenseVector, SparseVector}
 
+import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable
+import scala.language.higherKinds
 import scala.reflect.ClassTag
 
 package object featran {
 
-  implicit object SeqCollectionType extends CollectionType[Seq] {
-    override def map[A, B: ClassTag](ma: Seq[A], f: (A) => B): Seq[B] = ma.map(f)
-    override def reduce[A](ma: Seq[A], f: (A, A) => A): Seq[A] = Seq(ma.reduce(f))
-    override def cross[A, B: ClassTag](ma: Seq[A], mb: Seq[B]): Seq[(A, B)] = ma.map((_, mb.head))
+  implicit def scalaCollectionType[M[_] <: Traversable[_]]
+  (implicit cbf: CanBuildFrom[M[_], _, M[_]]): CollectionType[M] = new CollectionType[M] {
+    override def map[A, B: ClassTag](ma: M[A], f: (A) => B): M[B] = {
+      val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]
+      ma.asInstanceOf[Seq[A]].foreach(a => builder += f(a))
+      builder.result()
+    }
+    override def reduce[A](ma: M[A], f: (A, A) => A): M[A] = {
+      val builder = cbf().asInstanceOf[mutable.Builder[A, M[A]]]
+      builder += ma.asInstanceOf[Seq[A]].reduce(f)
+      builder.result()
+    }
+
+    override def cross[A, B: ClassTag](ma: M[A], mb: M[B]): M[(A, B)] = {
+      val builder = cbf().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
+      val b = mb.asInstanceOf[Seq[B]].head
+      ma.asInstanceOf[Seq[A]].foreach(a => builder += ((a, b)))
+      builder.result()
+    }
   }
 
   implicit def faFeatureBuilder: FeatureBuilder[Array[Float]] =

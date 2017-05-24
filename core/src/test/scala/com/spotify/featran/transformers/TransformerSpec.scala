@@ -25,20 +25,20 @@ import org.scalacheck.Prop.BooleanOperators
 
 object TransformerSpec extends Properties("transformer") {
 
-  implicit def seq[T](implicit arb: Arbitrary[T]): Arbitrary[Seq[T]] =
+  implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] =
     Arbitrary(Gen.listOfN(100, arb.arbitrary))
 
   // Double.NaN != Double.NaN
   // Also map to float to workaround precision error
-  private def safeCompare(xs: Seq[Array[Double]], ys: Seq[Seq[Double]]) = {
+  private def safeCompare(xs: List[Array[Double]], ys: List[Seq[Double]]) = {
     def d2e(x: Double): Either[Int, Float] = if (x.isNaN) Left(0) else Right(x.toFloat)
     xs.map(_.toSeq.map(d2e)) == ys.map(_.map(d2e))
   }
 
   private def test[T](t: Transformer[T, _, _],
-                      input: Seq[T],
+                      input: List[T],
                       names: Seq[String],
-                      expected: Seq[Seq[Double]],
+                      expected: List[Seq[Double]],
                       missing: Seq[Double]): Prop = {
     // all values present
     val f1 = FeatureSpec.of[T].required(identity)(t).extract(input)
@@ -52,19 +52,19 @@ object TransformerSpec extends Properties("transformer") {
       "optional values" |: safeCompare(f2.featureValues[Array[Double]], expected :+ missing))
   }
 
-  property("binarizer") = Prop.forAll { xs: Seq[Double] =>
+  property("binarizer") = Prop.forAll { xs: List[Double] =>
     val expected = xs.map(x => Seq(if (x > 0.0) 1.0 else 0.0))
     test(Binarizer("id"), xs, Seq("id"), expected, Seq(0.0))
   }
 
-  property("binarizer params") = Prop.forAll { (xs: Seq[Double], threshold: Double) =>
+  property("binarizer params") = Prop.forAll { (xs: List[Double], threshold: Double) =>
     val expected = xs.map(x => Seq(if (x > threshold) 1.0 else 0.0))
     test(Binarizer("id", threshold), xs, Seq("id"), expected, Seq(0.0))
   }
 
   private val splitsGen = Gen.choose(3, 10)
     .flatMap(n => Gen.listOfN(n, Arbitrary.arbDouble.arbitrary))
-  property("bucketizer") = Prop.forAll(seq[Double].arbitrary, splitsGen) { (xs, sp) =>
+  property("bucketizer") = Prop.forAll(list[Double].arbitrary, splitsGen) { (xs, sp) =>
     val splits = sp.toArray.sorted
     val names = (0 until splits.length - 1).map("bucketizer_" + _)
     val missing = (0 until splits.length - 1).map(_ => 0.0)
@@ -79,24 +79,24 @@ object TransformerSpec extends Properties("transformer") {
     test(Bucketizer("bucketizer", splits), xs, names, expected, missing)
   }
 
-  property("identity") = Prop.forAll { xs: Seq[Double] =>
+  property("identity") = Prop.forAll { xs: List[Double] =>
     test(Identity("id"), xs, Seq("id"), xs.map(Seq(_)), Seq(0.0))
   }
 
-  property("max abs") = Prop.forAll { xs: Seq[Double] =>
+  property("max abs") = Prop.forAll { xs: List[Double] =>
     val max = xs.map(math.abs).max
     val expected = xs.map(x => Seq(x / max))
     test(MaxAbsScaler("max_abs"), xs, Seq("max_abs"), expected, Seq(0.0))
   }
 
-  property("min max") = Prop.forAll { xs: Seq[Double] =>
+  property("min max") = Prop.forAll { xs: List[Double] =>
     val (min, max) = (xs.min, xs.max)
     val delta = max - min
     val expected = xs.map(x => Seq((x - min) / delta))
     test(MinMaxScaler("min_max"), xs, Seq("min_max"), expected, Seq(0.0))
   }
 
-  property("min max params") = Prop.forAll { (xs: Seq[Double], x: Double, y: Double) =>
+  property("min max params") = Prop.forAll { (xs: List[Double], x: Double, y: Double) =>
     val (minP, maxP) = if (x == y) {
       (math.min(x / 2, x), math.max(x / 2, x))
     } else {
@@ -153,37 +153,37 @@ object TransformerSpec extends Properties("transformer") {
     true
   }
 
-  def meanAndStddev(xs: Seq[Double]): (Double, Double) = {
+  def meanAndStddev(xs: List[Double]): (Double, Double) = {
     // breeze.stats.stddev is sample stddev
     val mean = breeze.stats.mean(xs)
     (mean, math.sqrt(xs.map(x => math.pow(x - mean, 2)).sum / xs.size))
   }
 
-  property("standard") = Prop.forAll { xs: Seq[Double] =>
+  property("standard") = Prop.forAll { xs: List[Double] =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev + mean))
     test(StandardScaler("std"), xs, Seq("std"), expected, Seq(mean))
   }
 
-  property("standard true true") = Prop.forAll { xs: Seq[Double] =>
+  property("standard true true") = Prop.forAll { xs: List[Double] =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev))
     test(StandardScaler("std", true, true), xs, Seq("std"), expected, Seq(0.0))
   }
 
-  property("standard true false") = Prop.forAll { xs: Seq[Double] =>
+  property("standard true false") = Prop.forAll { xs: List[Double] =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev + mean))
     test(StandardScaler("std", true, false), xs, Seq("std"), expected, Seq(mean))
   }
 
-  property("standard false true") = Prop.forAll { xs: Seq[Double] =>
+  property("standard false true") = Prop.forAll { xs: List[Double] =>
     val (mean, _) = meanAndStddev(xs)
     val expected = xs.map(x => Seq(x - mean))
     test(StandardScaler("std", false, true), xs, Seq("std"), expected, Seq(0.0))
   }
 
-  property("standard false false") = Prop.forAll { xs: Seq[Double] =>
+  property("standard false false") = Prop.forAll { xs: List[Double] =>
     val (mean, _) = meanAndStddev(xs)
     val expected = xs.map(Seq(_))
     test(StandardScaler("std", false, false), xs, Seq("std"), expected, Seq(mean))
