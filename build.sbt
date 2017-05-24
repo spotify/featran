@@ -31,10 +31,9 @@ val commonSettings = Seq(
   description := "Feature Transformers",
   scalaVersion := "2.11.11",
   scalacOptions ++= Seq("-target:jvm-1.7", "-deprecation", "-feature", "-unchecked"),
-  javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked")
-)
+  javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked"),
 
-val releaseSettings = Seq(
+  // Release settings
   releaseCrossBuild             := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle             := true,
