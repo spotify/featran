@@ -20,7 +20,6 @@ package com.spotify.featran
 import breeze.linalg.{DenseVector, SparseVector}
 import org.scalacheck._
 
-import scala.collection.mutable
 import scala.reflect.ClassTag
 
 class FeatureBuilderSpec extends Properties("FeatureBuilder") {
@@ -49,23 +48,21 @@ class FeatureBuilderSpec extends Properties("FeatureBuilder") {
 
   property("float traversable") = Prop.forAll(list[Float]) { xs =>
     Prop.all(
-      test(xs, implicitly[FeatureBuilder[mutable.Buffer[Float]]])(identity),
-      test(xs, implicitly[FeatureBuilder[IndexedSeq[Float]]])(identity),
-      test(xs, implicitly[FeatureBuilder[Iterable[Float]]])(_.toSeq),
-      test(xs, implicitly[FeatureBuilder[List[Float]]])(identity),
-      test(xs, implicitly[FeatureBuilder[Seq[Float]]])(identity),
       test(xs, implicitly[FeatureBuilder[Traversable[Float]]])(_.toSeq),
+      test(xs, implicitly[FeatureBuilder[Iterable[Float]]])(_.toSeq),
+      test(xs, implicitly[FeatureBuilder[Seq[Float]]])(identity),
+      test(xs, implicitly[FeatureBuilder[IndexedSeq[Float]]])(identity),
+      test(xs, implicitly[FeatureBuilder[List[Float]]])(identity),
       test(xs, implicitly[FeatureBuilder[Vector[Float]]])(identity))
   }
 
   property("double traversable") = Prop.forAll(list[Double]) { xs =>
     Prop.all(
-      test(xs, implicitly[FeatureBuilder[mutable.Buffer[Double]]])(identity),
-      test(xs, implicitly[FeatureBuilder[IndexedSeq[Double]]])(identity),
-      test(xs, implicitly[FeatureBuilder[Iterable[Double]]])(_.toSeq),
-      test(xs, implicitly[FeatureBuilder[List[Double]]])(identity),
-      test(xs, implicitly[FeatureBuilder[Seq[Double]]])(identity),
       test(xs, implicitly[FeatureBuilder[Traversable[Double]]])(_.toSeq),
+      test(xs, implicitly[FeatureBuilder[Iterable[Double]]])(_.toSeq),
+      test(xs, implicitly[FeatureBuilder[Seq[Double]]])(identity),
+      test(xs, implicitly[FeatureBuilder[IndexedSeq[Double]]])(identity),
+      test(xs, implicitly[FeatureBuilder[List[Double]]])(identity),
       test(xs, implicitly[FeatureBuilder[Vector[Double]]])(identity))
   }
 

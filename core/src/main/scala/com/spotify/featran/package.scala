@@ -53,7 +53,7 @@ package object featran {
   // Type class to generalize Float and Double
   //================================================================================
 
-  trait FloatingPoint[@specialized (Float, Double) T] {
+  trait FloatingPoint[@specialized (Float, Double) T] extends Serializable {
     def fromDouble(x: Double): T
   }
   implicit val floatFP: FloatingPoint[Float] = new FloatingPoint[Float] {
@@ -85,11 +85,28 @@ package object featran {
       }
     }
 
+  // Workaround for CanBuildFrom not serializable
+  trait CanBuild[T, M] extends Serializable {
+    def apply(): mutable.Builder[T, M]
+  }
+  private def newCB[T, M](f: () => mutable.Builder[T, M]) = new CanBuild[T, M] {
+    override def apply(): mutable.Builder[T, M] = f()
+  }
+  // Collection types in _root_.scala.*
+  //scalastyle:off public.methods.have.type
+  implicit def traversableCB[T] = newCB(() => Traversable.newBuilder[T])
+  implicit def iterableCB[T] = newCB(() => Iterable.newBuilder[T])
+  implicit def seqCB[T] = newCB(() => Seq.newBuilder[T])
+  implicit def indexedSeqCB[T] = newCB(() => IndexedSeq.newBuilder[T])
+  implicit def listCB[T] = newCB(() => List.newBuilder[T])
+  implicit def vectorCB[T] = newCB(() => Vector.newBuilder[T])
+  //scalastyle:on public.methods.have.type
+
   implicit def traversableFB[M[_] <: Traversable[_], T: ClassTag : FloatingPoint]
-  (implicit cbf: CanBuildFrom[_, T, M[T]]): FeatureBuilder[M[T]] = new FeatureBuilder[M[T]] {
-    private var b: mutable.Builder[T, M[T]] = cbf()
+  (implicit cb: CanBuild[T, M[T]]): FeatureBuilder[M[T]] = new FeatureBuilder[M[T]] {
+    private var b: mutable.Builder[T, M[T]] = _
     private val fp = implicitly[FloatingPoint[T]]
-    override def init(dimension: Int): Unit = b.clear()
+    override def init(dimension: Int): Unit = b = cb()
     override def add(value: Double): Unit = b += fp.fromDouble(value)
     override def skip(): Unit = b += fp.fromDouble(0.0)
     override def result: M[T] = b.result()
