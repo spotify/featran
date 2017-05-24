@@ -17,6 +17,7 @@
 
 package com.spotify.featran.examples
 
+import breeze.linalg._
 import com.spotify.featran._
 import com.spotify.featran.converters._
 import com.spotify.featran.transformers._
@@ -86,13 +87,21 @@ object Example {
       .required(_.d1)(StandardScaler("std1"))
       // Standard score with custom settings
       .required(_.d1)(StandardScaler("std2", withStd = false, withMean = true))
-      // extract features from Seq[Record]
+      // Extract features from Seq[Record]
       .extract(records)
 
     // scalastyle:off regex
     println(f.featureNames.head)
-    f.featureValues[Array[Double]].foreach(a => println(a.toSeq))
+    f.featureValues[Seq[Double]].foreach(println)
     // scalastyle:on regex
+
+    // Get feature values in different types
+    val floatA = f.featureValues[Array[Float]]
+    val doubleA = f.featureValues[Array[Double]]
+    val floatDV = f.featureValues[DenseVector[Float]]
+    val doubleDV = f.featureValues[DenseVector[Double]]
+    val floatSV = f.featureValues[SparseVector[Float]]
+    val doubleSV = f.featureValues[SparseVector[Double]]
   }
   // scalastyle:on method.length
 
