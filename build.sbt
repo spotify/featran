@@ -18,6 +18,7 @@
 val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
 val commonsMathVersion = "3.6.1"
+val flinkVersion = "1.2.0"
 val hadoopVersion = "2.8.0"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.1"
@@ -79,6 +80,7 @@ lazy val root: Project = Project(
   commonSettings ++ noPublishSettings
 ).aggregate(
   core,
+  flink,
   scalding,
   scio,
   spark
@@ -98,6 +100,20 @@ lazy val core: Project = Project(
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
   )
 )
+
+lazy val flink: Project = Project(
+  "flink",
+  file("flink")
+).settings(
+  moduleName := "featran-flink",
+  commonSettings,
+  description := "Feature Transformers - Flink",
+  libraryDependencies ++= Seq(
+    "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
+    "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
+    "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+  )
+).dependsOn(core)
 
 lazy val scalding: Project = Project(
   "scalding",
