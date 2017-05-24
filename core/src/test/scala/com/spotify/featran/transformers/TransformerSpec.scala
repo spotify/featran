@@ -64,7 +64,7 @@ object TransformerSpec extends Properties("transformer") {
   }
 
   private val splitsGen = Gen.choose(3, 10)
-    .flatMap(n => Gen.listOfN(n, Arbitrary.arbDouble.arbitrary))
+    .flatMap(n => Gen.listOfN(n, Arbitrary.arbitrary[Double]))
   property("bucketizer") = Prop.forAll(list[Double].arbitrary, splitsGen) { (xs, sp) =>
     val splits = sp.toArray.sorted
     val names = (0 until splits.length - 1).map("bucketizer_" + _)
@@ -140,7 +140,7 @@ object TransformerSpec extends Properties("transformer") {
   }
 
   private val polyGen = Gen.choose(2, 4)
-    .flatMap(n => Gen.listOfN(100, Gen.listOfN(n, Arbitrary.arbDouble.arbitrary).map(_.toArray)))
+    .flatMap(n => Gen.listOfN(100, Gen.listOfN(n, Arbitrary.arbitrary[Double]).map(_.toArray)))
   property("poly") = Prop.forAll(polyGen, Gen.choose(2, 4)) { (xs, degree) =>
     val dim = PolynomialExpansion.expand(xs.head, degree).length
     val names = (0 until dim).map("poly_" + _)
