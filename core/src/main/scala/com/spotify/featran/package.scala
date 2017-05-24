@@ -85,6 +85,16 @@ package object featran {
       }
     }
 
+  implicit def traversableFB[M[_] <: Traversable[_], T: ClassTag : FloatingPoint]
+  (implicit cbf: CanBuildFrom[_, T, M[T]]): FeatureBuilder[M[T]] = new FeatureBuilder[M[T]] {
+    private var b: mutable.Builder[T, M[T]] = cbf()
+    private val fp = implicitly[FloatingPoint[T]]
+    override def init(dimension: Int): Unit = b.clear()
+    override def add(value: Double): Unit = b += fp.fromDouble(value)
+    override def skip(): Unit = b += fp.fromDouble(0.0)
+    override def result: M[T] = b.result()
+  }
+
   implicit def denseVectorFB[T: ClassTag : FloatingPoint]: FeatureBuilder[DenseVector[T]] =
     implicitly[FeatureBuilder[Array[T]]].map(DenseVector(_))
 
