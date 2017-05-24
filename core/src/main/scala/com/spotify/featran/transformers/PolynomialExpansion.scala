@@ -73,10 +73,10 @@ private class PolynomialExpansion(name: String, val degree: Int)
   require(degree >= 1, "degree must be >= 1")
   override val aggregator: Aggregator[Array[Double], Int, Int] = Aggregators.arrayLength
   override def featureDimension(c: Int): Int = PolynomialExpansion.getPolySize(c, degree) - 1
-  override def featureNames(c: Int): Seq[String] = (0 until featureDimension(c)).map(name + "_" + _)
+  override def featureNames(c: Int): Seq[String] = nameN(featureDimension(c))
   override def buildFeatures(a: Option[Array[Double]], c: Int,
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) => PolynomialExpansion.expand(x, degree).foreach(fb.add)
-    case None => (0 until featureDimension(c)).foreach(_ => fb.skip())
+    case None => fb.skip(featureDimension(c))
   }
 }

@@ -37,7 +37,7 @@ private class Normalizer(name: String, val p: Double)
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
       val dv = DenseVector(x)
-      (dv / norm(dv, p)).data.foreach(fb.add)
-    case None => (0 until c).foreach(_ => fb.skip())
+      fb.add((dv / norm(dv, p)).data)
+    case None => fb.skip(c)
   }
 }

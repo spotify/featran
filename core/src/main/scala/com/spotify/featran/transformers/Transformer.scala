@@ -38,6 +38,8 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   // build features
   def buildFeatures(a: Option[A], c: C, fb: FeatureBuilder[_]): Unit
 
+  protected def nameN(n: Int): Seq[String] = (0 until n).map(name + '_' + _)
+
   //================================================================================
   // Special cases when value is missing in all rows
   //================================================================================

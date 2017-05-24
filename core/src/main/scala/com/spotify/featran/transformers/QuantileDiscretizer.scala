@@ -45,14 +45,13 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
       m
     }
   override def featureDimension(c: JTreeMap[Double, Int]): Int = numBuckets
-  override def featureNames(c: JTreeMap[Double, Int]): Seq[String] =
-    (0 until numBuckets).map(name + "_" + _)
+  override def featureNames(c: JTreeMap[Double, Int]): Seq[String] = nameN(numBuckets)
   override def buildFeatures(a: Option[Double], c: JTreeMap[Double, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
       val e = c.higherEntry(x)
       val offset = if (e == null) numBuckets - 1 else e.getValue
-      (0 until numBuckets).foreach(i => if(i == offset) fb.add(1.0) else fb.skip())
-    case None => (0 until numBuckets).foreach(_ => fb.skip())
+      (0 until numBuckets).foreach(i => if (i == offset) fb.add(1.0) else fb.skip())
+    case None => fb.skip(numBuckets)
   }
 }

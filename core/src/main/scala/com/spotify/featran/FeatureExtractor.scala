@@ -44,6 +44,22 @@ trait FeatureBuilder[T] extends Serializable { self =>
   def skip(): Unit
   def result: T
 
+  def add(in: Array[Double]): Unit = {
+    var i = 0
+    while (i < in.length) {
+      add(in(i))
+      i += 1
+    }
+  }
+
+  def skip(n: Int): Unit = {
+    var i = 0
+    while (i < n) {
+      skip()
+      i += 1
+    }
+  }
+
   def map[U](f: T => U): FeatureBuilder[U] = new FeatureBuilder[U] {
     private val delegate = self
     private val g = f
