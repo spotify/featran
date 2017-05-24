@@ -108,7 +108,7 @@ lazy val scalding: Project = Project(
   description := "Feature Transformers - Scalding",
   resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
   libraryDependencies ++= Seq(
-    "com.twitter" %% "scalding-core" % scaldingVersion,
+    "com.twitter" %% "scalding-core" % scaldingVersion % "provided",
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
@@ -135,7 +135,7 @@ lazy val spark: Project = Project(
   commonSettings,
   description := "Feature Transformers - Spark",
   libraryDependencies ++= Seq(
-    "org.apache.spark" %% "spark-core" % sparkVersion,
+    "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
 ).dependsOn(core)
