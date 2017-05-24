@@ -42,6 +42,9 @@ object Example {
   // Random generator for Seq[Record]
   val recordsGen: Gen[List[Record]] = Gen.listOfN(20, recordGen)
 
+  private def toArray(r: Record): Array[Double] =
+    Array(r.b.asDouble, r.f.toDouble, r.d1, r.d2.getOrElse(0.0))
+
   // scalastyle:off method.length
   def main(args: Array[String]): Unit = {
     // Random input
@@ -70,16 +73,16 @@ object Example {
       // Scale between custom min and max
       .required(_.d1)(MinMaxScaler("min_max2", 0.0, 100.0))
       .required(_.s1)(OneHotEncoder("one_hot"))
+      // Normalize vector with default p 2.0
+      .required(toArray)(Normalizer("norm1"))
+      // Normalize vector with custom p
+      .required(toArray)(Normalizer("norm2", 3.0))
       .required(_.s2)(NHotEncoder("n_hot"))
       // Record to Array[Double] composite feature
       // Polynomial expansion with default degree 2
-      .required {
-        r => Array(r.b.asDouble, r.f.toDouble, r.d1, r.d2.getOrElse(0.0))
-      } (PolynomialExpansion("poly1"))
+      .required(toArray)(PolynomialExpansion("poly1"))
       // Polynomial expansion with custom degree
-      .required {
-        r => Array(r.b.asDouble, r.f.toDouble, r.d1, r.d2.getOrElse(0.0))
-      } (PolynomialExpansion("poly2", 3))
+      .required(toArray)(PolynomialExpansion("poly2", 3))
       // Transform to absolute value first since QuantileDiscretizer requires non-negative value
       // Discretize into 4 quantiles
       .required(x => math.abs(x.d1))(QuantileDiscretizer("quantile", 4))
