@@ -19,6 +19,7 @@ package com.spotify.featran.transformers
 
 import java.util.{TreeMap => JTreeMap}
 
+import breeze.linalg._
 import com.spotify.featran._
 import org.scalacheck._
 import org.scalacheck.Prop.BooleanOperators
@@ -115,6 +116,18 @@ object TransformerSpec extends Properties("transformer") {
     val expected = xs.map(s => cats.map(c => if (s.contains(c)) 1.0 else 0.0))
     val missing = cats.map(_ => 0.0)
     test(NHotEncoder("n_hot"), xs, names, expected, missing)
+  }
+
+  private val normGen = Gen.listOfN(100,
+    Gen.listOfN(10, Arbitrary.arbitrary[Double]).map(_.toArray))
+  property("normalizer") = Prop.forAll(normGen, Gen.choose(1.0, 3.0)) { (xs, p) =>
+    val names = (0 until 10).map("norm_" + _)
+    val expected = xs.map { x =>
+      val dv = DenseVector(x)
+      (dv / norm(dv, p)).data.toSeq
+    }
+    val missing = (0 until 10).map(_ => 0.0)
+    test(Normalizer("norm", p), xs, names, expected, missing)
   }
 
   private val oneHotGen = Gen.listOfN(100, Gen.alphaStr)
