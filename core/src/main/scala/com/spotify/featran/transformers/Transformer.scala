@@ -59,7 +59,27 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
     case None => fb.skip()
   }
 
+  //================================================================================
+  // Transformer parameter and aggregator persistence
+  //================================================================================
+
+  // Encode aggregators of the current extraction
+  def encodeAggregator(c: Option[C]): Option[String]
+
+  // Decode aggregator from a previous extraction
+  def decodeAggregator(s: Option[String]): Option[C]
+
+  // Compile time parameters
+  def params: Map[String, String] = Map.empty
+
+  // Settings including compile time parameters and runtime aggregators
+  def settings(c: Option[C]): Settings =
+    Settings(this.getClass.getCanonicalName, name, params, optFeatureNames(c), encodeAggregator(c))
+
 }
+
+case class Settings(cls: String, name: String, params: Map[String, String],
+                    featureNames: Seq[String], aggregators: Option[String])
 
 private abstract class OneDimensional[A, B, C](name: String) extends Transformer[A, B, C](name) {
   override def featureDimension(c: C): Int = 1
@@ -74,6 +94,8 @@ private abstract class MapOne[A](name: String, val default: Double = 0.0)
     case None => fb.add(default)
   }
   def map(a: A): Double
+  override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")
+  override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
 }
 
 object Aggregators {

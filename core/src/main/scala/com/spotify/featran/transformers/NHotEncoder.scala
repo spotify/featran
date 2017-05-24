@@ -17,6 +17,8 @@
 
 package com.spotify.featran.transformers
 
+import java.net.{URLDecoder, URLEncoder}
+
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
@@ -37,4 +39,8 @@ private class NHotEncoder(name: String)
     val as = a.toSet.flatten
     c.foreach(s => if (as.contains(s)) fb.add(1.0) else fb.skip())
   }
+  override def encodeAggregator(c: Option[Array[String]]): Option[String] =
+    c.map(_.map(URLEncoder.encode(_, "UTF-8")).mkString(","))
+  override def decodeAggregator(s: Option[String]): Option[Array[String]] =
+    s.map(_.split(",").map(URLDecoder.decode(_, "UTF-8")))
 }

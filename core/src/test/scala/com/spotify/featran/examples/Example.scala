@@ -45,13 +45,14 @@ object Example {
   private def toArray(r: Record): Array[Double] =
     Array(r.b.asDouble, r.f.toDouble, r.d1, r.d2.getOrElse(0.0))
 
+  // scalastyle:off regex
   // scalastyle:off method.length
   def main(args: Array[String]): Unit = {
     // Random input
     val records = recordsGen.sample.get
 
     // Start building a feature specification
-    val f = FeatureSpec.of[Record]
+    val spec = FeatureSpec.of[Record]
       // Required field with Boolean to Double converter from `com.spotify.featran.converters._`
       // Pass value through with Identity transformer
       .required(_.b.asDouble)(Identity("id1"))
@@ -90,22 +91,29 @@ object Example {
       .required(_.d1)(StandardScaler("std1"))
       // Standard score with custom settings
       .required(_.d1)(StandardScaler("std2", withStd = false, withMean = true))
-      // Extract features from Seq[Record]
-      .extract(records)
 
-    // scalastyle:off regex
-    println(f.featureNames.head)
-    f.featureValues[Seq[Double]].foreach(println)
-    // scalastyle:on regex
+    // Extract features from Seq[Record]
+    val f1 = spec.extract(records)
+
+    println(f1.featureNames.head)
+    f1.featureValues[Seq[Double]].foreach(println)
 
     // Get feature values in different types
-    val floatA = f.featureValues[Array[Float]]
-    val doubleA = f.featureValues[Array[Double]]
-    val floatDV = f.featureValues[DenseVector[Float]]
-    val doubleDV = f.featureValues[DenseVector[Double]]
-    val floatSV = f.featureValues[SparseVector[Float]]
-    val doubleSV = f.featureValues[SparseVector[Double]]
+    val floatA = f1.featureValues[Array[Float]]
+    val doubleA = f1.featureValues[Array[Double]]
+    val floatDV = f1.featureValues[DenseVector[Float]]
+    val doubleDV = f1.featureValues[DenseVector[Double]]
+    val floatSV = f1.featureValues[SparseVector[Float]]
+    val doubleSV = f1.featureValues[SparseVector[Double]]
+
+    // Extract settings as a JSON string
+    val settings = f1.featureSettings
+    println(settings.head)
+
+    // Extract features from new records, but reuse previously saved settings
+    val f2 = spec.extractWithSettings(records.take(records.size / 2), settings)
   }
   // scalastyle:on method.length
+  // scalastyle:on regex
 
 }

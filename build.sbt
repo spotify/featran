@@ -17,6 +17,7 @@
 
 val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
+val circeVersion = "0.8.0"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.2.0"
 val hadoopVersion = "2.8.0"
@@ -98,7 +99,12 @@ lazy val core: Project = Project(
     "org.apache.commons" % "commons-math3" % commonsMathVersion,
     "org.scalanlp" %% "breeze" % breezeVersion,
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
-  )
+  ),
+  libraryDependencies ++= Seq(
+    "io.circe" %% "circe-core",
+    "io.circe" %% "circe-generic",
+    "io.circe" %% "circe-parser"
+  ).map(_ % circeVersion)
 )
 
 lazy val flink: Project = Project(

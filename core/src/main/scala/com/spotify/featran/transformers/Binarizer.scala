@@ -25,4 +25,7 @@ object Binarizer {
 
 private class Binarizer(name: String, val threshold: Double) extends MapOne[Double](name) {
   override def map(a: Double): Double = if (a > threshold) 1.0 else 0.0
+  override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")
+  override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
+  override def params: Map[String, String] = Map("threshold" -> threshold.toString)
 }

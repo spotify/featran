@@ -17,7 +17,7 @@
 
 package com.spotify.featran
 
-import com.spotify.featran.transformers.Transformer
+import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.language.{higherKinds, implicitConversions}
 
@@ -36,7 +36,11 @@ object FeatureSpec {
       new Builder[T](this.features :+ new Feature(f, default, t))
 
     def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] =
-      new FeatureExtractor[M, T](new FeatureSpec[T](features), input)
+      new FeatureExtractor[M, T](new FeatureSpec[T](features), input, None)
+
+    def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
+    : FeatureExtractor[M, T] =
+      new FeatureExtractor[M, T](new FeatureSpec[T](features), input, Some(settings))
   }
 
 }
@@ -74,9 +78,11 @@ private class Feature[T, A, B, C](val f: T => Option[A],
     transformer.optFeatureNames(c.asInstanceOf[Option[C]])
 
   // (Option[A], Option[C], FeatureBuilder[F])
-  def unsafeBuildFeatures(a: Option[Any], c: Option[Any], fb: FeatureBuilder[_]): Unit = {
+  def unsafeBuildFeatures(a: Option[Any], c: Option[Any], fb: FeatureBuilder[_]): Unit =
     transformer.optBuildFeatures(a.asInstanceOf[Option[A]], c.asInstanceOf[Option[C]], fb)
-  }
+
+  // Option[C]
+  def unsafeSettings(c: Option[Any]): Settings = transformer.settings(c.asInstanceOf[Option[C]])
 
 }
 
@@ -173,6 +179,29 @@ class FeatureSpec[T] private (private val features: Array[Feature[T, _, _, _]])
       features(i).unsafeBuildFeatures(a(i), c(i), fb)
       i += 1
     }
+  }
+
+  // Option[C]
+  def featureSettings(c: ARRAY): Seq[Settings] = {
+    require(n == c.length)
+    val b = Seq.newBuilder[Settings]
+    var i = 0
+    while (i < n) {
+      b += features(i).unsafeSettings(c(i))
+      i += 1
+    }
+    b.result()
+  }
+
+  def decodeAggregators(s: Seq[Settings]): ARRAY = {
+    val r = new Array[Option[Any]](n)
+    var i = 0
+    val it = s.iterator
+    while (i < n) {
+      r(i) = features(i).transformer.decodeAggregator(it.next().aggregators)
+      i += 1
+    }
+    r
   }
 
 }

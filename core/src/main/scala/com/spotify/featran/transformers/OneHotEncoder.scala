@@ -17,6 +17,8 @@
 
 package com.spotify.featran.transformers
 
+import java.net.{URLDecoder, URLEncoder}
+
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
@@ -34,4 +36,8 @@ private class OneHotEncoder(name: String)
   override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
   override def buildFeatures(a: Option[String], c: Array[String], fb: FeatureBuilder[_]): Unit =
     c.foreach(s => if (a.contains(s)) fb.add(1.0) else fb.skip())
+  override def encodeAggregator(c: Option[Array[String]]): Option[String] =
+    c.map(_.map(URLEncoder.encode(_, "UTF-8")).mkString(","))
+  override def decodeAggregator(s: Option[String]): Option[Array[String]] =
+    s.map(_.split(",").map(URLDecoder.decode(_, "UTF-8")))
 }

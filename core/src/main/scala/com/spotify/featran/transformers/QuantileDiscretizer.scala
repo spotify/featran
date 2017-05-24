@@ -22,6 +22,8 @@ import java.util.{TreeMap => JTreeMap}
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.{Aggregator, QTree, QTreeAggregator, QTreeSemigroup}
 
+import scala.collection.JavaConverters._
+
 object QuantileDiscretizer {
   // Missing value = [0.0, 0.0, ...]
   def apply(name: String, numBuckets: Int = 2, k: Int = QTreeAggregator.DefaultK)
@@ -54,4 +56,18 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
       (0 until numBuckets).foreach(i => if (i == offset) fb.add(1.0) else fb.skip())
     case None => fb.skip(numBuckets)
   }
+
+  override def encodeAggregator(c: Option[JTreeMap[Double, Int]]): Option[String] =
+    c.map(_.asScala.map(kv => s"${kv._1}:${kv._2}").mkString(","))
+  override def decodeAggregator(s: Option[String]): Option[JTreeMap[Double, Int]] =
+    s.map { x =>
+      val m = new JTreeMap[Double, Int]()
+      x.split(",").foreach { p =>
+        val t = p.split(":")
+        m.put(t(0).toDouble, t(1).toInt)
+      }
+      m
+    }
+  override def params: Map[String, String] =
+    Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
 }

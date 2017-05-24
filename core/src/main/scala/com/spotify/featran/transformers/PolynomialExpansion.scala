@@ -79,4 +79,7 @@ private class PolynomialExpansion(name: String, val degree: Int)
     case Some(x) => PolynomialExpansion.expand(x, degree).foreach(fb.add)
     case None => fb.skip(featureDimension(c))
   }
+  override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)
+  override def decodeAggregator(s: Option[String]): Option[Int] = s.map(_.toInt)
+  override def params: Map[String, String] = Map("degree" -> degree.toString)
 }

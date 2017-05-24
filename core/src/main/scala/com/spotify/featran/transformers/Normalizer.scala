@@ -40,4 +40,8 @@ private class Normalizer(name: String, val p: Double)
       fb.add((dv / norm(dv, p)).data)
     case None => fb.skip(c)
   }
+  override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)
+  override def decodeAggregator(s: Option[String]): Option[Int] = s.map(_.toInt)
+  override def params: Map[String, String] = Map("p" -> p.toString)
+
 }

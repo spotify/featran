@@ -56,4 +56,8 @@ private class Bucketizer(name: String, splits: Array[Double])
       }
     case None => fb.skip(splits.length - 1)
   }
+
+  override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")
+  override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
+  override def params: Map[String, String] = Map("splits" -> splits.mkString("[", ",", "]"))
 }

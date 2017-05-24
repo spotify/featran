@@ -21,8 +21,8 @@ import java.util.{TreeMap => JTreeMap}
 
 import breeze.linalg._
 import com.spotify.featran._
-import org.scalacheck._
 import org.scalacheck.Prop.BooleanOperators
+import org.scalacheck._
 
 object TransformerSpec extends Properties("transformer") {
 
@@ -46,11 +46,20 @@ object TransformerSpec extends Properties("transformer") {
     // add one missing value
     val f2 = FeatureSpec.of[Option[T]].optional(identity)(t).extract(input.map(Some(_)) :+ None)
 
+    // extract first half of the values
+    val settings = f1.featureSettings
+    val f3 = FeatureSpec.of[T].required(identity)(t)
+      .extractWithSettings(input.take(input.size / 2), settings)
+
     Prop.all(
-      "required names" |: f1.featureNames == Seq(names),
-      "optional names" |: f2.featureNames == Seq(names),
-      "required values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
-      "optional values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing))
+      "f1 names" |: f1.featureNames == Seq(names),
+      "f2 names" |: f2.featureNames == Seq(names),
+      "f3 names" |: f3.featureNames == Seq(names),
+      "f1 values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
+      "f2 values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing),
+      "f3 values" |: safeCompare(f3.featureValues[Seq[Double]], expected.take(input.size / 2)),
+      "f2 settings" |: settings == f2.featureSettings,
+      "f3 settings" |: settings == f3.featureSettings)
   }
 
   property("binarizer") = Prop.forAll { xs: List[Double] =>
