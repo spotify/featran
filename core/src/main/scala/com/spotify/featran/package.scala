@@ -18,6 +18,8 @@
 package com.spotify
 
 import breeze.linalg.{DenseVector, SparseVector}
+import breeze.math.Semiring
+import breeze.storage.Zero
 
 import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable
@@ -47,84 +49,63 @@ package object featran {
     }
   }
 
-  implicit def faFeatureBuilder: FeatureBuilder[Array[Float]] =
-    new FeatureBuilder[Array[Float]] {
-      private var array: Array[Float] = _
+  //================================================================================
+  // Type class to generalize Float and Double
+  //================================================================================
+
+  trait FloatingPoint[@specialized (Float, Double) T] {
+    def fromDouble(x: Double): T
+  }
+  implicit val floatFP: FloatingPoint[Float] = new FloatingPoint[Float] {
+    override def fromDouble(x: Double): Float = x.toFloat
+  }
+  implicit val doubleFP: FloatingPoint[Double] = new FloatingPoint[Double] {
+    override def fromDouble(x: Double): Double = x
+  }
+
+  //================================================================================
+  // FeatureBuilder implementations
+  //================================================================================
+
+  implicit def arrayFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Array[T]] =
+    new FeatureBuilder[Array[T]] {
+      private var array: Array[T] = _
       private var offset: Int = 0
-      override def init(dimension: Int): Unit = array = new Array[Float](dimension)
+      private val fp = implicitly[FloatingPoint[T]]
+      override def init(dimension: Int): Unit = array = new Array[T](dimension)
       override def add(value: Double): Unit = {
-        array(offset) = value.toFloat
+        array(offset) = fp.fromDouble(value)
         offset += 1
       }
-      def skip(): Unit = offset += 1
-      override def result: Array[Float] = {
+      override def skip(): Unit = offset += 1
+      override def result: Array[T] = {
         require(offset == array.length)
         offset = 0
         array.clone()
       }
     }
 
-  implicit def daFeatureBuilder: FeatureBuilder[Array[Double]] =
-    new FeatureBuilder[Array[Double]] {
-      private var array: Array[Double] = _
-      private var offset: Int = 0
-      override def init(dimension: Int): Unit = {
-        array = new Array[Double](dimension)
-        offset = 0
-      }
-      override def add(value: Double): Unit = {
-        array(offset) = value
-        offset += 1
-      }
-      def skip(): Unit = offset += 1
-      override def result: Array[Double] = {
-        require(offset == array.length)
-        array.clone()
-      }
+  implicit def denseVectorFB[T: ClassTag : FloatingPoint]: FeatureBuilder[DenseVector[T]] =
+    implicitly[FeatureBuilder[Array[T]]].map(DenseVector(_))
+
+  implicit def sparseVectorFB[T: ClassTag : FloatingPoint : Semiring : Zero]
+  : FeatureBuilder[SparseVector[T]] = new FeatureBuilder[SparseVector[T]] {
+    private var dim: Int = _
+    private var offset: Int = 0
+    private val queue: mutable.Queue[(Int, T)] = mutable.Queue.empty
+    private val fp = implicitly[FloatingPoint[T]]
+    override def init(dimension: Int): Unit = {
+      dim = dimension
+      offset = 0
+      queue.clear()
     }
+    override def add(value: Double): Unit = {
+      queue.enqueue((offset, fp.fromDouble(value)))
+      offset += 1
 
-  implicit def fdvFeatureBuilder: FeatureBuilder[DenseVector[Float]] =
-    faFeatureBuilder.map(DenseVector(_))
-
-  implicit def ddvFeatureBuilder: FeatureBuilder[DenseVector[Double]] =
-    daFeatureBuilder.map(DenseVector(_))
-
-  implicit def fsvFeatureBuilder: FeatureBuilder[SparseVector[Float]] =
-    new FeatureBuilder[SparseVector[Float]] {
-      private var dim: Int = _
-      private var offset: Int = 0
-      private val queue: mutable.Queue[(Int, Float)] = mutable.Queue.empty
-      override def init(dimension: Int): Unit = {
-        dim = dimension
-        offset = 0
-        queue.clear()
-      }
-      override def add(value: Double): Unit = {
-        queue.enqueue((offset, value.toFloat))
-        offset += 1
-
-      }
-      override def skip(): Unit = offset += 1
-      override def result: SparseVector[Float] = SparseVector(dim)(queue: _*)
     }
-
-  implicit def dsvFeatureBuilder: FeatureBuilder[SparseVector[Double]] =
-    new FeatureBuilder[SparseVector[Double]] {
-      private var dim: Int = _
-      private var offset: Int = 0
-      private val queue: mutable.Queue[(Int, Double)] = mutable.Queue.empty
-      override def init(dimension: Int): Unit = {
-        dim = dimension
-        offset = 0
-        queue.clear()
-      }
-      override def add(value: Double): Unit = {
-        queue.enqueue((offset, value))
-        offset += 1
-
-      }
-      override def skip(): Unit = offset += 1
-      override def result: SparseVector[Double] = SparseVector(dim)(queue: _*)
-    }
+    override def skip(): Unit = offset += 1
+    override def result: SparseVector[T] = SparseVector(dim)(queue: _*)
+  }
 
 }
