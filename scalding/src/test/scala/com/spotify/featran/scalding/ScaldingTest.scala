@@ -41,11 +41,11 @@ class ScaldingTest extends FlatSpec with Matchers {
       "one_hot_d",
       "one_hot_e",
       "min_max"))
-    materialize(f.featureValues[Array[Double]]).map(_.toSeq) shouldBe Iterable(
-      Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
-      Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
-      Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
-      Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
-      Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
+    materialize(f.featureValues[Array[Double]]) should contain theSameElementsAs Iterable(
+      Array(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
+      Array(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
+      Array(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
+      Array(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
+      Array(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
   }
 }

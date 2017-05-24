@@ -39,7 +39,7 @@ class SparkTest extends FlatSpec with Matchers {
       "one_hot_d",
       "one_hot_e",
       "min_max"))
-    f.featureValues[Array[Double]].collect() shouldBe Array(
+    f.featureValues[Array[Double]].collect() should contain theSameElementsAs Array(
       Array(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
       Array(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
       Array(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
