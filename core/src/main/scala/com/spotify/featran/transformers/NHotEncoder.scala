@@ -23,7 +23,11 @@ import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
 object NHotEncoder {
-  // Missing value = [0.0, 0.0, ...]
+  /**
+   * Transform a collection of categorical features to binary columns, with at most N one-values.
+   *
+   * Missing values are transformed to [0.0, 0.0, ...].
+   */
   def apply(name: String): Transformer[Seq[String], Set[String], Array[String]] =
     new NHotEncoder(name)
 }

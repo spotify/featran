@@ -21,7 +21,12 @@ import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.{Aggregator, Max, Min}
 
 object MinMaxScaler {
-  // Missing value = min
+  /**
+   * Transform features by rescaling each feature to a specific range [`min`, `max`] (default
+   * [0, 1]).
+   *
+   * Missing values are transformed to `min`.
+   */
   def apply(name: String,
             min: Double = 0.0,
             max: Double = 1.0): Transformer[Double, (Min[Double], Max[Double]), (Double, Double)] =

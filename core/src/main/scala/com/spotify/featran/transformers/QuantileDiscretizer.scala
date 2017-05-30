@@ -25,7 +25,15 @@ import com.twitter.algebird.{Aggregator, QTree, QTreeAggregator, QTreeSemigroup}
 import scala.collection.JavaConverters._
 
 object QuantileDiscretizer {
-  // Missing value = [0.0, 0.0, ...]
+  /**
+   * Transform a column of continuous features to n columns of binned categorical features. The
+   * number of bins is set by the `numBuckets` parameter.
+   *
+   * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
+   * of the approximation can be controlled with the `k` parameter.
+   *
+   * Missing values are transformed to zero vectors.
+   */
   def apply(name: String, numBuckets: Int = 2, k: Int = QTreeAggregator.DefaultK)
   : Transformer[Double, QTree[Double], JTreeMap[Double, Int]] =
     new QuantileDiscretizer(name, numBuckets, k)

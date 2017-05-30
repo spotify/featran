@@ -22,7 +22,12 @@ import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
 object Normalizer {
-  // Missing value = [0.0, 0.0, ...]
+  /**
+   * Transform vector features by normalizing each vector to have unit norm. Parameter `p` specifies
+   * the p-norm used for normalization (default 2).
+   *
+   * Missing values are transformed to zero vectors.
+   */
   def apply(name: String, p: Double = 2.0): Transformer[Array[Double], Int, Int] =
     new Normalizer(name, p)
 }

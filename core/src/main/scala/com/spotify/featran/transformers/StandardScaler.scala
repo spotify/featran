@@ -21,7 +21,13 @@ import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.{Aggregator, Moments}
 
 object StandardScaler {
-  // Missing value = if (withMean) 0.0 else mean
+  /**
+   * Transform features by normalizing each feature to have unit standard deviation and/or zero
+   * mean. When `withStd` is true, it scales the data to unit standard deviation. When `withMean` is
+   * true, it centers the data with mean before scaling.
+   *
+   * Missing values are transformed to 0.0 if `withMean` is true or population mean otherwise.
+   */
   def apply(name: String,
             withStd: Boolean = true,
             withMean: Boolean = false): Transformer[Double, Moments, (Double, Double)] =

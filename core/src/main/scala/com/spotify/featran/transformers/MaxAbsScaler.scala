@@ -21,7 +21,12 @@ import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.{Aggregator, Max}
 
 object MaxAbsScaler {
-  // Missing value = 0.0
+  /**
+   * Transform features by rescaling each feature to range [-1, 1] by dividing through the maximum
+   * absolute value in each feature.
+   *
+   * Missing values are transformed to 0.0.
+   */
   def apply(name: String): Transformer[Double, Max[Double], Double] = new MaxAbsScaler(name)
 }
 

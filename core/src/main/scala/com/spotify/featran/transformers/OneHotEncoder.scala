@@ -23,7 +23,12 @@ import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
 object OneHotEncoder {
-  // Missing value = [0.0, 0.0, ...]
+  /**
+   * Transform a collection of categorical features to binary columns, with at most a single
+   * one-value.
+   *
+   * Missing values are transformed to [0.0, 0.0, ...].
+   */
   def apply(name: String): Transformer[String, Set[String], Array[String]] =
     new OneHotEncoder(name)
 }

@@ -18,7 +18,11 @@
 package com.spotify.featran.transformers
 
 object Identity {
-  // Missing value = 0.0
+  /**
+   * Transform features by passing them through.
+   *
+   * Missing values are transformed to 0.0.
+   */
   def apply(name: String): Transformer[Double, Unit, Unit] = new Identity(name)
 }
 

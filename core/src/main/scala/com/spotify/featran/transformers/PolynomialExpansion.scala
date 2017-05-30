@@ -22,7 +22,12 @@ import com.twitter.algebird.Aggregator
 import org.apache.commons.math3.util.CombinatoricsUtils
 
 object PolynomialExpansion {
-  // Missing value = [0.0, 0.0, ...]
+  /**
+   * Transform vector features by expanding them into a polynomial space, which is formulated by an
+   * n-degree combination of original dimensions.
+   *
+   * Missing values are transformed to zero vectors.
+   */
   def apply(name: String, degree: Int = 2): Transformer[Array[Double], Int, Int] =
     new PolynomialExpansion(name, degree)
 
