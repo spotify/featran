@@ -28,6 +28,8 @@ object OneHotEncoder {
    * one-value.
    *
    * Missing values are transformed to [0.0, 0.0, ...].
+   *
+   * When using aggregated feature summary from a previous session, unseen labels are ignored.
    */
   def apply(name: String): Transformer[String, Set[String], Array[String]] =
     new OneHotEncoder(name)

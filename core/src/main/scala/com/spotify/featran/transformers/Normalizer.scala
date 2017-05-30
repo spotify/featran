@@ -27,6 +27,9 @@ object Normalizer {
    * the p-norm used for normalization (default 2).
    *
    * Missing values are transformed to zero vectors.
+   *
+   * When using aggregated feature summary from a previous session, vectors of different dimensions
+   * are transformed to zero vectors.
    */
   def apply(name: String, p: Double = 2.0): Transformer[Array[Double], Int, Int] =
     new Normalizer(name, p)
@@ -41,8 +44,12 @@ private class Normalizer(name: String, val p: Double)
   override def buildFeatures(a: Option[Array[Double]], c: Int,
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
-      val dv = DenseVector(x)
-      fb.add((dv / norm(dv, p)).data)
+      if (x.length != c) {
+        fb.skip(c)
+      } else {
+        val dv = DenseVector(x)
+        fb.add((dv / norm(dv, p)).data)
+      }
     case None => fb.skip(c)
   }
   override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)

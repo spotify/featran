@@ -27,6 +27,9 @@ object PolynomialExpansion {
    * n-degree combination of original dimensions.
    *
    * Missing values are transformed to zero vectors.
+   *
+   * When using aggregated feature summary from a previous session, vectors of different dimensions
+   * are transformed to zero vectors.
    */
   def apply(name: String, degree: Int = 2): Transformer[Array[Double], Int, Int] =
     new PolynomialExpansion(name, degree)
@@ -81,7 +84,12 @@ private class PolynomialExpansion(name: String, val degree: Int)
   override def featureNames(c: Int): Seq[String] = nameN(featureDimension(c))
   override def buildFeatures(a: Option[Array[Double]], c: Int,
                              fb: FeatureBuilder[_]): Unit = a match {
-    case Some(x) => PolynomialExpansion.expand(x, degree).foreach(fb.add)
+    case Some(x) =>
+      if (x.length != c) {
+        fb.skip(featureDimension(c))
+      } else {
+        PolynomialExpansion.expand(x, degree).foreach(fb.add)
+      }
     case None => fb.skip(featureDimension(c))
   }
   override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)

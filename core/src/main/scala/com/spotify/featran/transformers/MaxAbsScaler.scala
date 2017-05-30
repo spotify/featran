@@ -26,6 +26,9 @@ object MaxAbsScaler {
    * absolute value in each feature.
    *
    * Missing values are transformed to 0.0.
+   *
+   * When using aggregated feature summary from a previous session, out of bound values are
+   * truncated to -1.0 or 1.0.
    */
   def apply(name: String): Transformer[Double, Max[Double], Double] = new MaxAbsScaler(name)
 }
@@ -34,7 +37,10 @@ private class MaxAbsScaler(name: String) extends OneDimensional[Double, Max[Doub
   override val aggregator: Aggregator[Double, Max[Double], Double] =
     Aggregators.from[Double](x => Max(math.abs(x))).to(_.get)
   override def buildFeatures(a: Option[Double], c: Double, fb: FeatureBuilder[_]): Unit = a match {
-    case Some(x) => fb.add(x / c)
+    case Some(x) =>
+      // truncate x to [-max, max]
+      val truncated = math.min(math.abs(x), c) * math.signum(x)
+      fb.add(truncated / c)
     case None => fb.skip()
   }
   override def encodeAggregator(c: Option[Double]): Option[String] = c.map(_.toString)

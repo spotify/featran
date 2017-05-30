@@ -26,6 +26,9 @@ object MinMaxScaler {
    * [0, 1]).
    *
    * Missing values are transformed to `min`.
+   *
+   * When using aggregated feature summary from a previous session, out of bound values are
+   * truncated to `min` or `max`.
    */
   def apply(name: String,
             min: Double = 0.0,
@@ -38,10 +41,12 @@ private class MinMaxScaler(name: String, val min: Double, val max: Double)
   require(max > min, "max must be > min")
 
   override val aggregator: Aggregator[Double, (Min[Double], Max[Double]), (Double, Double)] =
-    Aggregators.from[Double](x => (Min(x), Max(x))).to(r => (r._1.get, r._2.get - r._1.get))
+    Aggregators.from[Double](x => (Min(x), Max(x))).to(r => (r._1.get, r._2.get))
   override def buildFeatures(a: Option[Double], c: (Double, Double),
                              fb: FeatureBuilder[_]): Unit = a match {
-    case Some(x) => fb.add((x - c._1) / c._2 * (max - min) + min)
+    case Some(x) =>
+      val truncated = math.max(math.min(x, c._2), c._1)
+      fb.add((truncated - c._1) / (c._2 - c._1) * (max - min) + min)
     case None => fb.add(min)
   }
 

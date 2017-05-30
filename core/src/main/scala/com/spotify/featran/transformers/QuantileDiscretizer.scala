@@ -49,7 +49,10 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
       val interval = 1.0 / numBuckets
       for (i <- 1 until numBuckets) {
         val (l, u) = qt.quantileBounds(interval * i)
-        m.put(l + (u - l) / 2, i - 1)
+        val k = l + (u - l) / 2
+        if (!m.containsKey(k)) { // in case of too few distinct values
+          m.put(k, i - 1)
+        }
       }
       m.put(qt.upperBound, numBuckets - 1)
       m

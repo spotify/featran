@@ -27,6 +27,8 @@ object NHotEncoder {
    * Transform a collection of categorical features to binary columns, with at most N one-values.
    *
    * Missing values are transformed to [0.0, 0.0, ...].
+   *
+   * When using aggregated feature summary from a previous session, unseen labels are ignored.
    */
   def apply(name: String): Transformer[Seq[String], Set[String], Array[String]] =
     new NHotEncoder(name)

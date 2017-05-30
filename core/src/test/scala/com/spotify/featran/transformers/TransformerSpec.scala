@@ -21,6 +21,7 @@ import java.util.{TreeMap => JTreeMap}
 
 import breeze.linalg._
 import com.spotify.featran._
+import com.twitter.algebird.{QTree, QTreeAggregator, QTreeSemigroup}
 import org.scalacheck.Prop.BooleanOperators
 import org.scalacheck._
 
@@ -40,26 +41,34 @@ object TransformerSpec extends Properties("transformer") {
                       input: List[T],
                       names: Seq[String],
                       expected: List[Seq[Double]],
-                      missing: Seq[Double]): Prop = {
+                      missing: Seq[Double],
+                      outOfBoundElems: List[(T, Seq[Double])] = Nil): Prop = {
+    val fs = FeatureSpec.of[T].required(identity)(t)
+
     // all values present
-    val f1 = FeatureSpec.of[T].required(identity)(t).extract(input)
+    val f1 = fs.extract(input)
     // add one missing value
     val f2 = FeatureSpec.of[Option[T]].optional(identity)(t).extract(input.map(Some(_)) :+ None)
 
-    // extract first half of the values
+    // extract with settings from a previous session
     val settings = f1.featureSettings
-    val f3 = FeatureSpec.of[T].required(identity)(t)
-      .extractWithSettings(input.take(input.size / 2), settings)
+    // first half of the values
+    val f3 = fs.extractWithSettings(input.take(input.size / 2), settings)
+    // all values plus optional elements out of bound of the previous session
+    val f4 = fs.extractWithSettings(outOfBoundElems.map(_._1), settings)
 
     Prop.all(
       "f1 names" |: f1.featureNames == Seq(names),
       "f2 names" |: f2.featureNames == Seq(names),
       "f3 names" |: f3.featureNames == Seq(names),
+      "f4 names" |: f4.featureNames == Seq(names),
       "f1 values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
       "f2 values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing),
       "f3 values" |: safeCompare(f3.featureValues[Seq[Double]], expected.take(input.size / 2)),
+      "f4 values" |: safeCompare(f4.featureValues[Seq[Double]], outOfBoundElems.map(_._2)),
       "f2 settings" |: settings == f2.featureSettings,
-      "f3 settings" |: settings == f3.featureSettings)
+      "f3 settings" |: settings == f3.featureSettings,
+      "f4 settings" |: settings == f4.featureSettings)
   }
 
   property("binarizer") = Prop.forAll { xs: List[Double] =>
@@ -117,26 +126,32 @@ object TransformerSpec extends Properties("transformer") {
   property("max abs") = Prop.forAll { xs: List[Double] =>
     val max = xs.map(math.abs).max
     val expected = xs.map(x => Seq(x / max))
-    test(MaxAbsScaler("max_abs"), xs, Seq("max_abs"), expected, Seq(0.0))
+    val oob = List((max + 1, Seq(1.0)), (-max - 1, Seq(-1.0)))
+    test(MaxAbsScaler("max_abs"), xs, Seq("max_abs"), expected, Seq(0.0), oob)
   }
 
   property("min max") = Prop.forAll { xs: List[Double] =>
     val (min, max) = (xs.min, xs.max)
     val delta = max - min
     val expected = xs.map(x => Seq((x - min) / delta))
-    test(MinMaxScaler("min_max"), xs, Seq("min_max"), expected, Seq(0.0))
+    val oob = List((min - 1, Seq(0.0)), (max + 1, Seq(1.0))) // exceed lower and upper bounds
+    test(MinMaxScaler("min_max"), xs, Seq("min_max"), expected, Seq(0.0), oob)
   }
 
-  property("min max params") = Prop.forAll { (xs: List[Double], x: Double, y: Double) =>
-    val (minP, maxP) = if (x == y) {
-      (math.min(x / 2, x), math.max(x / 2, x))
-    } else {
-      (math.min(x, y), math.max(x, y))
-    }
+  // limit the range of min and max to avoid overflow
+  private val minMaxGen = for {
+    min <- Gen.choose(-1000.0, 1000.0)
+    range <- Gen.choose(1.0, 2000.0)
+  } yield (min, min + range)
+  property("min max params") = Prop.forAll(
+    Gen.listOfN(100, Arbitrary.arbitrary[Double]),
+    minMaxGen) { (xs: List[Double], p) =>
+    val (minP, maxP) = p
     val (min, max) = (xs.min, xs.max)
     val delta = max - min
     val expected = xs.map(x => Seq((x - min) / delta * (maxP - minP) + minP))
-    test(MinMaxScaler("min_max", minP, maxP), xs, Seq("min_max"), expected, Seq(minP))
+    val oob = List((min - 1, Seq(minP)), (max + 1, Seq(maxP))) // exceed lower and upper bounds
+    test(MinMaxScaler("min_max", minP, maxP), xs, Seq("min_max"), expected, Seq(minP), oob)
   }
 
   private val nHotGen = Gen.listOfN(100, Gen.listOfN(10, Gen.alphaStr))
@@ -145,7 +160,8 @@ object TransformerSpec extends Properties("transformer") {
     val names = cats.map("n_hot_" + _)
     val expected = xs.map(s => cats.map(c => if (s.contains(c)) 1.0 else 0.0))
     val missing = cats.map(_ => 0.0)
-    test(NHotEncoder("n_hot"), xs, names, expected, missing)
+    val oob = List((List("s1", "s2"), missing)) // unseen labels
+    test(NHotEncoder("n_hot"), xs, names, expected, missing, oob)
   }
 
   private val normGen = Gen.listOfN(100,
@@ -157,7 +173,8 @@ object TransformerSpec extends Properties("transformer") {
       (dv / norm(dv, p)).data.toSeq
     }
     val missing = (0 until 10).map(_ => 0.0)
-    test(Normalizer("norm", p), xs, names, expected, missing)
+    val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
+    test(Normalizer("norm", p), xs, names, expected, missing, oob)
   }
 
   private val oneHotGen = Gen.listOfN(100, Gen.alphaStr)
@@ -166,7 +183,8 @@ object TransformerSpec extends Properties("transformer") {
     val names = cats.map("one_hot_" + _)
     val expected = xs.map(s => cats.map(c => if (s == c) 1.0 else 0.0))
     val missing = cats.map(_ => 0.0)
-    test(OneHotEncoder("one_hot"), xs, names, expected, missing)
+    val oob = List(("s1", missing), ("s2", missing)) // unseen labels
+    test(OneHotEncoder("one_hot"), xs, names, expected, missing, oob)
   }
 
   private val polyGen = Gen.choose(2, 4)
@@ -176,24 +194,34 @@ object TransformerSpec extends Properties("transformer") {
     val names = (0 until dim).map("poly_" + _)
     val expected = xs.map(v => PolynomialExpansion.expand(v, degree).toSeq)
     val missing = (0 until dim).map(_ => 0.0)
-    test(PolynomialExpansion("poly", degree), xs, names, expected, missing)
+    val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
+    test(PolynomialExpansion("poly", degree), xs, names, expected, missing, oob)
   }
 
   private val quantileGen = Gen.listOfN(100, Gen.posNum[Double])
   property("quantile") = Prop.forAll(quantileGen, Gen.oneOf(2, 4, 5)) { (xs, numBuckets) =>
+    // FIXME: make this a black box
+    val qt = xs.map(QTree(_)).reduce(new QTreeSemigroup[Double](QTreeAggregator.DefaultK).plus)
     val m = new JTreeMap[Double, Int]()
+    val interval = 1.0 / numBuckets
     for (i <- 1 until numBuckets) {
-      val offset = xs.size / numBuckets * i
-      m.put(xs(offset), i - 1)
+      val (l, u) = qt.quantileBounds(interval * i)
+      val k = l + (u - l) / 2
+      if (!m.containsKey(k)) {
+        m.put(k, i - 1)
+      }
     }
-    m.put(Double.PositiveInfinity, numBuckets - 1)
+    m.put(qt.upperBound, numBuckets - 1)
     val expected = xs.map { x =>
       (0 until numBuckets).map(i => if (i == m.higherEntry(x).getValue) 1.0 else 0.0)
     }
     val names = (0 until numBuckets).map("quantile_" + _)
     val missing = (0 until numBuckets).map(_ => 0.0)
-    test(QuantileDiscretizer("quantile", numBuckets), xs, names, expected, missing)
-    true
+    val oob = List(
+      (xs.max + 1, (0 until numBuckets - 1).map(_ => 0.0) :+ 1.0),
+      (math.max(xs.min - 1, 0.0), 1.0 +: (0 until numBuckets - 1).map(_ => 0.0))
+    )
+    test(QuantileDiscretizer("quantile", numBuckets), xs, names, expected, missing, oob)
   }
 
   def meanAndStddev(xs: List[Double]): (Double, Double) = {
