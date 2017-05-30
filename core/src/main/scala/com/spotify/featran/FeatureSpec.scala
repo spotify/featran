@@ -21,28 +21,71 @@ import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.language.{higherKinds, implicitConversions}
 
+/**
+ * Companion object for [[FeatureSpec]].
+ */
 object FeatureSpec {
 
-  type ARRAY = Array[Option[Any]]
+  private[featran] type ARRAY = Array[Option[Any]]
 
+  /**
+   * Create a new [[FeatureSpec]] for input record type `T`.
+   * @tparam T input record type to extract features from
+   */
   def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty)
 
 }
 
+/**
+ * Encapsulate specification for feature extraction and transformation.
+ * @tparam T input record type to extract features from
+ */
 class FeatureSpec[T] private[featran] (private val features: Array[Feature[T, _, _, _]]) {
+
+  /**
+   * Add a required field specification.
+   * @param f function to extract feature `A` from record `T`
+   * @param t [[com.spotify.featran.transformers.Transformer Transformer]] for extracted feature `A`
+   * @tparam A extracted feature type
+   */
   def required[A](f: T => A)(t: Transformer[A, _, _]): FeatureSpec[T] =
     optional(t => Some(f(t)))(t)
 
+  /**
+   * Add an optional field specification.
+   * @param f function to extract feature `Option[A]` from record `T`
+   * @param default default for missing values
+   * @param t [[com.spotify.featran.transformers.Transformer Transformer]] for extracted feature `A`
+   * @tparam A extracted feature type
+   */
   def optional[A](f: T => Option[A], default: Option[A] = None)
                  (t: Transformer[A, _, _]): FeatureSpec[T] =
     new FeatureSpec[T](this.features :+ new Feature(f, default, t))
 
+  /**
+   * Extract features from a input collection.
+   *
+   * This is done in two steps, a `reduce` step over the collection to aggregate feature summary,
+   * and a `map` step to transform values using the summary.
+   * @param input input collection
+   * @tparam M input collection type, e.g. `Array`, `List`
+   */
   def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] =
     new FeatureExtractor[M, T](new FeatureSet[T](features), input, None)
 
+  /**
+   * Extract features from a input collection using settings from a previous session.
+   *
+   * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
+   * in a previous session.
+   * @param input input collection
+   * @param settings JSON settings from a previous session
+   * @tparam M input collection type, e.g. `Array`, `List`
+   */
   def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
   : FeatureExtractor[M, T] =
     new FeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings))
+
 }
 
 private class Feature[T, A, B, C](val f: T => Option[A],

@@ -72,6 +72,11 @@ trait FeatureBuilder[T] extends Serializable { self =>
   }
 }
 
+/**
+ * Encapsulate features extracted from a [[FeatureSpec]].
+ * @tparam M input collection type, e.g. `Array`, List
+ * @tparam T input record type to extract features from
+ */
 class FeatureExtractor[M[_]: CollectionType, T] private[featran]
 (private val fs: FeatureSet[T],
  @transient private val input: M[T],
@@ -80,7 +85,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
 
   import FeatureSpec.ARRAY
 
-  @transient val dt: CollectionType[M] = implicitly[CollectionType[M]]
+  @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
   @transient private lazy val as: M[ARRAY] = input.map(fs.unsafeGet)
@@ -93,8 +98,12 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
     case None => as.map(fs.unsafePrepare).reduce(fs.unsafeSum).map(fs.unsafePresent)
   }
 
-  @transient lazy val featureNames: M[Seq[String]] = aggregate.map(fs.featureNames)
-
+  /**
+   * JSON settings of the [[FeatureSpec]] and aggregated feature summary.
+   *
+   * This can be used with [[FeatureSpec#extractWithSettings]] to bypass the `reduce` step when
+   * extracting new records of the same type.
+   */
   @transient lazy val featureSettings: M[String] = settings match {
     case Some(x) => x
     case None => aggregate.map { a =>
@@ -104,6 +113,16 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
     }
   }
 
+  /**
+   * Names of the extracted features, in the same order as values in [[featureValues]].
+   */
+  @transient lazy val featureNames: M[Seq[String]] = aggregate.map(fs.featureNames)
+
+  /**
+   * Values of the extracted features, in the same order as names in [[featureNames]].
+   * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
+   *           `DenseVector[Double]`
+   */
   def featureValues[F: FeatureBuilder : ClassTag]: M[F] = {
     val fb = implicitly[FeatureBuilder[F]]
     as.cross(aggregate).map { case (a, c) =>
