@@ -73,7 +73,7 @@ trait FeatureBuilder[T] extends Serializable { self =>
 }
 
 class FeatureExtractor[M[_]: CollectionType, T] private[featran]
-(val spec: FeatureSpec[T],
+(private val fs: FeatureSet[T],
  @transient private val input: M[T],
  @transient private val settings: Option[M[String]])
   extends Serializable {
@@ -83,31 +83,31 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   @transient val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
-  @transient private lazy val as: M[ARRAY] = input.map(spec.unsafeGet)
+  @transient private lazy val as: M[ARRAY] = input.map(fs.unsafeGet)
   @transient private lazy val aggregate: M[ARRAY] = settings match {
     case Some(x) => x.map { s =>
       import io.circe.generic.auto._
       import io.circe.parser._
-      spec.decodeAggregators(decode[Seq[Settings]](s).right.get)
+      fs.decodeAggregators(decode[Seq[Settings]](s).right.get)
     }
-    case None => as.map(spec.unsafePrepare).reduce(spec.unsafeSum).map(spec.unsafePresent)
+    case None => as.map(fs.unsafePrepare).reduce(fs.unsafeSum).map(fs.unsafePresent)
   }
 
-  @transient lazy val featureNames: M[Seq[String]] = aggregate.map(spec.featureNames)
+  @transient lazy val featureNames: M[Seq[String]] = aggregate.map(fs.featureNames)
 
   @transient lazy val featureSettings: M[String] = settings match {
     case Some(x) => x
     case None => aggregate.map { a =>
       import io.circe.generic.auto._
       import io.circe.syntax._
-      spec.featureSettings(a).asJson.noSpaces
+      fs.featureSettings(a).asJson.noSpaces
     }
   }
 
   def featureValues[F: FeatureBuilder : ClassTag]: M[F] = {
     val fb = implicitly[FeatureBuilder[F]]
     as.cross(aggregate).map { case (a, c) =>
-      spec.featureValues(a, c, fb)
+      fs.featureValues(a, c, fb)
       fb.result
     }
   }

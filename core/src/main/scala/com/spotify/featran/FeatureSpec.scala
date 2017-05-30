@@ -25,24 +25,24 @@ object FeatureSpec {
 
   type ARRAY = Array[Option[Any]]
 
-  def of[T]: Builder[T] = new Builder[T](Array.empty)
+  def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty)
 
-  class Builder[T] private[featran] (private val features: Array[Feature[T, _, _, _]]) {
-    def required[A](f: T => A)(t: Transformer[A, _, _]): Builder[T] =
-      optional(t => Some(f(t)))(t)
+}
 
-    def optional[A](f: T => Option[A], default: Option[A] = None)
-                   (t: Transformer[A, _, _]): Builder[T] =
-      new Builder[T](this.features :+ new Feature(f, default, t))
+class FeatureSpec[T] private[featran] (private val features: Array[Feature[T, _, _, _]]) {
+  def required[A](f: T => A)(t: Transformer[A, _, _]): FeatureSpec[T] =
+    optional(t => Some(f(t)))(t)
 
-    def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] =
-      new FeatureExtractor[M, T](new FeatureSpec[T](features), input, None)
+  def optional[A](f: T => Option[A], default: Option[A] = None)
+                 (t: Transformer[A, _, _]): FeatureSpec[T] =
+    new FeatureSpec[T](this.features :+ new Feature(f, default, t))
 
-    def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
-    : FeatureExtractor[M, T] =
-      new FeatureExtractor[M, T](new FeatureSpec[T](features), input, Some(settings))
-  }
+  def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] =
+    new FeatureExtractor[M, T](new FeatureSet[T](features), input, None)
 
+  def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
+  : FeatureExtractor[M, T] =
+    new FeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings))
 }
 
 private class Feature[T, A, B, C](val f: T => Option[A],
@@ -86,7 +86,7 @@ private class Feature[T, A, B, C](val f: T => Option[A],
 
 }
 
-class FeatureSpec[T] private (private val features: Array[Feature[T, _, _, _]])
+private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
   extends Serializable {
 
   {
