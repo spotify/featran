@@ -76,10 +76,31 @@ object TransformerSpec extends Properties("transformer") {
     .flatMap(n => Gen.listOfN(n, Arbitrary.arbitrary[Double]))
   property("bucketizer") = Prop.forAll(list[Double].arbitrary, splitsGen) { (xs, sp) =>
     val splits = sp.toArray.sorted
+    val upper = splits.max
     val names = (0 until splits.length - 1).map("bucketizer_" + _)
     val missing = (0 until splits.length - 1).map(_ => 0.0)
     val expected = xs.map { x =>
-      val offset = splits.indexWhere(x < _) - 1
+      val offset = if (x == upper) splits.length - 2 else splits.indexWhere(x < _) - 1
+      if (offset >= 0) {
+        (0 until splits.length - 1).map(i => if (i == offset) 1.0 else 0.0)
+      } else {
+        missing
+      }
+    }
+    test(Bucketizer("bucketizer", splits), xs, names, expected, missing)
+  }
+
+  property("bucketizer upper") = Prop.forAll(list[Double].arbitrary) { xs =>
+    val (lower, upper) = (xs.min, xs.max)
+    val mean = {
+      val (l, u) = (BigDecimal(lower), BigDecimal(upper)) // in case of overflow
+      (l + (u - l) / 2).toDouble
+    }
+    val splits = Array(lower, mean, upper)
+    val names = (0 until splits.length - 1).map("bucketizer_" + _)
+    val missing = (0 until splits.length - 1).map(_ => 0.0)
+    val expected = xs.map { x =>
+      val offset = if (x == upper) splits.length - 2 else splits.indexWhere(x < _) - 1
       if (offset >= 0) {
         (0 until splits.length - 1).map(i => if (i == offset) 1.0 else 0.0)
       } else {

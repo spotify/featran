@@ -32,6 +32,7 @@ private class Bucketizer(name: String, splits: Array[Double])
   extends Transformer[Double, Unit, Unit](name) {
   require(splits.length >= 3, "splits.length must be >= 3")
   private val lower = splits.head
+  private val upper = splits.last
   private val map = {
     val m = new JTreeMap[Double, Int]()
     var i = 1
@@ -47,11 +48,11 @@ private class Bucketizer(name: String, splits: Array[Double])
   override def featureNames(c: Unit): Seq[String] = nameN(splits.length - 1)
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
-      val e = map.higherEntry(x)
-      if (x < lower || e == null) {
+      if (x < lower || x > upper) {
         (0 until splits.length - 1).foreach(_ => fb.skip())
       } else {
-        val offset = e.getValue
+        val e = map.higherEntry(x)
+        val offset = if (e != null) e.getValue else splits.length - 2
         (0 until splits.length - 1).foreach(i => if (i == offset) fb.add(1.0) else fb.skip())
       }
     case None => fb.skip(splits.length - 1)
