@@ -18,7 +18,6 @@
 package com.spotify.featran
 
 import com.spotify.featran.transformers.{Settings, Transformer}
-
 import scala.language.{higherKinds, implicitConversions}
 
 /**
@@ -237,14 +236,13 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
   }
 
   def decodeAggregators(s: Seq[Settings]): ARRAY = {
-    val r = new Array[Option[Any]](n)
-    var i = 0
-    val it = s.iterator
-    while (i < n) {
-      r(i) = features(i).transformer.decodeAggregator(it.next().aggregators)
-      i += 1
+    val settingLookup = s.map{setting => (setting.name, setting)}.toMap
+    features.map { feature =>
+      val name = feature.transformer.name
+      settingLookup
+        .get(feature.transformer.name)
+        .map(setting => feature.transformer.decodeAggregator(setting.aggregators))
+        .getOrElse(sys.error(s"Attempting to load existing settings but it does not contain $name"))
     }
-    r
   }
-
 }

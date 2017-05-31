@@ -31,6 +31,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   }
 
   private val id = Identity("id")
+  private val id2 = Identity("id2")
 
   property("required") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
@@ -77,6 +78,16 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     Prop.all(
       f.featureNames == Seq(Seq("id")),
       f.featureValuesWithOriginal[Seq[Double]] == xs.map(r => (Seq(r.d), r)))
+  }
+
+  property("extra stored feature") = Prop.forAll { xs: List[Record] =>
+    val spec1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
+    val spec2 = FeatureSpec.of[Record].required(_.d)(id)
+    val f2 = spec2.extractWithSettings(xs,  spec1.extract(xs).featureSettings)
+
+    Prop.all(
+      f2.featureNames == Seq(Seq("id")),
+      f2.featureValuesWithOriginal[Seq[Double]] == xs.map(r => (Seq(r.d), r)))
   }
 
   property("names") = Prop.forAll(Gen.alphaStr) { s =>
