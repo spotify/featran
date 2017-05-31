@@ -107,7 +107,7 @@ object Example {
     val doubleSV = f1.featureValues[SparseVector[Double]]
 
     // Get feature values as above with the original object
-    val labeledDoubleA = f1.labeledFeatureValues[Array[Double]]
+    val labeledDoubleA = f1.recordFeatureValues[Array[Double]]
 
     // Extract settings as a JSON string
     val settings = f1.featureSettings

@@ -128,7 +128,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    *           `DenseVector[Double]`
    */
   def featureValues[F: FeatureBuilder : ClassTag]: M[F] =
-    labeledFeatureValues.map(_._2)
+    recordFeatureValues.map(_._2)
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]] with the
@@ -136,7 +136,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def labeledFeatureValues[F: FeatureBuilder : ClassTag]: M[(T,F)] = {
+  def recordFeatureValues[F: FeatureBuilder : ClassTag]: M[(T,F)] = {
     val fb = implicitly[FeatureBuilder[F]]
     as.cross(aggregate).map { case ((o, a), c) =>
       fs.featureValues(a, c, fb)

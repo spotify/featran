@@ -76,9 +76,8 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
-      f.labeledFeatureValues[Seq[Double]] == xs.map(r => (r, Seq(r.d))))
+      f.recordFeatureValues[Seq[Double]] == xs.map(r => (r, Seq(r.d))))
   }
-
 
   property("names") = Prop.forAll(Gen.alphaStr) { s =>
     val msg = if (s == null || s.isEmpty) {
