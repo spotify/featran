@@ -106,6 +106,9 @@ object Example {
     val floatSV = f1.featureValues[SparseVector[Float]]
     val doubleSV = f1.featureValues[SparseVector[Double]]
 
+    // Get feature values as above with the original input record
+    val doubleAWithOriginal = f1.featureValuesWithOriginal[Array[Double]]
+
     // Extract settings as a JSON string
     val settings = f1.featureSettings
     println(settings.head)

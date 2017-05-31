@@ -72,6 +72,13 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       f.featureValues[Seq[Double]] == xs.map(r => Seq(r.d, r.optD.getOrElse(0.5))))
   }
 
+  property("original") = Prop.forAll { xs: List[Record] =>
+    val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
+    Prop.all(
+      f.featureNames == Seq(Seq("id")),
+      f.featureValuesWithOriginal[Seq[Double]] == xs.map(r => (Seq(r.d), r)))
+  }
+
   property("names") = Prop.forAll(Gen.alphaStr) { s =>
     val msg = if (s == null || s.isEmpty) {
       "requirement failed: name cannot be null or empty"
