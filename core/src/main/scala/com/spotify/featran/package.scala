@@ -40,7 +40,6 @@ package object featran {
       builder += ma.asInstanceOf[Seq[A]].reduce(f)
       builder.result()
     }
-
     override def cross[A, B: ClassTag](ma: M[A], mb: M[B]): M[(A, B)] = {
       val builder = cbf().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
       val b = mb.asInstanceOf[Seq[B]].head
