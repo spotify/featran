@@ -88,14 +88,18 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
-  @transient private lazy val as: M[ARRAY] = input.map(fs.unsafeGet)
+  @transient private lazy val as: M[(T,ARRAY)] = input.map(o => (o, fs.unsafeGet(o)))
   @transient private lazy val aggregate: M[ARRAY] = settings match {
     case Some(x) => x.map { s =>
       import io.circe.generic.auto._
       import io.circe.parser._
       fs.decodeAggregators(decode[Seq[Settings]](s).right.get)
     }
-    case None => as.map(fs.unsafePrepare).reduce(fs.unsafeSum).map(fs.unsafePresent)
+    case None =>
+      as
+        .map { case(_, a) => fs.unsafePrepare(a) }
+        .reduce(fs.unsafeSum)
+        .map(fs.unsafePresent)
   }
 
   /**
@@ -123,11 +127,20 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValues[F: FeatureBuilder : ClassTag]: M[F] = {
+  def featureValues[F: FeatureBuilder : ClassTag]: M[F] =
+    labeledFeatureValues.map(_._2)
+
+  /**
+   * Values of the extracted features, in the same order as names in [[featureNames]] with the
+   * original raw feature object.
+   * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
+   *           `DenseVector[Double]`
+   */
+  def labeledFeatureValues[F: FeatureBuilder : ClassTag]: M[(T,F)] = {
     val fb = implicitly[FeatureBuilder[F]]
-    as.cross(aggregate).map { case (a, c) =>
+    as.cross(aggregate).map { case ((o, a), c) =>
       fs.featureValues(a, c, fb)
-      fb.result
+      (o, fb.result)
     }
   }
 
