@@ -90,6 +90,21 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       f2.featureValuesWithOriginal[Seq[Double]] == xs.map(r => (Seq(r.d), r)))
   }
 
+  property("missing feature in settings") = Prop.forAll { xs: List[Record] =>
+    val spec1 = FeatureSpec.of[Record].required(_.d)(id)
+    val spec2 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
+    val settings = spec1.extract(xs).featureSettings
+
+    val t = Try(spec2.extractWithSettings(xs,  settings).featureValues[Seq[Double]])
+    val msg = "requirement failed: Attempting to load existing settings but it does not contain id2"
+
+    Prop.all(
+      t.isFailure,
+      t.failed.get.isInstanceOf[IllegalArgumentException],
+      t.failed.get.getMessage == msg
+    )
+  }
+
   property("names") = Prop.forAll(Gen.alphaStr) { s =>
     val msg = if (s == null || s.isEmpty) {
       "requirement failed: name cannot be null or empty"

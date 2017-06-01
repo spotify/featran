@@ -239,10 +239,9 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
     val settingLookup = s.map{setting => (setting.name, setting)}.toMap
     features.map { feature =>
       val name = feature.transformer.name
-      settingLookup
-        .get(feature.transformer.name)
-        .map(setting => feature.transformer.decodeAggregator(setting.aggregators))
-        .getOrElse(sys.error(s"Attempting to load existing settings but it does not contain $name"))
+      lazy val msg = s"Attempting to load existing settings but it does not contain $name"
+      require(settingLookup.contains(name), msg)
+      feature.transformer.decodeAggregator(settingLookup(feature.transformer.name).aggregators)
     }
   }
 }
