@@ -26,10 +26,10 @@ object MinMaxScalerSpec extends TransformerProp("MinMaxScaler") {
   }
 
   // limit the range of min and max to avoid overflow
-  private val minMaxGen = for {
+  private val minMaxGen = (for {
     min <- Gen.choose(-1000.0, 1000.0)
     range <- Gen.choose(1.0, 2000.0)
-  } yield (min, min + range)
+  } yield (min, min + range)).suchThat(t => t._2 > t._1)
 
   property("params") = Prop.forAll(list[Double].arbitrary, minMaxGen) { (xs, p) =>
     val (minP, maxP) = p
@@ -38,8 +38,9 @@ object MinMaxScalerSpec extends TransformerProp("MinMaxScaler") {
 
   private def test(xs: List[Double], minP: Double, maxP: Double): Prop = {
     val (min, max) = (xs.min, xs.max)
-    val delta = max - min
-    val expected = xs.map(x => Seq((x - min) / delta * (maxP - minP) + minP))
+    val f = if ((max - min).isPosInfinity) 2.0 else 1.0
+    val delta = max / f - min / f
+    val expected = xs.map(x => Seq((x / f - min / f) / delta * (maxP - minP) + minP))
     val oob = List((min - 1, Seq(minP)), (max + 1, Seq(maxP))) // out of lower and upper bounds
     test(MinMaxScaler("min_max", minP, maxP), xs, Seq("min_max"), expected, Seq(minP), oob)
   }
