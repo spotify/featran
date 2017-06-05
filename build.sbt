@@ -86,6 +86,7 @@ lazy val root: Project = Project(
   scalding,
   scio,
   spark,
+  numpy,
   tensorflow
 )
 
@@ -160,6 +161,18 @@ lazy val spark: Project = Project(
   description := "Feature Transformers - Spark",
   libraryDependencies ++= Seq(
     "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
+    "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+  )
+).dependsOn(core)
+
+lazy val numpy: Project = Project(
+  "numpy",
+  file("numpy")
+).settings(
+  moduleName := "featran-numpy",
+  commonSettings,
+  description := "Feature Transformers - NumPy",
+  libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
 ).dependsOn(core)
