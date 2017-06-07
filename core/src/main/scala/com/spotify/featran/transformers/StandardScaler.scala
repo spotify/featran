@@ -47,8 +47,8 @@ private class StandardScaler(name: String, val withStd: Boolean, val withMean: B
         case (false, true) => x - c._1
         case (false, false) => x
       }
-      fb.add(r)
-    case None => fb.add(if (withMean) 0.0 else c._1)
+      fb.add(name, r)
+    case None => fb.add(name, if (withMean) 0.0 else c._1)
   }
   override def encodeAggregator(c: Option[(Double, Double)]): Option[String] =
     c.map(t => s"${t._1},${t._2}")

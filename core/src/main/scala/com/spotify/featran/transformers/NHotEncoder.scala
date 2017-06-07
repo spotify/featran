@@ -39,11 +39,11 @@ private class NHotEncoder(name: String)
   override val aggregator: Aggregator[Seq[String], Set[String], Array[String]] =
     Aggregators.from[Seq[String]](_.toSet).to(_.toArray.sorted)
   override def featureDimension(c: Array[String]): Int = c.length
-  override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
+  override def featureNames(c: Array[String]): Seq[String] = c.map(name + '_' + _).toSeq
   override def buildFeatures(a: Option[Seq[String]], c: Array[String],
                              fb: FeatureBuilder[_]): Unit = {
     val as = a.toSet.flatten
-    c.foreach(s => if (as.contains(s)) fb.add(1.0) else fb.skip())
+    c.foreach(s => if (as.contains(s)) fb.add(name + '_' + s, 1.0) else fb.skip())
   }
   override def encodeAggregator(c: Option[Array[String]]): Option[String] =
     c.map(_.map(URLEncoder.encode(_, "UTF-8")).mkString(","))

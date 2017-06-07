@@ -38,7 +38,8 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   // build features
   def buildFeatures(a: Option[A], c: C, fb: FeatureBuilder[_]): Unit
 
-  protected def nameN(n: Int): Seq[String] = (0 until n).map(name + '_' + _)
+  protected def nameAt(n: Int): String = name + '_' + n
+  protected def names(n: Int): Iterator[String] = (0 until n).iterator.map(nameAt)
 
   //================================================================================
   // Special cases when value is missing in all rows
@@ -90,8 +91,8 @@ private abstract class MapOne[A](name: String, val default: Double = 0.0)
   extends OneDimensional[A, Unit, Unit](name) {
   override val aggregator: Aggregator[A, Unit, Unit] = Aggregators.unit[A]
   override def buildFeatures(a: Option[A], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
-    case Some(x) => fb.add(map(x))
-    case None => fb.add(default)
+    case Some(x) => fb.add(name, map(x))
+    case None => fb.add(name, default)
   }
   def map(a: A): Double
   override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")

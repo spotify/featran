@@ -55,8 +55,8 @@ private class MinMaxScaler(name: String, val min: Double, val max: Double)
     case Some(x) =>
       val (aMin, aMax, f) = c
       val truncated = math.max(math.min(x / f, aMax), aMin)
-      fb.add((truncated - aMin) / (aMax - aMin) * (max - min) + min)
-    case None => fb.add(min)
+      fb.add(name, (truncated - aMin) / (aMax - aMin) * (max - min) + min)
+    case None => fb.add(name, min)
   }
 
   override def encodeAggregator(c: Option[C]): Option[String] =
