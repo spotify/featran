@@ -22,56 +22,6 @@ import com.spotify.featran.transformers.Settings
 import scala.language.{higherKinds, implicitConversions}
 import scala.reflect.ClassTag
 
-trait CollectionType[M[_]] { self =>
-
-  def map[A, B: ClassTag](ma: M[A], f: A => B): M[B]
-  def reduce[A](ma: M[A], f: (A, A) => A): M[A]
-  def cross[A, B: ClassTag](ma: M[A], mb: M[B]): M[(A, B)]
-
-  class MOps[A](ma: M[A]) {
-    def map[B: ClassTag](f: A => B): M[B] = self.map(ma, f)
-    def reduce(f: (A, A) => A): M[A] = self.reduce(ma, f)
-    def cross[B: ClassTag](mb: M[B]): M[(A, B)] = self.cross(ma, mb)
-  }
-
-  object Ops {
-    implicit def mkMOps[A](xs: M[A]): MOps[A] = new MOps[A](xs)
-  }
-
-}
-
-trait FeatureBuilder[T] extends Serializable { self =>
-  def init(dimension: Int): Unit
-  def add(value: Double): Unit
-  def skip(): Unit
-  def result: T
-
-  def add(in: Array[Double]): Unit = {
-    var i = 0
-    while (i < in.length) {
-      add(in(i))
-      i += 1
-    }
-  }
-
-  def skip(n: Int): Unit = {
-    var i = 0
-    while (i < n) {
-      skip()
-      i += 1
-    }
-  }
-
-  def map[U](f: T => U): FeatureBuilder[U] = new FeatureBuilder[U] {
-    private val delegate = self
-    private val g = f
-    override def init(dimension: Int): Unit = delegate.init(dimension)
-    override def add(value: Double): Unit = delegate.add(value)
-    override def skip(): Unit = delegate.skip()
-    override def result: U = g(delegate.result)
-  }
-}
-
 /**
  * Encapsulate features extracted from a [[FeatureSpec]].
  * @tparam M input collection type, e.g. `Array`, List

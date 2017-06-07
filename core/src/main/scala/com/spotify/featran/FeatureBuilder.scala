@@ -15,56 +15,49 @@
  * under the License.
  */
 
-package com.spotify
+package com.spotify.featran
 
 import breeze.linalg.{DenseVector, SparseVector}
 import breeze.math.Semiring
 import breeze.storage.Zero
 
-import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
-package object featran {
+trait FeatureBuilder[T] extends Serializable { self =>
+  def init(dimension: Int): Unit
+  def add(value: Double): Unit
+  def skip(): Unit
+  def result: T
 
-  implicit def scalaCollectionType[M[_] <: Traversable[_]]
-  (implicit cbf: CanBuildFrom[M[_], _, M[_]]): CollectionType[M] = new CollectionType[M] {
-    override def map[A, B: ClassTag](ma: M[A], f: (A) => B): M[B] = {
-      val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]
-      ma.asInstanceOf[Seq[A]].foreach(a => builder += f(a))
-      builder.result()
-    }
-    override def reduce[A](ma: M[A], f: (A, A) => A): M[A] = {
-      val builder = cbf().asInstanceOf[mutable.Builder[A, M[A]]]
-      builder += ma.asInstanceOf[Seq[A]].reduce(f)
-      builder.result()
-    }
-    override def cross[A, B: ClassTag](ma: M[A], mb: M[B]): M[(A, B)] = {
-      val builder = cbf().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
-      val b = mb.asInstanceOf[Seq[B]].head
-      ma.asInstanceOf[Seq[A]].foreach(a => builder += ((a, b)))
-      builder.result()
+  def add(in: Array[Double]): Unit = {
+    var i = 0
+    while (i < in.length) {
+      add(in(i))
+      i += 1
     }
   }
 
-  //================================================================================
-  // Type class to generalize Float and Double
-  //================================================================================
-
-  trait FloatingPoint[@specialized (Float, Double) T] extends Serializable {
-    def fromDouble(x: Double): T
-  }
-  implicit val floatFP: FloatingPoint[Float] = new FloatingPoint[Float] {
-    override def fromDouble(x: Double): Float = x.toFloat
-  }
-  implicit val doubleFP: FloatingPoint[Double] = new FloatingPoint[Double] {
-    override def fromDouble(x: Double): Double = x
+  def skip(n: Int): Unit = {
+    var i = 0
+    while (i < n) {
+      skip()
+      i += 1
+    }
   }
 
-  //================================================================================
-  // FeatureBuilder implementations
-  //================================================================================
+  def map[U](f: T => U): FeatureBuilder[U] = new FeatureBuilder[U] {
+    private val delegate = self
+    private val g = f
+    override def init(dimension: Int): Unit = delegate.init(dimension)
+    override def add(value: Double): Unit = delegate.add(value)
+    override def skip(): Unit = delegate.skip()
+    override def result: U = g(delegate.result)
+  }
+}
+
+object FeatureBuilder {
 
   implicit def arrayFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Array[T]] =
     new FeatureBuilder[Array[T]] {
@@ -91,6 +84,7 @@ package object featran {
   private def newCB[T, M](f: () => mutable.Builder[T, M]) = new CanBuild[T, M] {
     override def apply(): mutable.Builder[T, M] = f()
   }
+
   // Collection types in _root_.scala.*
   //scalastyle:off public.methods.have.type
   implicit def traversableCB[T] = newCB(() => Traversable.newBuilder[T])
