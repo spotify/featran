@@ -31,9 +31,9 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
                                             (toSeq: F => Seq[T]): Prop = {
     val num = implicitly[Numeric[T]]
     fb.init(xs.size)
-    xs.foreach {
-      case Some(x) => fb.add(num.toDouble(x))
-      case None => fb.skip()
+    xs.zipWithIndex.foreach {
+      case (Some(x), i) => fb.add("key" + i.toString, num.toDouble(x))
+      case (None, _) => fb.skip()
     }
     toSeq(fb.result) == xs.map(_.getOrElse(num.zero))
   }
@@ -84,6 +84,22 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
 
   property("double sparse vector") = Prop.forAll(list[Double]) { xs =>
     test(xs, implicitly[FeatureBuilder[SparseVector[Double]]])(_.toDenseVector.data.toSeq)
+  }
+
+  property("map") = Prop.forAll(list[Double]) { xs =>
+    val fb = implicitly[FeatureBuilder[Map[String, Double]]]
+    fb.init(xs.size)
+    xs.zipWithIndex.foreach {
+      case (Some(x), i) =>
+        fb.add("key" + i.toString, x)
+      case (None, _) => fb.skip()
+    }
+    val expected = xs
+      .zipWithIndex
+      .filter(_._1.isDefined)
+      .map(t => ("key" + t._2, t._1.getOrElse(0.0)))
+      .toMap
+    fb.result == expected
   }
 
 }

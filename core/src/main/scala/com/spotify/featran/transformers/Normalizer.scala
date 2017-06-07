@@ -40,7 +40,7 @@ private class Normalizer(name: String, val p: Double)
   require(p >= 1.0, "p must be >= 1.0")
   override val aggregator: Aggregator[Array[Double], Int, Int] = Aggregators.arrayLength
   override def featureDimension(c: Int): Int = c
-  override def featureNames(c: Int): Seq[String] = (0 until c).map(name + "_" + _)
+  override def featureNames(c: Int): Seq[String] = names(c).toSeq
   override def buildFeatures(a: Option[Array[Double]], c: Int,
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
@@ -48,7 +48,7 @@ private class Normalizer(name: String, val p: Double)
         fb.skip(c)
       } else {
         val dv = DenseVector(x)
-        fb.add((dv / norm(dv, p)).data)
+        fb.add(names(c), (dv / norm(dv, p)).data)
       }
     case None => fb.skip(c)
   }

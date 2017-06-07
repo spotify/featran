@@ -40,7 +40,7 @@ private class MaxAbsScaler(name: String) extends OneDimensional[Double, Max[Doub
     case Some(x) =>
       // truncate x to [-max, max]
       val truncated = math.min(math.abs(x), c) * math.signum(x)
-      fb.add(truncated / c)
+      fb.add(name, truncated / c)
     case None => fb.skip()
   }
   override def encodeAggregator(c: Option[Double]): Option[String] = c.map(_.toString)

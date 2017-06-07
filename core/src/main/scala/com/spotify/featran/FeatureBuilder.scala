@@ -27,14 +27,14 @@ import scala.reflect.ClassTag
 
 trait FeatureBuilder[T] extends Serializable { self =>
   def init(dimension: Int): Unit
-  def add(value: Double): Unit
+  def add(name: String, value: Double): Unit
   def skip(): Unit
   def result: T
 
-  def add(in: Array[Double]): Unit = {
+  def add(names: Iterator[String], values: Array[Double]): Unit = {
     var i = 0
-    while (i < in.length) {
-      add(in(i))
+    while (i < values.length) {
+      add(names.next(), values(i))
       i += 1
     }
   }
@@ -51,7 +51,7 @@ trait FeatureBuilder[T] extends Serializable { self =>
     private val delegate = self
     private val g = f
     override def init(dimension: Int): Unit = delegate.init(dimension)
-    override def add(value: Double): Unit = delegate.add(value)
+    override def add(name: String, value: Double): Unit = delegate.add(name, value)
     override def skip(): Unit = delegate.skip()
     override def result: U = g(delegate.result)
   }
@@ -65,7 +65,7 @@ object FeatureBuilder {
       private var offset: Int = 0
       private val fp = implicitly[FloatingPoint[T]]
       override def init(dimension: Int): Unit = array = new Array[T](dimension)
-      override def add(value: Double): Unit = {
+      override def add(name: String, value: Double): Unit = {
         array(offset) = fp.fromDouble(value)
         offset += 1
       }
@@ -100,7 +100,7 @@ object FeatureBuilder {
     private var b: mutable.Builder[T, M[T]] = _
     private val fp = implicitly[FloatingPoint[T]]
     override def init(dimension: Int): Unit = b = cb()
-    override def add(value: Double): Unit = b += fp.fromDouble(value)
+    override def add(name: String, value: Double): Unit = b += fp.fromDouble(value)
     override def skip(): Unit = b += fp.fromDouble(0.0)
     override def result: M[T] = b.result()
   }
@@ -119,7 +119,7 @@ object FeatureBuilder {
       offset = 0
       queue.clear()
     }
-    override def add(value: Double): Unit = {
+    override def add(name: String, value: Double): Unit = {
       queue.enqueue((offset, fp.fromDouble(value)))
       offset += 1
 
@@ -127,5 +127,15 @@ object FeatureBuilder {
     override def skip(): Unit = offset += 1
     override def result: SparseVector[T] = SparseVector(dim)(queue: _*)
   }
+
+  implicit def mapFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Map[String, T]] =
+    new FeatureBuilder[Map[String, T]] {
+      private var map: mutable.LinkedHashMap[String, T] = _
+      private val fp = implicitly[FloatingPoint[T]]
+      override def init(dimension: Int): Unit = map = mutable.LinkedHashMap.empty
+      override def add(name: String, value: Double): Unit = map.put(name, fp.fromDouble(value))
+      override def skip(): Unit = Unit
+      override def result: Map[String, T] = map.toMap
+    }
 
 }

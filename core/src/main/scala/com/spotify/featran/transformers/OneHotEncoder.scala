@@ -40,9 +40,9 @@ private class OneHotEncoder(name: String)
   override val aggregator: Aggregator[String, Set[String], Array[String]] =
     Aggregators.from[String](Set(_)).to(_.toArray.sorted)
   override def featureDimension(c: Array[String]): Int = c.length
-  override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
+  override def featureNames(c: Array[String]): Seq[String] = c.map(name + '_' + _).toSeq
   override def buildFeatures(a: Option[String], c: Array[String], fb: FeatureBuilder[_]): Unit =
-    c.foreach(s => if (a.contains(s)) fb.add(1.0) else fb.skip())
+    c.foreach(s => if (a.contains(s)) fb.add(name + '_' + s, 1.0) else fb.skip())
   override def encodeAggregator(c: Option[Array[String]]): Option[String] =
     c.map(_.map(URLEncoder.encode(_, "UTF-8")).mkString(","))
   override def decodeAggregator(s: Option[String]): Option[Array[String]] =
