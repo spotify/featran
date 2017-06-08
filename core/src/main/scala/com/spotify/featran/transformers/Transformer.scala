@@ -63,7 +63,7 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   // Transformer parameter and aggregator persistence
   //================================================================================
 
-  // Encode aggregators of the current extraction
+  // Encode aggregator of the current extraction
   def encodeAggregator(c: Option[C]): Option[String]
 
   // Decode aggregator from a previous extraction
@@ -72,7 +72,7 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   // Compile time parameters
   def params: Map[String, String] = Map.empty
 
-  // Settings including compile time parameters and runtime aggregators
+  // Settings including compile time parameters and runtime aggregator
   def settings(c: Option[C]): Settings =
     Settings(this.getClass.getCanonicalName, name, params, optFeatureNames(c), encodeAggregator(c))
 
