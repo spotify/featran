@@ -43,7 +43,7 @@ val commonSettings = Seq(
   publishArtifact in Test       := false,
   sonatypeProfileName           := "com.spotify",
   pomExtra                      := {
-    <url>https://github.com/spotify/ratatool</url>
+    <url>https://github.com/spotify/featran</url>
     <licenses>
       <license>
         <name>Apache 2</name>
@@ -51,8 +51,8 @@ val commonSettings = Seq(
       </license>
     </licenses>
     <scm>
-      <url>git@github.com/spotify/ratatool.git</url>
-      <connection>scm:git:git@github.com:spotify/ratatool.git</connection>
+      <url>git@github.com/spotify/featran.git</url>
+      <connection>scm:git:git@github.com:spotify/featran.git</connection>
     </scm>
     <developers>
       <developer>
