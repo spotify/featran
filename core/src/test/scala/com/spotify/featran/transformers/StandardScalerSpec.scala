@@ -23,7 +23,7 @@ object StandardScalerSpec extends TransformerProp("StandardScaler") {
 
   def meanAndStddev(xs: List[Double]): (Double, Double) = {
     // breeze.stats.stddev is sample stddev
-    val mean = breeze.stats.mean(xs)
+    val mean = xs.map(_ / xs.length).sum
     (mean, math.sqrt(xs.map(x => math.pow(x - mean, 2)).sum / xs.size))
   }
 
