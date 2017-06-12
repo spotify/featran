@@ -237,14 +237,12 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
   }
 
   def decodeAggregators(s: Seq[Settings]): ARRAY = {
-    val r = new Array[Option[Any]](n)
-    var i = 0
-    val it = s.iterator
-    while (i < n) {
-      r(i) = features(i).transformer.decodeAggregator(it.next().aggregators)
-      i += 1
+    val m: Map[String, Settings] = s.map(x => (x.name, x))(scala.collection.breakOut)
+    features.map { feature =>
+      val name = feature.transformer.name
+      require(m.contains(name), s"Missing settings for $name")
+      feature.transformer.decodeAggregator(m(feature.transformer.name).aggregators)
     }
-    r
   }
 
 }

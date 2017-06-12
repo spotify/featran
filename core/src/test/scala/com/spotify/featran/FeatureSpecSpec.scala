@@ -31,6 +31,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   }
 
   private val id = Identity("id")
+  private val id2 = Identity("id2")
 
   property("required") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
@@ -77,6 +78,29 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     Prop.all(
       f.featureNames == Seq(Seq("id")),
       f.featureValuesWithOriginal[Seq[Double]] == xs.map(r => (Seq(r.d), r)))
+  }
+
+  property("extra feature in settings") = Prop.forAll { xs: List[Record] =>
+    val spec1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
+    val spec2 = FeatureSpec.of[Record].required(_.d)(id)
+    val settings = spec1.extract(xs).featureSettings
+    val f = spec2.extractWithSettings(xs,  settings)
+
+    Prop.all(
+      f.featureNames == Seq(Seq("id")),
+      f.featureValuesWithOriginal[Seq[Double]] == xs.map(r => (Seq(r.d), r)))
+  }
+
+  property("missing feature in settings") = Prop.forAll { xs: List[Record] =>
+    val spec1 = FeatureSpec.of[Record].required(_.d)(id)
+    val spec2 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
+    val settings = spec1.extract(xs).featureSettings
+    val t = Try(spec2.extractWithSettings(xs,  settings).featureValues[Seq[Double]])
+
+    Prop.all(
+      t.isFailure,
+      t.failed.get.isInstanceOf[IllegalArgumentException],
+      t.failed.get.getMessage == "requirement failed: Missing settings for id2")
   }
 
   property("names") = Prop.forAll(Gen.alphaStr) { s =>
