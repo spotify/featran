@@ -58,4 +58,16 @@ object CollectionType {
       builder.result()
     }
   }
+
+  implicit val arrayCollectionType = new CollectionType[Array] {
+    override def map[A, B: ClassTag](ma: Array[A], f: (A) => B): Array[B] = ma.map(f)
+    override def reduce[A](ma: Array[A], f: (A, A) => A): Array[A] = {
+      // workaround for "No ClassTag available for A"
+      val r = ma.take(1)
+      r(0) = ma.reduce(f)
+      r
+    }
+    override def cross[A, B: ClassTag](ma: Array[A], mb: Array[B]): Array[(A, B)] =
+      ma.map((_, mb.head))
+  }
 }

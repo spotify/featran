@@ -47,6 +47,13 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       f.featureValues[Seq[Double]] == xs.map(r => Seq(r.optD.getOrElse(0.0))))
   }
 
+  property("array") = Prop.forAll { xs: List[Record] =>
+    val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs.toArray)
+    Prop.all(
+      f.featureNames.toList == Seq(Seq("id")),
+      f.featureValues[Seq[Double]].toList == xs.map(r => Seq(r.d)))
+  }
+
   property("default") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec.of[Record].optional(_.optD, Some(0.5))(id).extract(xs)
     Prop.all(
