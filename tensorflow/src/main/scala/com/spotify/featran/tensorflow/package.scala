@@ -21,7 +21,7 @@ import org.tensorflow.example.{Example, Feature, Features, FloatList}
 
 package object tensorflow {
   implicit val tfExampleFB: FeatureBuilder[Example] = new FeatureBuilder[Example] {
-    private val fb = Features.newBuilder()
+    @transient private lazy val fb = Features.newBuilder()
     override def init(dimension: Int): Unit = fb.clear()
     override def add(name: String, value: Double): Unit =
       fb.putFeature(
