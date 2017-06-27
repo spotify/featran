@@ -47,4 +47,22 @@ class ScioTest extends PipelineSpec {
     }
   }
 
+  private class NonSerializable {
+    def method(a: String): Double = a.toDouble
+  }
+
+  // scalastyle:off no.whitespace.before.left.bracket
+  it should "fail on throw serializable feature" in {
+    runWithContext { sc =>
+      val foo = new NonSerializable()
+      val f = FeatureSpec.of[(String, Int)]
+        .required(e => foo.method(e._1))(Identity("foo"))
+        .extract(sc.parallelize(data))
+
+      val thrown = the [RuntimeException] thrownBy f.featureValues[Seq[Double]]
+      thrown.getMessage should startWith("unable to serialize anonymous function")
+    }
+  }
+  // scalastyle:on no.whitespace.before.left.bracket
+
 }
