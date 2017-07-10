@@ -22,6 +22,7 @@ import com.spotify.featran.transformers.Settings
 import scala.language.{higherKinds, implicitConversions}
 import scala.reflect.ClassTag
 
+
 /**
  * Encapsulate features extracted from a [[FeatureSpec]].
  * @tparam M input collection type, e.g. `Array`, List
@@ -38,11 +39,11 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
-  @transient private lazy val as: M[(T, ARRAY)] = {
+  @transient protected lazy val as: M[(T, ARRAY)] = {
     val g = fs // defeat closure
     input.map(o => (o, g.unsafeGet(o)))
   }
-  @transient private lazy val aggregate: M[ARRAY] = settings match {
+  @transient protected lazy val aggregate: M[ARRAY] = settings match {
     case Some(x) => x.map { s =>
       import io.circe.generic.auto._
       import io.circe.parser._

@@ -25,6 +25,10 @@ import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
+trait FeatureBuilderConstructor[T] extends Serializable {self =>
+  def build: FeatureBuilder[T]
+}
+
 trait FeatureBuilder[T] extends Serializable { self =>
   def init(dimension: Int): Unit
   def add(name: String, value: Double): Unit
@@ -58,7 +62,6 @@ trait FeatureBuilder[T] extends Serializable { self =>
 }
 
 object FeatureBuilder {
-
   implicit def arrayFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Array[T]] =
     new FeatureBuilder[Array[T]] {
       private var array: Array[T] = _
@@ -137,5 +140,39 @@ object FeatureBuilder {
       override def skip(): Unit = Unit
       override def result: Map[String, T] = map.toMap
     }
-
 }
+
+object FeatureConstructor {
+  import FeatureBuilder._
+
+  implicit def arrayConstructor[T: ClassTag : FloatingPoint]: FeatureBuilderConstructor[Array[T]] =
+    new FeatureBuilderConstructor[Array[T]] {
+      def build: FeatureBuilder[Array[T]] = arrayFB
+    }
+
+  implicit def cbConstructor[M[_] <: Traversable[_], T: ClassTag : FloatingPoint]
+  (implicit cb: CanBuild[T, M[T]])
+  : FeatureBuilderConstructor[M[T]] =
+    new FeatureBuilderConstructor[M[T]] {
+      def build: FeatureBuilder[M[T]] = traversableFB
+    }
+
+  implicit def mapConstructor[T: ClassTag : FloatingPoint]
+  : FeatureBuilderConstructor[Map[String, T]] =
+    new FeatureBuilderConstructor[Map[String, T]] {
+      def build: FeatureBuilder[Map[String, T]] = mapFB
+    }
+
+  implicit def svConstructor[T: ClassTag : FloatingPoint : Semiring : Zero]
+  : FeatureBuilderConstructor[SparseVector[T]] =
+    new FeatureBuilderConstructor[SparseVector[T]] {
+      def build: FeatureBuilder[SparseVector[T]] = sparseVectorFB
+    }
+
+  implicit def dvConstructor[T: ClassTag : FloatingPoint]
+  : FeatureBuilderConstructor[DenseVector[T]] =
+    new FeatureBuilderConstructor[DenseVector[T]] {
+      def build: FeatureBuilder[DenseVector[T]] = denseVectorFB
+    }
+}
+

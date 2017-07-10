@@ -34,13 +34,19 @@ object FeatureSpec {
    */
   def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty)
 
+  def combine[T](specs: FeatureSpec[T]*): FeatureSpec[T] = {
+    assert(specs.nonEmpty)
+    specs.reduceLeft[FeatureSpec[T]] { case (spec1, spec2) =>
+      new FeatureSpec(spec1.features ++ spec2.features)
+    }
+  }
 }
 
 /**
  * Encapsulate specification for feature extraction and transformation.
  * @tparam T input record type to extract features from
  */
-class FeatureSpec[T] private[featran] (private val features: Array[Feature[T, _, _, _]]) {
+class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feature[T, _, _, _]]) {
 
   /**
    * Add a required field specification.
@@ -127,6 +133,11 @@ private class Feature[T, A, B, C](val f: T => Option[A],
   // Option[C]
   def unsafeSettings(c: Option[Any]): Settings = transformer.settings(c.asInstanceOf[Option[C]])
 
+  def toIndex(map: Map[String, Int]): Int = {
+    assert(map.contains(transformer.name))
+    map(transformer.name)
+  }
+
 }
 
 private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
@@ -211,6 +222,58 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
       i += 1
     }
     b.result()
+  }
+
+  // Array[Option[C]] => Array[String]
+  def multiFeatureNames(c: ARRAY, mapping: Map[String, Int]): Seq[Seq[String]] = {
+    require(n == c.length)
+    val dims = mapping.values.toSet.size
+    val b = 0.until(dims).map(_ => Seq.newBuilder[String])
+    var i = 0
+    while (i < n) {
+      val feature = features(i)
+      val idx = feature.toIndex(mapping)
+      feature.unsafeFeatureNames(c(i)).foreach(b(idx) += _)
+      i += 1
+    }
+    b.map(_.result())
+  }
+
+  // Array[Option[C]] => Array[Int]
+  def multiFeatureDimension(c: ARRAY, mapping: Map[String, Int]): Array[Int] = {
+    val dims = mapping.values.toSet.size
+    val featureCount = Array.fill[Int](dims)(0)
+    var i = 0
+    while (i < n) {
+      val feature = features(i)
+      val idx = feature.toIndex(mapping)
+      featureCount(idx) += features(i).unsafeFeatureDimension(c(i))
+      i += 1
+    }
+    featureCount
+  }
+
+  // (Array[Option[A]], Array[Option[C]], FeatureBuilder[F])
+  def multiFeatureValues[F](
+    a: ARRAY,
+    c: ARRAY,
+    fb: Array[FeatureBuilder[F]],
+    mapping: Map[String, Int]): Unit = {
+
+    require(fb.length == mapping.values.toSet.size)
+
+    val counts = multiFeatureDimension(c, mapping)
+
+    fb.zip(counts).foreach{case(b, cnt) => b.init(cnt)}
+
+    var i = 0
+    while (i < n) {
+      val feature = features(i)
+      assert(mapping.contains(feature.transformer.name))
+      val builder = fb(mapping(feature.transformer.name))
+      features(i).unsafeBuildFeatures(a(i), c(i), builder)
+      i += 1
+    }
   }
 
   // (Array[Option[A]], Array[Option[C]], FeatureBuilder[F])

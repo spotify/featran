@@ -87,6 +87,15 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       f.featureValuesWithOriginal[Seq[Double]] == xs.map(r => (Seq(r.d), r)))
   }
 
+  property("combine") = Prop.forAll { xs: List[Record] =>
+    val f = FeatureSpec.of[Record].required(_.d)(id)
+    val f2 = FeatureSpec.of[Record].required(_.d)(id2)
+    val result = FeatureSpec.combine(f, f2).extract(xs)
+    Prop.all(
+      result.featureNames == Seq(Seq("id", "id2")),
+      result.featureValuesWithOriginal[Seq[Double]] == xs.map(r => (Seq(r.d, r.d), r)))
+  }
+
   property("extra feature in settings") = Prop.forAll { xs: List[Record] =>
     val spec1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
     val spec2 = FeatureSpec.of[Record].required(_.d)(id)
