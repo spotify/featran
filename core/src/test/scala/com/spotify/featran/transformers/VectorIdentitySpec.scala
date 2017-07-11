@@ -30,4 +30,12 @@ class VectorIdentitySpec extends TransformerProp("VectorIdentity") {
     test[Array[Double]](VectorIdentity("id"), xs, names, expected, missing, oob)
   }
 
+  property("length") = Prop.forAll { xs: List[Array[Double]] =>
+    val msg = "requirement failed: Invalid input length, " +
+      s"expected: ${xs.head.length + 1}, actual: ${xs.head.length}"
+    testException[Array[Double]](VectorIdentity("id", xs.head.length + 1), xs) { e =>
+      e.isInstanceOf[IllegalArgumentException] && e.getMessage == msg
+    }
+  }
+
 }

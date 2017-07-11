@@ -120,7 +120,9 @@ object Aggregators {
   : Aggregator[M[T], Int, Int] = new Aggregator[M[T], Int, Int] {
     override def prepare(input: M[T]): Int = {
       if (expectedLength > 0) {
-        require(input.length == expectedLength)
+        require(
+          input.length == expectedLength,
+          s"Invalid input length, expected: $expectedLength, actual: ${input.length}")
       }
       input.length
     }

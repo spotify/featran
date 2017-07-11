@@ -75,4 +75,13 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f4 settings" |: settings == f4.featureSettings)
   }
 
+  def testException[T](t: Transformer[T, _, _], input: List[T])(p: Throwable => Boolean): Prop =
+    try {
+      FeatureSpec.of[T].required(identity)(t).extract(input).featureValues[Seq[Double]]
+      false
+    } catch {
+      case e: Exception => p(e)
+      case e: Throwable => throw e
+    }
+
 }
