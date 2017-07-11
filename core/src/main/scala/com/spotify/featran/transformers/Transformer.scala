@@ -127,7 +127,7 @@ object Aggregators {
       input.length
     }
     override def semigroup: Semigroup[Int] = Semigroup.from { (x, y) =>
-      require(x == y)
+      require(x == y, s"Different input lengths, $x != $y")
       x
     }
     override def present(reduction: Int): Int = reduction
