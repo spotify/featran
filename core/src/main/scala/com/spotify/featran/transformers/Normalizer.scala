@@ -23,14 +23,15 @@ import com.twitter.algebird.Aggregator
 
 object Normalizer {
   /**
-   * Transform vector features by normalizing each vector to have unit norm..
+   * Transform vector features by normalizing each vector to have unit norm. Parameter `p` specifies
+   * the p-norm used for normalization (default 2).
    *
    * Missing values are transformed to zero vectors.
    *
    * When using aggregated feature summary from a previous session, vectors of different dimensions
    * are transformed to zero vectors.
    *
-   * @param p p-norm used for normalization (default 2)
+   * @param p normalization in L^p^ space, must be greater than or equal to 1.0
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
   def apply(name: String, p: Double = 2.0, expectedLength: Int = 0)

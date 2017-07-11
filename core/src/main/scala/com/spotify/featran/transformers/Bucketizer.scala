@@ -40,6 +40,8 @@ object Bucketizer {
    * `s0 < s1 < s2 < ... < sn`.
    *
    * Missing values are transformed to zero vectors.
+   *
+   * @param splits parameter for mapping continuous features into buckets
    */
   def apply(name: String, splits: Array[Double]): Transformer[Double, Unit, Unit] =
     new Bucketizer(name, splits)

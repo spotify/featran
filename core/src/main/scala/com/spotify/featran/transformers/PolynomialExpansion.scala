@@ -31,7 +31,7 @@ object PolynomialExpansion {
    * When using aggregated feature summary from a previous session, vectors of different dimensions
    * are transformed to zero vectors.
    *
-   * @param degree the polynomial degree to expand
+   * @param degree the polynomial degree to expand, which should be greater than or equal to 1
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
   def apply(name: String, degree: Int = 2, expectedLength: Int = 0)

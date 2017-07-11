@@ -25,6 +25,8 @@ object Binarizer {
    * `threshold` are binarized to 0.0.
    *
    * Missing values are binarized to 0.0.
+   *
+   * @param threshold threshold to binarize continuous features
    */
   def apply(name: String, threshold: Double = 0.0): Transformer[Double, Unit, Unit] =
     new Binarizer(name, threshold)
