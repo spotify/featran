@@ -30,9 +30,12 @@ object PolynomialExpansion {
    *
    * When using aggregated feature summary from a previous session, vectors of different dimensions
    * are transformed to zero vectors.
+   *
+   * @param degree the polynomial degree to expand
+   * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
-  def apply(name: String, degree: Int = 2): Transformer[Array[Double], Int, Int] =
-    new PolynomialExpansion(name, degree)
+  def apply(name: String, degree: Int = 2, expectedLength: Int = 0)
+  : Transformer[Array[Double], Int, Int] = new PolynomialExpansion(name, degree, expectedLength)
 
   def expand(v: Array[Double], degree: Int): Array[Double] = {
     val n = v.length
@@ -76,10 +79,11 @@ object PolynomialExpansion {
   }
 }
 
-private class PolynomialExpansion(name: String, val degree: Int)
+private class PolynomialExpansion(name: String, val degree: Int, val expectedLength: Int)
   extends Transformer[Array[Double], Int, Int](name) {
   require(degree >= 1, "degree must be >= 1")
-  override val aggregator: Aggregator[Array[Double], Int, Int] = Aggregators.arrayLength
+  override val aggregator: Aggregator[Array[Double], Int, Int] =
+    Aggregators.seqLength(expectedLength)
   override def featureDimension(c: Int): Int = PolynomialExpansion.getPolySize(c, degree) - 1
   override def featureNames(c: Int): Seq[String] = names(featureDimension(c)).toSeq
   override def buildFeatures(a: Option[Array[Double]], c: Int,
@@ -95,5 +99,7 @@ private class PolynomialExpansion(name: String, val degree: Int)
   }
   override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)
   override def decodeAggregator(s: Option[String]): Option[Int] = s.map(_.toInt)
-  override def params: Map[String, String] = Map("degree" -> degree.toString)
+  override def params: Map[String, String] = Map(
+    "degree" -> degree.toString,
+    "expectedLength" -> expectedLength.toString)
 }

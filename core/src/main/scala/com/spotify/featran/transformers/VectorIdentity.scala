@@ -20,29 +20,40 @@ package com.spotify.featran.transformers
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
+import scala.language.higherKinds
+
 object VectorIdentity {
   /**
-   * Takes a vector with a fixed length and maps it to the features.
+   * Takes fixed length vectors by passing them through.
    *
-   * Similar to Identity but for a Sequence of Doubles.
+   * Similar to [[Identity]] but for a sequence of doubles.
+   *
+   * Missing values are transformed to zero vectors.
+   *
+   * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
-  def apply(name: String, length: Int): Transformer[Seq[Double], Unit, Unit] =
-    new VectorIdentity(name, length)
+  def apply[M[_]](name: String, expectedLength: Int = 0)
+                 (implicit ev: M[Double] => Seq[Double]): Transformer[M[Double], Int, Int] =
+    new VectorIdentity(name, expectedLength)(ev)
 }
 
-private class VectorIdentity(name: String, length: Int)
-  extends Transformer[Seq[Double], Unit, Unit](name) {
-  require(length > 0, "length must be > 0")
-  private val names = 0.until(length).map(name + "_" + _)
+private class VectorIdentity[M[_]](name: String, expectedLength: Int)
+                                  (implicit ev: M[Double] => Seq[Double])
+  extends Transformer[M[Double], Int, Int](name) {
+  override val aggregator: Aggregator[M[Double], Int, Int] = Aggregators.seqLength(expectedLength)
+  override def featureDimension(c: Int): Int = c
+  override def featureNames(c: Int): Seq[String] = names(c).toSeq
+  override def buildFeatures(a: Option[M[Double]], c: Int, fb: FeatureBuilder[_]): Unit = a match {
+    case Some(x) =>
+      if (x.length != c) {
+        fb.skip(c)
+      } else {
+        fb.add(names(c), x.toArray)
+      }
+    case None => fb.skip(c)
+  }
 
-  override val aggregator: Aggregator[Seq[Double], Unit, Unit] = Aggregators.unit
-  override def featureDimension(c: Unit): Int = length
-  override def featureNames(c: Unit): Seq[String] = names
-
-  override def buildFeatures(a: Option[Seq[Double]], c: Unit, fb: FeatureBuilder[_]): Unit =
-    if(a.isDefined) fb.add(names.toIterator, a.get.toArray) else fb.skip(length)
-
-  override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")
-  override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
-  override def params: Map[String, String] = Map("length" -> length.toString)
+  override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)
+  override def decodeAggregator(s: Option[String]): Option[Int] = s.map(_.toInt)
+  override def params: Map[String, String] = Map("expectedLength" -> expectedLength.toString)
 }

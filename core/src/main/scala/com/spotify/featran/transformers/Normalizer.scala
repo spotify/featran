@@ -23,22 +23,25 @@ import com.twitter.algebird.Aggregator
 
 object Normalizer {
   /**
-   * Transform vector features by normalizing each vector to have unit norm. Parameter `p` specifies
-   * the p-norm used for normalization (default 2).
+   * Transform vector features by normalizing each vector to have unit norm..
    *
    * Missing values are transformed to zero vectors.
    *
    * When using aggregated feature summary from a previous session, vectors of different dimensions
    * are transformed to zero vectors.
+   *
+   * @param p p-norm used for normalization (default 2)
+   * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
-  def apply(name: String, p: Double = 2.0): Transformer[Array[Double], Int, Int] =
-    new Normalizer(name, p)
+  def apply(name: String, p: Double = 2.0, expectedLength: Int = 0)
+  : Transformer[Array[Double], Int, Int] = new Normalizer(name, p, expectedLength)
 }
 
-private class Normalizer(name: String, val p: Double)
+private class Normalizer(name: String, val p: Double, val expectedLength: Int)
   extends Transformer[Array[Double], Int, Int](name) {
   require(p >= 1.0, "p must be >= 1.0")
-  override val aggregator: Aggregator[Array[Double], Int, Int] = Aggregators.arrayLength
+  override val aggregator: Aggregator[Array[Double], Int, Int] =
+    Aggregators.seqLength(expectedLength)
   override def featureDimension(c: Int): Int = c
   override def featureNames(c: Int): Seq[String] = names(c).toSeq
   override def buildFeatures(a: Option[Array[Double]], c: Int,
@@ -54,6 +57,8 @@ private class Normalizer(name: String, val p: Double)
   }
   override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)
   override def decodeAggregator(s: Option[String]): Option[Int] = s.map(_.toInt)
-  override def params: Map[String, String] = Map("p" -> p.toString)
+  override def params: Map[String, String] = Map(
+    "p" -> p.toString,
+    "expectedLength" -> expectedLength.toString)
 
 }
