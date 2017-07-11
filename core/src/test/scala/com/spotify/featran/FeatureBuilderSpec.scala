@@ -18,16 +18,17 @@
 package com.spotify.featran
 
 import breeze.linalg.{DenseVector, SparseVector}
+import com.spotify.featran.FeatureBuilderSpec.list
 import org.scalacheck._
 
 import scala.reflect.ClassTag
 
 object FeatureBuilderSpec extends Properties("FeatureBuilder") {
 
-  private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
+  def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
-  private def test[T: ClassTag : Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])
+  def test[T: ClassTag : Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])
                                             (toSeq: F => Seq[T]): Prop = {
     val num = implicitly[Numeric[T]]
     fb.init(xs.size)
@@ -102,4 +103,66 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
     fb.result == expected
   }
 
+}
+
+object FeatureConstructorSpec extends Properties("FeatureConstructor") {
+  import FeatureConstructor._
+
+  def build[T: ClassTag : Numeric, F](xs: List[Option[T]], fb: FeatureBuilderConstructor[F])
+                                    (toSeq: F => Seq[T]): Prop =
+    FeatureBuilderSpec.test(xs, fb.build)(toSeq)
+
+  property("float array") = Prop.forAll(list[Float]) { xs =>
+    build(xs, implicitly[FeatureBuilderConstructor[Array[Float]]])(_.toSeq)
+  }
+
+  property("double array") = Prop.forAll(list[Double]) { xs =>
+    build(xs, implicitly[FeatureBuilderConstructor[Array[Double]]])(_.toSeq)
+  }
+
+  property("float traversable") = Prop.forAll(list[Float]) { xs =>
+    Prop.all(
+      build(xs, implicitly[FeatureBuilderConstructor[Traversable[Float]]])(_.toSeq),
+      build(xs, implicitly[FeatureBuilderConstructor[Iterable[Float]]])(_.toSeq),
+      build(xs, implicitly[FeatureBuilderConstructor[Seq[Float]]])(identity),
+      build(xs, implicitly[FeatureBuilderConstructor[IndexedSeq[Float]]])(identity),
+      build(xs, implicitly[FeatureBuilderConstructor[List[Float]]])(identity),
+      build(xs, implicitly[FeatureBuilderConstructor[Vector[Float]]])(identity))
+  }
+
+  property("double traversable") = Prop.forAll(list[Double]) { xs =>
+    Prop.all(
+      build(xs, implicitly[FeatureBuilderConstructor[Traversable[Double]]])(_.toSeq),
+      build(xs, implicitly[FeatureBuilderConstructor[Iterable[Double]]])(_.toSeq),
+      build(xs, implicitly[FeatureBuilderConstructor[Seq[Double]]])(identity),
+      build(xs, implicitly[FeatureBuilderConstructor[IndexedSeq[Double]]])(identity),
+      build(xs, implicitly[FeatureBuilderConstructor[List[Double]]])(identity),
+      build(xs, implicitly[FeatureBuilderConstructor[Vector[Double]]])(identity))
+  }
+
+  property("double traversable") = Prop.forAll(list[Double]) { xs =>
+    build(xs, implicitly[FeatureBuilderConstructor[Seq[Double]]])(identity)
+  }
+
+  property("float dense vector") = Prop.forAll(list[Float]) { xs =>
+    build(xs, implicitly[FeatureBuilderConstructor[DenseVector[Float]]])(_.data.toSeq)
+  }
+
+  property("double dense vector") = Prop.forAll(list[Double]) { xs =>
+    build(xs, implicitly[FeatureBuilderConstructor[DenseVector[Double]]])(_.data.toSeq)
+  }
+
+  property("float sparse vector") = Prop.forAll(list[Float]) { xs =>
+    build(
+      xs,
+      implicitly[FeatureBuilderConstructor[SparseVector[Float]]])(_.toDenseVector.data.toSeq
+    )
+  }
+
+  property("double sparse vector") = Prop.forAll(list[Double]) { xs =>
+    build(
+      xs,
+      implicitly[FeatureBuilderConstructor[SparseVector[Double]]])(_.toDenseVector.data.toSeq
+    )
+  }
 }
