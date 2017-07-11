@@ -6,7 +6,7 @@ class NHotWeightedEncoderSpec extends TransformerProp("NHotWeightedEncoder") {
   private implicit val weightedVector = Arbitrary {
     val weightedValueGen = for {
       value <- Gen.chooseNum(-1.0, 1.0)
-      n <- Arbitrary.arbString.arbitrary.suchThat(!_.isEmpty)
+      n <- Arbitrary.arbString.arbitrary
     } yield WeightedValue(n, value)
 
     Gen.choose(1, 5).flatMap(Gen.listOfN(_, weightedValueGen))
