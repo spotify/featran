@@ -82,7 +82,7 @@ object Example {
       .required(toArray)(Normalizer("norm2", 3.0))
       .required(_.s2)(NHotEncoder("n_hot"))
       // Same as above but with weighted names
-      .required(_.s2.map(s => WeightedValue(s, 0.5)))(NHotWeightedEncoder("n_hot_weighted"))
+      .required(_.s2.map(s => WeightedLabel(s, 0.5)))(NHotWeightedEncoder("n_hot_weighted"))
       // Record to Array[Double] composite feature
       // Polynomial expansion with default degree 2
       .required(toArray)(PolynomialExpansion("poly1"))

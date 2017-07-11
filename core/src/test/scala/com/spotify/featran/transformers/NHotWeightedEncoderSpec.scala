@@ -25,18 +25,18 @@ class NHotWeightedEncoderSpec extends TransformerProp("NHotWeightedEncoder") {
     val weightedValueGen = for {
       value <- Gen.chooseNum(-1.0, 1.0)
       n <- Gen.alphaStr
-    } yield WeightedValue(n, value)
+    } yield WeightedLabel(n, value)
 
     Gen.choose(1, 5).flatMap(Gen.listOfN(_, weightedValueGen))
   }
 
-  property("default") = Prop.forAll { xs: List[List[WeightedValue]] =>
+  property("default") = Prop.forAll { xs: List[List[WeightedLabel]] =>
     val cats = xs.flatten.map(_.name).distinct.sorted
     val names = cats.map("n_hot_" + _)
     val expected = xs.map(s => cats.map(c => (0.0 +: s.filter(_.name == c).map(_.value)).sum))
     val missing = cats.map(_ => 0.0)
-    val oob = List((List(WeightedValue("s1", 0.2), WeightedValue("s2", 0.1)), missing))
-    test[Seq[WeightedValue]](NHotWeightedEncoder("n_hot"), xs, names, expected, missing, oob)
+    val oob = List((List(WeightedLabel("s1", 0.2), WeightedLabel("s2", 0.1)), missing))
+    test[Seq[WeightedLabel]](NHotWeightedEncoder("n_hot"), xs, names, expected, missing, oob)
   }
 
 }

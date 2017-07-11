@@ -25,9 +25,9 @@ import com.twitter.algebird.Aggregator
 import scala.collection.mutable.{Map => MMap}
 
 /**
- * Weighted value. Also can be thought as a weighted label or a value in a named sparse vector.
+ * Weighted label. Also can be thought as a weighted value in a named sparse vector.
  */
-case class WeightedValue(name: String, value: Double)
+case class WeightedLabel(name: String, value: Double)
 
 object NHotWeightedEncoder {
   /**
@@ -41,17 +41,17 @@ object NHotWeightedEncoder {
    *
    * When using aggregated feature summary from a previous session, unseen labels are ignored.
    */
-  def apply(name: String): Transformer[Seq[WeightedValue], Set[String], Array[String]] =
+  def apply(name: String): Transformer[Seq[WeightedLabel], Set[String], Array[String]] =
     new NHotWeightedEncoder(name)
 }
 
 private class NHotWeightedEncoder(name: String)
-  extends Transformer[Seq[WeightedValue], Set[String], Array[String]](name) {
-  override val aggregator: Aggregator[Seq[WeightedValue], Set[String], Array[String]] =
-    Aggregators.from[Seq[WeightedValue]](_.map(_.name).toSet).to(_.toArray.sorted)
+  extends Transformer[Seq[WeightedLabel], Set[String], Array[String]](name) {
+  override val aggregator: Aggregator[Seq[WeightedLabel], Set[String], Array[String]] =
+    Aggregators.from[Seq[WeightedLabel]](_.map(_.name).toSet).to(_.toArray.sorted)
   override def featureDimension(c: Array[String]): Int = c.length
   override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
-  override def buildFeatures(a: Option[Seq[WeightedValue]], c: Array[String],
+  override def buildFeatures(a: Option[Seq[WeightedLabel]], c: Array[String],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(xs) =>
       val as = MMap[String, Double]().withDefaultValue(0.0)
