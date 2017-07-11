@@ -58,6 +58,8 @@ object Example {
       .required(_.b.asDouble)(Identity("id1"))
       // Requird field with Float to Double conversion
       .required(_.f.toDouble)(Identity("id2"))
+      // Vector Identity
+      .required(v => Seq(v.f.toDouble))(VectorIdentity("vec_id", 1))
       // Binarize with default threshold 0.0
       .required(_.d1)(Binarizer("bin1"))
       // Binarize with custom threshold
@@ -79,6 +81,8 @@ object Example {
       // Normalize vector with custom p
       .required(toArray)(Normalizer("norm2", 3.0))
       .required(_.s2)(NHotEncoder("n_hot"))
+      // Same as above but with weighted names
+      .required(_.s2.map(s => WeightedValue(s, 0.5)))(NHotWeightedEncoder("n_hot_weighted"))
       // Record to Array[Double] composite feature
       // Polynomial expansion with default degree 2
       .required(toArray)(PolynomialExpansion("poly1"))
