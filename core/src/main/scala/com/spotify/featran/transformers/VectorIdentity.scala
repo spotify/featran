@@ -48,7 +48,7 @@ private class VectorIdentity[M[_]](name: String, expectedLength: Int)
       if (x.length != c) {
         fb.skip(c)
       } else {
-        fb.add(names(c), x.toArray)
+        fb.add(names(c), x)
       }
     case None => fb.skip(c)
   }
