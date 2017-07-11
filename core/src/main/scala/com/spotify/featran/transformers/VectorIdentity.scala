@@ -29,4 +29,5 @@ private class VectorIdentity(name: String, length: Int)
 
   override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")
   override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
+  override def params: Map[String, String] = Map("length" -> length.toString)
 }

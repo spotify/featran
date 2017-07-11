@@ -11,7 +11,7 @@ import com.twitter.algebird.Aggregator
  * @param name Name of the field
  * @param value Weight on the field
  */
-case class WeightedValues(name: String, value: Double)
+case class WeightedValue(name: String, value: Double)
 
 object NHotWeightedEncoder {
   /**
@@ -24,23 +24,26 @@ object NHotWeightedEncoder {
    * @param name Name of the feature
    * @return Transformer
    */
-  def apply(name: String): Transformer[Seq[WeightedValues], Set[String], Array[String]] =
+  def apply(name: String): Transformer[Seq[WeightedValue], Set[String], Array[String]] =
     new NHotWeightedEncoder(name)
 }
 
 private class NHotWeightedEncoder(name: String)
-  extends Transformer[Seq[WeightedValues], Set[String], Array[String]](name) {
+  extends Transformer[Seq[WeightedValue], Set[String], Array[String]](name) {
 
-  override val aggregator: Aggregator[Seq[WeightedValues], Set[String], Array[String]] =
-    Aggregators.from[Seq[WeightedValues]](_.map(_.name).toSet).to(_.toArray.sorted)
+  override val aggregator: Aggregator[Seq[WeightedValue], Set[String], Array[String]] =
+    Aggregators.from[Seq[WeightedValue]](_.map(_.name).toSet).to(_.toArray.sorted)
 
   override def featureDimension(c: Array[String]): Int = c.length
 
   override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
 
-  override def buildFeatures(a: Option[Seq[WeightedValues]], c: Array[String],
+  override def buildFeatures(a: Option[Seq[WeightedValue]], c: Array[String],
                              fb: FeatureBuilder[_]): Unit = {
-    val as = a.map(_.map(n => (n.name, n.value)).toMap).getOrElse(Map.empty)
+    val as: Map[String, Double] = a match {
+      case Some(xs) => xs.map(x => (x.name, x.value))(scala.collection.breakOut)
+      case None => Map.empty
+    }
     c.foreach(s => if (as.contains(s)) fb.add(name + "_" + s, as(s)) else fb.skip())
   }
 
