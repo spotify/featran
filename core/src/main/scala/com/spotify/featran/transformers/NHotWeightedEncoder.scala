@@ -47,8 +47,11 @@ object NHotWeightedEncoder {
 
 private class NHotWeightedEncoder(name: String)
   extends Transformer[Seq[WeightedLabel], Set[String], Array[String]](name) {
+  private def labelNames(xs: Seq[WeightedLabel]): Set[String] =
+    xs.map(_.name)(scala.collection.breakOut)
+
   override val aggregator: Aggregator[Seq[WeightedLabel], Set[String], Array[String]] =
-    Aggregators.from[Seq[WeightedLabel]](_.map(_.name).toSet).to(_.toArray.sorted)
+    Aggregators.from[Seq[WeightedLabel]](labelNames).to(_.toArray.sorted)
   override def featureDimension(c: Array[String]): Int = c.length
   override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
   override def buildFeatures(a: Option[Seq[WeightedLabel]], c: Array[String],
