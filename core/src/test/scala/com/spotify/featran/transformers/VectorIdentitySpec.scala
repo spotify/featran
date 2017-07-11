@@ -20,8 +20,14 @@ package com.spotify.featran.transformers
 import org.scalacheck.Prop
 
 class VectorIdentitySpec extends TransformerProp("VectorIdentity") {
-  property("default") = Prop.forAll { xs: List[Double] =>
-    val vecs = xs.map(a => Seq(a))
-    test[Seq[Double]](VectorIdentity("id", 1), vecs, Seq("id_0"), xs.map(Seq(_)), Seq(0.0))
+
+  property("default") = Prop.forAll { xs: List[Array[Double]] =>
+    val dim = xs.head.length
+    val names = (0 until dim).map("id_" + _)
+    val expected = xs.map(_.toSeq)
+    val missing = (0 until dim).map(_ => 0.0)
+    val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
+    test[Array[Double]](VectorIdentity("id"), xs, names, expected, missing, oob)
   }
+
 }
