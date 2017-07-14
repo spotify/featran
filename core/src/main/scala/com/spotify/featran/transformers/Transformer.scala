@@ -20,6 +20,8 @@ package com.spotify.featran.transformers
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.{Aggregator, Semigroup}
 
+import scala.language.higherKinds
+
 // TODO: port more transformers from Spark
 // https://spark.apache.org/docs/2.1.0/ml-features.html
 
@@ -114,10 +116,18 @@ object Aggregators {
     }
   }
 
-  val arrayLength: Aggregator[Array[Double], Int, Int] = new Aggregator[Array[Double], Int, Int] {
-    override def prepare(input: Array[Double]): Int = input.length
+  def seqLength[T, M[_]](expectedLength: Int = 0)(implicit ev: M[T] => Seq[T])
+  : Aggregator[M[T], Int, Int] = new Aggregator[M[T], Int, Int] {
+    override def prepare(input: M[T]): Int = {
+      if (expectedLength > 0) {
+        require(
+          input.length == expectedLength,
+          s"Invalid input length, expected: $expectedLength, actual: ${input.length}")
+      }
+      input.length
+    }
     override def semigroup: Semigroup[Int] = Semigroup.from { (x, y) =>
-      require(x == y)
+      require(x == y, s"Different input lengths, $x != $y")
       x
     }
     override def present(reduction: Int): Int = reduction

@@ -25,7 +25,7 @@ import org.scalacheck._
 
 object Example {
 
-  case class Record(b: Boolean, f: Float, d1: Double, d2: Option[Double],
+  case class Record(b: Boolean, f: Float, d1: Double, d2: Option[Double], d3: Double,
                     s1: String, s2: List[String])
 
   // Random generator for Record
@@ -34,10 +34,11 @@ object Example {
     f <- Arbitrary.arbitrary[Float]
     d1 <- Arbitrary.arbitrary[Double]
     d2 <- Arbitrary.arbitrary[Option[Double]]
+    d3 <- Gen.choose(0, 24)
     s1 <- Gen.alphaStr.map(_.take(5))
     n <- Gen.choose(0, 10)
     s2 <- Gen.listOfN(n, Gen.alphaStr.map(_.take(5)))
-  } yield Record(b, f, d1, d2, s1, s2)
+  } yield Record(b, f, d1, d2, d3, s1, s2)
 
   // Random generator for Seq[Record]
   val recordsGen: Gen[List[Record]] = Gen.listOfN(20, recordGen)
@@ -58,6 +59,8 @@ object Example {
       .required(_.b.asDouble)(Identity("id1"))
       // Requird field with Float to Double conversion
       .required(_.f.toDouble)(Identity("id2"))
+      // Vector Identity
+      .required(v => Seq(v.f.toDouble))(VectorIdentity("vec_id", 1))
       // Binarize with default threshold 0.0
       .required(_.d1)(Binarizer("bin1"))
       // Binarize with custom threshold
@@ -73,12 +76,18 @@ object Example {
       .required(_.d1)(MinMaxScaler("min_max1"))
       // Scale between custom min and max
       .required(_.d1)(MinMaxScaler("min_max2", 0.0, 100.0))
+      // Evaluate von Mises distribution (mu = d3, kappa = 2) at values 0, 4, .., 24
+      // (rescaled using scale=pi/12 to be in the interval [0,2pi])
+      .required(_.d3)(VonMisesEvaluator("von_mises", 2.0, math.Pi/12,
+        Array(0.0, 4.0, 8.0, 12.0, 16.0, 20.0, 24.0)))
       .required(_.s1)(OneHotEncoder("one_hot"))
       // Normalize vector with default p 2.0
       .required(toArray)(Normalizer("norm1"))
       // Normalize vector with custom p
       .required(toArray)(Normalizer("norm2", 3.0))
       .required(_.s2)(NHotEncoder("n_hot"))
+      // Same as above but with weighted names
+      .required(_.s2.map(s => WeightedLabel(s, 0.5)))(NHotWeightedEncoder("n_hot_weighted"))
       // Record to Array[Double] composite feature
       // Polynomial expansion with default degree 2
       .required(toArray)(PolynomialExpansion("poly1"))

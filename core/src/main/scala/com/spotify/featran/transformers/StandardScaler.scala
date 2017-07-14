@@ -27,6 +27,9 @@ object StandardScaler {
    * true, it centers the data with mean before scaling.
    *
    * Missing values are transformed to 0.0 if `withMean` is true or population mean otherwise.
+   *
+   * @param withStd whether to scale the data to unit standard deviation
+   * @param withMean whether to center the data with mean before scaling
    */
   def apply(name: String,
             withStd: Boolean = true,

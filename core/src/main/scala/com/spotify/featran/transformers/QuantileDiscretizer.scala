@@ -33,6 +33,10 @@ object QuantileDiscretizer {
    * of the approximation can be controlled with the `k` parameter.
    *
    * Missing values are transformed to zero vectors.
+   *
+   * @param numBuckets number of buckets (quantiles, or categories) into which data points are
+   *                   grouped, must be greater than or equal to 2
+   * @param k precision of the underlying Algebird QTree approximation
    */
   def apply(name: String, numBuckets: Int = 2, k: Int = QTreeAggregator.DefaultK)
   : Transformer[Double, QTree[Double], JTreeMap[Double, Int]] =

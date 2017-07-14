@@ -17,25 +17,23 @@
 
 package com.spotify.featran.transformers
 
-import org.scalacheck._
+import org.scalacheck.Prop
 
-object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
+class VectorIdentitySpec extends TransformerProp("VectorIdentity") {
 
-  property("default") = Prop.forAll(
-    list[Array[Double]].arbitrary,
-    Gen.choose(2, 4)) { (xs, degree) =>
-    val dim = PolynomialExpansion.expand(xs.head, degree).length
-    val names = (0 until dim).map("poly_" + _)
-    val expected = xs.map(v => PolynomialExpansion.expand(v, degree).toSeq)
+  property("default") = Prop.forAll { xs: List[Array[Double]] =>
+    val dim = xs.head.length
+    val names = (0 until dim).map("id_" + _)
+    val expected = xs.map(_.toSeq)
     val missing = (0 until dim).map(_ => 0.0)
     val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
-    test(PolynomialExpansion("poly", degree), xs, names, expected, missing, oob)
+    test[Array[Double]](VectorIdentity("id"), xs, names, expected, missing, oob)
   }
 
   property("length") = Prop.forAll { xs: List[Array[Double]] =>
     val msg = "requirement failed: Invalid input length, " +
       s"expected: ${xs.head.length + 1}, actual: ${xs.head.length}"
-    testException[Array[Double]](PolynomialExpansion("id", 2, xs.head.length + 1), xs) { e =>
+    testException[Array[Double]](VectorIdentity("id", xs.head.length + 1), xs) { e =>
       e.isInstanceOf[IllegalArgumentException] && e.getMessage == msg
     }
   }

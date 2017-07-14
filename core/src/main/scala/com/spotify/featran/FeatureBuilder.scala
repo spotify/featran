@@ -35,7 +35,8 @@ trait FeatureBuilder[T] extends Serializable { self =>
   def skip(): Unit
   def result: T
 
-  def add(names: Iterator[String], values: Array[Double]): Unit = {
+  def add[M[_]](names: Iterator[String], values: M[Double])
+               (implicit ev: M[Double] => Seq[Double]): Unit = {
     var i = 0
     while (i < values.length) {
       add(names.next(), values(i))

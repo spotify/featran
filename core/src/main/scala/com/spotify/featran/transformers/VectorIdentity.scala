@@ -17,49 +17,43 @@
 
 package com.spotify.featran.transformers
 
-import breeze.linalg._
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
-object Normalizer {
+import scala.language.higherKinds
+
+object VectorIdentity {
   /**
-   * Transform vector features by normalizing each vector to have unit norm. Parameter `p` specifies
-   * the p-norm used for normalization (default 2).
+   * Takes fixed length vectors by passing them through.
+   *
+   * Similar to [[Identity]] but for a sequence of doubles.
    *
    * Missing values are transformed to zero vectors.
    *
-   * When using aggregated feature summary from a previous session, vectors of different dimensions
-   * are transformed to zero vectors.
-   *
-   * @param p normalization in L^p^ space, must be greater than or equal to 1.0
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
-  def apply(name: String, p: Double = 2.0, expectedLength: Int = 0)
-  : Transformer[Array[Double], Int, Int] = new Normalizer(name, p, expectedLength)
+  def apply[M[_]](name: String, expectedLength: Int = 0)
+                 (implicit ev: M[Double] => Seq[Double]): Transformer[M[Double], Int, Int] =
+    new VectorIdentity(name, expectedLength)(ev)
 }
 
-private class Normalizer(name: String, val p: Double, val expectedLength: Int)
-  extends Transformer[Array[Double], Int, Int](name) {
-  require(p >= 1.0, "p must be >= 1.0")
-  override val aggregator: Aggregator[Array[Double], Int, Int] =
-    Aggregators.seqLength(expectedLength)
+private class VectorIdentity[M[_]](name: String, expectedLength: Int)
+                                  (implicit ev: M[Double] => Seq[Double])
+  extends Transformer[M[Double], Int, Int](name) {
+  override val aggregator: Aggregator[M[Double], Int, Int] = Aggregators.seqLength(expectedLength)
   override def featureDimension(c: Int): Int = c
   override def featureNames(c: Int): Seq[String] = names(c).toSeq
-  override def buildFeatures(a: Option[Array[Double]], c: Int,
-                             fb: FeatureBuilder[_]): Unit = a match {
+  override def buildFeatures(a: Option[M[Double]], c: Int, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
       if (x.length != c) {
         fb.skip(c)
       } else {
-        val dv = DenseVector(x)
-        fb.add(names(c), (dv / norm(dv, p)).data)
+        fb.add(names(c), x)
       }
     case None => fb.skip(c)
   }
+
   override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)
   override def decodeAggregator(s: Option[String]): Option[Int] = s.map(_.toInt)
-  override def params: Map[String, String] = Map(
-    "p" -> p.toString,
-    "expectedLength" -> expectedLength.toString)
-
+  override def params: Map[String, String] = Map("expectedLength" -> expectedLength.toString)
 }

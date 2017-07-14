@@ -29,6 +29,9 @@ object MinMaxScaler {
    *
    * When using aggregated feature summary from a previous session, out of bound values are
    * truncated to `min` or `max`.
+   *
+   * @param min lower bound after transformation, shared by all features
+   * @param max upper bound after transformation, shared by all features
    */
   def apply(name: String,
             min: Double = 0.0,
