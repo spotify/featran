@@ -71,6 +71,7 @@ object FeatureBuilder {
         offset += 1
       }
       override def skip(): Unit = offset += 1
+      override def skip(n: Int): Unit = offset += n
       override def result: Array[T] = {
         require(offset == array.length)
         offset = 0
@@ -126,6 +127,7 @@ object FeatureBuilder {
 
     }
     override def skip(): Unit = offset += 1
+    override def skip(n: Int): Unit = offset += n
     override def result: SparseVector[T] = SparseVector(dim)(queue: _*)
   }
 
