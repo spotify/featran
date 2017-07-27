@@ -22,6 +22,7 @@ import java.net.{URLDecoder, URLEncoder}
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.{Aggregator, Semigroup}
 
+import scala.collection.mutable.{Map => MMap}
 import scala.collection.{SortedMap, SortedSet}
 
 object OneHotEncoder {
@@ -37,27 +38,12 @@ object OneHotEncoder {
     new OneHotEncoder(name)
 }
 
-private class OneHotEncoder(name: String)
-  extends Transformer[String, SortedSet[String], SortedMap[String, Int]](name) {
 
-  private def present(reduction: SortedSet[String]): SortedMap[String, Int] = {
-    val b = SortedMap.newBuilder[String, Int]
-    var i = 0
-    val it = reduction.iterator
-    while (it.hasNext) {
-      b += it.next() -> i
-      i += 1
-    }
-    b.result()
-  }
 
-  override val aggregator: Aggregator[String, SortedSet[String], SortedMap[String, Int]] = {
-    implicit val sortedSetSg = Semigroup.from[SortedSet[String]](_ ++ _)
-    Aggregators.from[String](SortedSet(_)).to(present)
-  }
-  override def featureDimension(c: SortedMap[String, Int]): Int = c.size
-  override def featureNames(c: SortedMap[String, Int]): Seq[String] =
-    c.map(name + '_' + _._1)(scala.collection.breakOut)
+
+
+private class OneHotEncoder(name: String) extends BaseHotEncoder[String](name) {
+  override def prepare(a: String): SortedSet[String] = SortedSet(a)
   override def buildFeatures(a: Option[String],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = {
@@ -71,14 +57,40 @@ private class OneHotEncoder(name: String)
         fb.skip(c.size)
     }
   }
+}
+
+private abstract class BaseHotEncoder[A](name: String)
+  extends Transformer[A, SortedSet[String], SortedMap[String, Int]](name) {
+
+  def prepare(a: A): SortedSet[String]
+
+  private def present(reduction: SortedSet[String]): SortedMap[String, Int] = {
+    val b = SortedMap.newBuilder[String, Int]
+    var i = 0
+    val it = reduction.iterator
+    while (it.hasNext) {
+      b += it.next() -> i
+      i += 1
+    }
+    b.result()
+  }
+  override val aggregator: Aggregator[A, SortedSet[String], SortedMap[String, Int]] = {
+    implicit val sortedSetSg = Semigroup.from[SortedSet[String]](_ ++ _)
+    Aggregators.from[A](prepare).to(present)
+  }
+  override def featureDimension(c: SortedMap[String, Int]): Int = c.size
+  override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
+    c.map(name + '_' + _._1)(scala.collection.breakOut)
+  }
+
   override def encodeAggregator(c: Option[SortedMap[String, Int]]): Option[String] =
-    c.map(_.map(e => URLEncoder.encode(e._1, "UTF-8")).mkString(","))
+    c.map(_.map(e => URLEncoder.encode("label:" + e._1, "UTF-8")).mkString(","))
   override def decodeAggregator(s: Option[String]): Option[SortedMap[String, Int]] = s.map { ks =>
-    val a = ks.split(",")
+    val a = ks.split(",").filter(_.nonEmpty)
     var i = 0
     val b = SortedMap.newBuilder[String, Int]
     while (i < a.length) {
-      b += URLDecoder.decode(a(i), "UTF-8") -> i
+      b += URLDecoder.decode(a(i), "UTF-8").replaceAll("^label:", "") -> i
       i += 1
     }
     b.result()

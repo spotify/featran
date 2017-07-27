@@ -17,10 +17,9 @@
 
 package com.spotify.featran.transformers
 
-import java.net.{URLDecoder, URLEncoder}
-
 import com.spotify.featran.FeatureBuilder
-import com.twitter.algebird.Aggregator
+
+import scala.collection.{SortedMap, SortedSet}
 
 object NHotEncoder {
   /**
@@ -30,25 +29,33 @@ object NHotEncoder {
    *
    * When using aggregated feature summary from a previous session, unseen labels are ignored.
    */
-  def apply(name: String): Transformer[Seq[String], Set[String], Array[String]] =
+  def apply(name: String): Transformer[Seq[String], SortedSet[String], SortedMap[String, Int]] =
     new NHotEncoder(name)
 }
 
-private class NHotEncoder(name: String)
-  extends Transformer[Seq[String], Set[String], Array[String]](name) {
-  override val aggregator: Aggregator[Seq[String], Set[String], Array[String]] =
-    Aggregators.from[Seq[String]](_.toSet).to(_.toArray.sorted)
-  override def featureDimension(c: Array[String]): Int = c.length
-  override def featureNames(c: Array[String]): Seq[String] = c.map(name + '_' + _).toSeq
-  override def buildFeatures(a: Option[Seq[String]], c: Array[String],
+private class NHotEncoder(name: String) extends BaseHotEncoder[Seq[String]](name) {
+  override def prepare(a: Seq[String]): SortedSet[String] = SortedSet(a: _*)
+  override def buildFeatures(a: Option[Seq[String]],
+                             c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(xs) =>
-      val as = xs.toSet
-      c.foreach(s => if (as.contains(s)) fb.add(name + '_' + s, 1.0) else fb.skip())
-    case None => fb.skip(c.length)
+      val keys = xs.toSet
+      val hits = c.filterKeys(keys)
+      if (hits.isEmpty) {
+        fb.skip(c.size)
+      } else {
+        var prev = -1
+        val it = hits.iterator
+        while (it.hasNext) {
+          val (key, curr) = it.next()
+          val gap = curr - prev - 1
+          if (gap > 0) fb.skip(gap)
+          fb.add(name + '_' + key, 1.0)
+          prev = curr
+        }
+        val gap = c.size - prev - 1
+        if (gap > 0) fb.skip(gap)
+      }
+    case None => fb.skip(c.size)
   }
-  override def encodeAggregator(c: Option[Array[String]]): Option[String] =
-    c.map(_.map(URLEncoder.encode(_, "UTF-8")).mkString(","))
-  override def decodeAggregator(s: Option[String]): Option[Array[String]] =
-    s.map(_.split(",").map(URLDecoder.decode(_, "UTF-8")))
 }

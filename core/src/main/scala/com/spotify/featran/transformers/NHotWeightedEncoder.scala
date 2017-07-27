@@ -17,12 +17,10 @@
 
 package com.spotify.featran.transformers
 
-import java.net.{URLDecoder, URLEncoder}
-
 import com.spotify.featran.FeatureBuilder
-import com.twitter.algebird.Aggregator
 
 import scala.collection.mutable.{Map => MMap}
+import scala.collection.{SortedMap, SortedSet}
 
 /**
  * Weighted label. Also can be thought as a weighted value in a named sparse vector.
@@ -41,30 +39,35 @@ object NHotWeightedEncoder {
    *
    * When using aggregated feature summary from a previous session, unseen labels are ignored.
    */
-  def apply(name: String): Transformer[Seq[WeightedLabel], Set[String], Array[String]] =
+  def apply(name: String)
+  : Transformer[Seq[WeightedLabel], SortedSet[String], SortedMap[String, Int]] =
     new NHotWeightedEncoder(name)
 }
 
-private class NHotWeightedEncoder(name: String)
-  extends Transformer[Seq[WeightedLabel], Set[String], Array[String]](name) {
-  private def labelNames(xs: Seq[WeightedLabel]): Set[String] =
-    xs.map(_.name)(scala.collection.breakOut)
-
-  override val aggregator: Aggregator[Seq[WeightedLabel], Set[String], Array[String]] =
-    Aggregators.from[Seq[WeightedLabel]](labelNames).to(_.toArray.sorted)
-  override def featureDimension(c: Array[String]): Int = c.length
-  override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
-  override def buildFeatures(a: Option[Seq[WeightedLabel]], c: Array[String],
+private class NHotWeightedEncoder(name: String) extends BaseHotEncoder[Seq[WeightedLabel]](name) {
+  override def prepare(a: Seq[WeightedLabel]): SortedSet[String] = SortedSet(a.map(_.name): _*)
+  override def buildFeatures(a: Option[Seq[WeightedLabel]],
+                             c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(xs) =>
-      val as = MMap[String, Double]().withDefaultValue(0.0)
-      xs.foreach(x => as(x.name) += x.value)
-      c.foreach(s => if (as.contains(s)) fb.add(name + "_" + s, as(s)) else fb.skip())
-    case None => fb.skip(c.length)
+      val weights = MMap.empty[String, Double].withDefaultValue(0.0)
+      xs.foreach(x => weights(x.name) += x.value)
+      val hits = c.filterKeys(weights.contains)
+      if (hits.isEmpty) {
+        fb.skip(c.size)
+      } else {
+        var prev = -1
+        val it = hits.iterator
+        while (it.hasNext) {
+          val (key, curr) = it.next()
+          val gap = curr - prev - 1
+          if (gap > 0) fb.skip(gap)
+          fb.add(name + '_' + key, weights(key))
+          prev = curr
+        }
+        val gap = c.size - prev - 1
+        if (gap > 0) fb.skip(gap)
+      }
+    case None => fb.skip(c.size)
   }
-
-  override def encodeAggregator(c: Option[Array[String]]): Option[String] =
-    c.map(_.map(URLEncoder.encode(_, "UTF-8")).mkString(","))
-  override def decodeAggregator(s: Option[String]): Option[Array[String]] =
-    s.map(_.split(",").map(URLDecoder.decode(_, "UTF-8")))
 }
