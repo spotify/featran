@@ -84,13 +84,13 @@ private abstract class BaseHotEncoder[A](name: String)
   }
 
   override def encodeAggregator(c: Option[SortedMap[String, Int]]): Option[String] =
-    c.map(_.map(e => URLEncoder.encode("label:" + e._1, "UTF-8")).mkString(","))
+    c.map(_.map(e => "label:" + URLEncoder.encode(e._1, "UTF-8")).mkString(","))
   override def decodeAggregator(s: Option[String]): Option[SortedMap[String, Int]] = s.map { ks =>
     val a = ks.split(",").filter(_.nonEmpty)
     var i = 0
     val b = SortedMap.newBuilder[String, Int]
     while (i < a.length) {
-      b += URLDecoder.decode(a(i), "UTF-8").replaceAll("^label:", "") -> i
+      b += URLDecoder.decode(a(i).replaceAll("^label:", ""), "UTF-8") -> i
       i += 1
     }
     b.result()
