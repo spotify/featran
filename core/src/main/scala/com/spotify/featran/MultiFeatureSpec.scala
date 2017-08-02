@@ -24,11 +24,11 @@ import scala.language.{higherKinds, implicitConversions}
  */
 object MultiFeatureSpec {
   def specs[T](specs: FeatureSpec[T]*): MultiFeatureSpec[T] = {
-    val nameToSpec = specs.zipWithIndex.flatMap{case(spec, index) =>
-      spec.features.map(f => (f.transformer.name, index))
-    }.toMap
+    val nameToSpec: Map[String, Int] = specs.zipWithIndex.flatMap { case(spec, index) =>
+      spec.features.map(_.transformer.name -> index)
+    }(scala.collection.breakOut)
 
-    new MultiFeatureSpec(nameToSpec, FeatureSpec.combine(specs:_*).features)
+    new MultiFeatureSpec(nameToSpec, specs.map(_.features).reduce(_ ++ _))
   }
 }
 
@@ -37,13 +37,16 @@ object MultiFeatureSpec {
  */
 class MultiFeatureSpec[T](
   private[featran] val mapping: Map[String, Int],
-  private[featran] val multiFeatures: Array[Feature[T, _, _, _]])
-  extends FeatureSpec[T](multiFeatures) {
+  private[featran] val multiFeatures: Array[Feature[T, _, _, _]]) {
 
-  def multiExtract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] =
-    new MultiFeatureExtractor[M, T](new FeatureSet[T](features), input, None, mapping)
+  private val spec = new FeatureSpec(multiFeatures)
 
-  def multiExtractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
-  : MultiFeatureExtractor[M, T] =
-    new MultiFeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings), mapping)
+  def extract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] =
+    new MultiFeatureExtractor[M, T](new FeatureSet[T](spec.features), input, None, mapping)
+
+  def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
+  : MultiFeatureExtractor[M, T] = {
+    val set = new FeatureSet(spec.features)
+    new MultiFeatureExtractor[M, T](set, input, Some(settings), mapping)
+  }
 }

@@ -35,10 +35,8 @@ object FeatureSpec {
   def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty)
 
   def combine[T](specs: FeatureSpec[T]*): FeatureSpec[T] = {
-    assert(specs.nonEmpty)
-    specs.reduceLeft[FeatureSpec[T]] { case (spec1, spec2) =>
-      new FeatureSpec(spec1.features ++ spec2.features)
-    }
+    require(specs.nonEmpty, "Empty specs")
+    new FeatureSpec(specs.map(_.features).reduce(_ ++ _))
   }
 }
 

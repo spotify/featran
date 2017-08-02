@@ -39,11 +39,11 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
-  @transient protected lazy val as: M[(T, ARRAY)] = {
+  @transient private[featran] lazy val as: M[(T, ARRAY)] = {
     val g = fs // defeat closure
     input.map(o => (o, g.unsafeGet(o)))
   }
-  @transient protected lazy val aggregate: M[ARRAY] = settings match {
+  @transient private[featran] lazy val aggregate: M[ARRAY] = settings match {
     case Some(x) => x.map { s =>
       import io.circe.generic.auto._
       import io.circe.parser._

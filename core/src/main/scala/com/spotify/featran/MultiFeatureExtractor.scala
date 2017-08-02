@@ -17,6 +17,7 @@
 
 package com.spotify.featran
 
+import java.io._
 import scala.reflect.ClassTag
 import scala.language.{higherKinds, implicitConversions}
 
@@ -31,25 +32,36 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
  @transient private val input: M[T],
  @transient private val settings: Option[M[String]],
  @transient private val mapping: Map[String, Int])
-  extends FeatureExtractor[M, T](fs, input, settings) {
+  extends Serializable {
+
+  private val extractor = new FeatureExtractor(fs, input, settings)
 
   private lazy val dims: Int = mapping.values.toSet.size
 
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
-  def multiFeatureValues[F: FeatureBuilderConstructor : ClassTag]: M[Seq[F]] =
-    multiFeatureValuesWithOriginal.map(_._1)
+  def featureValues[F: FeatureBuilder : ClassTag]: M[Seq[F]] =
+    featureValuesWithOriginal.map(_._1)
 
-  def multiFeatureValuesWithOriginal[F: FeatureBuilderConstructor : ClassTag]: M[(Seq[F], T)] = {
-    val builder = implicitly[FeatureBuilderConstructor[F]]
-    val fb = 0.until(dims).map{_ => builder.build}.toArray
-    as.cross(aggregate).map { case ((o, a), c) =>
-      fs.multiFeatureValues(a, c, fb, mapping)
-      (fb.map(_.result).toSeq, o)
+  def featureValuesWithOriginal[F: FeatureBuilder : ClassTag]: M[(Seq[F], T)] = {
+    val fb = implicitly[FeatureBuilder[F]]
+    val buffer = new ByteArrayOutputStream()
+    val out = new ObjectOutputStream(buffer)
+    out.writeObject(fb)
+    val bytes = buffer.toByteArray
+    val fbs = Array.fill(dims) {
+      val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
+      in.readObject().asInstanceOf[FeatureBuilder[F]]
+    }
+    extractor.as.cross(extractor.aggregate).map { case ((o, a), c) =>
+      fs.multiFeatureValues(a, c, fbs, mapping)
+      (fbs.map(_.result).toSeq, o)
     }
   }
 
-  @transient lazy val multiFeatureNames: M[Seq[Seq[String]]] =
-    aggregate.map(a => fs.multiFeatureNames(a, mapping))
+  @transient lazy val featureNames: M[Seq[Seq[String]]] =
+    extractor.aggregate.map(a => fs.multiFeatureNames(a, mapping))
+
+  @transient lazy val featureSettings: M[String] = extractor.featureSettings
 }
