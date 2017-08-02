@@ -138,5 +138,3 @@ object FeatureBuilder {
       override def result: Map[String, T] = map.toMap
     }
 }
-
-
