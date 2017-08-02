@@ -38,10 +38,6 @@ object OneHotEncoder {
     new OneHotEncoder(name)
 }
 
-
-
-
-
 private class OneHotEncoder(name: String) extends BaseHotEncoder[String](name) {
   override def prepare(a: String): SortedSet[String] = SortedSet(a)
   override def buildFeatures(a: Option[String],
