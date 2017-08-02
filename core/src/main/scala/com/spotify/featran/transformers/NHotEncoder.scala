@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import com.spotify.featran.FeatureBuilder
 
-import scala.collection.{SortedMap, SortedSet}
+import scala.collection.SortedMap
 
 object NHotEncoder {
   /**
@@ -29,12 +29,12 @@ object NHotEncoder {
    *
    * When using aggregated feature summary from a previous session, unseen labels are ignored.
    */
-  def apply(name: String): Transformer[Seq[String], SortedSet[String], SortedMap[String, Int]] =
+  def apply(name: String): Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     new NHotEncoder(name)
 }
 
 private class NHotEncoder(name: String) extends BaseHotEncoder[Seq[String]](name) {
-  override def prepare(a: Seq[String]): SortedSet[String] = SortedSet(a: _*)
+  override def prepare(a: Seq[String]): Set[String] = Set(a: _*)
   override def buildFeatures(a: Option[Seq[String]],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {

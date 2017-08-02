@@ -20,10 +20,9 @@ package com.spotify.featran.transformers
 import java.net.{URLDecoder, URLEncoder}
 
 import com.spotify.featran.FeatureBuilder
-import com.twitter.algebird.{Aggregator, Semigroup}
+import com.twitter.algebird.Aggregator
 
-import scala.collection.mutable.{Map => MMap}
-import scala.collection.{SortedMap, SortedSet}
+import scala.collection.SortedMap
 
 object OneHotEncoder {
   /**
@@ -34,12 +33,12 @@ object OneHotEncoder {
    *
    * When using aggregated feature summary from a previous session, unseen labels are ignored.
    */
-  def apply(name: String): Transformer[String, SortedSet[String], SortedMap[String, Int]] =
+  def apply(name: String): Transformer[String, Set[String], SortedMap[String, Int]] =
     new OneHotEncoder(name)
 }
 
 private class OneHotEncoder(name: String) extends BaseHotEncoder[String](name) {
-  override def prepare(a: String): SortedSet[String] = SortedSet(a)
+  override def prepare(a: String): Set[String] = Set(a)
   override def buildFeatures(a: Option[String],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = {
@@ -56,24 +55,23 @@ private class OneHotEncoder(name: String) extends BaseHotEncoder[String](name) {
 }
 
 private abstract class BaseHotEncoder[A](name: String)
-  extends Transformer[A, SortedSet[String], SortedMap[String, Int]](name) {
+  extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
 
-  def prepare(a: A): SortedSet[String]
+  def prepare(a: A): Set[String]
 
-  private def present(reduction: SortedSet[String]): SortedMap[String, Int] = {
+  private def present(reduction: Set[String]): SortedMap[String, Int] = {
     val b = SortedMap.newBuilder[String, Int]
     var i = 0
-    val it = reduction.iterator
-    while (it.hasNext) {
-      b += it.next() -> i
+    val array = reduction.toArray
+    java.util.Arrays.sort(array, Ordering[String])
+    while (i < array.length) {
+      b += array(i) -> i
       i += 1
     }
     b.result()
   }
-  override val aggregator: Aggregator[A, SortedSet[String], SortedMap[String, Int]] = {
-    implicit val sortedSetSg = Semigroup.from[SortedSet[String]](_ ++ _)
+  override val aggregator: Aggregator[A, Set[String], SortedMap[String, Int]] =
     Aggregators.from[A](prepare).to(present)
-  }
   override def featureDimension(c: SortedMap[String, Int]): Int = c.size
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
     c.map(name + '_' + _._1)(scala.collection.breakOut)

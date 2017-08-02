@@ -19,8 +19,8 @@ package com.spotify.featran.transformers
 
 import com.spotify.featran.FeatureBuilder
 
+import scala.collection.SortedMap
 import scala.collection.mutable.{Map => MMap}
-import scala.collection.{SortedMap, SortedSet}
 
 /**
  * Weighted label. Also can be thought as a weighted value in a named sparse vector.
@@ -40,12 +40,12 @@ object NHotWeightedEncoder {
    * When using aggregated feature summary from a previous session, unseen labels are ignored.
    */
   def apply(name: String)
-  : Transformer[Seq[WeightedLabel], SortedSet[String], SortedMap[String, Int]] =
+  : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
     new NHotWeightedEncoder(name)
 }
 
 private class NHotWeightedEncoder(name: String) extends BaseHotEncoder[Seq[WeightedLabel]](name) {
-  override def prepare(a: Seq[WeightedLabel]): SortedSet[String] = SortedSet(a.map(_.name): _*)
+  override def prepare(a: Seq[WeightedLabel]): Set[String] = Set(a.map(_.name): _*)
   override def buildFeatures(a: Option[Seq[WeightedLabel]],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
