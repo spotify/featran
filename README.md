@@ -6,18 +6,69 @@ featran
 [![GitHub license](https://img.shields.io/github/license/spotify/featran.svg)](./LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/com.spotify/featran-core_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/com.spotify/featran-core_2.11)
 
-Featran is a Scala library for feature transformation. It supports various collection types for feature extraction and output formats for feature representation. The following artifacts are available:
+Featran, also known as Featran77 or F77 (get it?), is a Scala library for feature transformation. It aims to simplify the time consuming task of feature engineering in data science and machine learning processes. It supports various collection types for feature extraction and output formats for feature representation.
 
-- `featran-core` - Core library, supports extraction from Scala collections and output as Scala collections, [Breeze](https://github.com/scalanlp/breeze) dense and sparse vectors.
-- `featran-flink` - support for extraction from [Flink](http://flink.apache.org/) `DataSet`
-- `featran-scalding` - support for extraction from [Scalding](https://github.com/twitter/scalding) `TypedPipe`
-- `featran-scio` - support for extraction from [Scio](https://github.com/spotify/scio) `SCollection`
-- `featran-spark` - support for extraction from [Spark](https://spark.apache.org/) `RDD`
-- `featran-tensorflow` - suppoprt for output as [TensorFlow](https://www.tensorflow.org/) Example Protocol Buffer
-- `featran-numpy` - support for output as [NumPy](http://www.numpy.org/) `.npy` file
+# Introduction
 
+Most feature transformation logic requires two steps, one global aggregation to summarize data followed by one element-wise mapping to transform them. For example:
 
-See [Example.scala](https://github.com/spotify/featran/blob/master/core/src/test/scala/com/spotify/featran/examples/Example.scala) for example usage.
+- Min-Max Scaler
+  - Aggregation: global min & max
+  - Mapping: scale each value to `[min, max]`
+- One-Hot Encoder
+  - Aggregation: distinct labels
+  - Mapping: convert each label to a binary vector
+
+We can implement this in a naive way using `reduce` and `map`.
+
+```scala
+case class Point(score: Double, label: String)
+val data = Seq(Point(1.0, "a"), Point(2.0, "b"), Point(3.0, "c"))
+
+val a = data
+  .map(p => (p.score, p.score, Set(p.label)))
+  .reduce((x, y) => (math.min(x._1, y._1), math.max(x._2, y._2), x._3 ++ y._3))
+
+val features = data.map { p =>
+  (p.score - a._1) / (a._2 - a._1) :: a._3.toList.sorted.map(s => if (s == p.label) 1.0 else 0.0)
+}
+```
+
+But this is unmanageable for complex feature sets. The above logic can be easily expressed in Featran.
+
+```scala
+import com.spotify.featran._
+import com.spotify.featran.transformers._
+
+val fs = FeatureSpec.of[Point]
+  .required(_.score)(MinMaxScaler("min-max"))
+  .required(_.label)(OneHotEncoder("one-hot"))
+
+val fe = fs.extract(data)
+val names = fe.featureNames
+val features = fe.featureValues[Seq[Double]]
+```
+
+See [Example.scala](https://github.com/spotify/featran/blob/master/core/src/test/scala/com/spotify/featran/examples/Example.scala) for more example usage. See [transformers](https://github.com/spotify/featran/tree/master/core/src/main/scala/com/spotify/featran/transformers) for a complete list of available feature transformers.
+
+Featran also supports these additional features.
+
+- Extract from Scala collections, [Flink](http://flink.apache.org/) `DataSet`s, [Scalding](https://github.com/twitter/scalding) `TypedPipe`s, [Scio](https://github.com/spotify/scio) `SCollection`s and [Spark](https://spark.apache.org/) `RDD`s
+- Output as Scala collections, [Breeze](https://github.com/scalanlp/breeze) dense and sparse vectors,  [TensorFlow](https://www.tensorflow.org/) Example Protobuf and [NumPy](http://www.numpy.org/) `.npy` file
+- Import aggregation from a previous extraction for training, validation and test sets
+- Compose feature specifications and separate outputs
+
+# Artifacts
+
+Feature includes the following artifacts:
+
+- `featran-core` - Core library, supports extraction from Scala collections and output as Scala collections, Breeze dense and sparse vectors.
+- `featran-flink` - support for extraction from Flink `DataSet`
+- `featran-scalding` - support for extraction from Scalding `TypedPipe`
+- `featran-scio` - support for extraction from Scio `SCollection`
+- `featran-spark` - support for extraction from Spark `RDD`
+- `featran-tensorflow` - suppoprt for output as TensorFlow Example Protobuf
+- `featran-numpy` - support for output as NumPy `.npy` file
 
 # License
 
