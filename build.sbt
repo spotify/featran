@@ -94,8 +94,8 @@ lazy val core: Project = Project(
   "core",
   file("core")
 ).settings(
-  moduleName := "featran-core",
   commonSettings,
+  moduleName := "featran-core",
   description := "Feature Transformers",
   libraryDependencies ++= Seq(
     "com.twitter" %% "algebird-core" % algebirdVersion,
@@ -114,8 +114,8 @@ lazy val flink: Project = Project(
   "flink",
   file("flink")
 ).settings(
-  moduleName := "featran-flink",
   commonSettings,
+  moduleName := "featran-flink",
   description := "Feature Transformers - Flink",
   libraryDependencies ++= Seq(
     "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
@@ -128,8 +128,8 @@ lazy val scalding: Project = Project(
   "scalding",
   file("scalding")
 ).settings(
-  moduleName := "featran-scalding",
   commonSettings,
+  moduleName := "featran-scalding",
   description := "Feature Transformers - Scalding",
   resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
   libraryDependencies ++= Seq(
@@ -143,8 +143,8 @@ lazy val scio: Project = Project(
   "scio",
   file("scio")
 ).settings(
-  moduleName := "featran-scio",
   commonSettings,
+  moduleName := "featran-scio",
   description := "Feature Transformers - Scio",
   libraryDependencies ++= Seq(
     "com.spotify" %% "scio-core" % scioVersion,
@@ -156,8 +156,8 @@ lazy val spark: Project = Project(
   "spark",
   file("spark")
 ).settings(
-  moduleName := "featran-spark",
   commonSettings,
+  moduleName := "featran-spark",
   description := "Feature Transformers - Spark",
   libraryDependencies ++= Seq(
     "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
@@ -169,8 +169,8 @@ lazy val numpy: Project = Project(
   "numpy",
   file("numpy")
 ).settings(
-  moduleName := "featran-numpy",
   commonSettings,
+  moduleName := "featran-numpy",
   description := "Feature Transformers - NumPy",
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -181,8 +181,8 @@ lazy val tensorflow: Project = Project(
   "tensorflow",
   file("tensorflow")
 ).settings(
-  moduleName := "featran-tensorflow",
   commonSettings,
+  moduleName := "featran-tensorflow",
   description := "Feature Transformers - TensorFlow",
   libraryDependencies ++= Seq(
     "org.tensorflow" % "proto" % tensorflowVersion,
