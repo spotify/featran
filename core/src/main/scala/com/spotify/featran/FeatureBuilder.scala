@@ -132,14 +132,14 @@ object FeatureBuilder {
   }
 
   implicit def mapFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Map[String, T]] =
-    new FeatureBuilder[Map[String, T]] {
-      private var map: mutable.LinkedHashMap[String, T] = _
+    new FeatureBuilder[Map[String, T]] { self =>
+      private var b: mutable.Builder[(String, T), Map[String, T]] = _
       private val fp = implicitly[FloatingPoint[T]]
-      override def init(dimension: Int): Unit = map = mutable.LinkedHashMap.empty
-      override def add(name: String, value: Double): Unit = map.put(name, fp.fromDouble(value))
+      override def init(dimension: Int): Unit = b = Map.newBuilder[String, T]
+      override def add(name: String, value: Double): Unit = b += name -> fp.fromDouble(value)
       override def skip(): Unit = Unit
       override def skip(n: Int): Unit = Unit
-      override def result: Map[String, T] = map.toMap
+      override def result: Map[String, T] = b.result()
     }
 
 }
