@@ -46,7 +46,7 @@ object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
     val names = cats.map("n_hot_" + _)
     val expected = xs.map { s =>
       val hashes = s.map(HashEncoder.bucket(_, size)).toSet
-      cats.map(c => if(hashes.contains(c)) 1.0 else 0.0)
+      cats.map(c => if (hashes.contains(c)) 1.0 else 0.0)
     }
     val missing = cats.map(_ => 0.0)
     test(HashNHotEncoder("n_hot", size), xs, names, expected, missing)

@@ -25,14 +25,15 @@ import com.twitter.algebird.HLL
 object HashNHotWeightedEncoder {
   /**
    * Transform a collection of weighted categorical features to columns of weight sums, with at
-   * most N values.
+   * most N values. Similar to [[NHotWeightedEncoder]] but uses MurmursHash3 to hash features
+   * into buckets to reduce CPU and memory overhead.
    *
    * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
    * [[NHotEncoder]].
    *
    * Missing values are transformed to [0.0, 0.0, ...].
    *
-   * When using aggregated feature summary from a previous session, unseen labels are ignored.
+   * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
    */
   def apply(name: String, hashBucketSize: Int = 0)
   : Transformer[Seq[WeightedLabel], HLL, Int] =
@@ -50,7 +51,7 @@ private class HashNHotWeightedEncoder(name: String, hashBucketSize: Int)
                              fb: FeatureBuilder[_]): Unit = {
     fb.init(c)
     a match {
-      case Some(xs) => {
+      case Some(xs) =>
         val weights = new java.util.TreeMap[Int,Double]().asScala.withDefaultValue(0.0)
         xs.foreach(x => weights(HashEncoder.bucket(x.name, c)) += x.value)
         var prev = -1
@@ -63,9 +64,7 @@ private class HashNHotWeightedEncoder(name: String, hashBucketSize: Int)
         }
         val gap = c - prev - 1
         if (gap > 0) fb.skip(gap)
-      }
       case None => fb.skip(c)
     }
   }
-
 }

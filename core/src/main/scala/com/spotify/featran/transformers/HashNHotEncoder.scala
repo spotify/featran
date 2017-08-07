@@ -30,7 +30,7 @@ object HashNHotEncoder {
     *
     * Missing values are transformed to [0.0, 0.0, ...].
     *
-    * When using aggregated feature summary from a previous session, unseen labels are ignored.
+    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
     */
   def apply(name: String, hashBucketSize: Int = 0): Transformer[Seq[String], HLL, Int] =
     new HashNHotEncoder(name, hashBucketSize)
@@ -43,7 +43,7 @@ private class HashNHotEncoder(name: String, hashBucketSize: Int)
   override def buildFeatures(a: Option[Seq[String]], c: Int, fb: FeatureBuilder[_]): Unit = {
     fb.init(c)
     a match {
-      case Some(xs) => {
+      case Some(xs) =>
         var prev = -1
         SortedSet(xs.map(HashEncoder.bucket(_, c)): _*)
           .foreach { curr =>
@@ -54,7 +54,6 @@ private class HashNHotEncoder(name: String, hashBucketSize: Int)
           }
         val gap = c - prev - 1
         if (gap > 0) fb.skip(gap)
-      }
       case None => fb.skip(c)
     }
   }
