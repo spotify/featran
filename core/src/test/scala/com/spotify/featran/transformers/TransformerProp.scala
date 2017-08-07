@@ -35,10 +35,10 @@ abstract class TransformerProp(name: String) extends Properties(name) {
 
   // Double.NaN != Double.NaN
   // Also map to float to workaround precision error
-  private def safeCompare(xs: List[Seq[Double]], ys: List[Seq[Double]]): Boolean = {
-    def d2e(x: Double): Either[Int, Float] = if (x.isNaN) Left(0) else Right(x.toFloat)
+  private def d2e(x: Double): Either[Int, Float] = if (x.isNaN) Left(0) else Right(x.toFloat)
+
+  private def safeCompare(xs: List[Seq[Double]], ys: List[Seq[Double]]): Boolean =
     xs.map(_.map(d2e)) == ys.map(_.map(d2e))
-  }
 
   def test[T](t: Transformer[T, _, _],
               input: List[T],
@@ -70,6 +70,14 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f2 values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing),
       "f3 values" |: safeCompare(f3.featureValues[Seq[Double]], expected.take(input.size / 2)),
       "f4 values" |: safeCompare(f4.featureValues[Seq[Double]], outOfBoundsElems.map(_._2)),
+      "f1 map" |: {
+        val fMap = f1.featureValues[Map[String, Double]]
+        val eMap = expected.map(v => (names zip v).toMap)
+        // expected map is a superset of feature map
+        (fMap zip eMap).forall { case (f, e) =>
+          f.forall { case (k, v) => e.get(k).map(d2e).contains(d2e(v)) }
+        }
+      },
       "f2 settings" |: settings == f2.featureSettings,
       "f3 settings" |: settings == f3.featureSettings,
       "f4 settings" |: settings == f4.featureSettings)
