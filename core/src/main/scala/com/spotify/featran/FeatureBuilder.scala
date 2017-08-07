@@ -138,6 +138,7 @@ object FeatureBuilder {
       override def init(dimension: Int): Unit = map = mutable.LinkedHashMap.empty
       override def add(name: String, value: Double): Unit = map.put(name, fp.fromDouble(value))
       override def skip(): Unit = Unit
+      override def skip(n: Int): Unit = Unit
       override def result: Map[String, T] = map.toMap
     }
 
