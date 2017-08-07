@@ -17,13 +17,10 @@
 
 package com.spotify.featran.transformers
 
-import java.util
-
+import collection.JavaConverters._
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.HLL
 
-import scala.collection.SortedMap
-import scala.collection.mutable.{Map => MMap}
 
 object HashNHotWeightedEncoder {
   /**
@@ -54,17 +51,16 @@ private class HashNHotWeightedEncoder(name: String, hashBucketSize: Int)
     fb.init(c)
     a match {
       case Some(xs) => {
-        val weights = MMap.empty[String, Double].withDefaultValue(0.0)
-        xs.foreach(x => weights(x.name) += x.value)
+        val weights = new java.util.TreeMap[Int,Double]().asScala.withDefaultValue(0.0)
+        xs.foreach(x => weights(HashEncoder.bucket(x.name, c)) += x.value)
         var prev = -1
-          SortedMap(xs.map(i => (HashEncoder.bucket(i.name, c), i.name)): _*)
-          .foreach { v =>
-            val (curr, key) = v
-            val gap = curr - prev - 1
-            if (gap > 0) fb.skip(gap)
-            fb.add(name + '_' + key, weights(key))
-            prev = curr
-          }
+        weights.foreach { v =>
+          val (curr, value) = v
+          val gap = curr - prev - 1
+          if (gap > 0) fb.skip(gap)
+          fb.add("$name_$curr", value)
+          prev = curr
+        }
         val gap = c - prev - 1
         if (gap > 0) fb.skip(gap)
       }

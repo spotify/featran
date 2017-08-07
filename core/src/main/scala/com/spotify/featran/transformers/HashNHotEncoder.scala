@@ -20,9 +20,18 @@ package com.spotify.featran.transformers
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.HLL
 
-import scala.collection.SortedMap
+import scala.collection.SortedSet
 
 object HashNHotEncoder {
+  /**
+    * Transform a collection of categorical features to binary columns, with at most N one-values.
+    * Similar to [[NHotEncoder]] but uses MurmursHash3 to hash features into buckets
+    * to reduce CPU and memory overhead.
+    *
+    * Missing values are transformed to [0.0, 0.0, ...].
+    *
+    * When using aggregated feature summary from a previous session, unseen labels are ignored.
+    */
   def apply(name: String, hashBucketSize: Int = 0): Transformer[Seq[String], HLL, Int] =
     new HashNHotEncoder(name, hashBucketSize)
 }
@@ -36,12 +45,11 @@ private class HashNHotEncoder(name: String, hashBucketSize: Int)
     a match {
       case Some(xs) => {
         var prev = -1
-          SortedMap(xs.map(i => (HashEncoder.bucket(i, c), i)): _*)
-          .foreach { v =>
-            val (curr, key) = v
+        SortedSet(xs.map(HashEncoder.bucket(_, c)): _*)
+          .foreach { curr =>
             val gap = curr - prev - 1
             if (gap > 0) fb.skip(gap)
-            fb.add(name + '_' + key, 1.0)
+            fb.add("$name_$i", 1.0)
             prev = curr
           }
         val gap = c - prev - 1
@@ -51,4 +59,3 @@ private class HashNHotEncoder(name: String, hashBucketSize: Int)
     }
   }
 }
-

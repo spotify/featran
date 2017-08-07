@@ -39,9 +39,10 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     val cats = 0 until size
     val names = cats.map("n_hot_" + _)
     val expected = xs.map{ s =>
-      val hashes = s.map(a => (HashEncoder.bucket(a.name, size), a)).toMap
+      val hashes = s.map(x => (HashEncoder.bucket(x.name, size), x.value))
+        .groupBy(_._1).map(l => (l._1, l._2.map(_._2).sum))
       cats.map(c => hashes.get(c) match {
-        case Some(label) => (0.0 +: s.filter(_.name == label.name).map(_.value)).sum
+        case Some(v) => v
         case None => 0.0
       })
     }
@@ -54,9 +55,10 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     val cats = 0 until size
     val names = cats.map("n_hot_" + _)
     val expected = xs.map{ s =>
-      val hashes = s.map(a => (HashEncoder.bucket(a.name, size), a)).toMap
+      val hashes = s.map(x => (HashEncoder.bucket(x.name, size), x.value))
+        .groupBy(_._1).map(l => (l._1, l._2.map(_._2).sum))
       cats.map(c => hashes.get(c) match {
-        case Some(label) => (0.0 +: s.filter(_.name == label.name).map(_.value)).sum
+        case Some(v) => v
         case None => 0.0
       })
     }
