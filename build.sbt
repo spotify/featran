@@ -37,6 +37,7 @@ val commonSettings = Seq(
   description := "Feature Transformers",
   scalaVersion := "2.11.11",
   scalacOptions ++= Seq("-target:jvm-1.7", "-deprecation", "-feature", "-unchecked"),
+  scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
 
   // Release settings
   releaseCrossBuild             := true,
