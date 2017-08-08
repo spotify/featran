@@ -58,7 +58,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   /**
    * JSON settings of the [[FeatureSpec]] and aggregated feature summary.
    *
-   * This can be used with [[FeatureSpec#extractWithSettings]] to bypass the `reduce` step when
+   * This can be used with [[FeatureSpec.extractWithSettings]] to bypass the `reduce` step when
    * extracting new records of the same type.
    */
   @transient lazy val featureSettings: M[String] = settings match {

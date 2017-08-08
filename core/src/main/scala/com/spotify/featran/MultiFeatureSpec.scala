@@ -23,7 +23,7 @@ import scala.language.{higherKinds, implicitConversions}
  * Companion object for [[MultiFeatureSpec]].
  */
 object MultiFeatureSpec {
-  def specs[T](specs: FeatureSpec[T]*): MultiFeatureSpec[T] = {
+  def apply[T](specs: FeatureSpec[T]*): MultiFeatureSpec[T] = {
     val nameToSpec: Map[String, Int] = specs.zipWithIndex.flatMap { case(spec, index) =>
       spec.features.map(_.transformer.name -> index)
     }(scala.collection.breakOut)
@@ -33,20 +33,37 @@ object MultiFeatureSpec {
 }
 
 /**
- * Wrapper for FeatureSpec that allows for combination and separation of different specs.
+ * Wrapper for [[FeatureSpec]] that allows for combination and separation of different specs.
  */
-class MultiFeatureSpec[T](
-  private[featran] val mapping: Map[String, Int],
-  private[featran] val multiFeatures: Array[Feature[T, _, _, _]]) {
+class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
+                          private[featran] val multiFeatures: Array[Feature[T, _, _, _]]) {
 
   private val spec = new FeatureSpec(multiFeatures)
 
+  /**
+   * Extract features from a input collection.
+   *
+   * This is done in two steps, a `reduce` step over the collection to aggregate feature summary,
+   * and a `map` step to transform values using the summary.
+   * @param input input collection
+   * @tparam M input collection type, e.g. `Array`, `List`
+   */
   def extract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] =
     new MultiFeatureExtractor[M, T](new FeatureSet[T](spec.features), input, None, mapping)
 
+  /**
+   * Extract features from a input collection using settings from a previous session.
+   *
+   * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
+   * in a previous session.
+   * @param input input collection
+   * @param settings JSON settings from a previous session
+   * @tparam M input collection type, e.g. `Array`, `List`
+   */
   def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
   : MultiFeatureExtractor[M, T] = {
     val set = new FeatureSet(spec.features)
     new MultiFeatureExtractor[M, T](set, input, Some(settings), mapping)
   }
+
 }

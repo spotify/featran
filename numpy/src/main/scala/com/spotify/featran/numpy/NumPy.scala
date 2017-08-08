@@ -19,6 +19,9 @@ package com.spotify.featran.numpy
 
 import java.io.OutputStream
 
+/**
+ * Type class for NumPy numeric types.
+ */
 trait NumPyType[@specialized (Int, Long, Float, Double) T] {
   val descr: String
   val sizeOf: Int
@@ -75,8 +78,12 @@ object NumPyType {
     override val sizeOf: Int = 8
     override def write(out: OutputStream, value: Double): Unit = out.writeDouble(value)
   }
+
 }
 
+/**
+ * Utilities for writing data as NumPy `.npy` files.
+ */
 object NumPy {
 
   private def header(dimensions: Seq[Int], nt: NumPyType[_]): String = {

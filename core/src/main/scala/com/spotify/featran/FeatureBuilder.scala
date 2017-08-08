@@ -25,6 +25,10 @@ import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
+/**
+ * Type class for types to build feature into.
+ * @tparam T output feature type
+ */
 trait FeatureBuilder[T] extends Serializable { self =>
   def init(dimension: Int): Unit
   def add(name: String, value: Double): Unit
