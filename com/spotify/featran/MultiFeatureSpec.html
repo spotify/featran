@@ -51,7 +51,7 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Wrapper for FeatureSpec that allows for combination and seperation of different specs
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Wrapper for <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a> that allows for combination and separation of different specs.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -242,7 +242,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.spotify.featran.MultiFeatureSpec#extract" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.spotify.featran.MultiFeatureSpec#extract" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="extract[M[_]](input:M[T])(implicitevidence$1:com.spotify.featran.CollectionType[M]):com.spotify.featran.MultiFeatureExtractor[M,T]"></a>
       <a id="extract[M[_]](M[T])(CollectionType[M]):MultiFeatureExtractor[M,T]"></a>
       <h4 class="signature">
@@ -258,8 +258,9 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.MultiFeatureSpec#extractWithSettings" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Extract features from a input collection.</p><div class="fullcomment"><div class="comment cmt"><p>Extract features from a input collection.</p><p>This is done in two steps, a <code>reduce</code> step over the collection to aggregate feature summary,
+and a <code>map</code> step to transform values using the summary.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>input collection type, e.g. <code>Array</code>, <code>List</code></p></dd><dt class="param">input</dt><dd class="cmt"><p>input collection</p></dd></dl></div>
+    </li><li name="com.spotify.featran.MultiFeatureSpec#extractWithSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="extractWithSettings[M[_]](input:M[T],settings:M[String])(implicitevidence$2:com.spotify.featran.CollectionType[M]):com.spotify.featran.MultiFeatureExtractor[M,T]"></a>
       <a id="extractWithSettings[M[_]](M[T],M[String])(CollectionType[M]):MultiFeatureExtractor[M,T]"></a>
       <h4 class="signature">
@@ -275,7 +276,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Extract features from a input collection using settings from a previous session.</p><div class="fullcomment"><div class="comment cmt"><p>Extract features from a input collection using settings from a previous session.</p><p>This bypasses the <code>reduce</code> step in <a href="#extract[M[_]](input:M[T])(implicitevidence$1:com.spotify.featran.CollectionType[M]):com.spotify.featran.MultiFeatureExtractor[M,T]" class="extmbr" name="com.spotify.featran.MultiFeatureSpec#extract">extract</a> and uses feature summary from settings exported
+in a previous session.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>input collection type, e.g. <code>Array</code>, <code>List</code></p></dd><dt class="param">input</dt><dd class="cmt"><p>input collection</p></dd><dt class="param">settings</dt><dd class="cmt"><p>JSON settings from a previous session</p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>

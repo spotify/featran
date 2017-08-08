@@ -50,7 +50,7 @@
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Encapsulate features extracted from a <a href="MultiFeatureSpec.html" class="extype" name="com.spotify.featran.MultiFeatureSpec">MultiFeatureSpec</a>.
-Allows seperation back into specs by names or vector</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>input collection type, e.g. <code>Array</code>, List</p></dd><dt class="tparam">T</dt><dd class="cmt"><p>input record type to extract features from</p></dd></dl><div class="toggleContainer block">
+Allows separation back into specs by names or vectors.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>input collection type, e.g. <code>Array</code>, List</p></dd><dt class="tparam">T</dt><dd class="cmt"><p>input record type to extract features from</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -236,8 +236,8 @@ Allows seperation back into specs by names or vector</p></div><dl class="paramcm
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.MultiFeatureExtractor#featureSettings" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Names of the extracted features, in the same order as values in <a href="#featureValues[F](implicitevidence$2:com.spotify.featran.FeatureBuilder[F],implicitevidence$3:scala.reflect.ClassTag[F]):M[Seq[F]]" class="extmbr" name="com.spotify.featran.MultiFeatureExtractor#featureValues">featureValues</a>.</p>
+    </li><li name="com.spotify.featran.MultiFeatureExtractor#featureSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="featureSettings:M[String]"></a>
       <a id="featureSettings:M[String]"></a>
       <h4 class="signature">
@@ -253,8 +253,10 @@ Allows seperation back into specs by names or vector</p></div><dl class="paramcm
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.MultiFeatureExtractor#featureValues" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">JSON settings of the <a href="MultiFeatureSpec.html" class="extype" name="com.spotify.featran.MultiFeatureSpec">MultiFeatureSpec</a> and aggregated feature summary.</p><div class="fullcomment"><div class="comment cmt"><p>JSON settings of the <a href="MultiFeatureSpec.html" class="extype" name="com.spotify.featran.MultiFeatureSpec">MultiFeatureSpec</a> and aggregated feature summary.</p><p>This can be used with <a href="MultiFeatureSpec.html#extractWithSettings[M[_]](input:M[T],settings:M[String])(implicitevidence$2:com.spotify.featran.CollectionType[M]):com.spotify.featran.MultiFeatureExtractor[M,T]" class="extmbr" name="com.spotify.featran.MultiFeatureSpec#extractWithSettings">MultiFeatureSpec.extractWithSettings</a> to bypass the <code>reduce</code> step
+when extracting new records of the same type.
+</p></div></div>
+    </li><li name="com.spotify.featran.MultiFeatureExtractor#featureValues" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="featureValues[F](implicitevidence$2:com.spotify.featran.FeatureBuilder[F],implicitevidence$3:scala.reflect.ClassTag[F]):M[Seq[F]]"></a>
       <a id="featureValues[F](FeatureBuilder[F],ClassTag[F]):M[Seq[F]]"></a>
       <h4 class="signature">
@@ -270,8 +272,9 @@ Allows seperation back into specs by names or vector</p></div><dl class="paramcm
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.MultiFeatureExtractor#featureValuesWithOriginal" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[Seq[String]]]" class="extmbr" name="com.spotify.featran.MultiFeatureExtractor#featureNames">featureNames</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[Seq[String]]]" class="extmbr" name="com.spotify.featran.MultiFeatureExtractor#featureNames">featureNames</a>.</p></div><dl class="paramcmts block"><dt class="tparam">F</dt><dd class="cmt"><p>output data type, e.g. <code>Array[Float]</code>, <code>Array[Double]</code>, <code>DenseVector[Float]</code>,
+          <code>DenseVector[Double]</code></p></dd></dl></div>
+    </li><li name="com.spotify.featran.MultiFeatureExtractor#featureValuesWithOriginal" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="featureValuesWithOriginal[F](implicitevidence$4:com.spotify.featran.FeatureBuilder[F],implicitevidence$5:scala.reflect.ClassTag[F]):M[(Seq[F],T)]"></a>
       <a id="featureValuesWithOriginal[F](FeatureBuilder[F],ClassTag[F]):M[(Seq[F],T)]"></a>
       <h4 class="signature">
@@ -287,7 +290,10 @@ Allows seperation back into specs by names or vector</p></div><dl class="paramcm
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[Seq[String]]]" class="extmbr" name="com.spotify.featran.MultiFeatureExtractor#featureNames">featureNames</a> with the
+original input record.</p><div class="fullcomment"><div class="comment cmt"><p>Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[Seq[String]]]" class="extmbr" name="com.spotify.featran.MultiFeatureExtractor#featureNames">featureNames</a> with the
+original input record.</p></div><dl class="paramcmts block"><dt class="tparam">F</dt><dd class="cmt"><p>output data type, e.g. <code>Array[Float]</code>, <code>Array[Double]</code>, <code>DenseVector[Float]</code>,
+          <code>DenseVector[Double]</code></p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
