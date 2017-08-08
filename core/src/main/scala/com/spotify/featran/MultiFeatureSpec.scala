@@ -33,7 +33,7 @@ object MultiFeatureSpec {
 }
 
 /**
- * Wrapper for FeatureSpec that allows for combination and seperation of different specs
+ * Wrapper for FeatureSpec that allows for combination and separation of different specs.
  */
 class MultiFeatureSpec[T](
   private[featran] val mapping: Map[String, Int],

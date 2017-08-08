@@ -23,7 +23,7 @@ import scala.language.{higherKinds, implicitConversions}
 
 /**
  * Encapsulate features extracted from a [[MultiFeatureSpec]].
- * Allows seperation back into specs by names or vector
+ * Allows separation back into specs by names or vectors.
  * @tparam M input collection type, e.g. `Array`, List
  * @tparam T input record type to extract features from
  */
