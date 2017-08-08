@@ -15,6 +15,9 @@
  * under the License.
  */
 
+import com.typesafe.sbt.SbtSite.SiteKeys._
+import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
+
 val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
 val circeVersion = "0.8.0"
@@ -78,8 +81,11 @@ val noPublishSettings = Seq(
 lazy val root: Project = Project(
   "root",
   file(".")
-).settings(
-  commonSettings ++ noPublishSettings
+).enablePlugins(GhpagesPlugin, ScalaUnidocPlugin).settings(
+  commonSettings ++ noPublishSettings,
+  siteSubdirName in ScalaUnidoc := "",
+  addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+  gitRemoteRepo := "git@github.com:spotify/featran.git"
 ).aggregate(
   core,
   flink,
