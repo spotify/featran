@@ -33,10 +33,9 @@ trait FeatureBuilder[T] extends Serializable { self =>
 
   def add[M[_]](names: Iterator[String], values: M[Double])
                (implicit ev: M[Double] => Seq[Double]): Unit = {
-    var i = 0
-    while (i < values.length) {
-      add(names.next(), values(i))
-      i += 1
+    val i = values.iterator
+    while (names.hasNext && i.hasNext) {
+      add(names.next(), i.next())
     }
   }
 
