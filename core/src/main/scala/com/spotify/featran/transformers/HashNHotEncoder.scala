@@ -24,20 +24,43 @@ import scala.collection.SortedSet
 
 object HashNHotEncoder {
   /**
-   * Transform a collection of categorical features to binary columns, with at most N one-values.
-   * Similar to [[NHotEncoder]] but uses MurmursHash3 to hash features into buckets to reduce CPU
-   * and memory overhead.
-   *
-   * Missing values are transformed to [0.0, 0.0, ...].
-   *
-   * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
-   */
-  def apply(name: String, hashBucketSize: Int = 0): Transformer[Seq[String], HLL, Int] =
-    new HashNHotEncoder(name, hashBucketSize)
+    * Transform a collection of categorical features to binary columns, with at most N one-values.
+    * Similar to [[NHotEncoder]] but uses MurmursHash3 to hash features into buckets to reduce CPU
+    * and memory overhead.
+    *
+    * Missing values are transformed to [0.0, 0.0, ...].
+    *
+    * If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor
+    * to reduce the number of collisions.
+    *
+    * Rough table of relationship of scaling factor to % collisions:
+    *
+    * sizeScalingFactor     % Collisions
+    * -----------------     ------------
+    * 2048                  0.02%
+    * 1024                  0.04%
+    * 512                   0.09%
+    * 256                   0.18%
+    * 128                   0.34%
+    * 64                    0.68%
+    * 32                    1%
+    * 16                    2%
+    * 8                     5%
+    * 4                     9%
+    * 2                     16%
+    * 1                     25%
+    *
+    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
+    * @param sizeScalingFactor when hashBucketSize is 0, scale HLL estimate by this amount
+    */
+  def apply(name: String,
+            hashBucketSize: Int = 0,
+            sizeScalingFactor: Double = 8.0): Transformer[Seq[String], HLL, Int] =
+    new HashNHotEncoder(name, hashBucketSize, sizeScalingFactor)
 }
 
-private class HashNHotEncoder(name: String, hashBucketSize: Int)
-  extends BaseHashHotEncoder[Seq[String]](name, hashBucketSize) {
+private class HashNHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
+  extends BaseHashHotEncoder[Seq[String]](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: Seq[String]): HLL = a.map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)
 
   override def buildFeatures(a: Option[Seq[String]], c: Int, fb: FeatureBuilder[_]): Unit = {

@@ -17,6 +17,7 @@
 
 package com.spotify.featran.transformers
 
+import scala.math.ceil
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird._
 
@@ -24,20 +25,43 @@ import scala.util.hashing.MurmurHash3
 
 object HashOneHotEncoder {
   /**
-   * Transform a collection of categorical features to binary columns, with at most a single
-   * one-value. Similar to [[OneHotEncoder]] but uses MurmursHash3 to hash features into buckets
-   * to reduce CPU and memory overhead.
-   *
-   * Missing values are transformed to [0.0, 0.0, ...].
-   *
-   * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
-   */
-  def apply(name: String, hashBucketSize: Int = 0): Transformer[String, HLL, Int] =
-    new HashOneHotEncoder(name, hashBucketSize)
+    * Transform a collection of categorical features to binary columns, with at most a single
+    * one-value. Similar to [[OneHotEncoder]] but uses MurmursHash3 to hash features into buckets
+    * to reduce CPU and memory overhead.
+    *
+    * Missing values are transformed to [0.0, 0.0, ...].
+    *
+    * If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor
+    * to reduce the number of collisions.
+    *
+    * Rough table of relationship of scaling factor to % collisions:
+    *
+    * sizeScalingFactor     % Collisions
+    * -----------------     ------------
+    * 2048                  0.02%
+    * 1024                  0.04%
+    * 512                   0.09%
+    * 256                   0.18%
+    * 128                   0.34%
+    * 64                    0.68%
+    * 32                    1%
+    * 16                    2%
+    * 8                     5%
+    * 4                     9%
+    * 2                     16%
+    * 1                     25%
+    *
+    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
+    * @param sizeScalingFactor when hashBucketSize is 0, scale HLL estimate by this amount
+    */
+  def apply(name: String,
+            hashBucketSize: Int = 0,
+            sizeScalingFactor: Double = 8.0): Transformer[String, HLL, Int] =
+    new HashOneHotEncoder(name, hashBucketSize, sizeScalingFactor)
 }
 
-private class HashOneHotEncoder(name: String, hashBucketSize: Int)
-  extends BaseHashHotEncoder[String](name, hashBucketSize) {
+private class HashOneHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
+  extends BaseHashHotEncoder[String](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: String): HLL = hllMonoid.toHLL(a)
 
   override def buildFeatures(a: Option[String], c: Int, fb: FeatureBuilder[_]): Unit = {
@@ -54,7 +78,9 @@ private class HashOneHotEncoder(name: String, hashBucketSize: Int)
   }
 }
 
-private abstract class BaseHashHotEncoder[A](name: String, hashBucketSize: Int)
+private abstract class BaseHashHotEncoder[A](name: String,
+                                             hashBucketSize: Int,
+                                             sizeScalingFactor: Double)
   extends Transformer[A, HLL, Int](name) {
 
   private val hllBits = 12
@@ -63,7 +89,12 @@ private abstract class BaseHashHotEncoder[A](name: String, hashBucketSize: Int)
   def prepare(a: A): HLL
 
   private def present(reduction: HLL): Int =
-    if (hashBucketSize == 0) reduction.estimatedSize.toInt else hashBucketSize
+    if (hashBucketSize == 0) {
+      ceil((reduction.estimatedSize.toInt * sizeScalingFactor)).toInt
+    } else {
+      hashBucketSize
+    }
+
 
   override val aggregator: Aggregator[A, HLL, Int] =
     if (hashBucketSize == 0) {
