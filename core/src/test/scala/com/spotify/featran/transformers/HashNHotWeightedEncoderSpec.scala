@@ -19,6 +19,7 @@ package com.spotify.featran.transformers
 
 import com.twitter.algebird.HyperLogLogMonoid
 import org.scalacheck.{Arbitrary, Gen, Prop}
+
 import scala.math.ceil
 
 object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEncoder") {

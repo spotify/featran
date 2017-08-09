@@ -31,28 +31,29 @@ object HashNHotWeightedEncoder {
    * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
    * [[NHotEncoder]].
    *
-    * If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor
-    * to reduce the number of collisions.
-    *
-    * Rough table of relationship of scaling factor to % collisions:
-    *
-    * sizeScalingFactor     % Collisions
-    * -----------------     ------------
-    * 2048                  0.02%
-    * 1024                  0.04%
-    * 512                   0.09%
-    * 256                   0.18%
-    * 128                   0.34%
-    * 64                    0.68%
-    * 32                    1%
-    * 16                    2%
-    * 8                     5%
-    * 4                     9%
-    * 2                     16%
-    * 1                     25%
-    *
-    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
-    * @param sizeScalingFactor when hashBucketSize is 0, scale HLL estimate by this amount
+   * If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor
+   * to reduce the number of collisions.
+   *
+   * Rough table of relationship of scaling factor to % collisions, measured
+   * from a corpus of 466544 English words:
+   *
+   * sizeScalingFactor     % Collisions
+   * -----------------     ------------
+   *                 2     17.9934%
+   *                 4     10.5686%
+   *                 8     5.7236%
+   *                16     3.0019%
+   *                32     1.5313%
+   *                64     0.7864%
+   *               128     0.3920%
+   *               256     0.1998%
+   *               512     0.0975%
+   *              1024     0.0478%
+   *              2048     0.0236%
+   *              4096     0.0071%
+   *
+   * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
+   * @param sizeScalingFactor when hashBucketSize is 0, scale HLL estimate by this amount
    */
   def apply(name: String,
             hashBucketSize: Int = 0,

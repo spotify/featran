@@ -19,6 +19,7 @@ package com.spotify.featran.transformers
 
 import com.twitter.algebird.HyperLogLogMonoid
 import org.scalacheck._
+
 import scala.math.ceil
 
 object HashOneHotEncoderSpec extends TransformerProp("HashOneHotEncoder") {
