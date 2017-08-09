@@ -27,17 +27,20 @@ import scala.collection.mutable.{Map => MMap}
  */
 case class WeightedLabel(name: String, value: Double)
 
+/**
+ * Transform a collection of weighted categorical features to columns of weight sums, with at most
+ * N values.
+ *
+ * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
+ * [[NHotEncoder]].
+ *
+ * Missing values are transformed to [0.0, 0.0, ...].
+ *
+ * When using aggregated feature summary from a previous session, unseen labels are ignored.
+ */
 object NHotWeightedEncoder {
   /**
-   * Transform a collection of weighted categorical features to columns of weight sums, with at
-   * most N values.
-   *
-   * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
-   * [[NHotEncoder]].
-   *
-   * Missing values are transformed to [0.0, 0.0, ...].
-   *
-   * When using aggregated feature summary from a previous session, unseen labels are ignored.
+   * Create a new [[NHotWeightedEncoder]] instance.
    */
   def apply(name: String)
   : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =

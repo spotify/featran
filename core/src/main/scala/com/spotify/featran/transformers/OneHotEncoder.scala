@@ -24,14 +24,17 @@ import com.twitter.algebird.Aggregator
 
 import scala.collection.SortedMap
 
+/**
+ * Transform a collection of categorical features to binary columns, with at most a single
+ * one-value.
+ *
+ * Missing values are transformed to [0.0, 0.0, ...].
+ *
+ * When using aggregated feature summary from a previous session, unseen labels are ignored.
+ */
 object OneHotEncoder {
   /**
-   * Transform a collection of categorical features to binary columns, with at most a single
-   * one-value.
-   *
-   * Missing values are transformed to [0.0, 0.0, ...].
-   *
-   * When using aggregated feature summary from a previous session, unseen labels are ignored.
+   * Create a new [[OneHotEncoder]] instance.
    */
   def apply(name: String): Transformer[String, Set[String], SortedMap[String, Int]] =
     new OneHotEncoder(name)

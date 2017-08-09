@@ -22,25 +22,27 @@ import java.util.{TreeMap => JTreeMap}
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
+/**
+ * Transform a column of continuous features to n columns of feature buckets.
+ *
+ * With n+1 splits, there are n buckets. A bucket defined by splits x,y holds values in the range
+ * [x,y) except the last bucket, which also includes y. Splits should be strictly increasing.
+ * Values at -inf, inf must be explicitly provided to cover all double values; Otherwise, values
+ * outside the splits specified will be treated as errors. Two examples of splits are
+ * `Array(Double.NegativeInfinity, 0.0, 1.0, Double.PositiveInfinity)` and `Array(0.0, 1.0, 2.0)`.
+ *
+ * Note that if you have no idea of the upper and lower bounds of the targeted column, you should
+ * add `Double.NegativeInfinity` and `Double.PositiveInfinity` as the bounds of your splits to
+ * prevent a potential out of bounds exception.
+ *
+ * Note also that the splits that you provided have to be in strictly increasing order, i.e.
+ * `s0 < s1 < s2 < ... < sn`.
+ *
+ * Missing values are transformed to zero vectors.
+ */
 object Bucketizer {
   /**
-   * Transform a column of continuous features to n columns of feature buckets.
-   *
-   * With n+1 splits, there are n buckets. A bucket defined by splits x,y holds values in the range
-   * [x,y) except the last bucket, which also includes y. Splits should be strictly increasing.
-   * Values at -inf, inf must be explicitly provided to cover all double values; Otherwise, values
-   * outside the splits specified will be treated as errors. Two examples of splits are
-   * `Array(Double.NegativeInfinity, 0.0, 1.0, Double.PositiveInfinity)` and `Array(0.0, 1.0, 2.0)`.
-   *
-   * Note that if you have no idea of the upper and lower bounds of the targeted column, you should
-   * add `Double.NegativeInfinity` and `Double.PositiveInfinity` as the bounds of your splits to
-   * prevent a potential out of bounds exception.
-   *
-   * Note also that the splits that you provided have to be in strictly increasing order, i.e.
-   * `s0 < s1 < s2 < ... < sn`.
-   *
-   * Missing values are transformed to zero vectors.
-   *
+   * Create a new [[Bucketizer]] instance.
    * @param splits parameter for mapping continuous features into buckets
    */
   def apply(name: String, splits: Array[Double]): Transformer[Double, Unit, Unit] =

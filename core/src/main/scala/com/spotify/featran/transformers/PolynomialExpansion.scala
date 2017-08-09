@@ -21,16 +21,18 @@ import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 import org.apache.commons.math3.util.CombinatoricsUtils
 
+/**
+ * Transform vector features by expanding them into a polynomial space, which is formulated by an
+ * n-degree combination of original dimensions.
+ *
+ * Missing values are transformed to zero vectors.
+ *
+ * When using aggregated feature summary from a previous session, vectors of different dimensions
+ * are transformed to zero vectors.
+ */
 object PolynomialExpansion {
   /**
-   * Transform vector features by expanding them into a polynomial space, which is formulated by an
-   * n-degree combination of original dimensions.
-   *
-   * Missing values are transformed to zero vectors.
-   *
-   * When using aggregated feature summary from a previous session, vectors of different dimensions
-   * are transformed to zero vectors.
-   *
+   * Create a new [[PolynomialExpansion]] instance.
    * @param degree the polynomial degree to expand, which should be greater than or equal to 1
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */

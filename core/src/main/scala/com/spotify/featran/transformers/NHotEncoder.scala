@@ -21,13 +21,16 @@ import com.spotify.featran.FeatureBuilder
 
 import scala.collection.SortedMap
 
+/**
+ * Transform a collection of categorical features to binary columns, with at most N one-values.
+ *
+ * Missing values are transformed to [0.0, 0.0, ...].
+ *
+ * When using aggregated feature summary from a previous session, unseen labels are ignored.
+ */
 object NHotEncoder {
   /**
-   * Transform a collection of categorical features to binary columns, with at most N one-values.
-   *
-   * Missing values are transformed to [0.0, 0.0, ...].
-   *
-   * When using aggregated feature summary from a previous session, unseen labels are ignored.
+   * Create a new [[NHotEncoder]] instance.
    */
   def apply(name: String): Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     new NHotEncoder(name)

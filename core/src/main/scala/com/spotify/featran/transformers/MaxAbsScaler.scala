@@ -20,15 +20,18 @@ package com.spotify.featran.transformers
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.{Aggregator, Max}
 
+/**
+ * Transform features by rescaling each feature to range [-1, 1] by dividing through the maximum
+ * absolute value in each feature.
+ *
+ * Missing values are transformed to 0.0.
+ *
+ * When using aggregated feature summary from a previous session, out of bound values are
+ * truncated to -1.0 or 1.0.
+ */
 object MaxAbsScaler {
   /**
-   * Transform features by rescaling each feature to range [-1, 1] by dividing through the maximum
-   * absolute value in each feature.
-   *
-   * Missing values are transformed to 0.0.
-   *
-   * When using aggregated feature summary from a previous session, out of bound values are
-   * truncated to -1.0 or 1.0.
+   * Create a new [[MaxAbsScaler]] instance.
    */
   def apply(name: String): Transformer[Double, Max[Double], Double] = new MaxAbsScaler(name)
 }

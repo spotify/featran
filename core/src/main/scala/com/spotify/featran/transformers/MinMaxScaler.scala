@@ -20,16 +20,18 @@ package com.spotify.featran.transformers
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.{Aggregator, Max, Min}
 
+/**
+ * Transform features by rescaling each feature to a specific range [`min`, `max`] (default
+ * [0, 1]).
+ *
+ * Missing values are transformed to `min`.
+ *
+ * When using aggregated feature summary from a previous session, out of bound values are
+ * truncated to `min` or `max`.
+ */
 object MinMaxScaler {
   /**
-   * Transform features by rescaling each feature to a specific range [`min`, `max`] (default
-   * [0, 1]).
-   *
-   * Missing values are transformed to `min`.
-   *
-   * When using aggregated feature summary from a previous session, out of bound values are
-   * truncated to `min` or `max`.
-   *
+   * Create a new [[MinMaxScaler]] instance.
    * @param min lower bound after transformation, shared by all features
    * @param max upper bound after transformation, shared by all features
    */

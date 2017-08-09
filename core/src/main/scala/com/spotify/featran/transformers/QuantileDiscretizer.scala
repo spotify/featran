@@ -24,16 +24,18 @@ import com.twitter.algebird.{Aggregator, QTree, QTreeAggregator, QTreeSemigroup}
 
 import scala.collection.JavaConverters._
 
+/**
+ * Transform a column of continuous features to n columns of binned categorical features. The
+ * number of bins is set by the `numBuckets` parameter.
+ *
+ * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
+ * of the approximation can be controlled with the `k` parameter.
+ *
+ * Missing values are transformed to zero vectors.
+ */
 object QuantileDiscretizer {
   /**
-   * Transform a column of continuous features to n columns of binned categorical features. The
-   * number of bins is set by the `numBuckets` parameter.
-   *
-   * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
-   * of the approximation can be controlled with the `k` parameter.
-   *
-   * Missing values are transformed to zero vectors.
-   *
+   * Create a new [[QuantileDiscretizer]] instance.
    * @param numBuckets number of buckets (quantiles, or categories) into which data points are
    *                   grouped, must be greater than or equal to 2
    * @param k precision of the underlying Algebird QTree approximation

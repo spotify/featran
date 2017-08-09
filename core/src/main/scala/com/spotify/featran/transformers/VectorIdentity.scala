@@ -22,14 +22,16 @@ import com.twitter.algebird.Aggregator
 
 import scala.language.higherKinds
 
+/**
+ * Takes fixed length vectors by passing them through.
+ *
+ * Similar to [[Identity]] but for a sequence of doubles.
+ *
+ * Missing values are transformed to zero vectors.
+ */
 object VectorIdentity {
   /**
-   * Takes fixed length vectors by passing them through.
-   *
-   * Similar to [[Identity]] but for a sequence of doubles.
-   *
-   * Missing values are transformed to zero vectors.
-   *
+   * Create a new [[VectorIdentity]] instance.
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
   def apply[M[_]](name: String, expectedLength: Int = 0)

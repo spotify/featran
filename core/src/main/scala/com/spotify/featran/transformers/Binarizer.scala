@@ -17,15 +17,17 @@
 
 package com.spotify.featran.transformers
 
+/**
+ * Transform numerical features to binary features.
+ *
+ * Feature values greater than `threshold` are binarized to 1.0; values equal to or less than
+ * `threshold` are binarized to 0.0.
+ *
+ * Missing values are binarized to 0.0.
+ */
 object Binarizer {
   /**
-   * Transform numerical features to binary features.
-   *
-   * Feature values greater than `threshold` are binarized to 1.0; values equal to or less than
-   * `threshold` are binarized to 0.0.
-   *
-   * Missing values are binarized to 0.0.
-   *
+   * Create a new [[Binarizer]] instance.
    * @param threshold threshold to binarize continuous features
    */
   def apply(name: String, threshold: Double = 0.0): Transformer[Double, Unit, Unit] =
