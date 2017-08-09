@@ -91,11 +91,10 @@ private abstract class BaseHashHotEncoder[A](name: String,
 
   private def present(reduction: HLL): Int =
     if (hashBucketSize == 0) {
-      ceil((reduction.estimatedSize.toInt * sizeScalingFactor)).toInt
+      ceil(reduction.estimatedSize.toInt * sizeScalingFactor).toInt
     } else {
       hashBucketSize
     }
-
 
   override val aggregator: Aggregator[A, HLL, Int] =
     if (hashBucketSize == 0) {
@@ -113,6 +112,9 @@ private abstract class BaseHashHotEncoder[A](name: String,
 
   override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)
   override def decodeAggregator(s: Option[String]): Option[Int] = s.map(_.toInt)
+  override def params: Map[String, String] = Map(
+    "hashBucketSize" -> hashBucketSize.toString,
+    "sizeScalingFactor" -> sizeScalingFactor.toString)
 }
 
 private object HashEncoder {
