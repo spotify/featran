@@ -101,7 +101,7 @@ private abstract class MapOne[A](name: String, val default: Double = 0.0)
   override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
 }
 
-object Aggregators {
+private object Aggregators {
   def unit[A]: Aggregator[A, Unit, Unit] = from[A](_ => ()).to(_ => ())
 
   def from[A]: From[A] = new From[A]
