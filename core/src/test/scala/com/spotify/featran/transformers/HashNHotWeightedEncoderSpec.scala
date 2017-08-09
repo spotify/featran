@@ -36,6 +36,12 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     xs.flatten.map(_.name).map(m.toHLL(_)).reduce(m.plus).estimatedSize.toInt
   }
 
+  override implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {
+    Gen
+      .listOfN(10, arb.arbitrary)
+      .suchThat(_.nonEmpty) // workaround for shrinking failure
+  }
+
   property("default") = Prop.forAll { xs: List[List[WeightedLabel]] =>
     val size = ceil(estimateSize(xs) * 8.0).toInt
     val cats = 0 until size
