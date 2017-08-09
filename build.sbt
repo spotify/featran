@@ -15,6 +15,9 @@
  * under the License.
  */
 
+import com.typesafe.sbt.SbtSite.SiteKeys._
+import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
+
 val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
 val circeVersion = "0.8.0"
@@ -34,7 +37,7 @@ val commonSettings = Seq(
   description := "Feature Transformers",
   scalaVersion := "2.11.11",
   scalacOptions ++= Seq("-target:jvm-1.7", "-deprecation", "-feature", "-unchecked"),
-  javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked"),
+  scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
 
   // Release settings
   releaseCrossBuild             := true,
@@ -78,8 +81,11 @@ val noPublishSettings = Seq(
 lazy val root: Project = Project(
   "root",
   file(".")
-).settings(
-  commonSettings ++ noPublishSettings
+).enablePlugins(GhpagesPlugin, ScalaUnidocPlugin).settings(
+  commonSettings ++ noPublishSettings,
+  siteSubdirName in ScalaUnidoc := "",
+  addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+  gitRemoteRepo := "git@github.com:spotify/featran.git"
 ).aggregate(
   core,
   flink,

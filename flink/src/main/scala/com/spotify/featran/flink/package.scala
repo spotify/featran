@@ -24,6 +24,9 @@ import scala.reflect.ClassTag
 
 package object flink {
 
+  /**
+   * [[CollectionType]] for extraction from Apache Flink `DataSet` type.
+   */
   implicit object FlinkCollectionType extends CollectionType[DataSet] {
     // force fallback to default serializer
     private val ti = TypeInformation.of(classOf[Any])

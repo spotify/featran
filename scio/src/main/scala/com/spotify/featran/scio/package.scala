@@ -23,6 +23,9 @@ import scala.reflect.ClassTag
 
 package object scio {
 
+  /**
+   * [[CollectionType]] for extraction from Scio `SCollection` type.
+   */
   implicit object ScioCollectionType extends CollectionType[SCollection] {
     override def map[A, B: ClassTag](ma: SCollection[A], f: (A) => B): SCollection[B] = ma.map(f)
     override def reduce[A](ma: SCollection[A], f: (A, A) => A): SCollection[A] = ma.reduce(f)

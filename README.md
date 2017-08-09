@@ -58,6 +58,8 @@ Featran also supports these additional features.
 - Import aggregation from a previous extraction for training, validation and test sets
 - Compose feature specifications and separate outputs
 
+See [ScalaDocs](https://spotify.github.io/featran) for current API documentation.
+
 # Artifacts
 
 Feature includes the following artifacts:

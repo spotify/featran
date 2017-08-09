@@ -34,6 +34,9 @@ object FeatureSpec {
    */
   def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty)
 
+  /**
+   * Combine multiple [[FeatureSpec]]s into a single spec.
+   */
   def combine[T](specs: FeatureSpec[T]*): FeatureSpec[T] = {
     require(specs.nonEmpty, "Empty specs")
     new FeatureSpec(specs.map(_.features).reduce(_ ++ _))

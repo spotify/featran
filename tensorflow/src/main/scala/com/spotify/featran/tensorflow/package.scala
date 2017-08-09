@@ -20,7 +20,10 @@ package com.spotify.featran
 import org.tensorflow.{example => tf}
 
 package object tensorflow {
-  implicit val tfExampleFB: FeatureBuilder[tf.Example] = new FeatureBuilder[tf.Example] {
+  /**
+   * [[FeatureBuilder]] for output as TensorFlow `Example` type.
+   */
+  implicit object TensorFlowFeatureBuilder extends FeatureBuilder[tf.Example] {
     @transient private lazy val fb = tf.Features.newBuilder()
     override def init(dimension: Int): Unit = fb.clear()
     override def add(name: String, value: Double): Unit =

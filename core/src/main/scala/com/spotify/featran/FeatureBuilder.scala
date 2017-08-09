@@ -25,6 +25,10 @@ import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
+/**
+ * Type class for types to build feature into.
+ * @tparam T output feature type
+ */
 trait FeatureBuilder[T] extends Serializable { self =>
   def init(dimension: Int): Unit
   def add(name: String, value: Double): Unit
@@ -33,10 +37,9 @@ trait FeatureBuilder[T] extends Serializable { self =>
 
   def add[M[_]](names: Iterator[String], values: M[Double])
                (implicit ev: M[Double] => Seq[Double]): Unit = {
-    var i = 0
-    while (i < values.length) {
-      add(names.next(), values(i))
-      i += 1
+    val i = values.iterator
+    while (names.hasNext && i.hasNext) {
+      add(names.next(), i.next())
     }
   }
 
