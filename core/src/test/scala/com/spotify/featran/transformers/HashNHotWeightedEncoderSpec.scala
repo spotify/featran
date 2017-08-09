@@ -18,9 +18,12 @@
 package com.spotify.featran.transformers
 
 import com.twitter.algebird.HyperLogLogMonoid
-import org.scalacheck.{Arbitrary, Gen, Prop}
+import org.scalacheck._
+
+import scala.math.ceil
 
 object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEncoder") {
+
   private implicit val weightedVectors = Arbitrary {
     val weightedValueGen = for {
       value <- Gen.chooseNum(-1.0, 1.0)
@@ -34,8 +37,14 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     xs.flatten.map(_.name).map(m.toHLL(_)).reduce(m.plus).estimatedSize.toInt
   }
 
+  override implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {
+    Gen
+      .listOfN(10, arb.arbitrary)
+      .suchThat(_.nonEmpty) // workaround for shrinking failure
+  }
+
   property("default") = Prop.forAll { xs: List[List[WeightedLabel]] =>
-    val size = estimateSize(xs)
+    val size = ceil(estimateSize(xs) * 8.0).toInt
     val cats = 0 until size
     val names = cats.map("n_hot_" + _)
     val expected = xs.map{ s =>
@@ -65,4 +74,23 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     val missing = cats.map(_ => 0.0)
     test[Seq[WeightedLabel]](HashNHotWeightedEncoder("n_hot", size), xs, names, expected, missing)
   }
+
+  property("scaling factor") = Prop.forAll { xs: List[List[WeightedLabel]] =>
+    val scalingFactor = 4.0
+    val size = ceil(estimateSize(xs) * scalingFactor).toInt
+    val cats = 0 until size
+    val names = cats.map("n_hot_" + _)
+    val expected = xs.map{ s =>
+      val hashes = s.map(x => (HashEncoder.bucket(x.name, size), x.value))
+        .groupBy(_._1).map(l => (l._1, l._2.map(_._2).sum))
+      cats.map(c => hashes.get(c) match {
+        case Some(v) => v
+        case None => 0.0
+      })
+    }
+    val missing = cats.map(_ => 0.0)
+    test[Seq[WeightedLabel]](HashNHotWeightedEncoder("n_hot", 0, scalingFactor),
+      xs, names, expected, missing)
+  }
+
 }

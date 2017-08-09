@@ -20,6 +20,8 @@ package com.spotify.featran.transformers
 import com.twitter.algebird.HyperLogLogMonoid
 import org.scalacheck._
 
+import scala.math.ceil
+
 object HashOneHotEncoderSpec extends TransformerProp("HashOneHotEncoder") {
 
   private implicit val labelArb = Arbitrary(Gen.alphaStr)
@@ -30,7 +32,7 @@ object HashOneHotEncoderSpec extends TransformerProp("HashOneHotEncoder") {
   }
 
   property("default") = Prop.forAll { xs: List[String] =>
-    val size = estimateSize(xs)
+    val size = ceil(estimateSize(xs) * 8.0).toInt
     val cats = 0 until size
     val names = cats.map("one_hot_" + _)
     val expected = xs.map(s => cats.map(c => if (HashEncoder.bucket(s, size) == c) 1.0 else 0.0))
@@ -45,6 +47,16 @@ object HashOneHotEncoderSpec extends TransformerProp("HashOneHotEncoder") {
     val expected = xs.map(s => cats.map(c => if (HashEncoder.bucket(s, size) == c) 1.0 else 0.0))
     val missing = cats.map(_ => 0.0)
     test(HashOneHotEncoder("one_hot", size), xs, names, expected, missing)
+  }
+
+  property("scaling factor") = Prop.forAll { xs: List[String] =>
+    val scalingFactor = 2.0
+    val size = ceil(estimateSize(xs) * scalingFactor).toInt
+    val cats = 0 until size
+    val names = cats.map("one_hot_" + _)
+    val expected = xs.map(s => cats.map(c => if (HashEncoder.bucket(s, size) == c) 1.0 else 0.0))
+    val missing = cats.map(_ => 0.0)
+    test(HashOneHotEncoder("one_hot", 0, scalingFactor), xs, names, expected, missing)
   }
 
 }
