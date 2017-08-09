@@ -49,7 +49,10 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform a column of continuous features that represent the mean of a von Mises distribution
+to n columns of continuous features. The number n represent the number of points to evaluate
+the von Mises distribution. The von Mises pdf is given by</p><p>f(x | mu, kappa, scale) = exp(kappa * cos(scale*(x-mu)) / (2*pi*Io(kappa))</p><p>and is only valid for x, mu in the interval [0, 2*pi/scale].
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -161,11 +164,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Transform a column of continuous features that represent the mean of a von Mises distribution
-to n columns of continuous features.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a column of continuous features that represent the mean of a von Mises distribution
-to n columns of continuous features. The number n represent the number of points to evaluate
-the von Mises distribution. The von Mises pdf is given by</p><p>f(x | mu, kappa, scale) = exp(kappa * cos(scale*(x-mu)) / (2*pi*Io(kappa))</p><p>and is only valid for x, mu in the interval [0, 2*pi/scale].
-</p></div><dl class="paramcmts block"><dt class="param">kappa</dt><dd class="cmt"><p>measure of concentration</p></dd><dt class="param">scale</dt><dd class="cmt"><p>scaling factor</p></dd><dt class="param">points</dt><dd class="cmt"><p>points to evaluate the distribution with</p></dd></dl></div>
+      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.VonMisesEvaluator">VonMisesEvaluator</a> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <a href="" class="extype" name="com.spotify.featran.transformers.VonMisesEvaluator">VonMisesEvaluator</a> instance.</p></div><dl class="paramcmts block"><dt class="param">kappa</dt><dd class="cmt"><p>measure of concentration</p></dd><dt class="param">scale</dt><dd class="cmt"><p>scaling factor</p></dd><dt class="param">points</dt><dd class="cmt"><p>points to evaluate the distribution with</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>

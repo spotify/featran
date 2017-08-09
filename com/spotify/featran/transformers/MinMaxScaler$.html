@@ -49,7 +49,10 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform features by rescaling each feature to a specific range [<code>min</code>, <code>max</code>] (default
+[0, 1]).</p><p>Missing values are transformed to <code>min</code>.</p><p>When using aggregated feature summary from a previous session, out of bound values are
+truncated to <code>min</code> or <code>max</code>.
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -161,11 +164,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Transform features by rescaling each feature to a specific range [<code>min</code>, <code>max</code>] (default
-[0, 1]).</p><div class="fullcomment"><div class="comment cmt"><p>Transform features by rescaling each feature to a specific range [<code>min</code>, <code>max</code>] (default
-[0, 1]).</p><p>Missing values are transformed to <code>min</code>.</p><p>When using aggregated feature summary from a previous session, out of bound values are
-truncated to <code>min</code> or <code>max</code>.
-</p></div><dl class="paramcmts block"><dt class="param">min</dt><dd class="cmt"><p>lower bound after transformation, shared by all features</p></dd><dt class="param">max</dt><dd class="cmt"><p>upper bound after transformation, shared by all features</p></dd></dl></div>
+      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.MinMaxScaler">MinMaxScaler</a> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <a href="" class="extype" name="com.spotify.featran.transformers.MinMaxScaler">MinMaxScaler</a> instance.</p></div><dl class="paramcmts block"><dt class="param">min</dt><dd class="cmt"><p>lower bound after transformation, shared by all features</p></dd><dt class="param">max</dt><dd class="cmt"><p>upper bound after transformation, shared by all features</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>

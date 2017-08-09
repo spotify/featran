@@ -49,7 +49,10 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform features by rescaling each feature to range [-1, 1] by dividing through the maximum
+absolute value in each feature.</p><p>Missing values are transformed to 0.0.</p><p>When using aggregated feature summary from a previous session, out of bound values are
+truncated to -1.0 or 1.0.
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -145,7 +148,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.spotify.featran.transformers.MaxAbsScaler#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.spotify.featran.transformers.MaxAbsScaler#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="apply(name:String):com.spotify.featran.transformers.Transformer[Double,com.twitter.algebird.Max[Double],Double]"></a>
       <a id="apply(String):Transformer[Double,Max[Double],Double]"></a>
       <h4 class="signature">
@@ -161,11 +164,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Transform features by rescaling each feature to range [-1, 1] by dividing through the maximum
-absolute value in each feature.</p><div class="fullcomment"><div class="comment cmt"><p>Transform features by rescaling each feature to range [-1, 1] by dividing through the maximum
-absolute value in each feature.</p><p>Missing values are transformed to 0.0.</p><p>When using aggregated feature summary from a previous session, out of bound values are
-truncated to -1.0 or 1.0.
-</p></div></div>
+      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.MaxAbsScaler">MaxAbsScaler</a> instance.</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>

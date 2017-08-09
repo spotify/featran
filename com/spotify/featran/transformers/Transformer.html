@@ -49,7 +49,8 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Base class for feature transformers.</p><p>Input values are converted into intermediate type <code>B</code>, aggregated, and converted to summary type
+<code>C</code>. The summary type <code>C</code> is then used to transform input values into features.</p></div><dl class="paramcmts block"><dt class="tparam">A</dt><dd class="cmt"><p>input type</p></dd><dt class="tparam">B</dt><dd class="cmt"><p>aggregator intermediate type</p></dd><dt class="tparam">C</dt><dd class="cmt"><p>aggregator summary type</p></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -88,7 +89,7 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="com.spotify.featran.transformers.Transformer#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.spotify.featran.transformers.Transformer#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="&lt;init&gt;(name:String):com.spotify.featran.transformers.Transformer[A,B,C]"></a>
       <a id="&lt;init&gt;:Transformer[A,B,C]"></a>
       <h4 class="signature">
@@ -104,7 +105,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">name</dt><dd class="cmt"><p>feature name</p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -128,8 +129,8 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.transformers.Transformer#buildFeatures" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Aggregator for computing input values into a summary.</p>
+    </li><li name="com.spotify.featran.transformers.Transformer#buildFeatures" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="buildFeatures(a:Option[A],c:C,fb:com.spotify.featran.FeatureBuilder[_]):Unit"></a>
       <a id="buildFeatures(Option[A],C,FeatureBuilder[_]):Unit"></a>
       <h4 class="signature">
@@ -145,7 +146,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Build features from a single input value and an aggregator summary.</p><div class="fullcomment"><div class="comment cmt"><p>Build features from a single input value and an aggregator summary.</p></div><dl class="paramcmts block"><dt class="param">a</dt><dd class="cmt"><p>input value</p></dd><dt class="param">c</dt><dd class="cmt"><p>aggregator summary</p></dd><dt class="param">fb</dt><dd class="cmt"><p>feature builder</p></dd></dl></div>
     </li><li name="com.spotify.featran.transformers.Transformer#decodeAggregator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="decodeAggregator(s:Option[String]):Option[C]"></a>
       <a id="decodeAggregator(Option[String]):Option[C]"></a>
@@ -162,7 +163,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Decode aggregator summary from a previous extraction.</p>
     </li><li name="com.spotify.featran.transformers.Transformer#encodeAggregator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="encodeAggregator(c:Option[C]):Option[String]"></a>
       <a id="encodeAggregator(Option[C]):Option[String]"></a>
@@ -179,7 +180,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Encode aggregator summary of the current extraction.</p>
     </li><li name="com.spotify.featran.transformers.Transformer#featureDimension" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="featureDimension(c:C):Int"></a>
       <a id="featureDimension(C):Int"></a>
@@ -196,7 +197,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Number of generated features given an aggregator summary.</p>
     </li><li name="com.spotify.featran.transformers.Transformer#featureNames" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="featureNames(c:C):Seq[String]"></a>
       <a id="featureNames(C):Seq[String]"></a>
@@ -213,7 +214,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Names of the generated features given an aggregator summary.</p>
     </li></ol>
             </div>
 
@@ -434,7 +435,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">feature name</p>
     </li><li name="com.spotify.featran.transformers.Transformer#nameAt" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="nameAt(n:Int):String"></a>
       <a id="nameAt(Int):String"></a>
@@ -587,8 +588,8 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.transformers.Transformer#settings" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Compile time parameters.</p>
+    </li><li name="com.spotify.featran.transformers.Transformer#settings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="settings(c:Option[C]):com.spotify.featran.transformers.Settings"></a>
       <a id="settings(Option[C]):Settings"></a>
       <h4 class="signature">
@@ -604,7 +605,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Settings including compile time parameters and runtime aggregator summary.</p><div class="fullcomment"><div class="comment cmt"><p>Settings including compile time parameters and runtime aggregator summary.</p></div><dl class="paramcmts block"><dt class="param">c</dt><dd class="cmt"><p>aggregator summary</p></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>

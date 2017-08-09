@@ -49,7 +49,15 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform a column of continuous features to n columns of feature buckets.</p><p>With n+1 splits, there are n buckets. A bucket defined by splits x,y holds values in the range
+[x,y) except the last bucket, which also includes y. Splits should be strictly increasing.
+Values at -inf, inf must be explicitly provided to cover all double values; Otherwise, values
+outside the splits specified will be treated as errors. Two examples of splits are
+<code>Array(Double.NegativeInfinity, 0.0, 1.0, Double.PositiveInfinity)</code> and <code>Array(0.0, 1.0, 2.0)</code>.</p><p>Note that if you have no idea of the upper and lower bounds of the targeted column, you should
+add <code>Double.NegativeInfinity</code> and <code>Double.PositiveInfinity</code> as the bounds of your splits to
+prevent a potential out of bounds exception.</p><p>Note also that the splits that you provided have to be in strictly increasing order, i.e.
+<code>s0 &lt; s1 &lt; s2 &lt; ... &lt; sn</code>.</p><p>Missing values are transformed to zero vectors.
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -161,15 +169,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Transform a column of continuous features to n columns of feature buckets.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a column of continuous features to n columns of feature buckets.</p><p>With n+1 splits, there are n buckets. A bucket defined by splits x,y holds values in the range
-[x,y) except the last bucket, which also includes y. Splits should be strictly increasing.
-Values at -inf, inf must be explicitly provided to cover all double values; Otherwise, values
-outside the splits specified will be treated as errors. Two examples of splits are
-<code>Array(Double.NegativeInfinity, 0.0, 1.0, Double.PositiveInfinity)</code> and <code>Array(0.0, 1.0, 2.0)</code>.</p><p>Note that if you have no idea of the upper and lower bounds of the targeted column, you should
-add <code>Double.NegativeInfinity</code> and <code>Double.PositiveInfinity</code> as the bounds of your splits to
-prevent a potential out of bounds exception.</p><p>Note also that the splits that you provided have to be in strictly increasing order, i.e.
-<code>s0 &lt; s1 &lt; s2 &lt; ... &lt; sn</code>.</p><p>Missing values are transformed to zero vectors.
-</p></div><dl class="paramcmts block"><dt class="param">splits</dt><dd class="cmt"><p>parameter for mapping continuous features into buckets</p></dd></dl></div>
+      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.Bucketizer">Bucketizer</a> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <a href="" class="extype" name="com.spotify.featran.transformers.Bucketizer">Bucketizer</a> instance.</p></div><dl class="paramcmts block"><dt class="param">splits</dt><dd class="cmt"><p>parameter for mapping continuous features into buckets</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>

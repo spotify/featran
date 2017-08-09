@@ -49,7 +49,10 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform features by normalizing each feature to have unit standard deviation and/or zero
+mean. When <code>withStd</code> is true, it scales the data to unit standard deviation. When <code>withMean</code> is
+true, it centers the data with mean before scaling.</p><p>Missing values are transformed to 0.0 if <code>withMean</code> is true or population mean otherwise.
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -161,11 +164,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Transform features by normalizing each feature to have unit standard deviation and/or zero
-mean.</p><div class="fullcomment"><div class="comment cmt"><p>Transform features by normalizing each feature to have unit standard deviation and/or zero
-mean. When <code>withStd</code> is true, it scales the data to unit standard deviation. When <code>withMean</code> is
-true, it centers the data with mean before scaling.</p><p>Missing values are transformed to 0.0 if <code>withMean</code> is true or population mean otherwise.
-</p></div><dl class="paramcmts block"><dt class="param">withStd</dt><dd class="cmt"><p>whether to scale the data to unit standard deviation</p></dd><dt class="param">withMean</dt><dd class="cmt"><p>whether to center the data with mean before scaling</p></dd></dl></div>
+      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.StandardScaler">StandardScaler</a> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <a href="" class="extype" name="com.spotify.featran.transformers.StandardScaler">StandardScaler</a> instance.</p></div><dl class="paramcmts block"><dt class="param">withStd</dt><dd class="cmt"><p>whether to scale the data to unit standard deviation</p></dd><dt class="param">withMean</dt><dd class="cmt"><p>whether to center the data with mean before scaling</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
