@@ -26,9 +26,9 @@ object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
 
   private implicit val labelArb = Arbitrary(Gen.alphaStr)
 
-  private def estimateSize(xs: List[List[String]]): Int = {
+  private def estimateSize(xs: List[List[String]]): Double = {
     val m = new HyperLogLogMonoid(12)
-    xs.flatten.map(m.toHLL(_)).reduce(m.plus).estimatedSize.toInt
+    xs.flatten.map(m.toHLL(_)).reduce(m.plus).estimatedSize
   }
 
   override implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {

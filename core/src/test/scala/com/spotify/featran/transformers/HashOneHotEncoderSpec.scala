@@ -26,9 +26,9 @@ object HashOneHotEncoderSpec extends TransformerProp("HashOneHotEncoder") {
 
   private implicit val labelArb = Arbitrary(Gen.alphaStr)
 
-  private def estimateSize(xs: List[String]): Int = {
+  private def estimateSize(xs: List[String]): Double = {
     val m = new HyperLogLogMonoid(12)
-    xs.map(m.toHLL(_)).reduce(m.plus).estimatedSize.toInt
+    xs.map(m.toHLL(_)).reduce(m.plus).estimatedSize
   }
 
   property("default") = Prop.forAll { xs: List[String] =>

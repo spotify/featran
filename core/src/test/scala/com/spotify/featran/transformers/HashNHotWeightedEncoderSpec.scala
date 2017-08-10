@@ -32,9 +32,9 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     Gen.choose(1, 5).flatMap(Gen.listOfN(_, weightedValueGen))
   }
 
-  private def estimateSize(xs: List[List[WeightedLabel]]): Int = {
+  private def estimateSize(xs: List[List[WeightedLabel]]): Double = {
     val m = new HyperLogLogMonoid(12)
-    xs.flatten.map(_.name).map(m.toHLL(_)).reduce(m.plus).estimatedSize.toInt
+    xs.flatten.map(_.name).map(m.toHLL(_)).reduce(m.plus).estimatedSize
   }
 
   override implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {

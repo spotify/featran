@@ -95,7 +95,7 @@ private abstract class BaseHashHotEncoder[A](name: String,
 
   override val aggregator: Aggregator[A, HLL, Int] =
     if (hashBucketSize == 0) {
-      Aggregators.from[A](prepare).to(r => ceil(r.estimatedSize.toInt * sizeScalingFactor).toInt)
+      Aggregators.from[A](prepare).to(r => ceil(r.estimatedSize * sizeScalingFactor).toInt)
     } else {
       // dummy aggregator
       new Aggregator[A, HLL, Int] {
