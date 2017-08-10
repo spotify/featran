@@ -131,7 +131,10 @@ object FeatureBuilder {
     }
     override def skip(): Unit = offset += 1
     override def skip(n: Int): Unit = offset += n
-    override def result: SparseVector[T] = SparseVector(dim)(queue: _*)
+    override def result: SparseVector[T] = {
+      require(offset == dim)
+      SparseVector(dim)(queue: _*)
+    }
   }
 
   implicit def mapFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Map[String, T]] =
