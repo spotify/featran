@@ -97,7 +97,7 @@
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="com.spotify.featran.FeatureBuilder#add" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="com.spotify.featran.FeatureBuilder#add" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="add(name:String,value:Double):Unit"></a>
       <a id="add(String,Double):Unit"></a>
       <h4 class="signature">
@@ -113,8 +113,10 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.FeatureBuilder#init" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Add a single feature value.</p><div class="fullcomment"><div class="comment cmt"><p>Add a single feature value. The total number of values added and skipped should equal to
+dimension in <a href="#init(dimension:Int):Unit" class="extmbr" name="com.spotify.featran.FeatureBuilder#init">init</a>.
+</p></div></div>
+    </li><li name="com.spotify.featran.FeatureBuilder#init" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="init(dimension:Int):Unit"></a>
       <a id="init(Int):Unit"></a>
       <h4 class="signature">
@@ -130,8 +132,8 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.FeatureBuilder#result" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Initialize the builder for a record.</p><div class="fullcomment"><div class="comment cmt"><p>Initialize the builder for a record. This should be called only once per input row.</p></div><dl class="paramcmts block"><dt class="param">dimension</dt><dd class="cmt"><p>total feature dimension</p></dd></dl></div>
+    </li><li name="com.spotify.featran.FeatureBuilder#result" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="result:T"></a>
       <a id="result:T"></a>
       <h4 class="signature">
@@ -147,8 +149,9 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
-    </li><li name="com.spotify.featran.FeatureBuilder#skip" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <p class="shortcomment cmt">Gather builder result for a result.</p><div class="fullcomment"><div class="comment cmt"><p>Gather builder result for a result. This should be called only once per input row.
+</p></div></div>
+    </li><li name="com.spotify.featran.FeatureBuilder#skip" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="skip():Unit"></a>
       <a id="skip():Unit"></a>
       <h4 class="signature">
@@ -164,7 +167,9 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Skip a single feature value.</p><div class="fullcomment"><div class="comment cmt"><p>Skip a single feature value. The total number of values added and skipped should equal to
+dimension in <a href="#init(dimension:Int):Unit" class="extmbr" name="com.spotify.featran.FeatureBuilder#init">init</a>.
+</p></div></div>
     </li></ol>
             </div>
 
@@ -221,7 +226,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.spotify.featran.FeatureBuilder#add" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.spotify.featran.FeatureBuilder#add" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="add[M[_]](names:Iterator[String],values:M[Double])(implicitev:M[Double]=&gt;Seq[Double]):Unit"></a>
       <a id="add[M[_]](Iterator[String],M[Double])((M[Double])⇒Seq[Double]):Unit"></a>
       <h4 class="signature">
@@ -237,7 +242,9 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Add multiple feature values.</p><div class="fullcomment"><div class="comment cmt"><p>Add multiple feature values. The total number of values added and skipped should equal to
+dimension in <a href="#init(dimension:Int):Unit" class="extmbr" name="com.spotify.featran.FeatureBuilder#init">init</a>.
+</p></div></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -402,7 +409,7 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Create a <a href="" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a> for type <code>U</code> by converting the result type <code>T</code> with <code>f</code>.</p>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -454,7 +461,7 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="com.spotify.featran.FeatureBuilder#skip" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.spotify.featran.FeatureBuilder#skip" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="skip(n:Int):Unit"></a>
       <a id="skip(Int):Unit"></a>
       <h4 class="signature">
@@ -470,7 +477,9 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      
+      <p class="shortcomment cmt">Skip multiple feature values.</p><div class="fullcomment"><div class="comment cmt"><p>Skip multiple feature values. The total number of values added and skipped should equal to
+dimension in <a href="#init(dimension:Int):Unit" class="extmbr" name="com.spotify.featran.FeatureBuilder#init">init</a>.
+</p></div></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
