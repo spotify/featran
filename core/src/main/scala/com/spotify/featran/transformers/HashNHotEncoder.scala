@@ -69,7 +69,6 @@ private class HashNHotEncoder(name: String, hashBucketSize: Int, sizeScalingFact
   override def prepare(a: Seq[String]): HLL = a.map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)
 
   override def buildFeatures(a: Option[Seq[String]], c: Int, fb: FeatureBuilder[_]): Unit = {
-    fb.init(c)
     a match {
       case Some(xs) =>
         var prev = -1
