@@ -74,7 +74,6 @@ private class HashNHotWeightedEncoder(name: String, hashBucketSize: Int, sizeSca
   override def buildFeatures(a: Option[Seq[WeightedLabel]],
                              c: Int,
                              fb: FeatureBuilder[_]): Unit = {
-    fb.init(c)
     a match {
       case Some(xs) =>
         val weights = new java.util.TreeMap[Int,Double]().asScala.withDefaultValue(0.0)

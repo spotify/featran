@@ -70,7 +70,6 @@ private class HashOneHotEncoder(name: String, hashBucketSize: Int, sizeScalingFa
   override def prepare(a: String): HLL = hllMonoid.toHLL(a)
 
   override def buildFeatures(a: Option[String], c: Int, fb: FeatureBuilder[_]): Unit = {
-    fb.init(c)
     a match {
       case Some(x) =>
         val i = HashEncoder.bucket(x, c)
