@@ -30,11 +30,34 @@ import scala.reflect.ClassTag
  * @tparam T output feature type
  */
 trait FeatureBuilder[T] extends Serializable { self =>
+
+  /**
+   * Initialize the builder for a record. This should be called only once per input row.
+   * @param dimension total feature dimension
+   */
   def init(dimension: Int): Unit
-  def add(name: String, value: Double): Unit
-  def skip(): Unit
+
+  /**
+   * Gather builder result for a result. This should be called only once per input row.
+   */
   def result: T
 
+  /**
+   * Add a single feature value. The total number of values added and skipped should equal to
+   * dimension in [[init]].
+   */
+  def add(name: String, value: Double): Unit
+
+  /**
+   * Skip a single feature value. The total number of values added and skipped should equal to
+   * dimension in [[init]].
+   */
+  def skip(): Unit
+
+  /**
+   * Add multiple feature values. The total number of values added and skipped should equal to
+   * dimension in [[init]].
+   */
   def add[M[_]](names: Iterator[String], values: M[Double])
                (implicit ev: M[Double] => Seq[Double]): Unit = {
     val i = values.iterator
@@ -43,6 +66,10 @@ trait FeatureBuilder[T] extends Serializable { self =>
     }
   }
 
+  /**
+   * Skip multiple feature values. The total number of values added and skipped should equal to
+   * dimension in [[init]].
+   */
   def skip(n: Int): Unit = {
     var i = 0
     while (i < n) {
@@ -51,6 +78,9 @@ trait FeatureBuilder[T] extends Serializable { self =>
     }
   }
 
+  /**
+   * Create a [[FeatureBuilder]] for type `U` by converting the result type `T` with `f`.
+   */
   def map[U](f: T => U): FeatureBuilder[U] = new FeatureBuilder[U] {
     private val delegate = self
     private val g = f
@@ -59,6 +89,7 @@ trait FeatureBuilder[T] extends Serializable { self =>
     override def skip(): Unit = delegate.skip()
     override def result: U = g(delegate.result)
   }
+
 }
 
 object FeatureBuilder {
