@@ -70,7 +70,7 @@ private class Bucketizer(name: String, splits: Array[Double])
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
       if (x < lower || x > upper) {
-        (0 until splits.length - 1).foreach(_ => fb.skip())
+        fb.skip(splits.length - 1)
       } else {
         val e = map.higherEntry(x)
         val offset = if (e != null) e.getValue else splits.length - 2
