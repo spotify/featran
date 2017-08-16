@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.util.{TreeMap => JTreeMap}
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 
 /**
@@ -27,13 +27,14 @@ import com.twitter.algebird.Aggregator
  *
  * With n+1 splits, there are n buckets. A bucket defined by splits x,y holds values in the range
  * [x,y) except the last bucket, which also includes y. Splits should be strictly increasing.
- * Values at -inf, inf must be explicitly provided to cover all double values; Otherwise, values
- * outside the splits specified will be treated as errors. Two examples of splits are
+ * Values at -inf, inf must be explicitly provided to cover all double values; Otherwise,
+ * [[FeatureRejection.OutOfBound]] rejection will be reported for values outside the splits
+ * specified.. Two examples of splits are
  * `Array(Double.NegativeInfinity, 0.0, 1.0, Double.PositiveInfinity)` and `Array(0.0, 1.0, 2.0)`.
  *
  * Note that if you have no idea of the upper and lower bounds of the targeted column, you should
  * add `Double.NegativeInfinity` and `Double.PositiveInfinity` as the bounds of your splits to
- * prevent a potential out of bounds exception.
+ * prevent a potential [[FeatureRejection.OutOfBound]] rejection.
  *
  * Note also that the splits that you provided have to be in strictly increasing order, i.e.
  * `s0 < s1 < s2 < ... < sn`.
@@ -71,6 +72,7 @@ private class Bucketizer(name: String, splits: Array[Double])
     case Some(x) =>
       if (x < lower || x > upper) {
         fb.skip(splits.length - 1)
+        fb.reject(this, FeatureRejection.OutOfBound(lower, upper, x))
       } else {
         val e = map.higherEntry(x)
         val offset = if (e != null) e.getValue else splits.length - 2

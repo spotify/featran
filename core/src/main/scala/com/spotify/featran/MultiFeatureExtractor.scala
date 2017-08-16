@@ -60,17 +60,19 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValues[F: FeatureBuilder : ClassTag]: M[Seq[F]] =
-    featureValuesWithOriginal.map(_._1)
+  def featureValues[F: FeatureBuilder : ClassTag]: M[Seq[F]] = featureResults.map(_._1)
 
   /**
-   * Values of the extracted features, in the same order as names in [[featureNames]] with the
-   * original input record.
+   * Values of the extracted features, in the same order as names in [[featureNames]] with
+   * rejections keyed on feature name and the original input record.
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValuesWithOriginal[F: FeatureBuilder : ClassTag]: M[(Seq[F], T)] = {
+  def featureResults[F: FeatureBuilder : ClassTag]
+  : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] = {
     val fb = implicitly[FeatureBuilder[F]]
+
+    // each underlying FeatureSpec should get a unique copy of FeatureBuilder
     val buffer = new ByteArrayOutputStream()
     val out = new ObjectOutputStream(buffer)
     out.writeObject(fb)
@@ -81,7 +83,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
     }
     extractor.as.cross(extractor.aggregate).map { case ((o, a), c) =>
       fs.multiFeatureValues(a, c, fbs, mapping)
-      (fbs.map(_.result).toSeq, o)
+      (fbs.map(_.result).toSeq, fbs.map(_.rejections), o)
     }
   }
 

@@ -20,16 +20,38 @@ package com.spotify.featran
 import breeze.linalg.{DenseVector, SparseVector}
 import breeze.math.Semiring
 import breeze.storage.Zero
+import com.spotify.featran.transformers.Transformer
 
 import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
+
+sealed trait FeatureRejection
+object FeatureRejection {
+  case class OutOfBound(lower: Double, upper: Double, actual: Double) extends FeatureRejection
+  case class Unseen(labels: Set[String]) extends FeatureRejection
+  case class WrongDimension(expected: Int, actual: Int) extends FeatureRejection
+}
 
 /**
  * Type class for types to build feature into.
  * @tparam T output feature type
  */
 trait FeatureBuilder[T] extends Serializable { self =>
+
+  private val _rejections: mutable.Map[String, FeatureRejection] = mutable.Map.empty
+
+  def reject(transformer: Transformer[_, _, _], reason: FeatureRejection): Unit = {
+    val name = transformer.name
+    require(!rejections.contains(name), s"Transformer $name already rejected")
+    _rejections(name) = reason
+  }
+
+  def rejections: Map[String, FeatureRejection] = {
+    val r = _rejections.toMap
+    _rejections.clear()
+    r
+  }
 
   /**
    * Initialize the builder for a record. This should be called only once per input row.

@@ -80,20 +80,19 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValues[F: FeatureBuilder : ClassTag]: M[F] =
-    featureValuesWithOriginal.map(_._1)
+  def featureValues[F: FeatureBuilder : ClassTag]: M[F] = featureResults.map(_._1)
 
   /**
-   * Values of the extracted features, in the same order as names in [[featureNames]] with the
-   * original input record.
+   * Values of the extracted features, in the same order as names in [[featureNames]] with
+   * rejections keyed on feature name and the original input record.
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValuesWithOriginal[F: FeatureBuilder : ClassTag]: M[(F, T)] = {
+  def featureResults[F: FeatureBuilder : ClassTag]: M[(F, Map[String, FeatureRejection], T)] = {
     val fb = implicitly[FeatureBuilder[F]]
     as.cross(aggregate).map { case ((o, a), c) =>
       fs.featureValues(a, c, fb)
-      (fb.result, o)
+      (fb.result, fb.rejections, o)
     }
   }
 
