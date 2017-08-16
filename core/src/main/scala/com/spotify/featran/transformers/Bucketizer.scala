@@ -74,9 +74,9 @@ private class Bucketizer(name: String, splits: Array[Double])
       } else {
         val e = map.higherEntry(x)
         val offset = if (e != null) e.getValue else splits.length - 2
-        (0 until splits.length - 1).foreach { i =>
-          if (i == offset) fb.add(nameAt(i), 1.0) else fb.skip()
-        }
+        fb.skip(offset)
+        fb.add(nameAt(offset), 1.0)
+        fb.skip(splits.length - 2 - offset)
       }
     case None => fb.skip(splits.length - 1)
   }

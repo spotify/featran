@@ -95,7 +95,7 @@ private class PolynomialExpansion(name: String, val degree: Int, val expectedLen
         fb.skip(featureDimension(c))
       } else {
         val data = PolynomialExpansion.expand(x, degree)
-        data.indices.foreach(i => fb.add(nameAt(i), data(i)))
+        fb.add(names(featureDimension(c)), data)
       }
     case None => fb.skip(featureDimension(c))
   }

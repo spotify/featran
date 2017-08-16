@@ -70,7 +70,9 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
     case Some(x) =>
       val e = c.higherEntry(x)
       val offset = if (e == null) numBuckets - 1 else e.getValue
-      (0 until numBuckets).foreach(i => if (i == offset) fb.add(nameAt(i), 1.0) else fb.skip())
+      fb.skip(offset)
+      fb.add(nameAt(offset), 1.0)
+      fb.skip(numBuckets - 1 - offset)
     case None => fb.skip(numBuckets)
   }
 

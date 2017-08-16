@@ -65,10 +65,8 @@ private class VonMisesEvaluator(name: String,
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(mu) =>
       require(mu >= 0 && mu <= upperBound, s"mu $mu not in the range [0, $upperBound]")
-      points.indices.foreach { i =>
-        val v = VonMisesEvaluator.getProbability(points(i), mu, kappa, scale)
-        fb.add(nameAt(i), v)
-      }
+      val probs = points.map(VonMisesEvaluator.getProbability(_, mu, kappa, scale))
+      fb.add(names(points.length), probs)
     case None => fb.skip(points.length)
   }
 
