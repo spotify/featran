@@ -18,7 +18,7 @@
 package com.spotify.featran.transformers
 
 import breeze.linalg._
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 
 /**
@@ -28,7 +28,7 @@ import com.twitter.algebird.Aggregator
  * Missing values are transformed to zero vectors.
  *
  * When using aggregated feature summary from a previous session, vectors of different dimensions
- * are transformed to zero vectors.
+ * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
 object Normalizer {
   /**
@@ -52,6 +52,7 @@ private class Normalizer(name: String, val p: Double, val expectedLength: Int)
     case Some(x) =>
       if (x.length != c) {
         fb.skip(c)
+        fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
       } else {
         val dv = DenseVector(x)
         fb.add(names(c), (dv / norm(dv, p)).data)

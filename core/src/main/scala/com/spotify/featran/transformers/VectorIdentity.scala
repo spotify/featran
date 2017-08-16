@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 
 import scala.language.higherKinds
@@ -28,6 +28,9 @@ import scala.language.higherKinds
  * Similar to [[Identity]] but for a sequence of doubles.
  *
  * Missing values are transformed to zero vectors.
+ *
+ * When using aggregated feature summary from a previous session, vectors of different dimensions
+ * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
 object VectorIdentity {
   /**
@@ -49,6 +52,7 @@ private class VectorIdentity[M[_]](name: String, expectedLength: Int)
     case Some(x) =>
       if (x.length != c) {
         fb.skip(c)
+        fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
       } else {
         fb.add(names(c), x)
       }

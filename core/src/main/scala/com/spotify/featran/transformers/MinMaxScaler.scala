@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.{Aggregator, Max, Min}
 
 /**
@@ -27,7 +27,7 @@ import com.twitter.algebird.{Aggregator, Max, Min}
  * Missing values are transformed to `min`.
  *
  * When using aggregated feature summary from a previous session, out of bound values are
- * truncated to `min` or `max`.
+ * truncated to `min` or `max` and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
 object MinMaxScaler {
   /**
@@ -61,6 +61,9 @@ private class MinMaxScaler(name: String, val min: Double, val max: Double)
       val (aMin, aMax, f) = c
       val truncated = math.max(math.min(x / f, aMax), aMin)
       fb.add(name, (truncated - aMin) / (aMax - aMin) * (max - min) + min)
+      if (x < aMin || x > aMax) {
+        fb.reject(this, FeatureRejection.OutOfBound(aMin, aMax, x))
+      }
     case None => fb.add(name, min)
   }
 

@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 
 import scala.collection.SortedMap
 import scala.collection.mutable.{Map => MMap}
@@ -36,7 +36,8 @@ case class WeightedLabel(name: String, value: Double)
  *
  * Missing values are transformed to [0.0, 0.0, ...].
  *
- * When using aggregated feature summary from a previous session, unseen labels are ignored.
+ * When using aggregated feature summary from a previous session, unseen labels are ignored and
+ * [[FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotWeightedEncoder {
   /**
@@ -70,6 +71,10 @@ private class NHotWeightedEncoder(name: String) extends BaseHotEncoder[Seq[Weigh
         }
         val gap = c.size - prev - 1
         if (gap > 0) fb.skip(gap)
+      }
+      val unseen = weights.keySet -- c.keySet
+      if (unseen.nonEmpty) {
+        fb.reject(this, FeatureRejection.Unseen(unseen.toSet))
       }
     case None => fb.skip(c.size)
   }

@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 
 import scala.collection.SortedMap
 
@@ -26,7 +26,8 @@ import scala.collection.SortedMap
  *
  * Missing values are transformed to [0.0, 0.0, ...].
  *
- * When using aggregated feature summary from a previous session, unseen labels are ignored.
+ * When using aggregated feature summary from a previous session, unseen labels are ignored and
+ * [[FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotEncoder {
   /**
@@ -58,6 +59,10 @@ private class NHotEncoder(name: String) extends BaseHotEncoder[Seq[String]](name
         }
         val gap = c.size - prev - 1
         if (gap > 0) fb.skip(gap)
+      }
+      val unseen = keys -- c.keySet
+      if (unseen.nonEmpty) {
+        fb.reject(this, FeatureRejection.Unseen(unseen))
       }
     case None => fb.skip(c.size)
   }

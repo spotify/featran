@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 
 import scala.collection.SortedMap
@@ -30,7 +30,8 @@ import scala.collection.SortedMap
  *
  * Missing values are transformed to [0.0, 0.0, ...].
  *
- * When using aggregated feature summary from a previous session, unseen labels are ignored.
+ * When using aggregated feature summary from a previous session, unseen labels are ignored and
+ * [[FeatureRejection.Unseen]] rejections are reported.
  */
 object OneHotEncoder {
   /**
@@ -45,14 +46,17 @@ private class OneHotEncoder(name: String) extends BaseHotEncoder[String](name) {
   override def buildFeatures(a: Option[String],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = {
-    val kv = for (k <- a; v <- c.get(k)) yield (k, v)
-    kv match {
-      case Some((k, v)) =>
-        fb.skip(v)
-        fb.add(name + '_' + k, 1.0)
-        fb.skip(math.max(0, c.size - v - 1))
-      case None =>
-        fb.skip(c.size)
+    a match {
+      case Some(k) => c.get(k) match {
+        case Some(v) =>
+          fb.skip(v)
+          fb.add(name + '_' + k, 1.0)
+          fb.skip(math.max(0, c.size - v - 1))
+        case None =>
+          fb.skip(c.size)
+          fb.reject(this, FeatureRejection.Unseen(Set(k)))
+      }
+      case None => fb.skip(c.size)
     }
   }
 }

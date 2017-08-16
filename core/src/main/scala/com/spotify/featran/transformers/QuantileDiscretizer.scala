@@ -19,8 +19,8 @@ package com.spotify.featran.transformers
 
 import java.util.{TreeMap => JTreeMap}
 
-import com.spotify.featran.FeatureBuilder
-import com.twitter.algebird.{Aggregator, QTree, QTreeAggregator, QTreeSemigroup}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.twitter.algebird._
 
 import scala.collection.JavaConverters._
 
@@ -32,6 +32,10 @@ import scala.collection.JavaConverters._
  * of the approximation can be controlled with the `k` parameter.
  *
  * Missing values are transformed to zero vectors.
+ *
+ * When using aggregated feature summary from a previous session, values outside of previously seen
+ * `[min, max]` are binned into the first or last bucket and [[FeatureRejection.OutOfBound]]
+ * rejections are reported.
  */
 object QuantileDiscretizer {
   /**
@@ -41,16 +45,22 @@ object QuantileDiscretizer {
    * @param k precision of the underlying Algebird QTree approximation
    */
   def apply(name: String, numBuckets: Int = 2, k: Int = QTreeAggregator.DefaultK)
-  : Transformer[Double, QTree[Double], JTreeMap[Double, Int]] =
+  : Transformer[Double, B, C] =
     new QuantileDiscretizer(name, numBuckets, k)
+
+  private type B = (QTree[Double], Min[Double], Max[Double])
+  private type C = (JTreeMap[Double, Int], Double, Double)
 }
 
 private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
-  extends Transformer[Double, QTree[Double], JTreeMap[Double, Int]](name) {
+  extends Transformer[Double, QuantileDiscretizer.B, QuantileDiscretizer.C](name) {
   require(numBuckets >= 2, "numBuckets must be >= 2")
+
+  import QuantileDiscretizer.{B, C}
   implicit val sg = new QTreeSemigroup[Double](k)
-  override val aggregator: Aggregator[Double, QTree[Double], JTreeMap[Double, Int]] =
-    Aggregators.from[Double](QTree(_)).to { qt =>
+
+  override val aggregator: Aggregator[Double, B, C] =
+    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to { case (qt, min, max) =>
       val m = new JTreeMap[Double, Int]()  // upper bound -> offset
       val interval = 1.0 / numBuckets
       for (i <- 1 until numBuckets) {
@@ -61,31 +71,39 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
         }
       }
       m.put(qt.upperBound, numBuckets - 1)
-      m
+      (m, min.get, max.get)
     }
-  override def featureDimension(c: JTreeMap[Double, Int]): Int = numBuckets
-  override def featureNames(c: JTreeMap[Double, Int]): Seq[String] = names(numBuckets).toSeq
-  override def buildFeatures(a: Option[Double], c: JTreeMap[Double, Int],
+  override def featureDimension(c: C): Int = numBuckets
+  override def featureNames(c: C): Seq[String] = names(numBuckets).toSeq
+  override def buildFeatures(a: Option[Double], c: C,
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
-      val e = c.higherEntry(x)
+      val (m, min, max) = c
+      val e = m.higherEntry(x)
       val offset = if (e == null) numBuckets - 1 else e.getValue
       fb.skip(offset)
       fb.add(nameAt(offset), 1.0)
       fb.skip(numBuckets - 1 - offset)
+      if (x < min || x > max) {
+        fb.reject(this, FeatureRejection.OutOfBound(min, max, x))
+      }
     case None => fb.skip(numBuckets)
   }
 
-  override def encodeAggregator(c: Option[JTreeMap[Double, Int]]): Option[String] =
-    c.map(_.asScala.map(kv => s"${kv._1}:${kv._2}").mkString(","))
-  override def decodeAggregator(s: Option[String]): Option[JTreeMap[Double, Int]] =
+  override def encodeAggregator(c: Option[C]): Option[String] =
+    c.map { case (m, min, max) =>
+      s"$min,$max," + m.asScala.map(kv => s"${kv._1}:${kv._2}").mkString(",")
+    }
+  override def decodeAggregator(s: Option[String]): Option[C] =
     s.map { x =>
+      val a = x.split(",")
+      val (min, max) = (a(0).toDouble, a(1).toDouble)
       val m = new JTreeMap[Double, Int]()
-      x.split(",").foreach { p =>
-        val t = p.split(":")
+      (2 until a.length).foreach { i =>
+        val t = a(i).split(":")
         m.put(t(0).toDouble, t(1).toInt)
       }
-      m
+      (m, min, max)
     }
   override def params: Map[String, String] =
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)

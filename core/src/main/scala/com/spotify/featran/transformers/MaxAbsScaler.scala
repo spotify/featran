@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.{Aggregator, Max}
 
 /**
@@ -27,7 +27,7 @@ import com.twitter.algebird.{Aggregator, Max}
  * Missing values are transformed to 0.0.
  *
  * When using aggregated feature summary from a previous session, out of bound values are
- * truncated to -1.0 or 1.0.
+ * truncated to -1.0 or 1.0 and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
 object MaxAbsScaler {
   /**
@@ -44,6 +44,9 @@ private class MaxAbsScaler(name: String) extends OneDimensional[Double, Max[Doub
       // truncate x to [-max, max]
       val truncated = math.min(math.abs(x), c) * math.signum(x)
       fb.add(name, truncated / c)
+      if (math.abs(x) > c) {
+        fb.reject(this, FeatureRejection.OutOfBound(-c, c, x))
+      }
     case None => fb.skip()
   }
   override def encodeAggregator(c: Option[Double]): Option[String] = c.map(_.toString)

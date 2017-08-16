@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 import org.apache.commons.math3.util.CombinatoricsUtils
 
@@ -28,7 +28,7 @@ import org.apache.commons.math3.util.CombinatoricsUtils
  * Missing values are transformed to zero vectors.
  *
  * When using aggregated feature summary from a previous session, vectors of different dimensions
- * are transformed to zero vectors.
+ * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
 object PolynomialExpansion {
   /**
@@ -93,6 +93,7 @@ private class PolynomialExpansion(name: String, val degree: Int, val expectedLen
     case Some(x) =>
       if (x.length != c) {
         fb.skip(featureDimension(c))
+        fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
       } else {
         val data = PolynomialExpansion.expand(x, degree)
         fb.add(names(featureDimension(c)), data)
