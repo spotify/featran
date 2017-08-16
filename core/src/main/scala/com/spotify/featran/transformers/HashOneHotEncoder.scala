@@ -86,6 +86,8 @@ private abstract class BaseHashHotEncoder[A](name: String,
                                              hashBucketSize: Int,
                                              sizeScalingFactor: Double)
   extends Transformer[A, HLL, Int](name) {
+  require(hashBucketSize >= 0, "hashBucketSize must be >= 0")
+  require(sizeScalingFactor >= 1.0, "hashBucketSize must be >= 1.0")
 
   private val hllBits = 12
   implicit protected val hllMonoid = new HyperLogLogMonoid(hllBits)
