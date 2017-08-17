@@ -120,12 +120,12 @@ private abstract class OneDimensional[A, B, C](name: String) extends Transformer
   override def featureNames(c: C): Seq[String] = Seq(name)
 }
 
-private abstract class MapOne[A](name: String, val default: Double = 0.0)
+private abstract class MapOne[A](name: String)
   extends OneDimensional[A, Unit, Unit](name) {
   override val aggregator: Aggregator[A, Unit, Unit] = Aggregators.unit[A]
   override def buildFeatures(a: Option[A], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) => fb.add(name, map(x))
-    case None => fb.add(name, default)
+    case None => fb.add(name, 0.0)
   }
   def map(a: A): Double
   override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")

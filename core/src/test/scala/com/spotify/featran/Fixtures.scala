@@ -17,7 +17,12 @@
 
 package com.spotify.featran
 
+import java.io.File
+
 import com.spotify.featran.transformers._
+
+import scala.collection.JavaConverters._
+import scala.util.Try
 
 object Fixtures {
 
@@ -60,6 +65,7 @@ object Fixtures {
     .required(_.v)(VectorIdentity("v"))
     .optional(_.vo)(VectorIdentity("vo"))
 
+  // cover all transformers here
   private val recordSpec2 = FeatureSpec.of[Record]
     .required(_.x)(Binarizer("bin"))
     .required(_.x)(Bucketizer("bucket", Array(0.0, 10.0, 100.0)))
@@ -80,5 +86,25 @@ object Fixtures {
     .required(_.x)(VonMisesEvaluator("von-mises", 1.0, 0.01, Array(0.0, 1.0, 2.0)))
 
   val recordSpec = MultiFeatureSpec(recordSpec1, recordSpec2)
+
+  {
+    val pkg = "com.spotify.featran.transformers"
+    val classLoader = Thread.currentThread().getContextClassLoader
+    val baseCls = classOf[Transformer[_, _, _]]
+    val transformers = classLoader.getResources("").asScala
+      .map(url => new File(url.getFile + pkg.replace('.', '/')))
+      .filter(_.isDirectory)
+      .flatMap(_.listFiles())
+      .filter(f => f.getName.endsWith(".class") && !f.getName.contains("$"))
+      .map(f => classLoader.loadClass(s"$pkg.${f.getName.replace(".class", "")}"))
+      .filter(c => (baseCls isAssignableFrom c) && c != baseCls &&
+        Try(classLoader.loadClass(c.getName + "$")).isSuccess)
+      .toSet
+
+    val covered = recordSpec2.features.map(_.transformer.getClass).toSet
+    val missing = transformers -- covered
+    require(missing.isEmpty, "Not all transformers are covered in Fixtures, missing: " +
+      missing.map(_.getSimpleName).mkString(", "))
+  }
 
 }
