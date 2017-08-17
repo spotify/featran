@@ -128,7 +128,10 @@ lazy val flink: Project = Project(
     "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
-).dependsOn(core)
+).dependsOn(
+  core,
+  core % "test->test"
+)
 
 lazy val scalding: Project = Project(
   "scalding",
@@ -143,7 +146,10 @@ lazy val scalding: Project = Project(
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
-).dependsOn(core)
+).dependsOn(
+  core,
+  core % "test->test"
+)
 
 lazy val scio: Project = Project(
   "scio",
@@ -156,7 +162,10 @@ lazy val scio: Project = Project(
     "com.spotify" %% "scio-core" % scioVersion,
     "com.spotify" %% "scio-test" % scioVersion % "test"
   )
-).dependsOn(core)
+).dependsOn(
+  core,
+  core % "test->test"
+)
 
 lazy val spark: Project = Project(
   "spark",
@@ -169,7 +178,10 @@ lazy val spark: Project = Project(
     "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
-).dependsOn(core)
+).dependsOn(
+  core,
+  core % "test->test"
+)
 
 lazy val numpy: Project = Project(
   "numpy",

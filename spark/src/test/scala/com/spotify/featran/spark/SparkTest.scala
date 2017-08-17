@@ -18,33 +18,29 @@
 package com.spotify.featran.spark
 
 import com.spotify.featran._
-import com.spotify.featran.transformers._
 import org.apache.spark.SparkContext
 import org.scalatest._
 
 class SparkTest extends FlatSpec with Matchers {
 
-  private val data = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
+  import Fixtures._
 
   "FeatureSpec" should "work with Spark" in {
     val sc = new SparkContext("local[4]", "test")
-    val f = FeatureSpec.of[(String, Int)]
-      .required(_._1)(OneHotEncoder("one_hot"))
-      .required(_._2.toDouble)(MinMaxScaler("min_max"))
-      .extract(sc.parallelize(data))
-    f.featureNames.collect() shouldBe Array(Seq(
-      "one_hot_a",
-      "one_hot_b",
-      "one_hot_c",
-      "one_hot_d",
-      "one_hot_e",
-      "min_max"))
-    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs Array(
-      Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
-      Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
-      Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
-      Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
-      Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
+    val f = testSpec.extract(sc.parallelize(testData))
+    f.featureNames.collect() shouldBe Array(expectedNames)
+    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
     sc.stop()
   }
+
+  it should "work with MultiFeatureSpec" in {
+    noException shouldBe thrownBy {
+      val sc = new SparkContext("local[4]", "test")
+      val f = recordSpec.extract(sc.parallelize(records))
+      f.featureNames.collect()
+      f.featureValues[Seq[Double]].collect()
+      sc.stop()
+    }
+  }
+
 }
