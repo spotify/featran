@@ -39,31 +39,22 @@ object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
 
   property("default") = Prop.forAll{ xs: List[List[String]] =>
     val size = ceil(estimateSize(xs) * 8.0).toInt
-    val cats = 0 until size
-    val names = cats.map("n_hot_" + _)
-    val expected = xs.map { s =>
-      val hashes = s.map(HashEncoder.bucket(_, size)).toSet
-      cats.map(c => if(hashes.contains(c)) 1.0 else 0.0)
-    }
-    val missing = cats.map(_ => 0.0)
-    test(HashNHotEncoder("n_hot"), xs, names, expected, missing)
+    test(HashNHotEncoder("n_hot"), size, xs)
   }
 
   property("size") = Prop.forAll{ xs: List[List[String]] =>
     val size = 100
-    val cats = 0 until size
-    val names = cats.map("n_hot_" + _)
-    val expected = xs.map { s =>
-      val hashes = s.map(HashEncoder.bucket(_, size)).toSet
-      cats.map(c => if (hashes.contains(c)) 1.0 else 0.0)
-    }
-    val missing = cats.map(_ => 0.0)
-    test(HashNHotEncoder("n_hot", size), xs, names, expected, missing)
+    test(HashNHotEncoder("n_hot", size), size, xs)
   }
 
   property("scaling") = Prop.forAll { xs: List[List[String]] =>
     val scalingFactor = 2.0
     val size = ceil(estimateSize(xs) * scalingFactor).toInt
+    test(HashNHotEncoder("n_hot", 0, scalingFactor), size, xs)
+  }
+
+  private def test(encoder: Transformer[List[String], _, _],
+                   size: Int, xs: List[List[String]]): Prop = {
     val cats = 0 until size
     val names = cats.map("n_hot_" + _)
     val expected = xs.map { s =>
@@ -71,7 +62,7 @@ object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
       cats.map(c => if(hashes.contains(c)) 1.0 else 0.0)
     }
     val missing = cats.map(_ => 0.0)
-    test(HashNHotEncoder("n_hot", 0, scalingFactor), xs, names, expected, missing)
+    test(encoder, xs, names, expected, missing)
   }
 
 }

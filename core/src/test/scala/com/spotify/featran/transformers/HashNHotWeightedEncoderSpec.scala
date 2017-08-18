@@ -46,38 +46,22 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
   property("default") = Prop.forAll { xs: List[List[WeightedLabel]] =>
     val size = ceil(estimateSize(xs) * 8.0).toInt
     val cats = 0 until size
-    val names = cats.map("n_hot_" + _)
-    val expected = xs.map{ s =>
-      val hashes = s.map(x => (HashEncoder.bucket(x.name, size), x.value))
-        .groupBy(_._1).map(l => (l._1, l._2.map(_._2).sum))
-      cats.map(c => hashes.get(c) match {
-        case Some(v) => v
-        case None => 0.0
-      })
-    }
-    val missing = cats.map(_ => 0.0)
-    test[Seq[WeightedLabel]](HashNHotWeightedEncoder("n_hot"), xs, names, expected, missing)
+    test(HashNHotWeightedEncoder("n_hot"), size, xs)
   }
 
   property("size") = Prop.forAll { xs: List[List[WeightedLabel]] =>
     val size = 100
-    val cats = 0 until size
-    val names = cats.map("n_hot_" + _)
-    val expected = xs.map{ s =>
-      val hashes = s.map(x => (HashEncoder.bucket(x.name, size), x.value))
-        .groupBy(_._1).map(l => (l._1, l._2.map(_._2).sum))
-      cats.map(c => hashes.get(c) match {
-        case Some(v) => v
-        case None => 0.0
-      })
-    }
-    val missing = cats.map(_ => 0.0)
-    test[Seq[WeightedLabel]](HashNHotWeightedEncoder("n_hot", size), xs, names, expected, missing)
+    test(HashNHotWeightedEncoder("n_hot", size), size, xs)
   }
 
   property("scaling factor") = Prop.forAll { xs: List[List[WeightedLabel]] =>
     val scalingFactor = 4.0
     val size = ceil(estimateSize(xs) * scalingFactor).toInt
+    test(HashNHotWeightedEncoder("n_hot", 0, scalingFactor), size, xs)
+  }
+
+  private def test(encoder: Transformer[List[WeightedLabel], _, _],
+                   size: Int, xs: List[List[WeightedLabel]]): Prop = {
     val cats = 0 until size
     val names = cats.map("n_hot_" + _)
     val expected = xs.map{ s =>
@@ -89,8 +73,7 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
       })
     }
     val missing = cats.map(_ => 0.0)
-    test[Seq[WeightedLabel]](HashNHotWeightedEncoder("n_hot", 0, scalingFactor),
-      xs, names, expected, missing)
+    test(encoder, xs, names, expected, missing)
   }
 
 }
