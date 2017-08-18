@@ -134,10 +134,7 @@ private class Feature[T, A, B, C](val f: T => Option[A],
   // Option[C]
   def unsafeSettings(c: Option[Any]): Settings = transformer.settings(c.asInstanceOf[Option[C]])
 
-  def toIndex(map: Map[String, Int]): Int = {
-    assert(map.contains(transformer.name))
-    map(transformer.name)
-  }
+  def toIndex(map: Map[String, Int]): Int = map(transformer.name)
 
 }
 
@@ -226,9 +223,8 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
   }
 
   // Array[Option[C]] => Array[String]
-  def multiFeatureNames(c: ARRAY, mapping: Map[String, Int]): Seq[Seq[String]] = {
+  def multiFeatureNames(c: ARRAY, dims: Int, mapping: Map[String, Int]): Seq[Seq[String]] = {
     require(n == c.length)
-    val dims = mapping.values.toSet.size
     val b = 0.until(dims).map(_ => Seq.newBuilder[String])
     var i = 0
     while (i < n) {
@@ -241,8 +237,7 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
   }
 
   // Array[Option[C]] => Array[Int]
-  def multiFeatureDimension(c: ARRAY, mapping: Map[String, Int]): Array[Int] = {
-    val dims = mapping.values.toSet.size
+  def multiFeatureDimension(c: ARRAY, dims: Int, mapping: Map[String, Int]): Array[Int] = {
     val featureCount = Array.fill[Int](dims)(0)
     var i = 0
     while (i < n) {
@@ -258,21 +253,22 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
   def multiFeatureValues[F](
     a: ARRAY,
     c: ARRAY,
-    fb: Array[FeatureBuilder[F]],
+    fbs: Array[FeatureBuilder[F]],
+    dims: Int,
     mapping: Map[String, Int]): Unit = {
 
-    require(fb.length == mapping.values.toSet.size)
-
-    val counts = multiFeatureDimension(c, mapping)
-
-    fb.zip(counts).foreach{case(b, cnt) => b.init(cnt)}
-
     var i = 0
+    val counts = multiFeatureDimension(c, dims, mapping)
+    while (i < fbs.length) {
+      fbs(i).init(counts(i))
+      i += 1
+    }
+
+    i = 0
     while (i < n) {
       val feature = features(i)
-      assert(mapping.contains(feature.transformer.name))
-      val builder = fb(mapping(feature.transformer.name))
-      features(i).unsafeBuildFeatures(a(i), c(i), builder)
+      val builder = fbs(mapping(feature.transformer.name))
+      feature.unsafeBuildFeatures(a(i), c(i), builder)
       i += 1
     }
   }
