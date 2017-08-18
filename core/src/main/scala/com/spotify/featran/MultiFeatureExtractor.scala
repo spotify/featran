@@ -53,7 +53,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
    * Names of the extracted features, in the same order as values in [[featureValues]].
    */
   @transient lazy val featureNames: M[Seq[Seq[String]]] =
-  extractor.aggregate.map(a => fs.multiFeatureNames(a, mapping))
+  extractor.aggregate.map(a => fs.multiFeatureNames(a, dims, mapping))
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]].
@@ -82,7 +82,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
       in.readObject().asInstanceOf[FeatureBuilder[F]]
     }
     extractor.as.cross(extractor.aggregate).map { case ((o, a), c) =>
-      fs.multiFeatureValues(a, c, fbs, mapping)
+      fs.multiFeatureValues(a, c, fbs, dims, mapping)
       (fbs.map(_.result).toSeq, fbs.map(_.rejections), o)
     }
   }
