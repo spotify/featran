@@ -18,6 +18,7 @@
 package com.spotify.featran
 
 import java.io._
+
 import scala.reflect.ClassTag
 import scala.language.{higherKinds, implicitConversions}
 

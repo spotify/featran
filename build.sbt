@@ -36,8 +36,10 @@ val commonSettings = Seq(
   name := "featran",
   description := "Feature Transformers",
   scalaVersion := "2.11.11",
-  scalacOptions ++= Seq("-target:jvm-1.7", "-deprecation", "-feature", "-unchecked"),
+  scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
+  javacOptions in (Compile, doc)  := Seq("-source", "1.8"),
 
   // Release settings
   releaseCrossBuild             := true,
@@ -88,6 +90,7 @@ lazy val root: Project = Project(
   gitRemoteRepo := "git@github.com:spotify/featran.git"
 ).aggregate(
   core,
+  java,
   flink,
   scalding,
   scio,
@@ -114,6 +117,21 @@ lazy val core: Project = Project(
     "io.circe" %% "circe-generic",
     "io.circe" %% "circe-parser"
   ).map(_ % circeVersion)
+)
+
+lazy val java: Project = Project(
+  "java",
+  file("java")
+).settings(
+  commonSettings,
+  moduleName := "featran-java",
+  description := "Feature Transformers - java",
+  libraryDependencies ++= Seq(
+    "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+  )
+).dependsOn(
+  core,
+  core % "test->test"
 )
 
 lazy val flink: Project = Project(
