@@ -69,7 +69,7 @@ Feature includes the following artifacts:
 - `featran-scalding` - support for extraction from Scalding `TypedPipe`
 - `featran-scio` - support for extraction from Scio `SCollection`
 - `featran-spark` - support for extraction from Spark `RDD`
-- `featran-tensorflow` - suppoprt for output as TensorFlow Example Protobuf
+- `featran-tensorflow` - support for output as TensorFlow Example Protobuf
 - `featran-numpy` - support for output as NumPy `.npy` file
 
 # License
