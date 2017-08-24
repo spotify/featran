@@ -126,7 +126,7 @@ object Example {
     println(settings.head)
 
     // Extract features from new records, but reuse previously saved settings
-    val f2 = spec.extractWithSettings(records.take(records.size / 2), settings)
+    val f2 = spec.extractWithSettings(recordsGen.sample.get, settings)
   }
   // scalastyle:on method.length
   // scalastyle:on regex
