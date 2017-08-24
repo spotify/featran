@@ -70,8 +70,8 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f1 values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
       "f2 values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing),
       "f3 values" |: safeCompare(f3.featureValues[Seq[Double]], expected.take(input.size / 2)),
-      "f4 values" |: safeCompare(f4results.map(_._1), outOfBoundsElems.map(_._2)),
-      "f4 rejections" |: f4results.forall(_._2.keySet == Set(t.name)),
+      "f4 values" |: safeCompare(f4results.map(_.value), outOfBoundsElems.map(_._2)),
+      "f4 rejections" |: f4results.forall(_.rejections.keySet == Set(t.name)),
       "f1 map" |: {
         val fMap = f1.featureValues[Map[String, Double]]
         val eMap = expected.map(v => (names zip v).toMap)

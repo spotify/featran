@@ -117,9 +117,9 @@ object Example {
 
     // Get feature values as above with rejections and the original input record
     val doubleAResults = f1.featureResults[Array[Double]]
-    val doubleAValues = doubleAResults.map(_._1)
-    val doubleARejections = doubleAResults.map(_._2)
-    val doubleAOriginals = doubleAResults.map(_._3)
+    val doubleAValues = doubleAResults.map(_.value)
+    val doubleARejections = doubleAResults.map(_.rejections)
+    val doubleAOriginals = doubleAResults.map(_.original)
 
     // Extract settings as a JSON string
     val settings = f1.featureSettings

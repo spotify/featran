@@ -84,7 +84,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
-      f.featureResults[Seq[Double]] == xs.map(r => (Seq(r.d), Map.empty, r)))
+      f.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d), Map.empty, r)))
   }
 
   property("combine") = Prop.forAll { xs: List[Record] =>
@@ -93,7 +93,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val result = FeatureSpec.combine(f, f2).extract(xs)
     Prop.all(
       result.featureNames == Seq(Seq("id", "id2")),
-      result.featureResults[Seq[Double]] == xs.map(r => (Seq(r.d, r.d), Map.empty, r)))
+      result.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d, r.d), Map.empty, r)))
   }
 
   property("extra feature in settings") = Prop.forAll { xs: List[Record] =>
@@ -103,7 +103,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val f = spec2.extractWithSettings(xs,  settings)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
-      f.featureResults[Seq[Double]] == xs.map(r => (Seq(r.d), Map.empty, r)))
+      f.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d), Map.empty, r)))
   }
 
   property("missing feature in settings") = Prop.forAll { xs: List[Record] =>
