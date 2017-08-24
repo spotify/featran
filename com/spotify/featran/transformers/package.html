@@ -163,11 +163,12 @@
     </span>
       <p class="shortcomment cmt">Transform a column of continuous features to n columns of feature buckets.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a column of continuous features to n columns of feature buckets.</p><p>With n+1 splits, there are n buckets. A bucket defined by splits x,y holds values in the range
 [x,y) except the last bucket, which also includes y. Splits should be strictly increasing.
-Values at -inf, inf must be explicitly provided to cover all double values; Otherwise, values
-outside the splits specified will be treated as errors. Two examples of splits are
+Values at -inf, inf must be explicitly provided to cover all double values; Otherwise,
+<a href="../FeatureRejection$$OutOfBound.html" class="extype" name="com.spotify.featran.FeatureRejection.OutOfBound">FeatureRejection.OutOfBound</a> rejection will be reported for values outside the splits
+specified.. Two examples of splits are
 <code>Array(Double.NegativeInfinity, 0.0, 1.0, Double.PositiveInfinity)</code> and <code>Array(0.0, 1.0, 2.0)</code>.</p><p>Note that if you have no idea of the upper and lower bounds of the targeted column, you should
 add <code>Double.NegativeInfinity</code> and <code>Double.PositiveInfinity</code> as the bounds of your splits to
-prevent a potential out of bounds exception.</p><p>Note also that the splits that you provided have to be in strictly increasing order, i.e.
+prevent a potential <a href="../FeatureRejection$$OutOfBound.html" class="extype" name="com.spotify.featran.FeatureRejection.OutOfBound">FeatureRejection.OutOfBound</a> rejection.</p><p>Note also that the splits that you provided have to be in strictly increasing order, i.e.
 <code>s0 &lt; s1 &lt; s2 &lt; ... &lt; sn</code>.</p><p>Missing values are transformed to zero vectors.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.HashNHotEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -312,7 +313,7 @@ English words:</p><pre>sizeScalingFactor     % Collisions
       <p class="shortcomment cmt">Transform features by rescaling each feature to range [-1, 1] by dividing through the maximum
 absolute value in each feature.</p><div class="fullcomment"><div class="comment cmt"><p>Transform features by rescaling each feature to range [-1, 1] by dividing through the maximum
 absolute value in each feature.</p><p>Missing values are transformed to 0.0.</p><p>When using aggregated feature summary from a previous session, out of bound values are
-truncated to -1.0 or 1.0.
+truncated to -1.0 or 1.0 and <a href="../FeatureRejection$$OutOfBound.html" class="extype" name="com.spotify.featran.FeatureRejection.OutOfBound">FeatureRejection.OutOfBound</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.MinMaxScaler" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MinMaxScaler"></a>
@@ -333,7 +334,7 @@ truncated to -1.0 or 1.0.
       <p class="shortcomment cmt">Transform features by rescaling each feature to a specific range [<code>min</code>, <code>max</code>] (default
 [0, 1]).</p><div class="fullcomment"><div class="comment cmt"><p>Transform features by rescaling each feature to a specific range [<code>min</code>, <code>max</code>] (default
 [0, 1]).</p><p>Missing values are transformed to <code>min</code>.</p><p>When using aggregated feature summary from a previous session, out of bound values are
-truncated to <code>min</code> or <code>max</code>.
+truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejection$$OutOfBound.html" class="extype" name="com.spotify.featran.FeatureRejection.OutOfBound">FeatureRejection.OutOfBound</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.NHotEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="NHotEncoder"></a>
@@ -351,7 +352,8 @@ truncated to <code>min</code> or <code>max</code>.
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Transform a collection of categorical features to binary columns, with at most N one-values.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most N one-values.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored.
+      <p class="shortcomment cmt">Transform a collection of categorical features to binary columns, with at most N one-values.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most N one-values.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
+<a href="../FeatureRejection$$Unseen.html" class="extype" name="com.spotify.featran.FeatureRejection.Unseen">FeatureRejection.Unseen</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.NHotWeightedEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="NHotWeightedEncoder"></a>
@@ -372,7 +374,8 @@ truncated to <code>min</code> or <code>max</code>.
       <p class="shortcomment cmt">Transform a collection of weighted categorical features to columns of weight sums, with at most
 N values.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of weighted categorical features to columns of weight sums, with at most
 N values.</p><p>Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
-<a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a>.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored.
+<a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a>.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
+<a href="../FeatureRejection$$Unseen.html" class="extype" name="com.spotify.featran.FeatureRejection.Unseen">FeatureRejection.Unseen</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.Normalizer" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="Normalizer"></a>
@@ -392,7 +395,7 @@ N values.</p><p>Weights of the same labels in a row are summed instead of 1.0 as
     </span>
       <p class="shortcomment cmt">Transform vector features by normalizing each vector to have unit norm.</p><div class="fullcomment"><div class="comment cmt"><p>Transform vector features by normalizing each vector to have unit norm. Parameter <code>p</code> specifies
 the p-norm used for normalization (default 2).</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, vectors of different dimensions
-are transformed to zero vectors.
+are transformed to zero vectors and <a href="../FeatureRejection$$WrongDimension.html" class="extype" name="com.spotify.featran.FeatureRejection.WrongDimension">FeatureRejection.WrongDimension</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.OneHotEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="OneHotEncoder"></a>
@@ -412,7 +415,8 @@ are transformed to zero vectors.
     </span>
       <p class="shortcomment cmt">Transform a collection of categorical features to binary columns, with at most a single
 one-value.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most a single
-one-value.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored.
+one-value.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
+<a href="../FeatureRejection$$Unseen.html" class="extype" name="com.spotify.featran.FeatureRejection.Unseen">FeatureRejection.Unseen</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.PolynomialExpansion" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="PolynomialExpansion"></a>
@@ -433,7 +437,7 @@ one-value.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When u
       <p class="shortcomment cmt">Transform vector features by expanding them into a polynomial space, which is formulated by an
 n-degree combination of original dimensions.</p><div class="fullcomment"><div class="comment cmt"><p>Transform vector features by expanding them into a polynomial space, which is formulated by an
 n-degree combination of original dimensions.</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, vectors of different dimensions
-are transformed to zero vectors.
+are transformed to zero vectors and <a href="../FeatureRejection$$WrongDimension.html" class="extype" name="com.spotify.featran.FeatureRejection.WrongDimension">FeatureRejection.WrongDimension</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.QuantileDiscretizer" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="QuantileDiscretizer"></a>
@@ -453,7 +457,9 @@ are transformed to zero vectors.
     </span>
       <p class="shortcomment cmt">Transform a column of continuous features to n columns of binned categorical features.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a column of continuous features to n columns of binned categorical features. The
 number of bins is set by the <code>numBuckets</code> parameter.</p><p>The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
-of the approximation can be controlled with the <code>k</code> parameter.</p><p>Missing values are transformed to zero vectors.
+of the approximation can be controlled with the <code>k</code> parameter.</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, values outside of previously seen
+<code>[min, max]</code> are binned into the first or last bucket and <a href="../FeatureRejection$$OutOfBound.html" class="extype" name="com.spotify.featran.FeatureRejection.OutOfBound">FeatureRejection.OutOfBound</a>
+rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.StandardScaler" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="StandardScaler"></a>
@@ -492,7 +498,8 @@ true, it centers the data with mean before scaling.</p><p>Missing values are tra
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Takes fixed length vectors by passing them through.</p><div class="fullcomment"><div class="comment cmt"><p>Takes fixed length vectors by passing them through.</p><p>Similar to <a href="Identity$.html" class="extype" name="com.spotify.featran.transformers.Identity">Identity</a> but for a sequence of doubles.</p><p>Missing values are transformed to zero vectors.
+      <p class="shortcomment cmt">Takes fixed length vectors by passing them through.</p><div class="fullcomment"><div class="comment cmt"><p>Takes fixed length vectors by passing them through.</p><p>Similar to <a href="Identity$.html" class="extype" name="com.spotify.featran.transformers.Identity">Identity</a> but for a sequence of doubles.</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, vectors of different dimensions
+are transformed to zero vectors and <a href="../FeatureRejection$$WrongDimension.html" class="extype" name="com.spotify.featran.FeatureRejection.WrongDimension">FeatureRejection.WrongDimension</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.VonMisesEvaluator" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="VonMisesEvaluator"></a>

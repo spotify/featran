@@ -51,7 +51,9 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform a column of continuous features to n columns of binned categorical features. The
 number of bins is set by the <code>numBuckets</code> parameter.</p><p>The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
-of the approximation can be controlled with the <code>k</code> parameter.</p><p>Missing values are transformed to zero vectors.
+of the approximation can be controlled with the <code>k</code> parameter.</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, values outside of previously seen
+<code>[min, max]</code> are binned into the first or last bucket and <a href="../FeatureRejection$$OutOfBound.html" class="extype" name="com.spotify.featran.FeatureRejection.OutOfBound">FeatureRejection.OutOfBound</a>
+rejections are reported.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
@@ -149,18 +151,18 @@ of the approximation can be controlled with the <code>k</code> parameter.</p><p>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.spotify.featran.transformers.QuantileDiscretizer#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="apply(name:String,numBuckets:Int,k:Int):com.spotify.featran.transformers.Transformer[Double,com.twitter.algebird.QTree[Double],java.util.TreeMap[Double,Int]]"></a>
-      <a id="apply(String,Int,Int):Transformer[Double,QTree[Double],TreeMap[Double,Int]]"></a>
+      <a id="apply(name:String,numBuckets:Int,k:Int):com.spotify.featran.transformers.Transformer[Double,com.spotify.featran.transformers.QuantileDiscretizer.B,com.spotify.featran.transformers.QuantileDiscretizer.C]"></a>
+      <a id="apply(String,Int,Int):Transformer[Double,B,C]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="numBuckets">numBuckets: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">2</span></span>, <span name="k">k: <span class="extype" name="scala.Int">Int</span> = <span class="symbol"><span class="name"><a href="../../../package.html">QTreeAggregator.DefaultK</a></span></span></span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="com.twitter.algebird.QTree">QTree</span>[<span class="extype" name="scala.Double">Double</span>], <span class="extype" name="java.util.TreeMap">TreeMap</span>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Int">Int</span>]]</span>
+        <span class="name">apply</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="numBuckets">numBuckets: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">2</span></span>, <span name="k">k: <span class="extype" name="scala.Int">Int</span> = <span class="symbol"><span class="name"><a href="../../../package.html">QTreeAggregator.DefaultK</a></span></span></span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="com.spotify.featran.transformers.QuantileDiscretizer.B">B</span>, <span class="extype" name="com.spotify.featran.transformers.QuantileDiscretizer.C">C</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.transformers.QuantileDiscretizer$@apply(name:String,numBuckets:Int,k:Int):com.spotify.featran.transformers.Transformer[Double,com.twitter.algebird.QTree[Double],java.util.TreeMap[Double,Int]]" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.transformers.QuantileDiscretizer$@apply(name:String,numBuckets:Int,k:Int):com.spotify.featran.transformers.Transformer[Double,com.spotify.featran.transformers.QuantileDiscretizer.B,com.spotify.featran.transformers.QuantileDiscretizer.C]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

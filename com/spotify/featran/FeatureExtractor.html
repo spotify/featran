@@ -236,6 +236,26 @@
       </a>
     </span>
       <p class="shortcomment cmt">Names of the extracted features, in the same order as values in <a href="#featureValues[F](implicitevidence$2:com.spotify.featran.FeatureBuilder[F],implicitevidence$3:scala.reflect.ClassTag[F]):M[F]" class="extmbr" name="com.spotify.featran.FeatureExtractor#featureValues">featureValues</a>.</p>
+    </li><li name="com.spotify.featran.FeatureExtractor#featureResults" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="featureResults[F](implicitevidence$4:com.spotify.featran.FeatureBuilder[F],implicitevidence$5:scala.reflect.ClassTag[F]):M[com.spotify.featran.FeatureResult[F,T]]"></a>
+      <a id="featureResults[F](FeatureBuilder[F],ClassTag[F]):M[FeatureResult[F,T]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">featureResults</span><span class="tparams">[<span name="F">F</span>]</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="com.spotify.featran.FeatureExtractor.featureResults.F">F</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.spotify.featran.FeatureExtractor.featureResults.F">F</span>]</span>)</span><span class="result">: <span class="extype" name="com.spotify.featran.FeatureExtractor.M">M</span>[<a href="FeatureResult.html" class="extype" name="com.spotify.featran.FeatureResult">FeatureResult</a>[<span class="extype" name="com.spotify.featran.FeatureExtractor.featureResults.F">F</span>, <span class="extype" name="com.spotify.featran.FeatureExtractor.T">T</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.FeatureExtractor@featureResults[F](implicitevidence$4:com.spotify.featran.FeatureBuilder[F],implicitevidence$5:scala.reflect.ClassTag[F]):M[com.spotify.featran.FeatureResult[F,T]]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[String]]" class="extmbr" name="com.spotify.featran.FeatureExtractor#featureNames">featureNames</a> with
+rejections keyed on feature name and the original input record.</p><div class="fullcomment"><div class="comment cmt"><p>Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[String]]" class="extmbr" name="com.spotify.featran.FeatureExtractor#featureNames">featureNames</a> with
+rejections keyed on feature name and the original input record.</p></div><dl class="paramcmts block"><dt class="tparam">F</dt><dd class="cmt"><p>output data type, e.g. <code>Array[Float]</code>, <code>Array[Double]</code>, <code>DenseVector[Float]</code>,
+          <code>DenseVector[Double]</code></p></dd></dl></div>
     </li><li name="com.spotify.featran.FeatureExtractor#featureSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="featureSettings:M[String]"></a>
       <a id="featureSettings:M[String]"></a>
@@ -272,26 +292,6 @@ extracting new records of the same type.
       </a>
     </span>
       <p class="shortcomment cmt">Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[String]]" class="extmbr" name="com.spotify.featran.FeatureExtractor#featureNames">featureNames</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[String]]" class="extmbr" name="com.spotify.featran.FeatureExtractor#featureNames">featureNames</a>.</p></div><dl class="paramcmts block"><dt class="tparam">F</dt><dd class="cmt"><p>output data type, e.g. <code>Array[Float]</code>, <code>Array[Double]</code>, <code>DenseVector[Float]</code>,
-          <code>DenseVector[Double]</code></p></dd></dl></div>
-    </li><li name="com.spotify.featran.FeatureExtractor#featureValuesWithOriginal" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="featureValuesWithOriginal[F](implicitevidence$4:com.spotify.featran.FeatureBuilder[F],implicitevidence$5:scala.reflect.ClassTag[F]):M[(F,T)]"></a>
-      <a id="featureValuesWithOriginal[F](FeatureBuilder[F],ClassTag[F]):M[(F,T)]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">featureValuesWithOriginal</span><span class="tparams">[<span name="F">F</span>]</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="com.spotify.featran.FeatureExtractor.featureValuesWithOriginal.F">F</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.spotify.featran.FeatureExtractor.featureValuesWithOriginal.F">F</span>]</span>)</span><span class="result">: <span class="extype" name="com.spotify.featran.FeatureExtractor.M">M</span>[(<span class="extype" name="com.spotify.featran.FeatureExtractor.featureValuesWithOriginal.F">F</span>, <span class="extype" name="com.spotify.featran.FeatureExtractor.T">T</span>)]</span>
-      </span>
-      </h4><span class="permalink">
-      <a href="../../../index.html#com.spotify.featran.FeatureExtractor@featureValuesWithOriginal[F](implicitevidence$4:com.spotify.featran.FeatureBuilder[F],implicitevidence$5:scala.reflect.ClassTag[F]):M[(F,T)]" title="Permalink" target="_top">
-        <img src="../../../lib/permalink.png" alt="Permalink" />
-      </a>
-    </span>
-      <p class="shortcomment cmt">Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[String]]" class="extmbr" name="com.spotify.featran.FeatureExtractor#featureNames">featureNames</a> with the
-original input record.</p><div class="fullcomment"><div class="comment cmt"><p>Values of the extracted features, in the same order as names in <a href="#featureNames:M[Seq[String]]" class="extmbr" name="com.spotify.featran.FeatureExtractor#featureNames">featureNames</a> with the
-original input record.</p></div><dl class="paramcmts block"><dt class="tparam">F</dt><dd class="cmt"><p>output data type, e.g. <code>Array[Float]</code>, <code>Array[Double]</code>, <code>DenseVector[Float]</code>,
           <code>DenseVector[Double]</code></p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>

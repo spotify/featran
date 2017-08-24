@@ -49,7 +49,8 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Takes fixed length vectors by passing them through.</p><p>Similar to <a href="Identity$.html" class="extype" name="com.spotify.featran.transformers.Identity">Identity</a> but for a sequence of doubles.</p><p>Missing values are transformed to zero vectors.
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Takes fixed length vectors by passing them through.</p><p>Similar to <a href="Identity$.html" class="extype" name="com.spotify.featran.transformers.Identity">Identity</a> but for a sequence of doubles.</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, vectors of different dimensions
+are transformed to zero vectors and <a href="../FeatureRejection$$WrongDimension.html" class="extype" name="com.spotify.featran.FeatureRejection.WrongDimension">FeatureRejection.WrongDimension</a> rejections are reported.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
