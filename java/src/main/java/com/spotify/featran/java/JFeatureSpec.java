@@ -17,6 +17,7 @@
 
 package com.spotify.featran.java;
 
+import com.spotify.featran.CollectionType;
 import com.spotify.featran.FeatureSpec;
 import com.spotify.featran.transformers.Transformer;
 import scala.Function1;
@@ -25,6 +26,11 @@ import scala.Option;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Java wrapper for {{@link FeatureSpec}}.
+ *
+ * Note that {{@link List}} is the only supported input collection type.
+ */
 public class JFeatureSpec<T> {
 
   private final FeatureSpec<T> self;
@@ -33,21 +39,32 @@ public class JFeatureSpec<T> {
     this.self = self;
   }
 
+  /**
+   * Create a new {{@link JFeatureSpec}} instance.
+   */
   public static <T> JFeatureSpec<T> of() {
     return wrap(FeatureSpec.<T>of());
   }
 
+  /**
+   * Wrap an existing {{@link FeatureSpec}} instance.
+   */
   public static <T> JFeatureSpec<T> wrap(FeatureSpec<T> self) {
     return new JFeatureSpec<>(self);
   }
 
+  /**
+   * Java wrapper for {{@link FeatureSpec#required(Function1, Transformer)}}.
+   */
   public <A> JFeatureSpec<T> required(final SerializableFunction<T, A> f,
                                       final Transformer<A, ?, ?> t) {
     Function1<T, A> g = JavaOps.requiredFn(f);
     return wrap(self.required(g, t));
   }
 
-
+  /**
+   * Java wrapper for {{@link FeatureSpec#optional(Function1, Transformer)}}.
+   */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final Transformer<A, ?, ?> t) {
     Function1<T, Option<A>> g = JavaOps.optionalFn(f);
@@ -55,6 +72,9 @@ public class JFeatureSpec<T> {
     return wrap(self.optional(g, o, t));
   }
 
+  /**
+   * Java wrapper for {{@link FeatureSpec#optional(Function1, Transformer)}}.
+   */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final A defaultValue,
                                       final Transformer<A, ?, ?> t) {
@@ -63,10 +83,16 @@ public class JFeatureSpec<T> {
     return wrap(self.optional(g, o, t));
   }
 
+  /**
+   * Java wrapper for {{@link FeatureSpec#extract(Object, CollectionType)}}.
+   */
   public JFeatureExtractor<T> extract(List<T> input) {
     return new JFeatureExtractor<>(JavaOps.extract(self, input));
   }
 
+  /**
+   * Java wrapper for {{@link FeatureSpec#extractWithSettings(Object, Object, CollectionType)}.
+   */
   public JFeatureExtractor<T> extractWithSettings(List<T> input, String settings) {
     return new JFeatureExtractor<>(JavaOps.extractWithSettings(self, input, settings));
   }
