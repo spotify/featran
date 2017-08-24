@@ -127,6 +127,9 @@ object Example {
 
     // Extract features from new records, but reuse previously saved settings
     val f2 = spec.extractWithSettings(recordsGen.sample.get, settings)
+
+    // Filter out results with rejections and extract valid values
+    val validValues = f2.featureResults[Seq[Double]].filter(_.rejections.isEmpty).map(_.value)
   }
   // scalastyle:on method.length
   // scalastyle:on regex
