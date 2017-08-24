@@ -87,7 +87,9 @@ lazy val root: Project = Project(
   commonSettings ++ noPublishSettings,
   siteSubdirName in ScalaUnidoc := "",
   addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
-  gitRemoteRepo := "git@github.com:spotify/featran.git"
+  gitRemoteRepo := "git@github.com:spotify/featran.git",
+  // com.spotify.featran.java pollutes namespaces and breaks unidoc class path
+  unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(java)
 ).aggregate(
   core,
   java,
