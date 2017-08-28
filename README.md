@@ -64,7 +64,8 @@ See [ScalaDocs](https://spotify.github.io/featran) for current API documentation
 
 Feature includes the following artifacts:
 
-- `featran-core` - Core library, supports extraction from Scala collections and output as Scala collections, Breeze dense and sparse vectors.
+- `featran-core` - core library, support for extraction from Scala collections and output as Scala collections, Breeze dense and sparse vectors
+- `featran-java` - Java interface, see [JavaExample.java](https://github.com/spotify/featran/blob/master/java/src/test/java/com/spotify/featran/java/examples/JavaExample.java)
 - `featran-flink` - support for extraction from Flink `DataSet`
 - `featran-scalding` - support for extraction from Scalding `TypedPipe`
 - `featran-scio` - support for extraction from Scio `SCollection`
