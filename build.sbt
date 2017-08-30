@@ -27,7 +27,7 @@ val hadoopVersion = "2.8.0"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.1"
 val scaldingVersion = "0.17.0"
-val scioVersion = "0.3.5"
+val scioVersion = "0.4.0"
 val sparkVersion = "2.1.1"
 val tensorflowVersion = "1.1.0"
 
