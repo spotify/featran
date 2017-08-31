@@ -49,7 +49,8 @@ object PolynomialExpansion {
 
   private def getPolySize(numFeatures: Int, degree: Int): Int = {
     val n = CombinatoricsUtils.binomialCoefficient(numFeatures + degree, degree)
-    require(n <= Integer.MAX_VALUE)
+    // See: https://stackoverflow.com/questions/3038392/do-java-arrays-have-a-maximum-size
+    require(n <= Integer.MAX_VALUE - 8)
     n.toInt
   }
 
