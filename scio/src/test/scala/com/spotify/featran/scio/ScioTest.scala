@@ -55,8 +55,7 @@ class ScioTest extends PipelineSpec {
         .required(e => foo.method(e._1))(Identity("foo"))
         .extract(sc.parallelize(testData))
 
-      val thrown = the [RuntimeException] thrownBy f.featureValues[Seq[Double]]
-      thrown.getMessage should startWith("unable to serialize anonymous function")
+      an [Exception] should be thrownBy f.featureValues[Seq[Double]]
     }
   }
   // scalastyle:on no.whitespace.before.left.bracket
