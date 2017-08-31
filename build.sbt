@@ -18,6 +18,9 @@
 import com.typesafe.sbt.SbtSite.SiteKeys._
 import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
 
+val scala211 = "2.11.11"
+val scala212 = "2.12.3"
+
 val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
 val circeVersion = "0.8.0"
@@ -35,7 +38,8 @@ val commonSettings = Seq(
   organization := "com.spotify",
   name := "featran",
   description := "Feature Transformers",
-  scalaVersion := "2.11.11",
+  scalaVersion := scala211,
+  crossScalaVersions := Seq(scala211),
   scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
@@ -107,6 +111,7 @@ lazy val core: Project = Project(
   file("core")
 ).settings(
   commonSettings,
+  crossScalaVersions := Seq(scala211, scala212),
   moduleName := "featran-core",
   description := "Feature Transformers",
   libraryDependencies ++= Seq(
@@ -127,6 +132,7 @@ lazy val java: Project = Project(
   file("java")
 ).settings(
   commonSettings,
+  crossScalaVersions := Seq(scala211, scala212),
   moduleName := "featran-java",
   description := "Feature Transformers - java",
   libraryDependencies ++= Seq(
@@ -159,6 +165,7 @@ lazy val scalding: Project = Project(
   file("scalding")
 ).settings(
   commonSettings,
+  crossScalaVersions := Seq(scala211, scala212),
   moduleName := "featran-scalding",
   description := "Feature Transformers - Scalding",
   resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
@@ -177,6 +184,7 @@ lazy val scio: Project = Project(
   file("scio")
 ).settings(
   commonSettings,
+  crossScalaVersions := Seq(scala211, scala212),
   moduleName := "featran-scio",
   description := "Feature Transformers - Scio",
   libraryDependencies ++= Seq(
@@ -209,6 +217,7 @@ lazy val numpy: Project = Project(
   file("numpy")
 ).settings(
   commonSettings,
+  crossScalaVersions := Seq(scala211, scala212),
   moduleName := "featran-numpy",
   description := "Feature Transformers - NumPy",
   libraryDependencies ++= Seq(
@@ -221,6 +230,7 @@ lazy val tensorflow: Project = Project(
   file("tensorflow")
 ).settings(
   commonSettings,
+  crossScalaVersions := Seq(scala211, scala212),
   moduleName := "featran-tensorflow",
   description := "Feature Transformers - TensorFlow",
   libraryDependencies ++= Seq(
