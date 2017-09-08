@@ -16,7 +16,7 @@ case class FeatureCross[T](
   }
 
   def crossValues[F: FeatureGetter: FeatureBuilder](fg: F, index: Map[Int, Range]): F = {
-    val fb = FeatureBuilder()
+    val fb = implicitly[FeatureBuilder[F]]
     val getter = implicitly[FeatureGetter[F]]
 
     val iter = cross.iterator

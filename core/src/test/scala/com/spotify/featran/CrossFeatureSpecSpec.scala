@@ -37,10 +37,10 @@ object CrossFeatureSpecSpec extends Properties("FeatureSpec") {
       .cross(Cross("id", "id2", (a, _) => a))
       .extract(xs)
 
-    val features = result.featureValuesWithOriginal[Array[Double]]
+    val features = result.featureResults[Array[Double]]
     Prop.all(
       result.featureNames == Seq(Seq("id", "id2", "id-id2")),
-      features.map{case(k, v) => (k.toList, v)} == xs.map(r => (List(r.d, r.d, r.d), r)))
+      features.map{r => (r.value.toList, r.original)} == xs.map(r => (List(r.d, r.d, r.d), r)))
   }
 
 }

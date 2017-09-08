@@ -18,19 +18,21 @@
 package com.spotify.featran.transformers
 
 import breeze.linalg._
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 
+/**
+ * Transform vector features by normalizing each vector to have unit norm. Parameter `p` specifies
+ * the p-norm used for normalization (default 2).
+ *
+ * Missing values are transformed to zero vectors.
+ *
+ * When using aggregated feature summary from a previous session, vectors of different dimensions
+ * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
+ */
 object Normalizer {
   /**
-   * Transform vector features by normalizing each vector to have unit norm. Parameter `p` specifies
-   * the p-norm used for normalization (default 2).
-   *
-   * Missing values are transformed to zero vectors.
-   *
-   * When using aggregated feature summary from a previous session, vectors of different dimensions
-   * are transformed to zero vectors.
-   *
+   * Create a new [[Normalizer]] instance.
    * @param p normalization in L^p^ space, must be greater than or equal to 1.0
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
@@ -50,6 +52,7 @@ private class Normalizer(name: String, val p: Double, val expectedLength: Int)
     case Some(x) =>
       if (x.length != c) {
         fb.skip(c)
+        fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
       } else {
         val dv = DenseVector(x)
         fb.add(names(c), (dv / norm(dv, p)).data)

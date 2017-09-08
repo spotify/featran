@@ -17,19 +17,24 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 
 import scala.language.higherKinds
 
+/**
+ * Takes fixed length vectors by passing them through.
+ *
+ * Similar to [[Identity]] but for a sequence of doubles.
+ *
+ * Missing values are transformed to zero vectors.
+ *
+ * When using aggregated feature summary from a previous session, vectors of different dimensions
+ * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
+ */
 object VectorIdentity {
   /**
-   * Takes fixed length vectors by passing them through.
-   *
-   * Similar to [[Identity]] but for a sequence of doubles.
-   *
-   * Missing values are transformed to zero vectors.
-   *
+   * Create a new [[VectorIdentity]] instance.
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
   def apply[M[_]](name: String, expectedLength: Int = 0)
@@ -47,6 +52,7 @@ private class VectorIdentity[M[_]](name: String, expectedLength: Int)
     case Some(x) =>
       if (x.length != c) {
         fb.skip(c)
+        fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
       } else {
         fb.add(names(c), x)
       }

@@ -23,6 +23,7 @@ import breeze.linalg.{DenseVector, SparseVector}
 import breeze.math.Semiring
 import breeze.storage.Zero
 import cats.kernel.Semigroup
+import com.spotify.featran.transformers.Transformer
 
 import scala.collection.mutable
 import scala.language.higherKinds
@@ -32,21 +33,72 @@ trait FeatureGetter[T] extends Serializable with Semigroup[T] { self =>
   def get(name: String, idx: Int, t: T): Double
 }
 
+sealed trait FeatureRejection
+object FeatureRejection {
+  case class OutOfBound(lower: Double, upper: Double, actual: Double) extends FeatureRejection
+  case class Unseen(labels: Set[String]) extends FeatureRejection
+  case class WrongDimension(expected: Int, actual: Int) extends FeatureRejection
+}
+
+/**
+ * Type class for types to build feature into.
+ * @tparam T output feature type
+ */
 trait FeatureBuilder[T] extends Serializable { self =>
+
+  private val _rejections: mutable.Map[String, FeatureRejection] = mutable.Map.empty
+
+  def reject(transformer: Transformer[_, _, _], reason: FeatureRejection): Unit = {
+    val name = transformer.name
+    require(!rejections.contains(name), s"Transformer $name already rejected")
+    _rejections(name) = reason
+  }
+
+  def rejections: Map[String, FeatureRejection] = {
+    val r = _rejections.toMap
+    _rejections.clear()
+    r
+  }
+
+  /**
+   * Initialize the builder for a record. This should be called only once per input row.
+   * @param dimension total feature dimension
+   */
   def init(dimension: Int): Unit
-  def add(name: String, value: Double): Unit
-  def skip(): Unit
+
+  /**
+   * Gather builder result for a result. This should be called only once per input row.
+   */
   def result: T
 
+  /**
+   * Add a single feature value. The total number of values added and skipped should equal to
+   * dimension in [[init]].
+   */
+  def add(name: String, value: Double): Unit
+
+  /**
+   * Skip a single feature value. The total number of values added and skipped should equal to
+   * dimension in [[init]].
+   */
+  def skip(): Unit
+
+  /**
+   * Add multiple feature values. The total number of values added and skipped should equal to
+   * dimension in [[init]].
+   */
   def add[M[_]](names: Iterator[String], values: M[Double])
                (implicit ev: M[Double] => Seq[Double]): Unit = {
-    var i = 0
-    while (i < values.length) {
-      add(names.next(), values(i))
-      i += 1
+    val i = values.iterator
+    while (names.hasNext && i.hasNext) {
+      add(names.next(), i.next())
     }
   }
 
+  /**
+   * Skip multiple feature values. The total number of values added and skipped should equal to
+   * dimension in [[init]].
+   */
   def skip(n: Int): Unit = {
     var i = 0
     while (i < n) {
@@ -55,6 +107,9 @@ trait FeatureBuilder[T] extends Serializable { self =>
     }
   }
 
+  /**
+   * Create a [[FeatureBuilder]] for type `U` by converting the result type `T` with `f`.
+   */
   def map[U](f: T => U): FeatureBuilder[U] = new FeatureBuilder[U] {
     private val delegate = self
     private val g = f
@@ -63,20 +118,10 @@ trait FeatureBuilder[T] extends Serializable { self =>
     override def skip(): Unit = delegate.skip()
     override def result: U = g(delegate.result)
   }
+
 }
 
 object FeatureBuilder {
-  def apply[F: FeatureBuilder](): FeatureBuilder[F] = {
-    val fb = implicitly[FeatureBuilder[F]]
-    val buffer = new ByteArrayOutputStream()
-    val out = new ObjectOutputStream(buffer)
-    out.writeObject(fb)
-    val bytes = buffer.toByteArray
-    val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
-    in.readObject().asInstanceOf[FeatureBuilder[F]]
-  }
-
-
   implicit def arrayFG[T: ClassTag : FloatingPoint]: FeatureGetter[Array[T]] =
     new FeatureGetter[Array[T]] {
       private val fp = implicitly[FloatingPoint[T]]
@@ -101,6 +146,7 @@ object FeatureBuilder {
         offset += 1
       }
       override def skip(): Unit = offset += 1
+      override def skip(n: Int): Unit = offset += n
       override def result: Array[T] = {
         require(offset == array.length)
         offset = 0
@@ -180,7 +226,11 @@ object FeatureBuilder {
       offset += 1
     }
     override def skip(): Unit = offset += 1
-    override def result: SparseVector[T] = SparseVector(dim)(queue: _*)
+    override def skip(n: Int): Unit = offset += n
+    override def result: SparseVector[T] = {
+      require(offset == dim)
+      SparseVector(dim)(queue: _*)
+    }
   }
 
   implicit def mapFG[T: ClassTag : FloatingPoint]
@@ -194,13 +244,14 @@ object FeatureBuilder {
         t1 ++ t2
     }
 
-  implicit def mapFB[T: ClassTag : FloatingPoint]
-    : FeatureBuilder[Map[String, T]] = new FeatureBuilder[Map[String, T]] {
-      private var map: mutable.LinkedHashMap[String, T] = _
+  implicit def mapFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Map[String, T]] =
+    new FeatureBuilder[Map[String, T]] { self =>
+      private var b: mutable.Builder[(String, T), Map[String, T]] = _
       private val fp = implicitly[FloatingPoint[T]]
-      override def init(dimension: Int): Unit = map = mutable.LinkedHashMap.empty
-      override def add(name: String, value: Double): Unit = map.put(name, fp.fromDouble(value))
+      override def init(dimension: Int): Unit = b = Map.newBuilder[String, T]
+      override def add(name: String, value: Double): Unit = b += name -> fp.fromDouble(value)
       override def skip(): Unit = Unit
-      override def result: Map[String, T] = map.toMap
+      override def skip(n: Int): Unit = Unit
+      override def result: Map[String, T] = b.result()
     }
 }

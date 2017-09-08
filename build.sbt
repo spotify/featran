@@ -15,6 +15,9 @@
  * under the License.
  */
 
+import com.typesafe.sbt.SbtSite.SiteKeys._
+import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
+
 val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
 val circeVersion = "0.8.0"
@@ -24,7 +27,7 @@ val hadoopVersion = "2.8.0"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.1"
 val scaldingVersion = "0.17.0"
-val scioVersion = "0.3.1"
+val scioVersion = "0.4.0"
 val sparkVersion = "2.1.1"
 val tensorflowVersion = "1.1.0"
 
@@ -33,10 +36,13 @@ val commonSettings = Seq(
   name := "featran",
   description := "Feature Transformers",
   scalaVersion := "2.11.11",
-  scalacOptions ++= Seq("-target:jvm-1.7", "-deprecation", "-feature", "-unchecked"),
-  javacOptions ++= Seq("-source", "1.7", "-target", "1.7", "-Xlint:unchecked"),
+  scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
+  scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
+  javacOptions in (Compile, doc)  := Seq("-source", "1.8"),
 
   // Release settings
+  publishTo := Some(if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging),
   releaseCrossBuild             := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle             := true,
@@ -78,10 +84,16 @@ val noPublishSettings = Seq(
 lazy val root: Project = Project(
   "root",
   file(".")
-).settings(
-  commonSettings ++ noPublishSettings
+).enablePlugins(GhpagesPlugin, ScalaUnidocPlugin).settings(
+  commonSettings ++ noPublishSettings,
+  siteSubdirName in ScalaUnidoc := "",
+  addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+  gitRemoteRepo := "git@github.com:spotify/featran.git",
+  // com.spotify.featran.java pollutes namespaces and breaks unidoc class path
+  unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(java)
 ).aggregate(
   core,
+  java,
   flink,
   scalding,
   scio,
@@ -94,8 +106,8 @@ lazy val core: Project = Project(
   "core",
   file("core")
 ).settings(
-  moduleName := "featran-core",
   commonSettings,
+  moduleName := "featran-core",
   description := "Feature Transformers",
   libraryDependencies ++= Seq(
     "com.twitter" %% "algebird-core" % algebirdVersion,
@@ -110,26 +122,44 @@ lazy val core: Project = Project(
   ).map(_ % circeVersion)
 )
 
+lazy val java: Project = Project(
+  "java",
+  file("java")
+).settings(
+  commonSettings,
+  moduleName := "featran-java",
+  description := "Feature Transformers - java",
+  libraryDependencies ++= Seq(
+    "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+  )
+).dependsOn(
+  core,
+  core % "test->test"
+)
+
 lazy val flink: Project = Project(
   "flink",
   file("flink")
 ).settings(
-  moduleName := "featran-flink",
   commonSettings,
+  moduleName := "featran-flink",
   description := "Feature Transformers - Flink",
   libraryDependencies ++= Seq(
     "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
     "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
-).dependsOn(core)
+).dependsOn(
+  core,
+  core % "test->test"
+)
 
 lazy val scalding: Project = Project(
   "scalding",
   file("scalding")
 ).settings(
-  moduleName := "featran-scalding",
   commonSettings,
+  moduleName := "featran-scalding",
   description := "Feature Transformers - Scalding",
   resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
   libraryDependencies ++= Seq(
@@ -137,40 +167,49 @@ lazy val scalding: Project = Project(
     "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
-).dependsOn(core)
+).dependsOn(
+  core,
+  core % "test->test"
+)
 
 lazy val scio: Project = Project(
   "scio",
   file("scio")
 ).settings(
-  moduleName := "featran-scio",
   commonSettings,
+  moduleName := "featran-scio",
   description := "Feature Transformers - Scio",
   libraryDependencies ++= Seq(
     "com.spotify" %% "scio-core" % scioVersion,
     "com.spotify" %% "scio-test" % scioVersion % "test"
   )
-).dependsOn(core)
+).dependsOn(
+  core,
+  core % "test->test"
+)
 
 lazy val spark: Project = Project(
   "spark",
   file("spark")
 ).settings(
-  moduleName := "featran-spark",
   commonSettings,
+  moduleName := "featran-spark",
   description := "Feature Transformers - Spark",
   libraryDependencies ++= Seq(
     "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
   )
-).dependsOn(core)
+).dependsOn(
+  core,
+  core % "test->test"
+)
 
 lazy val numpy: Project = Project(
   "numpy",
   file("numpy")
 ).settings(
-  moduleName := "featran-numpy",
   commonSettings,
+  moduleName := "featran-numpy",
   description := "Feature Transformers - NumPy",
   libraryDependencies ++= Seq(
     "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -181,8 +220,8 @@ lazy val tensorflow: Project = Project(
   "tensorflow",
   file("tensorflow")
 ).settings(
-  moduleName := "featran-tensorflow",
   commonSettings,
+  moduleName := "featran-tensorflow",
   description := "Feature Transformers - TensorFlow",
   libraryDependencies ++= Seq(
     "org.tensorflow" % "proto" % tensorflowVersion,

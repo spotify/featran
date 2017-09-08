@@ -18,12 +18,13 @@
 package com.spotify.featran
 
 import java.io._
+
 import scala.reflect.ClassTag
 import scala.language.{higherKinds, implicitConversions}
 
 /**
  * Encapsulate features extracted from a [[MultiFeatureSpec]].
- * Allows seperation back into specs by names or vector
+ * Allows separation back into specs by names or vectors.
  * @tparam M input collection type, e.g. `Array`, List
  * @tparam T input record type to extract features from
  */
@@ -31,21 +32,48 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
 (private val fs: FeatureSet[T],
  @transient private val input: M[T],
  @transient private val settings: Option[M[String]],
- @transient private val mapping: Map[String, Int])
+ private val mapping: Map[String, Int])
   extends Serializable {
+
+  @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
+  import dt.Ops._
 
   private val extractor = new FeatureExtractor(fs, input, settings)
 
   private lazy val dims: Int = mapping.values.toSet.size
 
-  @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
-  import dt.Ops._
+  /**
+   * JSON settings of the [[MultiFeatureSpec]] and aggregated feature summary.
+   *
+   * This can be used with [[MultiFeatureSpec.extractWithSettings]] to bypass the `reduce` step
+   * when extracting new records of the same type.
+   */
+  @transient lazy val featureSettings: M[String] = extractor.featureSettings
 
-  def featureValues[F: FeatureBuilder : ClassTag]: M[Seq[F]] =
-    featureValuesWithOriginal.map(_._1)
+  /**
+   * Names of the extracted features, in the same order as values in [[featureValues]].
+   */
+  @transient lazy val featureNames: M[Seq[Seq[String]]] =
+  extractor.aggregate.map(a => fs.multiFeatureNames(a, dims, mapping))
 
-  def featureValuesWithOriginal[F: FeatureBuilder : ClassTag]: M[(Seq[F], T)] = {
+  /**
+   * Values of the extracted features, in the same order as names in [[featureNames]].
+   * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
+   *           `DenseVector[Double]`
+   */
+  def featureValues[F: FeatureBuilder : ClassTag]: M[Seq[F]] = featureResults.map(_._1)
+
+  /**
+   * Values of the extracted features, in the same order as names in [[featureNames]] with
+   * rejections keyed on feature name and the original input record.
+   * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
+   *           `DenseVector[Double]`
+   */
+  def featureResults[F: FeatureBuilder : ClassTag]
+  : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] = {
     val fb = implicitly[FeatureBuilder[F]]
+
+    // each underlying FeatureSpec should get a unique copy of FeatureBuilder
     val buffer = new ByteArrayOutputStream()
     val out = new ObjectOutputStream(buffer)
     out.writeObject(fb)
@@ -55,13 +83,9 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
       in.readObject().asInstanceOf[FeatureBuilder[F]]
     }
     extractor.as.cross(extractor.aggregate).map { case ((o, a), c) =>
-      fs.multiFeatureValues(a, c, fbs, mapping)
-      (fbs.map(_.result).toSeq, o)
+      fs.multiFeatureValues(a, c, fbs, dims, mapping)
+      (fbs.map(_.result).toSeq, fbs.map(_.rejections), o)
     }
   }
 
-  @transient lazy val featureNames: M[Seq[Seq[String]]] =
-    extractor.aggregate.map(a => fs.multiFeatureNames(a, mapping))
-
-  @transient lazy val featureSettings: M[String] = extractor.featureSettings
 }

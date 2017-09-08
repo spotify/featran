@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import org.scalacheck.Prop
 
-class VectorIdentitySpec extends TransformerProp("VectorIdentity") {
+object VectorIdentitySpec extends TransformerProp("VectorIdentity") {
 
   property("default") = Prop.forAll { xs: List[Array[Double]] =>
     val dim = xs.head.length

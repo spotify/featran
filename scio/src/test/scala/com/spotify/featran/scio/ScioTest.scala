@@ -23,27 +23,23 @@ import com.spotify.scio.testing._
 
 class ScioTest extends PipelineSpec {
 
-  private val data = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
+  import Fixtures._
 
-  "FeatureSpec" should "work with Scio" in {
+  "Scio" should "work with FeatureSpec" in {
     runWithContext { sc =>
-      val f = FeatureSpec.of[(String, Int)]
-        .required(_._1)(OneHotEncoder("one_hot"))
-        .required(_._2.toDouble)(MinMaxScaler("min_max"))
-        .extract(sc.parallelize(data))
-      f.featureNames should containSingleValue (Seq(
-        "one_hot_a",
-        "one_hot_b",
-        "one_hot_c",
-        "one_hot_d",
-        "one_hot_e",
-        "min_max"))
-//      f.featureValues[Seq[Double]] should containInAnyOrder (Seq(
-//        Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
-//        Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
-//        Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
-//        Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
-//        Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00)))
+      val f = testSpec.extract(sc.parallelize(testData))
+      f.featureNames should containSingleValue (expectedNames)
+      f.featureValues[Seq[Double]] should containInAnyOrder (expectedValues)
+    }
+  }
+
+  it should "work with MultiFeatureSpec" in {
+    noException shouldBe thrownBy {
+      runWithContext { sc =>
+        val f = recordSpec.extract(sc.parallelize(records))
+        f.featureNames
+        f.featureValues[Seq[Double]]
+      }
     }
   }
 
@@ -52,12 +48,12 @@ class ScioTest extends PipelineSpec {
   }
 
   // scalastyle:off no.whitespace.before.left.bracket
-  it should "fail on throw serializable feature" in {
+  it should "fail on serialization error" in {
     runWithContext { sc =>
       val foo = new NonSerializable()
       val f = FeatureSpec.of[(String, Int)]
         .required(e => foo.method(e._1))(Identity("foo"))
-        .extract(sc.parallelize(data))
+        .extract(sc.parallelize(testData))
 
       val thrown = the [RuntimeException] thrownBy f.featureValues[Seq[Double]]
       thrown.getMessage should startWith("unable to serialize anonymous function")

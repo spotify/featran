@@ -37,6 +37,9 @@ object FeatureSpec {
    */
   def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty)
 
+  /**
+   * Combine multiple [[FeatureSpec]]s into a single spec.
+   */
   def combine[T](specs: FeatureSpec[T]*): FeatureSpec[T] = {
     require(specs.nonEmpty, "Empty specs")
     new FeatureSpec(specs.map(_.features).reduce(_ ++ _))
@@ -137,10 +140,7 @@ private class Feature[T, A, B, C](val f: T => Option[A],
   // Option[C]
   def unsafeSettings(c: Option[Any]): Settings = transformer.settings(c.asInstanceOf[Option[C]])
 
-  def toIndex(map: Map[String, Int]): Int = {
-    assert(map.contains(transformer.name))
-    map(transformer.name)
-  }
+  def toIndex(map: Map[String, Int]): Int = map(transformer.name)
 
 }
 
@@ -211,7 +211,7 @@ class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _, _]])
     var sum = 0
     while (i < n) {
       val length = features(i).unsafeFeatureDimension(c(i))
-      map.put(i, Range(sum, sum+length))
+      map.put(i, Range(sum, sum + length))
       sum += length
       i += 1
     }
@@ -323,6 +323,57 @@ class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _, _]])
       val name = feature.transformer.name
       require(m.contains(name), s"Missing settings for $name")
       feature.transformer.decodeAggregator(m(feature.transformer.name).aggregators)
+    }
+  }
+
+  //================================================================================
+  // For MultiFeatureSpec and MultiFeatureExtractor
+  //================================================================================
+
+  // Array[Option[C]] => Array[String]
+  def multiFeatureNames(c: ARRAY, dims: Int, mapping: Map[String, Int]): Seq[Seq[String]] = {
+    require(n == c.length)
+    val b = 0.until(dims).map(_ => Seq.newBuilder[String])
+    var i = 0
+    while (i < n) {
+      val feature = features(i)
+      val idx = feature.toIndex(mapping)
+      feature.unsafeFeatureNames(c(i)).foreach(b(idx) += _)
+      i += 1
+    }
+    b.map(_.result())
+  }
+
+  // Array[Option[C]] => Array[Int]
+  def multiFeatureDimension(c: ARRAY, dims: Int, mapping: Map[String, Int]): Array[Int] = {
+    val featureCount = Array.fill[Int](dims)(0)
+    var i = 0
+    while (i < n) {
+      val feature = features(i)
+      val idx = feature.toIndex(mapping)
+      featureCount(idx) += features(i).unsafeFeatureDimension(c(i))
+      i += 1
+    }
+    featureCount
+  }
+
+  // (Array[Option[A]], Array[Option[C]], FeatureBuilder[F])
+  def multiFeatureValues[F](a: ARRAY, c: ARRAY, fbs: Array[FeatureBuilder[F]],
+                            dims: Int, mapping: Map[String, Int]): Unit = {
+
+    var i = 0
+    val counts = multiFeatureDimension(c, dims, mapping)
+    while (i < fbs.length) {
+      fbs(i).init(counts(i))
+      i += 1
+    }
+
+    i = 0
+    while (i < n) {
+      val feature = features(i)
+      val builder = fbs(mapping(feature.transformer.name))
+      feature.unsafeBuildFeatures(a(i), c(i), builder)
+      i += 1
     }
   }
 

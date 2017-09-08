@@ -22,6 +22,10 @@ import scala.collection.mutable
 import scala.language.{higherKinds, implicitConversions}
 import scala.reflect.ClassTag
 
+/**
+ * Type class for collections to extract features from.
+ * @tparam M collection type
+ */
 trait CollectionType[M[_]] { self =>
   def map[A, B: ClassTag](ma: M[A], f: A => B): M[B]
   def reduce[A](ma: M[A], f: (A, A) => A): M[A]

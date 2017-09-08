@@ -17,11 +17,9 @@
 
 package com.spotify.featran.transformers
 
-import java.net.{URLDecoder, URLEncoder}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 
-import com.spotify.featran.FeatureBuilder
-import com.twitter.algebird.Aggregator
-
+import scala.collection.SortedMap
 import scala.collection.mutable.{Map => MMap}
 
 /**
@@ -29,42 +27,55 @@ import scala.collection.mutable.{Map => MMap}
  */
 case class WeightedLabel(name: String, value: Double)
 
+/**
+ * Transform a collection of weighted categorical features to columns of weight sums, with at most
+ * N values.
+ *
+ * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
+ * [[NHotEncoder]].
+ *
+ * Missing values are transformed to [0.0, 0.0, ...].
+ *
+ * When using aggregated feature summary from a previous session, unseen labels are ignored and
+ * [[FeatureRejection.Unseen]] rejections are reported.
+ */
 object NHotWeightedEncoder {
   /**
-   * Transform a collection of weighted categorical features to columns of weight sums, with at
-   * most N values.
-   *
-   * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
-   * [[NHotEncoder]].
-   *
-   * Missing values are transformed to [0.0, 0.0, ...].
-   *
-   * When using aggregated feature summary from a previous session, unseen labels are ignored.
+   * Create a new [[NHotWeightedEncoder]] instance.
    */
-  def apply(name: String): Transformer[Seq[WeightedLabel], Set[String], Array[String]] =
+  def apply(name: String)
+  : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
     new NHotWeightedEncoder(name)
 }
 
-private class NHotWeightedEncoder(name: String)
-  extends Transformer[Seq[WeightedLabel], Set[String], Array[String]](name) {
-  private def labelNames(xs: Seq[WeightedLabel]): Set[String] =
-    xs.map(_.name)(scala.collection.breakOut)
-
-  override val aggregator: Aggregator[Seq[WeightedLabel], Set[String], Array[String]] =
-    Aggregators.from[Seq[WeightedLabel]](labelNames).to(_.toArray.sorted)
-  override def featureDimension(c: Array[String]): Int = c.length
-  override def featureNames(c: Array[String]): Seq[String] = c.map(name + "_" + _).toSeq
-  override def buildFeatures(a: Option[Seq[WeightedLabel]], c: Array[String],
+private class NHotWeightedEncoder(name: String) extends BaseHotEncoder[Seq[WeightedLabel]](name) {
+  override def prepare(a: Seq[WeightedLabel]): Set[String] = Set(a.map(_.name): _*)
+  override def buildFeatures(a: Option[Seq[WeightedLabel]],
+                             c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(xs) =>
-      val as = MMap[String, Double]().withDefaultValue(0.0)
-      xs.foreach(x => as(x.name) += x.value)
-      c.foreach(s => if (as.contains(s)) fb.add(name + "_" + s, as(s)) else fb.skip())
-    case None => fb.skip(c.length)
+      val weights = MMap.empty[String, Double].withDefaultValue(0.0)
+      xs.foreach(x => weights(x.name) += x.value)
+      val hits = c.filterKeys(weights.contains)
+      if (hits.isEmpty) {
+        fb.skip(c.size)
+      } else {
+        var prev = -1
+        val it = hits.iterator
+        while (it.hasNext) {
+          val (key, curr) = it.next()
+          val gap = curr - prev - 1
+          if (gap > 0) fb.skip(gap)
+          fb.add(name + '_' + key, weights(key))
+          prev = curr
+        }
+        val gap = c.size - prev - 1
+        if (gap > 0) fb.skip(gap)
+      }
+      val unseen = weights.keySet -- c.keySet
+      if (unseen.nonEmpty) {
+        fb.reject(this, FeatureRejection.Unseen(unseen.toSet))
+      }
+    case None => fb.skip(c.size)
   }
-
-  override def encodeAggregator(c: Option[Array[String]]): Option[String] =
-    c.map(_.map(URLEncoder.encode(_, "UTF-8")).mkString(","))
-  override def decodeAggregator(s: Option[String]): Option[Array[String]] =
-    s.map(_.split(",").map(URLDecoder.decode(_, "UTF-8")))
 }

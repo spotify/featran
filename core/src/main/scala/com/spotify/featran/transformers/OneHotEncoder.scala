@@ -19,32 +19,82 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 
+import scala.collection.SortedMap
+
+/**
+ * Transform a collection of categorical features to binary columns, with at most a single
+ * one-value.
+ *
+ * Missing values are transformed to [0.0, 0.0, ...].
+ *
+ * When using aggregated feature summary from a previous session, unseen labels are ignored and
+ * [[FeatureRejection.Unseen]] rejections are reported.
+ */
 object OneHotEncoder {
   /**
-   * Transform a collection of categorical features to binary columns, with at most a single
-   * one-value.
-   *
-   * Missing values are transformed to [0.0, 0.0, ...].
-   *
-   * When using aggregated feature summary from a previous session, unseen labels are ignored.
+   * Create a new [[OneHotEncoder]] instance.
    */
-  def apply(name: String): Transformer[String, Set[String], Array[String]] =
+  def apply(name: String): Transformer[String, Set[String], SortedMap[String, Int]] =
     new OneHotEncoder(name)
 }
 
-private class OneHotEncoder(name: String)
-  extends Transformer[String, Set[String], Array[String]](name) {
-  override val aggregator: Aggregator[String, Set[String], Array[String]] =
-    Aggregators.from[String](Set(_)).to(_.toArray.sorted)
-  override def featureDimension(c: Array[String]): Int = c.length
-  override def featureNames(c: Array[String]): Seq[String] = c.map(name + '_' + _).toSeq
-  override def buildFeatures(a: Option[String], c: Array[String], fb: FeatureBuilder[_]): Unit =
-    c.foreach(s => if (a.contains(s)) fb.add(name + '_' + s, 1.0) else fb.skip())
-  override def encodeAggregator(c: Option[Array[String]]): Option[String] =
-    c.map(_.map(URLEncoder.encode(_, "UTF-8")).mkString(","))
-  override def decodeAggregator(s: Option[String]): Option[Array[String]] =
-    s.map(_.split(",").map(URLDecoder.decode(_, "UTF-8")))
+private class OneHotEncoder(name: String) extends BaseHotEncoder[String](name) {
+  override def prepare(a: String): Set[String] = Set(a)
+  override def buildFeatures(a: Option[String],
+                             c: SortedMap[String, Int],
+                             fb: FeatureBuilder[_]): Unit = {
+    a match {
+      case Some(k) => c.get(k) match {
+        case Some(v) =>
+          fb.skip(v)
+          fb.add(name + '_' + k, 1.0)
+          fb.skip(math.max(0, c.size - v - 1))
+        case None =>
+          fb.skip(c.size)
+          fb.reject(this, FeatureRejection.Unseen(Set(k)))
+      }
+      case None => fb.skip(c.size)
+    }
+  }
+}
+
+private abstract class BaseHotEncoder[A](name: String)
+  extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
+
+  def prepare(a: A): Set[String]
+
+  private def present(reduction: Set[String]): SortedMap[String, Int] = {
+    val b = SortedMap.newBuilder[String, Int]
+    var i = 0
+    val array = reduction.toArray
+    java.util.Arrays.sort(array, Ordering[String])
+    while (i < array.length) {
+      b += array(i) -> i
+      i += 1
+    }
+    b.result()
+  }
+  override val aggregator: Aggregator[A, Set[String], SortedMap[String, Int]] =
+    Aggregators.from[A](prepare).to(present)
+  override def featureDimension(c: SortedMap[String, Int]): Int = c.size
+  override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
+    c.map(name + '_' + _._1)(scala.collection.breakOut)
+  }
+
+  override def encodeAggregator(c: Option[SortedMap[String, Int]]): Option[String] =
+    c.map(_.map(e => "label:" + URLEncoder.encode(e._1, "UTF-8")).mkString(","))
+  override def decodeAggregator(s: Option[String]): Option[SortedMap[String, Int]] = s.map { ks =>
+    val a = ks.split(",").filter(_.nonEmpty)
+    var i = 0
+    val b = SortedMap.newBuilder[String, Int]
+    while (i < a.length) {
+      b += URLDecoder.decode(a(i).replaceAll("^label:", ""), "UTF-8") -> i
+      i += 1
+    }
+    b.result()
+  }
+
 }

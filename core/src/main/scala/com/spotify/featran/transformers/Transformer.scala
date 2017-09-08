@@ -25,19 +25,41 @@ import scala.language.higherKinds
 // TODO: port more transformers from Spark
 // https://spark.apache.org/docs/2.1.0/ml-features.html
 
+/**
+ * Base class for feature transformers.
+ *
+ * Input values are converted into intermediate type `B`, aggregated, and converted to summary type
+ * `C`. The summary type `C` is then used to transform input values into features.
+ * @param name feature name
+ * @tparam A input type
+ * @tparam B aggregator intermediate type
+ * @tparam C aggregator summary type
+ */
 abstract class Transformer[-A, B, C](val name: String) extends Serializable {
 
   require(name != null && name.nonEmpty, "name cannot be null or empty")
 
+  /**
+   * Aggregator for computing input values into a summary.
+   */
   val aggregator: Aggregator[A, B, C]
 
-  // number of generated features
+  /**
+   * Number of generated features given an aggregator summary.
+   */
   def featureDimension(c: C): Int
 
-  // names of the generated features
+  /**
+   * Names of the generated features given an aggregator summary.
+   */
   def featureNames(c: C): Seq[String]
 
-  // build features
+  /**
+   * Build features from a single input value and an aggregator summary.
+   * @param a input value
+   * @param c aggregator summary
+   * @param fb feature builder
+   */
   def buildFeatures(a: Option[A], c: C, fb: FeatureBuilder[_]): Unit
 
   protected def nameAt(n: Int): String = name + '_' + n
@@ -66,16 +88,25 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   // Transformer parameter and aggregator persistence
   //================================================================================
 
-  // Encode aggregator of the current extraction
+  /**
+   * Encode aggregator summary of the current extraction.
+   */
   def encodeAggregator(c: Option[C]): Option[String]
 
-  // Decode aggregator from a previous extraction
+  /**
+   * Decode aggregator summary from a previous extraction.
+   */
   def decodeAggregator(s: Option[String]): Option[C]
 
-  // Compile time parameters
+  /**
+   * Compile time parameters.
+   */
   def params: Map[String, String] = Map.empty
 
-  // Settings including compile time parameters and runtime aggregator
+  /**
+   * Settings including compile time parameters and runtime aggregator summary.
+   * @param c aggregator summary
+   */
   def settings(c: Option[C]): Settings =
     Settings(this.getClass.getCanonicalName, name, params, optFeatureNames(c), encodeAggregator(c))
 
@@ -89,19 +120,19 @@ private abstract class OneDimensional[A, B, C](name: String) extends Transformer
   override def featureNames(c: C): Seq[String] = Seq(name)
 }
 
-private abstract class MapOne[A](name: String, val default: Double = 0.0)
+private abstract class MapOne[A](name: String)
   extends OneDimensional[A, Unit, Unit](name) {
   override val aggregator: Aggregator[A, Unit, Unit] = Aggregators.unit[A]
   override def buildFeatures(a: Option[A], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) => fb.add(name, map(x))
-    case None => fb.add(name, default)
+    case None => fb.add(name, 0.0)
   }
   def map(a: A): Double
   override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")
   override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
 }
 
-object Aggregators {
+private object Aggregators {
   def unit[A]: Aggregator[A, Unit, Unit] = from[A](_ => ()).to(_ => ())
 
   def from[A]: From[A] = new From[A]

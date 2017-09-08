@@ -63,7 +63,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   /**
    * JSON settings of the [[FeatureSpec]] and aggregated feature summary.
    *
-   * This can be used with [[FeatureSpec#extractWithSettings]] to bypass the `reduce` step when
+   * This can be used with [[FeatureSpec.extractWithSettings]] to bypass the `reduce` step when
    * extracting new records of the same type.
    */
   @transient lazy val featureSettings: M[String] = settings match {
@@ -88,22 +88,23 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValues[F: FeatureBuilder : ClassTag]: M[F] =
-    featureValuesWithOriginal.map(_._1)
+  def featureValues[F: FeatureBuilder : ClassTag]: M[F] = featureResults.map(_.value)
 
   /**
-   * Values of the extracted features, in the same order as names in [[featureNames]] with the
-   * original input record.
+   * Values of the extracted features, in the same order as names in [[featureNames]] with
+   * rejections keyed on feature name and the original input record.
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValuesWithOriginal[F: FeatureBuilder : ClassTag]: M[(F, T)] = {
+  def featureResults[F: FeatureBuilder : ClassTag]: M[FeatureResult[F, T]] = {
     val fb = implicitly[FeatureBuilder[F]]
     val cls = fs
     as.cross(aggregate).map { case ((o, a), c) =>
-      cls.featureValues(a, c, fb)
-      (fb.result, o)
+      fs.featureValues(a, c, fb)
+      FeatureResult(fb.result, fb.rejections, o)
     }
   }
 
 }
+
+case class FeatureResult[F, T](value: F, rejections: Map[String, FeatureRejection], original: T)

@@ -18,34 +18,28 @@
 package com.spotify.featran.scalding
 
 import com.spotify.featran._
-import com.spotify.featran.transformers._
 import com.twitter.scalding._
 import org.scalatest._
 
 class ScaldingTest extends FlatSpec with Matchers {
 
-  private val data = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
+  import Fixtures._
 
   def materialize[T](p: TypedPipe[T]): Iterable[T] =
     p.toIterableExecution.waitFor(Config.default, Local(true)).get
 
   "FeatureSpec" should "work with Scalding" in {
-    val f = FeatureSpec.of[(String, Int)]
-      .required(_._1)(OneHotEncoder("one_hot"))
-      .required(_._2.toDouble)(MinMaxScaler("min_max"))
-      .extract(TypedPipe.from(data))
-    materialize(f.featureNames) shouldBe Iterable(Seq(
-      "one_hot_a",
-      "one_hot_b",
-      "one_hot_c",
-      "one_hot_d",
-      "one_hot_e",
-      "min_max"))
-    materialize(f.featureValues[Seq[Double]]) should contain theSameElementsAs Iterable(
-      Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
-      Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
-      Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
-      Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
-      Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
+    val f = testSpec.extract(TypedPipe.from(testData))
+    materialize(f.featureNames) shouldBe Iterable(expectedNames)
+    materialize(f.featureValues[Seq[Double]]) should contain theSameElementsAs expectedValues
   }
+
+  it should "work with MultiFeatureSpec" in {
+    noException shouldBe thrownBy {
+      val f = recordSpec.extract(TypedPipe.from(records))
+      materialize(f.featureNames)
+      materialize(f.featureValues[Seq[Double]])
+    }
+  }
+
 }

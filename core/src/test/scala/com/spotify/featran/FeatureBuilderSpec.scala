@@ -31,12 +31,13 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
   def test[T: ClassTag : Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])
                                             (toSeq: F => Seq[T]): Prop = {
     val num = implicitly[Numeric[T]]
-    fb.init(xs.size)
+    fb.init(xs.size + 2)
     xs.zipWithIndex.foreach {
       case (Some(x), i) => fb.add("key" + i.toString, num.toDouble(x))
       case (None, _) => fb.skip()
     }
-    toSeq(fb.result) == xs.map(_.getOrElse(num.zero))
+    fb.skip(2)
+    toSeq(fb.result) == xs.map(_.getOrElse(num.zero)) ++ List(num.zero, num.zero)
   }
 
   property("float array") = Prop.forAll(list[Float]) { xs =>

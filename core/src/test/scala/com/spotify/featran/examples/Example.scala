@@ -115,15 +115,21 @@ object Example {
     val floatSV = f1.featureValues[SparseVector[Float]]
     val doubleSV = f1.featureValues[SparseVector[Double]]
 
-    // Get feature values as above with the original input record
-    val doubleAWithOriginal = f1.featureValuesWithOriginal[Array[Double]]
+    // Get feature values as above with rejections and the original input record
+    val doubleAResults = f1.featureResults[Array[Double]]
+    val doubleAValues = doubleAResults.map(_.value)
+    val doubleARejections = doubleAResults.map(_.rejections)
+    val doubleAOriginals = doubleAResults.map(_.original)
 
     // Extract settings as a JSON string
     val settings = f1.featureSettings
     println(settings.head)
 
     // Extract features from new records, but reuse previously saved settings
-    val f2 = spec.extractWithSettings(records.take(records.size / 2), settings)
+    val f2 = spec.extractWithSettings(recordsGen.sample.get, settings)
+
+    // Filter out results with rejections and extract valid values
+    val validValues = f2.featureResults[Seq[Double]].filter(_.rejections.isEmpty).map(_.value)
   }
   // scalastyle:on method.length
   // scalastyle:on regex

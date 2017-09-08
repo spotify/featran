@@ -41,7 +41,7 @@ object MinMaxScalerSpec extends TransformerProp("MinMaxScaler") {
     val f = if ((max - min).isPosInfinity) 2.0 else 1.0
     val delta = max / f - min / f
     val expected = xs.map(x => Seq((x / f - min / f) / delta * (maxP - minP) + minP))
-    val oob = List((min - 1, Seq(minP)), (max + 1, Seq(maxP))) // out of lower and upper bounds
+    val oob = List((lowerBound(min), Seq(minP)), (upperBound(max), Seq(maxP)))
     test(MinMaxScaler("min_max", minP, maxP), xs, Seq("min_max"), expected, Seq(minP), oob)
   }
 

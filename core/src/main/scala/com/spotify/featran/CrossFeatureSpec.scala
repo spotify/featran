@@ -27,19 +27,20 @@ class CrossedFeatureExtractor[M[_]: CollectionType, T] private[featran]
   import dt.Ops._
 
   def featureValues[F: FeatureBuilder : ClassTag : FeatureGetter]: M[F] =
-    featureValuesWithOriginal.map(_._1)
+    featureResults.map(_.value)
 
-  def featureValuesWithOriginal[F: FeatureBuilder : ClassTag : FeatureGetter]: M[(F, T)] = {
+  def featureResults[F: FeatureBuilder : ClassTag : FeatureGetter]: M[FeatureResult[F, T]] = {
+    val fb = implicitly[FeatureBuilder[F]]
     val cls = fs
     extractor
-      .featureValuesWithOriginal
+      .featureResults
       .cross(extractor.aggregate)
       .cross(featureNames)
-      .map{case(((feat, orig), aggr), names) =>
-        val index = fs.featureDimensionIndex(aggr).toMap
-        val values = FeatureCross(cls, cross, names.toArray).crossValues(feat, index)
-        (values, orig)
-    }
+      .map{case((FeatureResult(value, rej, orig), c), names) =>
+        val index = fs.featureDimensionIndex(c).toMap
+        val values = FeatureCross(cls, cross, names.toArray).crossValues(value, index)
+        FeatureResult(values, rej, orig)
+      }
   }
 
   @transient lazy val featureNames: M[Seq[String]] = {
