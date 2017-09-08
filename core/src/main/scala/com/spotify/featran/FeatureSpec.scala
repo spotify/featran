@@ -19,7 +19,10 @@ package com.spotify.featran
 
 import com.spotify.featran.transformers.{Settings, Transformer}
 
+import scala.collection.mutable
 import scala.language.{higherKinds, implicitConversions}
+
+case class Cross(name1: String, name2: String, combine: (Double, Double) => Double = _ * _)
 
 /**
  * Companion object for [[FeatureSpec]].
@@ -90,6 +93,9 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   : FeatureExtractor[M, T] =
     new FeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings))
 
+  def cross(cross: Cross*): CrossFeatureSpec[T] =
+    CrossFeatureSpec(this, cross.toList)
+
 }
 
 private class Feature[T, A, B, C](val f: T => Option[A],
@@ -138,9 +144,8 @@ private class Feature[T, A, B, C](val f: T => Option[A],
 
 }
 
-private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
+class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _, _]])
   extends Serializable {
-
   {
     val (_, dups) = features
       .foldLeft((Set.empty[String], Set.empty[String])) { case ((u, d), f) =>
@@ -198,6 +203,21 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
     r
   }
 
+  // Maps Feature Index into (Array offset, Feature Index)
+  def featureDimensionIndex(c: ARRAY): mutable.Map[Int, Range] = {
+    require(n == c.length)
+    var map = new mutable.HashMap[Int, Range]
+    var i = 0
+    var sum = 0
+    while (i < n) {
+      val length = features(i).unsafeFeatureDimension(c(i))
+      map.put(i, Range(sum, sum+length))
+      sum += length
+      i += 1
+    }
+    map
+  }
+
   // Array[Option[C]] => Int
   def featureDimension(c: ARRAY): Int = {
     require(n == c.length)
@@ -220,6 +240,17 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
       i += 1
     }
     b.result()
+  }
+
+  // (Array[Option[A]], Array[Option[C]], FeatureBuilder[F])
+  def featureValues[F](a: ARRAY, c: ARRAY, fb: FeatureBuilder[F]): Unit = {
+    require(n == c.length)
+    fb.init(featureDimension(c))
+    var i = 0
+    while (i < n) {
+      features(i).unsafeBuildFeatures(a(i), c(i), fb)
+      i += 1
+    }
   }
 
   // Array[Option[C]] => Array[String]
@@ -270,17 +301,6 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
       assert(mapping.contains(feature.transformer.name))
       val builder = fb(mapping(feature.transformer.name))
       features(i).unsafeBuildFeatures(a(i), c(i), builder)
-      i += 1
-    }
-  }
-
-  // (Array[Option[A]], Array[Option[C]], FeatureBuilder[F])
-  def featureValues[F](a: ARRAY, c: ARRAY, fb: FeatureBuilder[F]): Unit = {
-    require(n == c.length)
-    fb.init(featureDimension(c))
-    var i = 0
-    while (i < n) {
-      features(i).unsafeBuildFeatures(a(i), c(i), fb)
       i += 1
     }
   }

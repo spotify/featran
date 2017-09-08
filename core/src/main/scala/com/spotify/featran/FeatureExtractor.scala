@@ -41,19 +41,23 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
 
   @transient private[featran] lazy val as: M[(T, ARRAY)] = {
     val g = fs // defeat closure
-    input.map(o => (o, g.unsafeGet(o)))
+    input.map{o => (o, g.unsafeGet(o))}
   }
+
   @transient private[featran] lazy val aggregate: M[ARRAY] = settings match {
-    case Some(x) => x.map { s =>
-      import io.circe.generic.auto._
-      import io.circe.parser._
-      fs.decodeAggregators(decode[Seq[Settings]](s).right.get)
-    }
+    case Some(x) =>
+      val o = fs
+      x.map { s =>
+        import io.circe.generic.auto._
+        import io.circe.parser._
+        o.decodeAggregators(decode[Seq[Settings]](s).right.get)
+      }
     case None =>
+      val o = fs
       as
-        .map(t => fs.unsafePrepare(t._2))
-        .reduce(fs.unsafeSum)
-        .map(fs.unsafePresent)
+        .map(t => o.unsafePrepare(t._2))
+        .reduce(o.unsafeSum)
+        .map(o.unsafePresent)
   }
 
   /**
@@ -74,7 +78,10 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   /**
    * Names of the extracted features, in the same order as values in [[featureValues]].
    */
-  @transient lazy val featureNames: M[Seq[String]] = aggregate.map(fs.featureNames)
+  @transient lazy val featureNames: M[Seq[String]] = {
+    val o = fs
+    aggregate.map(o.featureNames)
+  }
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]].
@@ -92,8 +99,9 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    */
   def featureValuesWithOriginal[F: FeatureBuilder : ClassTag]: M[(F, T)] = {
     val fb = implicitly[FeatureBuilder[F]]
+    val cls = fs
     as.cross(aggregate).map { case ((o, a), c) =>
-      fs.featureValues(a, c, fb)
+      cls.featureValues(a, c, fb)
       (fb.result, o)
     }
   }

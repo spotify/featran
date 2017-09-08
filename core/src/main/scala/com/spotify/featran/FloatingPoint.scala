@@ -19,13 +19,16 @@ package com.spotify.featran
 
 trait FloatingPoint[@specialized (Float, Double) T] extends Serializable {
   def fromDouble(x: Double): T
+  def toDouble(x: T): Double
 }
 
 object FloatingPoint {
   implicit val floatFP: FloatingPoint[Float] = new FloatingPoint[Float] {
     override def fromDouble(x: Double): Float = x.toFloat
+    override def toDouble(x: Float): Double = x.toDouble
   }
   implicit val doubleFP: FloatingPoint[Double] = new FloatingPoint[Double] {
     override def fromDouble(x: Double): Double = x
+    override def toDouble(x: Double): Double = x
   }
 }
