@@ -1,35 +1,54 @@
+/*
+ * Copyright 2017 Spotify AB.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.spotify.featran
 
-case class FeatureCross[T](
-  fs: FeatureSet[T],
-  private val cross: List[Cross],
-  private val names: Array[String]) {
+class FeatureCross[T](
+  @transient private val features: Array[Feature[T, _, _, _]]) extends Serializable {
 
-  private val namedFeatures: Map[String, Int] =
-    fs.features.zipWithIndex.map{case(feat, idx) =>
+  val namedFeatures: Map[String, Int] =
+    features.zipWithIndex.map { case (feat, idx) =>
       feat.transformer.name -> idx
     }(scala.collection.breakOut)
 
-  {
-    val dups = cross.flatMap(c => List(c.name1, c.name2)).filterNot(namedFeatures.contains)
-    require(dups.isEmpty, "Can not resolve cross features: " + dups.mkString(", "))
-  }
-
-  def crossValues[F: FeatureGetter: FeatureBuilder](fg: F, index: Map[Int, Range]): F = {
+  def crossValues[F: FeatureGetter: FeatureBuilder](
+    cross: Array[Cross],
+    names: Array[String],
+    fg: F,
+    index: Map[Int, Range]): F = {
     val fb = implicitly[FeatureBuilder[F]]
     val getter = implicitly[FeatureGetter[F]]
 
     val iter = cross.iterator
-    fb.init(crossSize(index))
+    fb.init(crossSize(cross, index))
     while(iter.hasNext){
-      values(iter.next(), fg, fb, index)
+      values(iter.next(), names, fg, fb, index)
     }
     val crossed = fb.result
     getter.combine(fg, crossed)
   }
 
-  def values[F: FeatureGetter]
-  (cross: Cross, fg: F, fb: FeatureBuilder[F], index: Map[Int, Range]): Unit = {
+  def values[F: FeatureGetter](
+    cross: Cross,
+    names: Array[String],
+    fg: F,
+    fb: FeatureBuilder[F],
+    index: Map[Int, Range]): Unit = {
+
     val getter = implicitly[FeatureGetter[F]]
     val featureIdx1 = namedFeatures(cross.name1)
     val featureIdx2 = namedFeatures(cross.name2)
@@ -54,16 +73,24 @@ case class FeatureCross[T](
 
   }
 
-  def crossNames(index: Map[Int, Range]): Seq[String] = {
+  def crossNames(
+    cross: Array[Cross],
+    currentNames: Array[String],
+    index: Map[Int, Range]): Seq[String] = {
+
     val iter = cross.iterator
     val b = Seq.newBuilder[String]
     while(iter.hasNext){
-      b ++= names(iter.next(), index)
+      b ++= names(iter.next(), currentNames, index)
     }
-    names ++ b.result()
+    currentNames ++ b.result()
   }
 
-  def names(cross: Cross, index: Map[Int, Range]): Seq[String] = {
+  def names(
+    cross: Cross,
+    names: Array[String],
+    index: Map[Int, Range]): Seq[String] = {
+
     val featureIdx1 = namedFeatures(cross.name1)
     val featureIdx2 = namedFeatures(cross.name2)
 
@@ -86,7 +113,7 @@ case class FeatureCross[T](
     b.result()
   }
 
-  def crossSize(index: Map[Int, Range]): Int = {
+  def crossSize(cross: Array[Cross], index: Map[Int, Range]): Int = {
     val iter = cross.iterator
     var sum = 0
     while(iter.hasNext){

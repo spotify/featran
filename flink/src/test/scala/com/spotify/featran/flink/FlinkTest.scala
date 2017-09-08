@@ -24,6 +24,7 @@ import org.scalatest._
 class FlinkTest extends FlatSpec with Matchers {
 
   import Fixtures._
+  import FeatureBuilder._
 
   "Flink" should "work with FeatureSpec" in {
     val env = ExecutionEnvironment.getExecutionEnvironment
@@ -38,6 +39,15 @@ class FlinkTest extends FlatSpec with Matchers {
       val f = recordSpec.extract(env.fromCollection(records))
       f.featureNames.collect()
       f.featureValues[Seq[Double]].collect()
+    }
+  }
+
+  it should "work with CrossFeatureSpec" in {
+    noException shouldBe thrownBy {
+      val env = ExecutionEnvironment.getExecutionEnvironment
+      val f = crossTestSpec.extract(env.fromCollection(testData))
+      f.featureNames.collect()
+      f.featureValues[Array[Double]].collect()
     }
   }
 

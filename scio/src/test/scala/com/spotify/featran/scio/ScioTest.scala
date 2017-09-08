@@ -24,6 +24,7 @@ import com.spotify.scio.testing._
 class ScioTest extends PipelineSpec {
 
   import Fixtures._
+  import FeatureBuilder._
 
   "Scio" should "work with FeatureSpec" in {
     runWithContext { sc =>
@@ -39,6 +40,23 @@ class ScioTest extends PipelineSpec {
         val f = recordSpec.extract(sc.parallelize(records))
         f.featureNames
         f.featureValues[Seq[Double]]
+      }
+    }
+  }
+
+  it should "work with CrossFeatureSpec" in {
+    noException shouldBe thrownBy {
+      try {
+      runWithContext { sc =>
+        val f = crossTestSpec.extract(sc.parallelize(testData))
+        f.featureNames
+        f.featureValues[Array[Double]]
+      }
+      } catch {
+        case e =>
+          e.printStackTrace()
+          println(e)
+          throw e
       }
     }
   }

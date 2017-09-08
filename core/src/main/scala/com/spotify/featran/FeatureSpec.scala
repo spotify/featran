@@ -22,7 +22,7 @@ import com.spotify.featran.transformers.{Settings, Transformer}
 import scala.collection.mutable
 import scala.language.{higherKinds, implicitConversions}
 
-case class Cross(name1: String, name2: String, combine: (Double, Double) => Double = _ * _)
+case class Cross(name1: String, name2: String, combine: (Double, Double) => Double = _ * _) extends Serializable
 
 /**
  * Companion object for [[FeatureSpec]].

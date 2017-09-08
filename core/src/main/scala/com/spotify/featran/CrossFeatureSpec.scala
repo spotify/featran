@@ -1,3 +1,20 @@
+/*
+ * Copyright 2017 Spotify AB.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.spotify.featran
 
 import scala.reflect.ClassTag
@@ -18,7 +35,7 @@ class CrossedFeatureExtractor[M[_]: CollectionType, T] private[featran]
 (private val fs: FeatureSet[T],
  @transient private val input: M[T],
  @transient private val settings: Option[M[String]],
- @transient private val cross: List[Cross]
+ private val cross: List[Cross]
 ) extends Serializable {
 
   private val extractor = new FeatureExtractor(fs, input, settings)
@@ -32,23 +49,27 @@ class CrossedFeatureExtractor[M[_]: CollectionType, T] private[featran]
   def featureResults[F: FeatureBuilder : ClassTag : FeatureGetter]: M[FeatureResult[F, T]] = {
     val fb = implicitly[FeatureBuilder[F]]
     val cls = fs
+    val localCross = cross.toArray
+    val crosser = new FeatureCross(cls.features)
     extractor
       .featureResults
       .cross(extractor.aggregate)
       .cross(featureNames)
       .map{case((FeatureResult(value, rej, orig), c), names) =>
-        val index = fs.featureDimensionIndex(c).toMap
-        val values = FeatureCross(cls, cross, names.toArray).crossValues(value, index)
+        val index = cls.featureDimensionIndex(c).toMap
+        val values = crosser.crossValues(localCross, names.toArray, value, index)
         FeatureResult(values, rej, orig)
       }
   }
 
   @transient lazy val featureNames: M[Seq[String]] = {
     val cls = fs
+    val localCross = cross.toArray
+    val crosser = new FeatureCross(cls.features)
     extractor.aggregate.map { a =>
-      val names = fs.featureNames(a)
-      val index = fs.featureDimensionIndex(a).toMap
-      FeatureCross(cls, cross, names.toArray).crossNames(index)
+      val names = cls.featureNames(a)
+      val index = cls.featureDimensionIndex(a).toMap
+      crosser.crossNames(localCross, names.toArray, index)
     }
   }
 

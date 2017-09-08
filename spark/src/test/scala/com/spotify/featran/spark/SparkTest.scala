@@ -24,6 +24,7 @@ import org.scalatest._
 class SparkTest extends FlatSpec with Matchers {
 
   import Fixtures._
+  import FeatureBuilder._
 
   "FeatureSpec" should "work with Spark" in {
     val sc = new SparkContext("local[4]", "test")
@@ -39,6 +40,16 @@ class SparkTest extends FlatSpec with Matchers {
       val f = recordSpec.extract(sc.parallelize(records))
       f.featureNames.collect()
       f.featureValues[Seq[Double]].collect()
+      sc.stop()
+    }
+  }
+
+  it should "work with CrossFeatureSpec" in {
+    noException shouldBe thrownBy {
+      val sc = new SparkContext("local[4]", "test")
+      val f = crossTestSpec.extract(sc.parallelize(testData))
+      f.featureNames.collect()
+      f.featureValues[Array[Double]].collect()
       sc.stop()
     }
   }
