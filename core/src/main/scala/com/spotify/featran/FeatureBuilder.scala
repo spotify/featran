@@ -30,7 +30,7 @@ import scala.language.higherKinds
 import scala.reflect.ClassTag
 
 trait FeatureGetter[F, T] extends Serializable with Semigroup[F] { self =>
-  def iterable(names: Seq[String], t: F): Iterable[(T, Int)]
+  def iterable(names: Array[String], t: F): Iterable[(T, Int)]
 }
 
 sealed trait FeatureRejection
@@ -138,7 +138,7 @@ object FeatureBuilder {
 
   implicit def arrayFG[T: ClassTag : FloatingPoint]: FeatureGetter[Array[T], T] =
     new FeatureGetter[Array[T], T] {
-      override def iterable(names: Seq[String], t: Array[T]): Iterable[(T, Int)] =
+      override def iterable(names: Array[String], t: Array[T]): Iterable[(T, Int)] =
         t.zipWithIndex
 
       override def combine(t1: Array[T], t2: Array[T]): Array[T] = t1 ++ t2
@@ -176,7 +176,7 @@ object FeatureBuilder {
 
   implicit def seqFG[T: ClassTag : FloatingPoint]: FeatureGetter[Seq[T], T] =
     new FeatureGetter[Seq[T], T] {
-      override def iterable(names: Seq[String], t: Seq[T]): Iterable[(T, Int)] =
+      override def iterable(names: Array[String], t: Seq[T]): Iterable[(T, Int)] =
         t.zipWithIndex
       override def combine(t1: Seq[T], t2: Seq[T]): Seq[T] = t1 ++ t2
     }
@@ -205,7 +205,7 @@ object FeatureBuilder {
   implicit def denseVectorFG[T: ClassTag : FloatingPoint]
   : FeatureGetter[DenseVector[T], T] =
     new FeatureGetter[DenseVector[T], T] {
-      override def iterable(names: Seq[String], t: DenseVector[T]): Iterable[(T, Int)] =
+      override def iterable(names: Array[String], t: DenseVector[T]): Iterable[(T, Int)] =
         t.data.zipWithIndex
 
       override def combine(t1: DenseVector[T], t2: DenseVector[T]): DenseVector[T] =
@@ -218,7 +218,7 @@ object FeatureBuilder {
   implicit def sparseVectorFG[T: ClassTag : FloatingPoint : Semiring : Zero]
   : FeatureGetter[SparseVector[T], T] =
     new FeatureGetter[SparseVector[T], T] {
-      override def iterable(names: Seq[String], t: SparseVector[T]): Iterable[(T, Int)] =
+      override def iterable(names: Array[String], t: SparseVector[T]): Iterable[(T, Int)] =
         t.activeIterator.toIterable.map(_.swap)
 
       override def combine(t1: SparseVector[T], t2: SparseVector[T]): SparseVector[T] =
@@ -254,7 +254,7 @@ object FeatureBuilder {
       override def combine(t1: Map[String, T], t2: Map[String, T]): Map[String, T] =
         t1 ++ t2
 
-      override def iterable(names: Seq[String], t:  Map[String, T]): Iterable[(T, Int)] =
+      override def iterable(names: Array[String], t:  Map[String, T]): Iterable[(T, Int)] =
         names.zipWithIndex.collect{case(n, idx) if t.contains(n) => (t(n), idx)}
     }
 

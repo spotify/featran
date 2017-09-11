@@ -120,7 +120,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
 
       if(crosses.nonEmpty){
         val results = fbs.map(v => (v.result, v.rejections))
-        val iterables = results.map{case(f, _) => fg.iterable(Nil, f)}
+        val iterables = results.zipWithIndex.map{case((f, _), idx) => fg.iterable(names(idx), f)}
         val crossResult = featureCross.values(crossArray, iterables, names)
         val (reduced, rejections) = results.reduceLeft[(F, Map[String, FeatureRejection])]
           {case((cres, crej), (res, rej)) => (fg.combine(cres, res), crej ++ rej)}
