@@ -96,14 +96,14 @@ lazy val root: Project = Project(
   // com.spotify.featran.java pollutes namespaces and breaks unidoc class path
   unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(java)
 ).aggregate(
-  core,
-  java,
-  flink,
-  scalding,
-  scio,
-  spark,
-  numpy,
-  tensorflow
+  {
+    // ++$TRAVIS_SCALA_VERSION does not respect cross build versions, excluding them for Travis CI
+    val projects = if (Option(sys.props("TRAVIS_SCALA_VERSION")).forall(_.startsWith("2.12.")))
+      Seq(core, java, scalding, scio, numpy, tensorflow)
+    else
+      Seq(core, java, flink, scalding, scio, spark, numpy, tensorflow)
+    projects.map(p => LocalProject(p.id))
+  }: _*
 )
 
 lazy val core: Project = Project(
