@@ -32,8 +32,6 @@ object Fixtures {
     .required(_._1)(OneHotEncoder("one_hot"))
     .required(_._2.toDouble)(MinMaxScaler("min_max"))
 
-  val crossTestSpec = testSpec.cross(Cross("one_hot", "min_max"))
-
   val expectedNames = Seq(
     "one_hot_a",
     "one_hot_b",

@@ -24,6 +24,7 @@ import org.scalacheck._
 import scala.reflect.ClassTag
 
 object FeatureBuilderSpec extends Properties("FeatureBuilder") {
+  import FeatureBuilder._
 
   def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)

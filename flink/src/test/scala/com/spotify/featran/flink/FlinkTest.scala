@@ -30,7 +30,7 @@ class FlinkTest extends FlatSpec with Matchers {
     val env = ExecutionEnvironment.getExecutionEnvironment
     val f = testSpec.extract(env.fromCollection(testData))
     f.featureNames.collect() shouldBe Seq(expectedNames)
-    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
+    f.featureValues[Seq[Double], Double].collect() should contain theSameElementsAs expectedValues
   }
 
   it should "work with MultiFeatureSpec" in {
@@ -39,15 +39,6 @@ class FlinkTest extends FlatSpec with Matchers {
       val f = recordSpec.extract(env.fromCollection(records))
       f.featureNames.collect()
       f.featureValues[Seq[Double]].collect()
-    }
-  }
-
-  it should "work with CrossFeatureSpec" in {
-    noException shouldBe thrownBy {
-      val env = ExecutionEnvironment.getExecutionEnvironment
-      val f = crossTestSpec.extract(env.fromCollection(testData))
-      f.featureNames.collect()
-      f.featureValues[Array[Double]].collect()
     }
   }
 

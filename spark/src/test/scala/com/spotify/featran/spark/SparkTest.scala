@@ -30,7 +30,7 @@ class SparkTest extends FlatSpec with Matchers {
     val sc = new SparkContext("local[4]", "test")
     val f = testSpec.extract(sc.parallelize(testData))
     f.featureNames.collect() shouldBe Array(expectedNames)
-    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
+    f.featureValues[Seq[Double], Double].collect() should contain theSameElementsAs expectedValues
     sc.stop()
   }
 
@@ -40,16 +40,6 @@ class SparkTest extends FlatSpec with Matchers {
       val f = recordSpec.extract(sc.parallelize(records))
       f.featureNames.collect()
       f.featureValues[Seq[Double]].collect()
-      sc.stop()
-    }
-  }
-
-  it should "work with CrossFeatureSpec" in {
-    noException shouldBe thrownBy {
-      val sc = new SparkContext("local[4]", "test")
-      val f = crossTestSpec.extract(sc.parallelize(testData))
-      f.featureNames.collect()
-      f.featureValues[Array[Double]].collect()
       sc.stop()
     }
   }

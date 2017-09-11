@@ -31,10 +31,13 @@ import scala.reflect.ClassTag
 class FeatureExtractor[M[_]: CollectionType, T] private[featran]
 (private val fs: FeatureSet[T],
  @transient private val input: M[T],
- @transient private val settings: Option[M[String]])
+ @transient private val settings: Option[M[String]],
+ private val crosses: List[Cross])
   extends Serializable {
 
   import FeatureSpec.ARRAY
+
+  private val featureCross = new FeatureCross(fs.features)
 
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
@@ -80,7 +83,11 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    */
   @transient lazy val featureNames: M[Seq[String]] = {
     val o = fs
-    aggregate.map(o.featureNames)
+    val crossArray = crosses.toArray
+    aggregate.map { aggr =>
+      val names = o.featureIndexedNames(aggr)
+      o.featureNames(aggr) ++ featureCross.names(crossArray, names)
+    }
   }
 
   /**
@@ -88,7 +95,9 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValues[F: FeatureBuilder : ClassTag]: M[F] = featureResults.map(_.value)
+  def featureValues[F, A]
+  (implicit fb: FeatureBuilder[F], fg: FeatureGetter[F, A], ct: ClassTag[F], fp: FloatingPoint[A])
+  : M[F] = featureResults.map(_.value)
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]] with
@@ -96,12 +105,39 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureResults[F: FeatureBuilder : ClassTag]: M[FeatureResult[F, T]] = {
-    val fb = implicitly[FeatureBuilder[F]]
+  def featureResults[F, A]
+  (implicit fb: FeatureBuilder[F], fg: FeatureGetter[F, A], ct: ClassTag[F], fp: FloatingPoint[A])
+  : M[FeatureResult[F, T]] = {
     val cls = fs
-    as.cross(aggregate).map { case ((o, a), c) =>
-      fs.featureValues(a, c, fb)
-      FeatureResult(fb.result, fb.rejections, o)
+    val n = fs.features.length
+    val crossArray = crosses.toArray
+    val namedAggregate = aggregate.map{aggr => (aggr, cls.featureIndexedNames(aggr))}
+
+    as.cross(namedAggregate).map { case ((o, a), (c, names)) =>
+      val fbs = FeatureBuilder[F](n)
+
+      fs.featureValues(a, c, fbs)
+
+      if(crosses.nonEmpty){
+        val results = fbs.map(v => (v.result, v.rejections))
+        val iterables = results.map{case(f, _) => fg.iterable(Nil, f)}
+        val crossResult = featureCross.values(crossArray, iterables, names)
+        val (reduced, rejections) = results.reduceLeft[(F, Map[String, FeatureRejection])]
+          {case((cres, crej), (res, rej)) => (fg.combine(cres, res), crej ++ rej)}
+
+        FeatureResult(
+          fg.combine(reduced, crossResult.result),
+          rejections ++ crossResult.rejections,
+          o)
+
+      } else {
+        val (results, rejections) = fbs
+          .map(v => (v.result, v.rejections))
+          .reduceLeft[(F, Map[String, FeatureRejection])]
+            {case((cres, crej), (res, rej)) => (fg.combine(cres, res), crej ++ rej)}
+
+        FeatureResult(results, rejections, o)
+      }
     }
   }
 

@@ -24,6 +24,7 @@ import com.spotify.featran.transformers._
 import org.scalacheck._
 
 object Example {
+  import FeatureBuilder._
 
   case class Record(b: Boolean, f: Float, d1: Double, d2: Option[Double], d3: Double,
                     s1: String, s2: List[String])
@@ -105,18 +106,18 @@ object Example {
     val f1 = spec.extract(records)
 
     println(f1.featureNames.head)
-    f1.featureValues[Seq[Double]].foreach(println)
+    f1.featureValues[Seq[Double], Double].foreach(println)
 
     // Get feature values in different types
-    val floatA = f1.featureValues[Array[Float]]
-    val doubleA = f1.featureValues[Array[Double]]
-    val floatDV = f1.featureValues[DenseVector[Float]]
-    val doubleDV = f1.featureValues[DenseVector[Double]]
-    val floatSV = f1.featureValues[SparseVector[Float]]
-    val doubleSV = f1.featureValues[SparseVector[Double]]
+    val floatA = f1.featureValues[Array[Float], Float]
+    val doubleA = f1.featureValues[Array[Double], Double]
+    val floatDV = f1.featureValues[DenseVector[Float], Float]
+    val doubleDV = f1.featureValues[DenseVector[Double], Double]
+    val floatSV = f1.featureValues[SparseVector[Float], Float]
+    val doubleSV = f1.featureValues[SparseVector[Double], Double]
 
     // Get feature values as above with rejections and the original input record
-    val doubleAResults = f1.featureResults[Array[Double]]
+    val doubleAResults = f1.featureResults[Array[Double], Double]
     val doubleAValues = doubleAResults.map(_.value)
     val doubleARejections = doubleAResults.map(_.rejections)
     val doubleAOriginals = doubleAResults.map(_.original)
@@ -129,7 +130,7 @@ object Example {
     val f2 = spec.extractWithSettings(recordsGen.sample.get, settings)
 
     // Filter out results with rejections and extract valid values
-    val validValues = f2.featureResults[Seq[Double]].filter(_.rejections.isEmpty).map(_.value)
+    val validValues = f2.featureResults[Seq[Double], Double].filter(_.rejections.isEmpty).map(_.value)
   }
   // scalastyle:on method.length
   // scalastyle:on regex

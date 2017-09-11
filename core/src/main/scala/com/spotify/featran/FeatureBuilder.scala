@@ -29,8 +29,8 @@ import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
-trait FeatureGetter[T] extends Serializable with Semigroup[T] { self =>
-  def get(name: String, idx: Int, t: T): Double
+trait FeatureGetter[F, T] extends Serializable with Semigroup[F] { self =>
+  def iterable(names: Seq[String], t: F): Iterable[(T, Int)]
 }
 
 sealed trait FeatureRejection
@@ -122,13 +122,25 @@ trait FeatureBuilder[T] extends Serializable { self =>
 }
 
 object FeatureBuilder {
-  implicit def arrayFG[T: ClassTag : FloatingPoint]: FeatureGetter[Array[T]] =
-    new FeatureGetter[Array[T]] {
-      private val fp = implicitly[FloatingPoint[T]]
-      override def get(name: String, idx: Int, t: Array[T]): Double = {
-        require(t.length > idx)
-        fp.toDouble(t(idx))
-      }
+  def apply[F: FeatureBuilder](dims: Int): Array[FeatureBuilder[F]] = {
+    val fb = implicitly[FeatureBuilder[F]]
+
+    // each underlying FeatureSpec should get a unique copy of FeatureBuilder
+    val buffer = new ByteArrayOutputStream()
+    val out = new ObjectOutputStream(buffer)
+    out.writeObject(fb)
+    val bytes = buffer.toByteArray
+    Array.fill(dims) {
+      val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
+      in.readObject().asInstanceOf[FeatureBuilder[F]]
+    }
+  }
+
+  implicit def arrayFG[T: ClassTag : FloatingPoint]: FeatureGetter[Array[T], T] =
+    new FeatureGetter[Array[T], T] {
+      override def iterable(names: Seq[String], t: Array[T]): Iterable[(T, Int)] =
+        t.zipWithIndex
+
       override def combine(t1: Array[T], t2: Array[T]): Array[T] = t1 ++ t2
     }
 
@@ -162,6 +174,13 @@ object FeatureBuilder {
     override def apply(): mutable.Builder[T, M] = f()
   }
 
+  implicit def seqFG[T: ClassTag : FloatingPoint]: FeatureGetter[Seq[T], T] =
+    new FeatureGetter[Seq[T], T] {
+      override def iterable(names: Seq[String], t: Seq[T]): Iterable[(T, Int)] =
+        t.zipWithIndex
+      override def combine(t1: Seq[T], t2: Seq[T]): Seq[T] = t1 ++ t2
+    }
+
   // Collection types in _root_.scala.*
   //scalastyle:off public.methods.have.type
   implicit def traversableCB[T] = newCB(() => Traversable.newBuilder[T])
@@ -184,13 +203,11 @@ object FeatureBuilder {
   }
 
   implicit def denseVectorFG[T: ClassTag : FloatingPoint]
-  : FeatureGetter[DenseVector[T]] =
-    new FeatureGetter[DenseVector[T]] {
-      private val fp = implicitly[FloatingPoint[T]]
-      override def get(name: String, idx: Int, t: DenseVector[T]): Double = {
-        require(t.size > idx)
-        fp.toDouble(t(idx))
-      }
+  : FeatureGetter[DenseVector[T], T] =
+    new FeatureGetter[DenseVector[T], T] {
+      override def iterable(names: Seq[String], t: DenseVector[T]): Iterable[(T, Int)] =
+        t.data.zipWithIndex
+
       override def combine(t1: DenseVector[T], t2: DenseVector[T]): DenseVector[T] =
         DenseVector(t1.data ++ t2.data)
     }
@@ -199,13 +216,11 @@ object FeatureBuilder {
     implicitly[FeatureBuilder[Array[T]]].map(DenseVector(_))
 
   implicit def sparseVectorFG[T: ClassTag : FloatingPoint : Semiring : Zero]
-  : FeatureGetter[SparseVector[T]] =
-    new FeatureGetter[SparseVector[T]] {
-      private val fp = implicitly[FloatingPoint[T]]
-      override def get(name: String, idx: Int, t: SparseVector[T]): Double = {
-        require(t.size > idx)
-        fp.toDouble(t(idx))
-      }
+  : FeatureGetter[SparseVector[T], T] =
+    new FeatureGetter[SparseVector[T], T] {
+      override def iterable(names: Seq[String], t: SparseVector[T]): Iterable[(T, Int)] =
+        t.activeIterator.toIterable.map(_.swap)
+
       override def combine(t1: SparseVector[T], t2: SparseVector[T]): SparseVector[T] =
         SparseVector(t1.length + t2.length)(t1.activeIterator.toList ++ t2.activeIterator.toList:_*)
     }
@@ -234,14 +249,13 @@ object FeatureBuilder {
   }
 
   implicit def mapFG[T: ClassTag : FloatingPoint]
-  : FeatureGetter[Map[String, T]] =
-    new FeatureGetter[Map[String, T]] {
-      private val fp = implicitly[FloatingPoint[T]]
-      override def get(name: String, idx: Int, t: Map[String, T]): Double = {
-        t.get(name).map(fp.toDouble).getOrElse(0.0)
-      }
+  : FeatureGetter[Map[String, T], T] =
+    new FeatureGetter[Map[String, T], T] {
       override def combine(t1: Map[String, T], t2: Map[String, T]): Map[String, T] =
         t1 ++ t2
+
+      override def iterable(names: Seq[String], t:  Map[String, T]): Iterable[(T, Int)] =
+        names.zipWithIndex.collect{case(n, idx) if t.contains(n) => (t(n), idx)}
     }
 
   implicit def mapFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Map[String, T]] =

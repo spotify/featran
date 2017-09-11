@@ -30,7 +30,7 @@ class ScioTest extends PipelineSpec {
     runWithContext { sc =>
       val f = testSpec.extract(sc.parallelize(testData))
       f.featureNames should containSingleValue (expectedNames)
-      f.featureValues[Seq[Double]] should containInAnyOrder (expectedValues)
+      f.featureValues[Seq[Double], Double] should containInAnyOrder (expectedValues)
     }
   }
 
@@ -40,23 +40,6 @@ class ScioTest extends PipelineSpec {
         val f = recordSpec.extract(sc.parallelize(records))
         f.featureNames
         f.featureValues[Seq[Double]]
-      }
-    }
-  }
-
-  it should "work with CrossFeatureSpec" in {
-    noException shouldBe thrownBy {
-      try {
-      runWithContext { sc =>
-        val f = crossTestSpec.extract(sc.parallelize(testData))
-        f.featureNames
-        f.featureValues[Array[Double]]
-      }
-      } catch {
-        case e =>
-          e.printStackTrace()
-          println(e)
-          throw e
       }
     }
   }
@@ -73,7 +56,7 @@ class ScioTest extends PipelineSpec {
         .required(e => foo.method(e._1))(Identity("foo"))
         .extract(sc.parallelize(testData))
 
-      val thrown = the [RuntimeException] thrownBy f.featureValues[Seq[Double]]
+      val thrown = the [RuntimeException] thrownBy f.featureValues[Seq[Double], Double]
       thrown.getMessage should startWith("unable to serialize anonymous function")
     }
   }

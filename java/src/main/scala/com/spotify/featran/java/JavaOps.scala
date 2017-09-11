@@ -26,6 +26,7 @@ import scala.language.higherKinds
 import scala.reflect.ClassTag
 
 private object JavaOps {
+  import com.spotify.featran.FeatureBuilder._
 
   def requiredFn[I, O](f: SerializableFunction[I, O]): I => O = (input: I) => f(input)
 
@@ -61,8 +62,7 @@ private object JavaOps {
   def featureSettings[T](fe: FeatureExtractor[JList, T]): String = fe.featureSettings.get(0)
   def featureNames[T](fe: FeatureExtractor[JList, T]): JList[String] = fe.featureNames.get(0).asJava
   def featureValuesFloat[T](fe: FeatureExtractor[JList, T]): JList[Array[Float]] =
-    fe.featureValues[Array[Float]]
+    fe.featureValues[Array[Float], Float]
   def featureValuesDouble[T](fe: FeatureExtractor[JList, T]): JList[Array[Double]] =
-    fe.featureValues[Array[Double]]
-
+    fe.featureValues[Array[Double], Double]
 }

@@ -17,117 +17,94 @@
 
 package com.spotify.featran
 
-class FeatureCross[T](
-  @transient private val features: Array[Feature[T, _, _, _]]) extends Serializable {
+class FeatureCross[T](@transient private val features: Array[Feature[T, _, _, _]])
+  extends Serializable {
 
-  val namedFeatures: Map[String, Int] =
+  private val namedFeatures: Map[String, Int] =
     features.zipWithIndex.map { case (feat, idx) =>
       feat.transformer.name -> idx
     }(scala.collection.breakOut)
 
-  def crossValues[F: FeatureGetter: FeatureBuilder](
+  private val n = features.length
+  private val names = features.map(_.transformer.name)
+
+  def values[F, A](
     cross: Array[Cross],
-    names: Array[String],
-    fg: F,
-    index: Map[Int, Range]): F = {
-    val fb = implicitly[FeatureBuilder[F]]
-    val getter = implicitly[FeatureGetter[F]]
-
+    featureValues: Array[Iterable[(A, Int)]],
+    names: Map[Int, Array[String]]
+  )(implicit fb: FeatureBuilder[F], fp: FloatingPoint[A]): FeatureBuilder[F] ={
     val iter = cross.iterator
-    fb.init(crossSize(cross, index))
-    while(iter.hasNext){
-      values(iter.next(), names, fg, fb, index)
-    }
-    val crossed = fb.result
-    getter.combine(fg, crossed)
-  }
+    val index = names.mapValues(_.length)
+    fb.init(size(cross, index))
 
-  def values[F: FeatureGetter](
-    cross: Cross,
-    names: Array[String],
-    fg: F,
-    fb: FeatureBuilder[F],
-    index: Map[Int, Range]): Unit = {
+    while(iter.hasNext) {
+      val cross = iter.next()
+      val fn = cross.combine
 
-    val getter = implicitly[FeatureGetter[F]]
-    val featureIdx1 = namedFeatures(cross.name1)
-    val featureIdx2 = namedFeatures(cross.name2)
+      val featureIdx1 = namedFeatures(cross.name1)
+      val featureIdx2 = namedFeatures(cross.name2)
+      val iter1 = featureValues(featureIdx1).toIterator
+      val baseName1 = names(featureIdx1)
+      val baseName2 = names(featureIdx2)
 
-    val range1 = index(featureIdx1)
-    val range2 = index(featureIdx2)
-
-    val fn = cross.combine
-
-    var idx1 = range1.start
-    var idx2 = range2.start
-
-    range1.foreach{idx1 =>
-      val name1 = names(featureIdx1)
-      val v1 = getter.get(name1, idx1, fg)
-      range2.foreach{idx2 =>
-        val name2 = names(featureIdx2)
-        val v2 = getter.get(name2, idx1, fg)
-        fb.add(name1 + "-" + name2, fn(v1, v2))
+      var counter1 = 0
+      var counter2 = 0
+      val length2 = index(featureIdx2)
+      while (iter1.hasNext) {
+        val (feature1, idx1) = iter1.next()
+        if(counter1 < idx1-1) fb.skip((idx1-1-counter1)*length2)
+        val feature1Double = fp.toDouble(feature1)
+        counter2 = 0
+        val iter2 = featureValues(featureIdx2).toIterator
+        while (iter2.hasNext) {
+          val (feature2, idx2) = iter2.next()
+          if(counter2 < idx2-1) fb.skip(idx2-1-counter2)
+          val feature2Double = fp.toDouble(feature2)
+          val name = s"${names(featureIdx1)(idx1)}_${names(featureIdx2)(idx2)}"
+          fb.add(name, fn(feature1Double, feature2Double))
+          counter2 += 1
+        }
       }
     }
 
+    fb
   }
 
-  def crossNames(
-    cross: Array[Cross],
-    currentNames: Array[String],
-    index: Map[Int, Range]): Seq[String] = {
-
+  def names(cross: Array[Cross], names: Map[Int, Array[String]]): Seq[String] = {
     val iter = cross.iterator
     val b = Seq.newBuilder[String]
+
     while(iter.hasNext){
-      b ++= names(iter.next(), currentNames, index)
-    }
-    currentNames ++ b.result()
-  }
+      val cross = iter.next()
 
-  def names(
-    cross: Cross,
-    names: Array[String],
-    index: Map[Int, Range]): Seq[String] = {
+      val featureIdx1 = namedFeatures(cross.name1)
+      val featureIdx2 = namedFeatures(cross.name2)
+      val baseName1 = names(featureIdx1)
+      val baseName2 = names(featureIdx2)
 
-    val featureIdx1 = namedFeatures(cross.name1)
-    val featureIdx2 = namedFeatures(cross.name2)
-
-    val range1 = index(featureIdx1)
-    val range2 = index(featureIdx2)
-
-    var idx1 = range1.start
-    var idx2 = range2.start
-
-    val b = Seq.newBuilder[String]
-
-    range1.foreach{idx1 =>
-      val name1 = names(featureIdx1)
-      range2.foreach{idx2 =>
-        val name2 = names(featureIdx2)
-        b += name1 + "-" + name2
+      names(featureIdx1).foreach { name1 =>
+        names(featureIdx2).foreach { name2 =>
+          val name = s"${name1}_$name2"
+          b += name
+        }
       }
     }
 
     b.result()
   }
 
-  def crossSize(cross: Array[Cross], index: Map[Int, Range]): Int = {
+  def size(cross: Array[Cross], index: Map[Int, Int]): Int = {
     val iter = cross.iterator
     var sum = 0
     while(iter.hasNext){
-      sum += size(iter.next(), index)
+      val cross = iter.next()
+
+      val idx = namedFeatures(cross.name1)
+      val crossIdx = namedFeatures(cross.name2)
+
+      sum += index(idx) * index(crossIdx)
     }
+
     sum
-  }
-
-  def size(cross: Cross, index: Map[Int, Range]): Int = {
-    val idx = namedFeatures(cross.name1)
-    val crossIdx = namedFeatures(cross.name2)
-    val rightDim = index(idx)
-    val leftDim = index(crossIdx)
-
-    rightDim.length * leftDim.length
   }
 }

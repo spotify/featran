@@ -38,7 +38,7 @@ object MultiFeatureSpec {
 class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
                           private[featran] val multiFeatures: Array[Feature[T, _, _, _]]) {
 
-  private val spec = new FeatureSpec(multiFeatures)
+  private val spec = new FeatureSpec(multiFeatures, Nil)
 
   /**
    * Extract features from a input collection.
