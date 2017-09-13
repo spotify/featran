@@ -29,8 +29,9 @@ import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
-trait FeatureGetter[F, T] extends Serializable with Semigroup[F] { self =>
+trait FeatureGetter[F, T] extends Serializable { self =>
   def iterable(names: Array[String], t: F): Iterable[(T, Int)]
+  def combine(t1: F, t2: F): F
 }
 
 sealed trait FeatureRejection
@@ -222,7 +223,7 @@ object FeatureBuilder {
         t.activeIterator.toIterable.map(_.swap)
 
       override def combine(t1: SparseVector[T], t2: SparseVector[T]): SparseVector[T] =
-        SparseVector(t1.length + t2.length)(t1.activeIterator.toList ++ t2.activeIterator.toList:_*)
+        SparseVector.vertcat(t1, t2)
     }
 
   implicit def sparseVectorFB[T: ClassTag : FloatingPoint : Semiring : Zero]

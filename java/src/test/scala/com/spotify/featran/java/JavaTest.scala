@@ -19,14 +19,34 @@ package com.spotify.featran.java
 
 import java.util.Optional
 
-import com.spotify.featran.transformers._
+import com.spotify.featran.Fixtures
+import com.spotify.featran.FeatureSpec
+import com.spotify.featran.transformers.{MinMaxScaler, OneHotEncoder, _}
 import org.scalatest._
 
 import scala.collection.JavaConverters._
 
 class JavaTest extends FlatSpec with Matchers {
 
-  import com.spotify.featran.Fixtures._
+  val testSpec = FeatureSpec.of[(String, Int)]
+    .required(_._1)(OneHotEncoder("one_hot"))
+    .required(_._2.toDouble)(MinMaxScaler("min_max"))
+
+  val expectedNames = Seq(
+    "one_hot_a",
+    "one_hot_b",
+    "one_hot_c",
+    "one_hot_d",
+    "one_hot_e",
+    "min_max")
+
+  val expectedValues = Seq(
+    Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
+    Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
+    Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
+    Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
+    Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
+
 
   "JFeatureSpec" should "work" in {
     val f = JFeatureSpec.of[(String, Int)]()
@@ -36,7 +56,8 @@ class JavaTest extends FlatSpec with Matchers {
       .required(new SerializableFunction[(String, Int), Double] {
         override def apply(input: (String, Int)): Double = input._2.toDouble
       }, MinMaxScaler("min_max"))
-      .extract(testData.asJava)
+      .extract(Fixtures.testData.asJava)
+
     f.featureNames().asScala shouldBe expectedNames
     f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
@@ -56,7 +77,7 @@ class JavaTest extends FlatSpec with Matchers {
   }
 
   it should "work with FeatureSpec" in {
-    val f = JFeatureSpec.wrap(testSpec).extract(testData.asJava)
+    val f = JFeatureSpec.wrap(testSpec).extract(Fixtures.testData.asJava)
     f.featureNames().asScala shouldBe expectedNames
     f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
@@ -64,9 +85,9 @@ class JavaTest extends FlatSpec with Matchers {
 
   it should "work with extractWithSettings" in {
     val fs = JFeatureSpec.wrap(testSpec)
-    val settings = fs.extract(testData.asJava).featureSettings()
-    val n = testData.size / 2
-    val f = fs.extractWithSettings(testData.take(n).asJava, settings)
+    val settings = fs.extract(Fixtures.testData.asJava).featureSettings()
+    val n = Fixtures.testData.size / 2
+    val f = fs.extractWithSettings(Fixtures.testData.take(n).asJava, settings)
     f.featureNames().asScala shouldBe expectedNames
     f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues.take(n)
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues.take(n)

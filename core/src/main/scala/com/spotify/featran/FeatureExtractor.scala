@@ -32,7 +32,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
 (private val fs: FeatureSet[T],
  @transient private val input: M[T],
  @transient private val settings: Option[M[String]],
- private val crosses: List[Cross])
+ private val crosses: Array[Cross])
   extends Serializable {
 
   import FeatureSpec.ARRAY
@@ -72,9 +72,10 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   @transient lazy val featureSettings: M[String] = settings match {
     case Some(x) => x
     case None => aggregate.map { a =>
+      val o = fs
       import io.circe.generic.auto._
       import io.circe.syntax._
-      fs.featureSettings(a).asJson.noSpaces
+      o.featureSettings(a).asJson.noSpaces
     }
   }
 
@@ -83,7 +84,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
    */
   @transient lazy val featureNames: M[Seq[String]] = {
     val o = fs
-    val crossArray = crosses.toArray
+    val crossArray = crosses
     aggregate.map { aggr =>
       val names = o.featureIndexedNames(aggr)
       o.featureNames(aggr) ++ featureCross.names(crossArray, names)
@@ -110,21 +111,20 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
   : M[FeatureResult[F, T]] = {
     val cls = fs
     val n = fs.features.length
-    val crossArray = crosses.toArray
+    val crossArray = crosses
     val namedAggregate = aggregate.map{aggr => (aggr, cls.featureIndexedNames(aggr))}
 
     as.cross(namedAggregate).map { case ((o, a), (c, names)) =>
       val fbs = FeatureBuilder[F](n)
 
-      fs.featureValues(a, c, fbs)
+      cls.featureValues(a, c, fbs)
 
-      if(crosses.nonEmpty){
+      if(crossArray.nonEmpty){
         val results = fbs.map(v => (v.result, v.rejections))
         val iterables = results.zipWithIndex.map{case((f, _), idx) => fg.iterable(names(idx), f)}
         val crossResult = featureCross.values(crossArray, iterables, names)
         val (reduced, rejections) = results.reduceLeft[(F, Map[String, FeatureRejection])]
           {case((cres, crej), (res, rej)) => (fg.combine(cres, res), crej ++ rej)}
-
         FeatureResult(
           fg.combine(reduced, crossResult.result),
           rejections ++ crossResult.rejections,

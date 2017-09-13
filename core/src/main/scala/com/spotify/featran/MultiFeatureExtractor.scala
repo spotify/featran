@@ -38,7 +38,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
-  private val extractor = new FeatureExtractor(fs, input, settings, Nil)
+  private val extractor = new FeatureExtractor(fs, input, settings, Array.empty)
 
   private lazy val dims: Int = mapping.values.toSet.size
 

@@ -89,7 +89,7 @@ class FeatureSpec[T] private[featran] (
    * @tparam M input collection type, e.g. `Array`, `List`
    */
   def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] =
-    new FeatureExtractor[M, T](new FeatureSet[T](features), input, None, this.crosses)
+    new FeatureExtractor[M, T](new FeatureSet[T](features), input, None, this.crosses.toArray)
 
   /**
    * Extract features from a input collection using settings from a previous session.
@@ -102,7 +102,7 @@ class FeatureSpec[T] private[featran] (
    */
   def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
   : FeatureExtractor[M, T] =
-    new FeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings), this.crosses)
+    new FeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings), this.crosses.toArray)
 
 }
 

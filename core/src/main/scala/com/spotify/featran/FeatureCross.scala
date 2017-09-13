@@ -48,22 +48,22 @@ class FeatureCross[T](@transient private val features: Array[Feature[T, _, _, _]
       val baseName2 = names(featureIdx2)
 
       var counter1 = 0
-      var counter2 = 0
       val length2 = index(featureIdx2)
       while (iter1.hasNext) {
         val (feature1, idx1) = iter1.next()
-        if(counter1 < idx1-1) fb.skip((idx1-1-counter1)*length2)
+        if (counter1 < idx1 - 1) fb.skip((idx1 - 1 - counter1) * length2)
         val feature1Double = fp.toDouble(feature1)
-        counter2 = 0
+        var counter2 = 0
         val iter2 = featureValues(featureIdx2).toIterator
         while (iter2.hasNext) {
           val (feature2, idx2) = iter2.next()
-          if(counter2 < idx2-1) fb.skip(idx2-1-counter2)
+          if (counter2 < idx2 - 1) fb.skip(idx2 - 1 - counter2)
           val feature2Double = fp.toDouble(feature2)
           val name = s"${names(featureIdx1)(idx1)}_${names(featureIdx2)(idx2)}"
           fb.add(name, fn(feature1Double, feature2Double))
           counter2 += 1
         }
+        counter1 += 1
       }
     }
 
