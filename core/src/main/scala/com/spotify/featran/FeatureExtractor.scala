@@ -39,6 +39,14 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
 
   private val featureCross = new FeatureCross(fs.features)
 
+  {
+    val missingNames = featureCross.checkNames(crosses)
+    require(
+      missingNames.isEmpty,
+      "Crossed Features Names must exist as features, Missing : " + missingNames.mkString(",")
+    )
+  }
+
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 

@@ -25,6 +25,12 @@ class FeatureCross[T](@transient private val features: Array[Feature[T, _, _, _]
       feat.transformer.name -> idx
     }(scala.collection.breakOut)
 
+  def checkNames(cross: Array[Cross]): Set[String] =
+    cross
+      .flatMap(c => List(c.name1, c.name2))
+      .filterNot(c => namedFeatures.contains(c))
+      .toSet
+
   private val n = features.length
   private val names = features.map(_.transformer.name)
 
