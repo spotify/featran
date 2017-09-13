@@ -125,11 +125,11 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
         val crossResult = featureCross.values(crossArray, iterables, names)
         val (reduced, rejections) = results.reduceLeft[(F, Map[String, FeatureRejection])]
           {case((cres, crej), (res, rej)) => (fg.combine(cres, res), crej ++ rej)}
+
         FeatureResult(
           fg.combine(reduced, crossResult.result),
           rejections ++ crossResult.rejections,
           o)
-
       } else {
         val (results, rejections) = fbs
           .map(v => (v.result, v.rejections))

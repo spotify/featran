@@ -34,8 +34,6 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   private val id = Identity("id")
   private val id2 = Identity("id2")
 
-  val xs = List(Record(1.0, None), Record(0.5, Some(0.2)))
-
   property("required") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
     Prop.all(
@@ -94,6 +92,19 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     Prop.all(
       f.featureNames == Seq(Seq("id1", "id2", "id1_id2")),
       f.featureValues[Seq[Double], Double] == result)
+  }
+
+  property("cross float") = Prop.forAll { xs: List[Record] =>
+    val f = FeatureSpec.of[Record]
+      .required(_.d)(Identity("id1"))
+      .optional(_.optD, Some(0.5))(Identity("id2"))
+      .cross("id1", "id2", (a, b) => a)
+      .extract(xs)
+
+    val result = xs.map(r => Seq(r.d.toFloat, r.optD.getOrElse(0.5).toFloat, r.d.toFloat))
+    Prop.all(
+      f.featureNames == Seq(Seq("id1", "id2", "id1_id2")),
+      f.featureValues[Seq[Float], Float] == result)
   }
 
   property("cross sparse left") = Prop.forAll { xs: List[Record] =>

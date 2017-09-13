@@ -76,6 +76,12 @@ class FeatureSpec[T] private[featran] (
                  (t: Transformer[A, _, _]): FeatureSpec[T] =
     new FeatureSpec[T](this.features :+ new Feature(f, default, t), this.crosses)
 
+  /**
+    * Cross Feature with another feature
+    * @param feature1 Name of feature1
+    * @param feature2 Name of Feature 2
+    * @param combine How to combine the two features
+    */
   def cross(feature1: String, feature2: String, combine: (Double, Double) => Double = _ * _)
   : FeatureSpec[T] =
     new FeatureSpec[T](this.features, this.crosses :+ Cross(feature1, feature2, combine))

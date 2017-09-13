@@ -34,6 +34,15 @@ class SparkTest extends FlatSpec with Matchers {
     sc.stop()
   }
 
+  "FeatureSpec" should "work with not crossed Spark" in {
+    val sc = new SparkContext("local[4]", "test")
+    val f = notCrossedTestSpec.extract(sc.parallelize(testData))
+    f.featureNames.collect() shouldBe Array(notCrossedExpectedNames)
+    val results = f.featureValues[Seq[Double], Double].collect()
+    results should contain theSameElementsAs notCrossedExpectedValues
+    sc.stop()
+  }
+
   it should "work with MultiFeatureSpec" in {
     noException shouldBe thrownBy {
       val sc = new SparkContext("local[4]", "test")

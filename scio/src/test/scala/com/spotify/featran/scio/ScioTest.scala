@@ -34,6 +34,14 @@ class ScioTest extends PipelineSpec {
     }
   }
 
+  "Scio" should "work with not crossed FeatureSpec" in {
+    runWithContext { sc =>
+      val f = notCrossedTestSpec.extract(sc.parallelize(testData))
+      f.featureNames should containSingleValue (notCrossedExpectedNames)
+      f.featureValues[Seq[Double], Double] should containInAnyOrder (notCrossedExpectedValues)
+    }
+  }
+
   it should "work with MultiFeatureSpec" in {
     noException shouldBe thrownBy {
       runWithContext { sc =>

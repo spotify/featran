@@ -33,6 +33,13 @@ class ScaldingTest extends FlatSpec with Matchers {
     result should contain theSameElementsAs expectedValues
   }
 
+  "FeatureSpec" should "work with Scalding not crossed" in {
+    val f = notCrossedTestSpec.extract(TypedPipe.from(testData))
+    inMemoryToList(f.featureNames) shouldBe Iterable(notCrossedExpectedNames)
+    val result = inMemoryToList(f.featureValues[Seq[Double], Double])
+    result should contain theSameElementsAs notCrossedExpectedValues
+  }
+
   it should "work with MultiFeatureSpec" in {
     noException shouldBe thrownBy {
       val f = recordSpec.extract(TypedPipe.from(records))
