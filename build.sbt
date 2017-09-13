@@ -25,14 +25,14 @@ val algebirdVersion = "0.13.0"
 val breezeVersion = "0.13.1"
 val circeVersion = "0.8.0"
 val commonsMathVersion = "3.6.1"
-val flinkVersion = "1.2.0"
+val flinkVersion = "1.3.2"
 val hadoopVersion = "2.8.0"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.1"
 val scaldingVersion = "0.17.0"
-val scioVersion = "0.4.0"
-val sparkVersion = "2.1.1"
-val tensorflowVersion = "1.1.0"
+val scioVersion = "0.4.1"
+val sparkVersion = "2.2.0"
+val tensorflowVersion = "1.3.0"
 
 val commonSettings = Seq(
   organization := "com.spotify",
@@ -188,7 +188,7 @@ lazy val scio: Project = Project(
   moduleName := "featran-scio",
   description := "Feature Transformers - Scio",
   libraryDependencies ++= Seq(
-    "com.spotify" %% "scio-core" % scioVersion,
+    "com.spotify" %% "scio-core" % scioVersion % "provided",
     "com.spotify" %% "scio-test" % scioVersion % "test"
   )
 ).dependsOn(
