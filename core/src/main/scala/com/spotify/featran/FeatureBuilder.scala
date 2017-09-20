@@ -114,6 +114,22 @@ trait FeatureBuilder[T] extends Serializable { self =>
 
 }
 
+/**
+ * A sparse representation of an array using two arrays for indices and values of non-zero entries.
+ */
+case class SparseArray[@specialized (Float, Double) T]
+(indices: Array[Int], values: Array[T], length: Int) {
+  def toDense(implicit ct: ClassTag[T]): Array[T] = {
+    val r = new Array[T](length)
+    var i = 0
+    while (i < indices.length) {
+      r(indices(i)) = values(i)
+      i += 1
+    }
+    r
+  }
+}
+
 object FeatureBuilder {
 
   implicit def arrayFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Array[T]] =
@@ -161,6 +177,52 @@ object FeatureBuilder {
     override def add(name: String, value: Double): Unit = b += fp.fromDouble(value)
     override def skip(): Unit = b += fp.fromDouble(0.0)
     override def result: M[T] = b.result()
+  }
+
+  implicit def sparseArrayFB[@specialized (Float, Double) T: ClassTag : FloatingPoint]
+  : FeatureBuilder[SparseArray[T]] = new FeatureBuilder[SparseArray[T]] {
+    private val initCapacity = 1024
+    private var dim: Int = _
+    private var offset: Int = 0
+    private var i: Int = 0
+    private var indices: Array[Int] = _
+    private var values: Array[T] = _
+    private val fp = implicitly[FloatingPoint[T]]
+    override def init(dimension: Int): Unit = {
+      dim = dimension
+      offset = 0
+      i = 0
+      if (indices == null) {
+        val n = math.min(dimension, initCapacity)
+        indices = new Array[Int](n)
+        values = new Array[T](n)
+      }
+    }
+    override def add(name: String, value: Double): Unit = {
+      indices(i) = offset
+      values(i) = fp.fromDouble(value)
+      i += 1
+      offset += 1
+      if (indices.length == i) {
+        val n = indices.length * 2
+        val newIndices = new Array[Int](n)
+        val newValues = new Array[T](n)
+        Array.copy(indices, 0, newIndices, 0, indices.length)
+        Array.copy(values, 0, newValues, 0, indices.length)
+        indices = newIndices
+        values = newValues
+      }
+    }
+    override def skip(): Unit = offset += 1
+    override def skip(n: Int): Unit = offset += n
+    override def result: SparseArray[T] = {
+      require(offset == dim)
+      val rIndices = new Array[Int](i)
+      val rValues = new Array[T](i)
+      Array.copy(indices, 0, rIndices, 0, i)
+      Array.copy(values, 0, rValues, 0, i)
+      SparseArray(rIndices, rValues, dim)
+    }
   }
 
   implicit def denseVectorFB[T: ClassTag : FloatingPoint]: FeatureBuilder[DenseVector[T]] =
