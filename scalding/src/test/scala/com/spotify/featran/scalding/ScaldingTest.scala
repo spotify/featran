@@ -22,23 +22,29 @@ import com.twitter.scalding._
 import org.scalatest._
 
 class ScaldingTest extends FlatSpec with Matchers {
-
+  import TypedPipeChecker._
   import Fixtures._
-
-  def materialize[T](p: TypedPipe[T]): Iterable[T] =
-    p.toIterableExecution.waitFor(Config.default, Local(true)).get
+  import FeatureBuilder._
 
   "FeatureSpec" should "work with Scalding" in {
     val f = testSpec.extract(TypedPipe.from(testData))
-    materialize(f.featureNames) shouldBe Iterable(expectedNames)
-    materialize(f.featureValues[Seq[Double]]) should contain theSameElementsAs expectedValues
+    inMemoryToList(f.featureNames) shouldBe Iterable(expectedNames)
+    val result = inMemoryToList(f.featureValues[Seq[Double], Double])
+    result should contain theSameElementsAs expectedValues
+  }
+
+  "FeatureSpec" should "work with Scalding not crossed" in {
+    val f = notCrossedTestSpec.extract(TypedPipe.from(testData))
+    inMemoryToList(f.featureNames) shouldBe Iterable(notCrossedExpectedNames)
+    val result = inMemoryToList(f.featureValues[Seq[Double], Double])
+    result should contain theSameElementsAs notCrossedExpectedValues
   }
 
   it should "work with MultiFeatureSpec" in {
     noException shouldBe thrownBy {
       val f = recordSpec.extract(TypedPipe.from(records))
-      materialize(f.featureNames)
-      materialize(f.featureValues[Seq[Double]])
+      inMemoryToList(f.featureNames)
+      inMemoryToList(f.featureValues[Seq[Double]])
     }
   }
 

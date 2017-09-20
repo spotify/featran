@@ -22,6 +22,7 @@ import org.scalacheck.Prop.BooleanOperators
 import org.scalacheck._
 
 abstract class TransformerProp(name: String) extends Properties(name) {
+  import com.spotify.featran.FeatureBuilder._
 
   implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {
     Gen
@@ -60,20 +61,20 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     val f3 = fsRequired.extractWithSettings(input.take(input.size / 2), settings)
     // all values plus optional elements out of bound of the previous session
     val f4 = fsRequired.extractWithSettings(outOfBoundsElems.map(_._1), settings)
-    val f4results = f4.featureResults[Seq[Double]]
+    val f4results = f4.featureResults[Seq[Double], Double]
 
     Prop.all(
       "f1 names" |: f1.featureNames == List(names),
       "f2 names" |: f2.featureNames == List(names),
       "f3 names" |: f3.featureNames == List(names),
       "f4 names" |: f4.featureNames == List(names),
-      "f1 values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
-      "f2 values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing),
-      "f3 values" |: safeCompare(f3.featureValues[Seq[Double]], expected.take(input.size / 2)),
+      "f1 values" |: safeCompare(f1.featureValues[Seq[Double], Double], expected),
+      "f2 values" |: safeCompare(f2.featureValues[Seq[Double], Double], expected :+ missing),
+      "f3 val" |: safeCompare(f3.featureValues[Seq[Double], Double], expected.take(input.size / 2)),
       "f4 values" |: safeCompare(f4results.map(_.value), outOfBoundsElems.map(_._2)),
       "f4 rejections" |: f4results.forall(_.rejections.keySet == Set(t.name)),
       "f1 map" |: {
-        val fMap = f1.featureValues[Map[String, Double]]
+        val fMap = f1.featureValues[Map[String, Double], Double]
         val eMap = expected.map(v => (names zip v).toMap)
         // expected map is a superset of feature map
         (fMap zip eMap).forall { case (f, e) =>
@@ -87,7 +88,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
 
   def testException[T](t: Transformer[T, _, _], input: List[T])(p: Throwable => Boolean): Prop =
     try {
-      FeatureSpec.of[T].required(identity)(t).extract(input).featureValues[Seq[Double]]
+      FeatureSpec.of[T].required(identity)(t).extract(input).featureValues[Seq[Double], Double]
       false
     } catch {
       case e: Exception => p(e)

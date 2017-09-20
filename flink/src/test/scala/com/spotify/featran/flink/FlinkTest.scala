@@ -24,12 +24,21 @@ import org.scalatest._
 class FlinkTest extends FlatSpec with Matchers {
 
   import Fixtures._
+  import FeatureBuilder._
 
   "Flink" should "work with FeatureSpec" in {
     val env = ExecutionEnvironment.getExecutionEnvironment
     val f = testSpec.extract(env.fromCollection(testData))
     f.featureNames.collect() shouldBe Seq(expectedNames)
-    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
+    f.featureValues[Seq[Double], Double].collect() should contain theSameElementsAs expectedValues
+  }
+
+  "Flink" should "work with not crossed FeatureSpec" in {
+    val env = ExecutionEnvironment.getExecutionEnvironment
+    val f = notCrossedTestSpec.extract(env.fromCollection(testData))
+    f.featureNames.collect() shouldBe Seq(notCrossedExpectedNames)
+    val results = f.featureValues[Seq[Double], Double].collect()
+    results should contain theSameElementsAs notCrossedExpectedValues
   }
 
   it should "work with MultiFeatureSpec" in {

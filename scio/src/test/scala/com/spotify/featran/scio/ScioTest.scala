@@ -24,12 +24,21 @@ import com.spotify.scio.testing._
 class ScioTest extends PipelineSpec {
 
   import Fixtures._
+  import FeatureBuilder._
 
   "Scio" should "work with FeatureSpec" in {
     runWithContext { sc =>
       val f = testSpec.extract(sc.parallelize(testData))
       f.featureNames should containSingleValue (expectedNames)
-      f.featureValues[Seq[Double]] should containInAnyOrder (expectedValues)
+      f.featureValues[Seq[Double], Double] should containInAnyOrder (expectedValues)
+    }
+  }
+
+  "Scio" should "work with not crossed FeatureSpec" in {
+    runWithContext { sc =>
+      val f = notCrossedTestSpec.extract(sc.parallelize(testData))
+      f.featureNames should containSingleValue (notCrossedExpectedNames)
+      f.featureValues[Seq[Double], Double] should containInAnyOrder (notCrossedExpectedValues)
     }
   }
 
@@ -54,8 +63,7 @@ class ScioTest extends PipelineSpec {
       val f = FeatureSpec.of[(String, Int)]
         .required(e => foo.method(e._1))(Identity("foo"))
         .extract(sc.parallelize(testData))
-
-      an [Exception] should be thrownBy f.featureValues[Seq[Double]]
+      an [Exception] should be thrownBy f.featureValues[Seq[Double], Double]
     }
   }
   // scalastyle:on no.whitespace.before.left.bracket

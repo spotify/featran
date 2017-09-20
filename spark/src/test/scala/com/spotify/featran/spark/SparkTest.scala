@@ -24,12 +24,22 @@ import org.scalatest._
 class SparkTest extends FlatSpec with Matchers {
 
   import Fixtures._
+  import FeatureBuilder._
 
   "FeatureSpec" should "work with Spark" in {
     val sc = new SparkContext("local[4]", "test")
     val f = testSpec.extract(sc.parallelize(testData))
     f.featureNames.collect() shouldBe Array(expectedNames)
-    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
+    f.featureValues[Seq[Double], Double].collect() should contain theSameElementsAs expectedValues
+    sc.stop()
+  }
+
+  "FeatureSpec" should "work with not crossed Spark" in {
+    val sc = new SparkContext("local[4]", "test")
+    val f = notCrossedTestSpec.extract(sc.parallelize(testData))
+    f.featureNames.collect() shouldBe Array(notCrossedExpectedNames)
+    val results = f.featureValues[Seq[Double], Double].collect()
+    results should contain theSameElementsAs notCrossedExpectedValues
     sc.stop()
   }
 

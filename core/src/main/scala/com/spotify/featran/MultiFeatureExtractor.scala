@@ -38,7 +38,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
-  private val extractor = new FeatureExtractor(fs, input, settings)
+  private val extractor = new FeatureExtractor(fs, input, settings, Array.empty)
 
   private lazy val dims: Int = mapping.values.toSet.size
 
@@ -71,17 +71,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
    */
   def featureResults[F: FeatureBuilder : ClassTag]
   : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] = {
-    val fb = implicitly[FeatureBuilder[F]]
-
-    // each underlying FeatureSpec should get a unique copy of FeatureBuilder
-    val buffer = new ByteArrayOutputStream()
-    val out = new ObjectOutputStream(buffer)
-    out.writeObject(fb)
-    val bytes = buffer.toByteArray
-    val fbs = Array.fill(dims) {
-      val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
-      in.readObject().asInstanceOf[FeatureBuilder[F]]
-    }
+    val fbs = FeatureBuilder(dims)
     extractor.as.cross(extractor.aggregate).map { case ((o, a), c) =>
       fs.multiFeatureValues(a, c, fbs, dims, mapping)
       (fbs.map(_.result).toSeq, fbs.map(_.rejections), o)

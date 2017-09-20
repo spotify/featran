@@ -17,14 +17,22 @@
 
 package com.spotify.featran
 
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
+
 import breeze.linalg.{DenseVector, SparseVector}
 import breeze.math.Semiring
 import breeze.storage.Zero
+import cats.kernel.Semigroup
 import com.spotify.featran.transformers.Transformer
 
 import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
+
+trait FeatureGetter[F, T] extends Serializable { self =>
+  def iterable(names: Array[String], t: F): Iterable[(T, Int)]
+  def combine(t1: F, t2: F): F
+}
 
 sealed trait FeatureRejection
 object FeatureRejection {
@@ -115,13 +123,37 @@ trait FeatureBuilder[T] extends Serializable { self =>
 }
 
 object FeatureBuilder {
+  def apply[F: FeatureBuilder](dims: Int): Array[FeatureBuilder[F]] = {
+    val fb = implicitly[FeatureBuilder[F]]
 
-  implicit def arrayFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Array[T]] =
+    // each underlying FeatureSpec should get a unique copy of FeatureBuilder
+    val buffer = new ByteArrayOutputStream()
+    val out = new ObjectOutputStream(buffer)
+    out.writeObject(fb)
+    val bytes = buffer.toByteArray
+    Array.fill(dims) {
+      val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
+      in.readObject().asInstanceOf[FeatureBuilder[F]]
+    }
+  }
+
+  implicit def arrayFG[T: ClassTag : FloatingPoint]: FeatureGetter[Array[T], T] =
+    new FeatureGetter[Array[T], T] {
+      override def iterable(names: Array[String], t: Array[T]): Iterable[(T, Int)] =
+        t.zipWithIndex
+
+      override def combine(t1: Array[T], t2: Array[T]): Array[T] = t1 ++ t2
+    }
+
+  implicit def arrayFB[T: ClassTag : FloatingPoint] : FeatureBuilder[Array[T]] =
     new FeatureBuilder[Array[T]] {
       private var array: Array[T] = _
       private var offset: Int = 0
       private val fp = implicitly[FloatingPoint[T]]
-      override def init(dimension: Int): Unit = array = new Array[T](dimension)
+      override def init(dimension: Int): Unit = {
+        offset = 0
+        array = new Array[T](dimension)
+      }
       override def add(name: String, value: Double): Unit = {
         array(offset) = fp.fromDouble(value)
         offset += 1
@@ -143,6 +175,13 @@ object FeatureBuilder {
     override def apply(): mutable.Builder[T, M] = f()
   }
 
+  implicit def seqFG[T: ClassTag : FloatingPoint]: FeatureGetter[Seq[T], T] =
+    new FeatureGetter[Seq[T], T] {
+      override def iterable(names: Array[String], t: Seq[T]): Iterable[(T, Int)] =
+        t.zipWithIndex
+      override def combine(t1: Seq[T], t2: Seq[T]): Seq[T] = t1 ++ t2
+    }
+
   // Collection types in _root_.scala.*
   //scalastyle:off public.methods.have.type
   implicit def traversableCB[T] = newCB(() => Traversable.newBuilder[T])
@@ -154,7 +193,8 @@ object FeatureBuilder {
   //scalastyle:on public.methods.have.type
 
   implicit def traversableFB[M[_] <: Traversable[_], T: ClassTag : FloatingPoint]
-  (implicit cb: CanBuild[T, M[T]]): FeatureBuilder[M[T]] = new FeatureBuilder[M[T]] {
+  (implicit cb: CanBuild[T, M[T]]): FeatureBuilder[M[T]]
+  = new FeatureBuilder[M[T]] {
     private var b: mutable.Builder[T, M[T]] = _
     private val fp = implicitly[FloatingPoint[T]]
     override def init(dimension: Int): Unit = b = cb()
@@ -163,8 +203,28 @@ object FeatureBuilder {
     override def result: M[T] = b.result()
   }
 
+  implicit def denseVectorFG[T: ClassTag : FloatingPoint]
+  : FeatureGetter[DenseVector[T], T] =
+    new FeatureGetter[DenseVector[T], T] {
+      override def iterable(names: Array[String], t: DenseVector[T]): Iterable[(T, Int)] =
+        t.data.zipWithIndex
+
+      override def combine(t1: DenseVector[T], t2: DenseVector[T]): DenseVector[T] =
+        DenseVector(t1.data ++ t2.data)
+    }
+
   implicit def denseVectorFB[T: ClassTag : FloatingPoint]: FeatureBuilder[DenseVector[T]] =
     implicitly[FeatureBuilder[Array[T]]].map(DenseVector(_))
+
+  implicit def sparseVectorFG[T: ClassTag : FloatingPoint : Semiring : Zero]
+  : FeatureGetter[SparseVector[T], T] =
+    new FeatureGetter[SparseVector[T], T] {
+      override def iterable(names: Array[String], t: SparseVector[T]): Iterable[(T, Int)] =
+        t.activeIterator.toIterable.map(_.swap)
+
+      override def combine(t1: SparseVector[T], t2: SparseVector[T]): SparseVector[T] =
+        SparseVector.vertcat(t1, t2)
+    }
 
   implicit def sparseVectorFB[T: ClassTag : FloatingPoint : Semiring : Zero]
   : FeatureBuilder[SparseVector[T]] = new FeatureBuilder[SparseVector[T]] {
@@ -180,7 +240,6 @@ object FeatureBuilder {
     override def add(name: String, value: Double): Unit = {
       queue.enqueue((offset, fp.fromDouble(value)))
       offset += 1
-
     }
     override def skip(): Unit = offset += 1
     override def skip(n: Int): Unit = offset += n
@@ -189,6 +248,16 @@ object FeatureBuilder {
       SparseVector(dim)(queue: _*)
     }
   }
+
+  implicit def mapFG[T: ClassTag : FloatingPoint]
+  : FeatureGetter[Map[String, T], T] =
+    new FeatureGetter[Map[String, T], T] {
+      override def combine(t1: Map[String, T], t2: Map[String, T]): Map[String, T] =
+        t1 ++ t2
+
+      override def iterable(names: Array[String], t:  Map[String, T]): Iterable[(T, Int)] =
+        names.zipWithIndex.collect{case(n, idx) if t.contains(n) => (t(n), idx)}
+    }
 
   implicit def mapFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Map[String, T]] =
     new FeatureBuilder[Map[String, T]] { self =>
@@ -200,5 +269,4 @@ object FeatureBuilder {
       override def skip(n: Int): Unit = Unit
       override def result: Map[String, T] = b.result()
     }
-
 }

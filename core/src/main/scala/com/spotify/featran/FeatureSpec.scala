@@ -19,7 +19,11 @@ package com.spotify.featran
 
 import com.spotify.featran.transformers.{Settings, Transformer}
 
+import scala.collection.mutable
 import scala.language.{higherKinds, implicitConversions}
+
+case class Cross(name1: String, name2: String, combine: (Double, Double) => Double = _ * _)
+  extends Serializable
 
 /**
  * Companion object for [[FeatureSpec]].
@@ -32,14 +36,14 @@ object FeatureSpec {
    * Create a new [[FeatureSpec]] for input record type `T`.
    * @tparam T input record type to extract features from
    */
-  def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty)
+  def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty, Nil)
 
   /**
    * Combine multiple [[FeatureSpec]]s into a single spec.
    */
   def combine[T](specs: FeatureSpec[T]*): FeatureSpec[T] = {
     require(specs.nonEmpty, "Empty specs")
-    new FeatureSpec(specs.map(_.features).reduce(_ ++ _))
+    new FeatureSpec(specs.map(_.features).reduce(_ ++ _), Nil)
   }
 }
 
@@ -47,7 +51,10 @@ object FeatureSpec {
  * Encapsulate specification for feature extraction and transformation.
  * @tparam T input record type to extract features from
  */
-class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feature[T, _, _, _]]) {
+class FeatureSpec[T] private[featran] (
+  private[featran] val features: Array[Feature[T, _, _, _]],
+  private[featran] val crosses: List[Cross]
+  ) {
 
   /**
    * Add a required field specification.
@@ -67,7 +74,17 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    */
   def optional[A](f: T => Option[A], default: Option[A] = None)
                  (t: Transformer[A, _, _]): FeatureSpec[T] =
-    new FeatureSpec[T](this.features :+ new Feature(f, default, t))
+    new FeatureSpec[T](this.features :+ new Feature(f, default, t), this.crosses)
+
+  /**
+    * Cross Feature with another feature
+    * @param feature1 Name of feature1
+    * @param feature2 Name of Feature 2
+    * @param combine How to combine the two features
+    */
+  def cross(feature1: String, feature2: String, combine: (Double, Double) => Double = _ * _)
+  : FeatureSpec[T] =
+    new FeatureSpec[T](this.features, this.crosses :+ Cross(feature1, feature2, combine))
 
   /**
    * Extract features from a input collection.
@@ -78,7 +95,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @tparam M input collection type, e.g. `Array`, `List`
    */
   def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] =
-    new FeatureExtractor[M, T](new FeatureSet[T](features), input, None)
+    new FeatureExtractor[M, T](new FeatureSet[T](features), input, None, this.crosses.toArray)
 
   /**
    * Extract features from a input collection using settings from a previous session.
@@ -91,7 +108,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    */
   def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
   : FeatureExtractor[M, T] =
-    new FeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings))
+    new FeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings), this.crosses.toArray)
 
 }
 
@@ -138,9 +155,8 @@ private class Feature[T, A, B, C](val f: T => Option[A],
 
 }
 
-private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
+class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _, _]])
   extends Serializable {
-
   {
     val (_, dups) = features
       .foldLeft((Set.empty[String], Set.empty[String])) { case ((u, d), f) =>
@@ -198,6 +214,19 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
     r
   }
 
+  // Maps Feature Index into (Array offset, Feature Index)
+  def featureIndexedNames(c: ARRAY): Map[Int, Array[String]] = {
+    require(n == c.length)
+    var map = new mutable.HashMap[Int, Array[String]]
+    var i = 0
+    while (i < n) {
+      val length = features(i).unsafeFeatureDimension(c(i))
+      map.put(i, features(i).unsafeFeatureNames(c(i)).toArray)
+      i += 1
+    }
+    map.toMap
+  }
+
   // Array[Option[C]] => Int
   def featureDimension(c: ARRAY): Int = {
     require(n == c.length)
@@ -223,12 +252,66 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
   }
 
   // (Array[Option[A]], Array[Option[C]], FeatureBuilder[F])
-  def featureValues[F](a: ARRAY, c: ARRAY, fb: FeatureBuilder[F]): Unit = {
+  def featureValues[F](a: ARRAY, c: ARRAY, fbs: Array[FeatureBuilder[F]]): Unit = {
     require(n == c.length)
-    fb.init(featureDimension(c))
     var i = 0
     while (i < n) {
+      val feature = features(i)
+      val fb = fbs(i)
+      fb.init(feature.unsafeFeatureDimension(c(i)))
       features(i).unsafeBuildFeatures(a(i), c(i), fb)
+      i += 1
+    }
+  }
+
+  // Array[Option[C]] => Array[String]
+  def multiFeatureNames(c: ARRAY, mapping: Map[String, Int]): Seq[Seq[String]] = {
+    require(n == c.length)
+    val dims = mapping.values.toSet.size
+    val b = 0.until(dims).map(_ => Seq.newBuilder[String])
+    var i = 0
+    while (i < n) {
+      val feature = features(i)
+      val idx = feature.toIndex(mapping)
+      feature.unsafeFeatureNames(c(i)).foreach(b(idx) += _)
+      i += 1
+    }
+    b.map(_.result())
+  }
+
+  // Array[Option[C]] => Array[Int]
+  def multiFeatureDimension(c: ARRAY, mapping: Map[String, Int]): Array[Int] = {
+    val dims = mapping.values.toSet.size
+    val featureCount = Array.fill[Int](dims)(0)
+    var i = 0
+    while (i < n) {
+      val feature = features(i)
+      val idx = feature.toIndex(mapping)
+      featureCount(idx) += features(i).unsafeFeatureDimension(c(i))
+      i += 1
+    }
+    featureCount
+  }
+
+  // (Array[Option[A]], Array[Option[C]], FeatureBuilder[F])
+  def multiFeatureValues[F](
+    a: ARRAY,
+    c: ARRAY,
+    fb: Array[FeatureBuilder[F]],
+    mapping: Map[String, Int]): Unit = {
+
+    require(fb.length == mapping.values.toSet.size)
+
+    val counts = multiFeatureDimension(c, mapping)
+
+    fb.zip(counts).foreach{case(b, cnt) => b.init(cnt)}
+
+    var i = 0
+    while (i < n) {
+      val feature = features(i)
+      assert(mapping.contains(feature.transformer.name))
+      val builder = fb(mapping(feature.transformer.name))
+      features(i).unsafeBuildFeatures(a(i), c(i), builder)
       i += 1
     }
   }

@@ -18,7 +18,7 @@
 package com.spotify.featran
 
 import java.io.File
-
+import java.lang.reflect.Modifier
 import com.spotify.featran.transformers._
 
 import scala.collection.JavaConverters._
@@ -31,6 +31,7 @@ object Fixtures {
   val testSpec = FeatureSpec.of[(String, Int)]
     .required(_._1)(OneHotEncoder("one_hot"))
     .required(_._2.toDouble)(MinMaxScaler("min_max"))
+    .cross("one_hot", "min_max")
 
   val expectedNames = Seq(
     "one_hot_a",
@@ -38,14 +39,39 @@ object Fixtures {
     "one_hot_c",
     "one_hot_d",
     "one_hot_e",
-    "min_max")
+    "min_max",
+    "one_hot_a_min_max",
+    "one_hot_b_min_max",
+    "one_hot_c_min_max",
+    "one_hot_d_min_max",
+    "one_hot_e_min_max")
 
   val expectedValues = Seq(
+    Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00, 0.0, 0.0, 0.0, 0.0, 0.0),
+    Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25, 0.0, 0.25, 0.0, 0.0, 0.0),
+    Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50, 0.0, 0.0, 0.50, 0.0, 0.0),
+    Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75, 0.0, 0.0, 0.0, 0.75, 0.0),
+    Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00, 0.0, 0.0, 0.0, 0.0, 1.0))
+
+  val notCrossedTestSpec = FeatureSpec.of[(String, Int)]
+    .required(_._1)(OneHotEncoder("one_hot"))
+    .required(_._2.toDouble)(MinMaxScaler("min_max"))
+
+  val notCrossedExpectedNames = Seq(
+    "one_hot_a",
+    "one_hot_b",
+    "one_hot_c",
+    "one_hot_d",
+    "one_hot_e",
+    "min_max")
+
+  val notCrossedExpectedValues = Seq(
     Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
     Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
     Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
     Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
     Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
+
 
   case class Record(x: Double, xo: Option[Double],
                     v: Array[Double], vo: Option[Array[Double]],
@@ -97,6 +123,7 @@ object Fixtures {
       .flatMap(_.listFiles())
       .filter(f => f.getName.endsWith(".class") && !f.getName.contains("$"))
       .map(f => classLoader.loadClass(s"$pkg.${f.getName.replace(".class", "")}"))
+      .filterNot(c => Modifier.isAbstract(c.getModifiers()))
       .filter(c => (baseCls isAssignableFrom c) && c != baseCls &&
         Try(classLoader.loadClass(c.getName + "$")).isSuccess)
       .toSet
