@@ -19,7 +19,7 @@ package com.spotify.featran.java
 
 import java.util.{Collections, Optional, List => JList}
 
-import com.spotify.featran.{CollectionType, FeatureExtractor, FeatureSpec}
+import com.spotify.featran._
 
 import scala.collection.JavaConverters._
 import scala.language.higherKinds
@@ -65,4 +65,24 @@ private object JavaOps {
   def featureValuesDouble[T](fe: FeatureExtractor[JList, T]): JList[Array[Double]] =
     fe.featureValues[Array[Double]]
 
+  implicit val floatSparseArrayFB: FeatureBuilder[FloatSparseArray] =
+    implicitly[FeatureBuilder[SparseArray[Float]]]
+      .map(a => new FloatSparseArray(a.indices, a.values, a.length))
+  implicit val doubleSparseArrayFB: FeatureBuilder[DoubleSparseArray] =
+    implicitly[FeatureBuilder[SparseArray[Double]]]
+      .map(a => new DoubleSparseArray(a.indices, a.values, a.length))
+
+  def featureValuesFloatSparseArray[T](fe: FeatureExtractor[JList, T])
+  : JList[FloatSparseArray] = fe.featureValues[FloatSparseArray]
+  def featureValuesDoubleSparseArray[T](fe: FeatureExtractor[JList, T])
+  : JList[DoubleSparseArray] = fe.featureValues[DoubleSparseArray]
+
 }
+
+/** A sparse array of float values. */
+class FloatSparseArray private[java] (indices: Array[Int], values: Array[Float], length: Int)
+  extends SparseArray[Float](indices, values, length)
+
+/** A sparse array of double values. */
+class DoubleSparseArray private[java] (indices: Array[Int], values: Array[Double], length: Int)
+  extends SparseArray[Double](indices, values, length)

@@ -40,6 +40,8 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureNames().asScala shouldBe expectedNames
     f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
+    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
+    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
   }
 
   it should "work with Optional" in {
@@ -52,7 +54,10 @@ class JavaTest extends FlatSpec with Matchers {
       }, OneHotEncoder("one_hot"))
       .extract(in.asJava)
     f.featureNames().asScala shouldBe names
+    f.featureValuesFloat().asScala.map(_.toSeq) shouldBe values
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe values
+    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe values
+    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe values
   }
 
   it should "work with FeatureSpec" in {
@@ -60,6 +65,8 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureNames().asScala shouldBe expectedNames
     f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
+    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
+    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
   }
 
   it should "work with extractWithSettings" in {
@@ -70,6 +77,8 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureNames().asScala shouldBe expectedNames
     f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues.take(n)
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues.take(n)
+    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
+    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
   }
 
 }

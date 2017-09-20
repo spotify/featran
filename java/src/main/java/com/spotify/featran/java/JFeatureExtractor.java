@@ -47,4 +47,18 @@ public class JFeatureExtractor<T> {
     return JavaOps.featureValuesDouble(self);
   }
 
+  /**
+   * Java wrapper for {{@link FeatureExtractor#featureValues(FeatureBuilder, ClassTag)}}.
+   */
+  public List<FloatSparseArray> featureValuesFloatSparse() {
+    return JavaOps.featureValuesFloatSparseArray(self);
+  }
+
+  /**
+   * Java wrapper for {{@link FeatureExtractor#featureValues(FeatureBuilder, ClassTag)}}.
+   */
+  public List<DoubleSparseArray> featureValuesDoubleSparse() {
+    return JavaOps.featureValuesDoubleSparseArray(self);
+  }
+
 }

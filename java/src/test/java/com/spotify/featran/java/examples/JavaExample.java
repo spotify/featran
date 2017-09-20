@@ -1,5 +1,6 @@
 package com.spotify.featran.java.examples;
 
+import com.spotify.featran.java.DoubleSparseArray;
 import com.spotify.featran.java.JFeatureExtractor;
 import com.spotify.featran.java.JFeatureSpec;
 import com.spotify.featran.transformers.MinMaxScaler;
@@ -47,6 +48,14 @@ public class JavaExample {
     // Get feature values as double[]
     for (double[] f : f1.featureValuesDouble()) {
       System.out.println(Arrays.toString(f));
+    }
+
+    // Get feature values as DoubleSparseArray
+    for (DoubleSparseArray f : f1.featureValuesDoubleSparse()) {
+      String s = String.format(
+          "indices: [%s], values: [%s], length: %d",
+          Arrays.toString(f.indices()), Arrays.toString(f.values()), f.length());
+      System.out.println(s);
     }
 
     // Extract settings as a JSON string

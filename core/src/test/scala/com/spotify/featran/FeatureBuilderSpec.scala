@@ -71,6 +71,20 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
     test(xs, implicitly[FeatureBuilder[Seq[Double]]])(identity)
   }
 
+  property("float sparse array") = Prop.forAll(list[Float]) { xs =>
+    test(xs, implicitly[FeatureBuilder[SparseArray[Float]]])(_.toDense.toSeq)
+    val n = 1024 / xs.size + 1
+    val xs2 = Seq.fill(n)(xs).reduce(_ ++ _)
+    test(xs2, implicitly[FeatureBuilder[SparseArray[Float]]])(_.toDense.toSeq)
+  }
+
+  property("double sparse array") = Prop.forAll(list[Double]) { xs =>
+    test(xs, implicitly[FeatureBuilder[SparseArray[Double]]])(_.toDense.toSeq)
+    val n = 1024 / xs.size + 1
+    val xs2 = Seq.fill(n)(xs).reduce(_ ++ _)
+    test(xs2, implicitly[FeatureBuilder[SparseArray[Double]]])(_.toDense.toSeq)
+  }
+
   property("float dense vector") = Prop.forAll(list[Float]) { xs =>
     test(xs, implicitly[FeatureBuilder[DenseVector[Float]]])(_.data.toSeq)
   }
