@@ -49,31 +49,16 @@ val commonSettings = Seq(
   publishMavenStyle             := true,
   publishArtifact in Test       := false,
   sonatypeProfileName           := "com.spotify",
-  pomExtra                      := {
-    <url>https://github.com/spotify/featran</url>
-    <licenses>
-      <license>
-        <name>Apache 2</name>
-        <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      </license>
-    </licenses>
-    <scm>
-      <url>git@github.com/spotify/featran.git</url>
-      <connection>scm:git:git@github.com:spotify/featran.git</connection>
-    </scm>
-    <developers>
-      <developer>
-        <id>sinisa_lyh</id>
-        <name>Neville Li</name>
-        <url>https://twitter.com/sinisa_lyh</url>
-      </developer>
-      <developer>
-        <id>rwhitcomb</id>
-        <name>Richard Whitcomb</name>
-        <url>https://twitter.com/rwhitcomb</url>
-      </developer>
-    </developers>
-  }
+
+  licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+  homepage := Some(url("https://github.com/spotify/featran")),
+  scmInfo := Some(ScmInfo(
+    url("https://github.com/spotify/featran.git"),
+    "scm:git:git@github.com:spotify/featran.git")),
+  developers := List(
+    Developer(id="sinisa_lyh", name="Neville Li", email="neville.lyh@gmail.com", url=url("https://twitter.com/sinisa_lyh")),
+    Developer(id="rwhitcomb", name="Richard Whitcomb", email="richwhitjr@gmail.com", url=url("https://twitter.com/rwhitcomb"))
+  )
 )
 
 val noPublishSettings = Seq(
