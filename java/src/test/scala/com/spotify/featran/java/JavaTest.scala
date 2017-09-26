@@ -29,7 +29,7 @@ class JavaTest extends FlatSpec with Matchers {
   import com.spotify.featran.Fixtures._
 
   "JFeatureSpec" should "work" in {
-    val f = JFeatureSpec.of[(String, Int)]()
+    val f = JFeatureSpec.create[(String, Int)]()
       .required(new SerializableFunction[(String, Int), String] {
         override def apply(input: (String, Int)): String = input._1
       }, OneHotEncoder("one_hot"))
@@ -48,7 +48,7 @@ class JavaTest extends FlatSpec with Matchers {
     val in = Seq("a", "b", null)
     val names = Seq("one_hot_a", "one_hot_b")
     val values = Seq(Seq(1.0, 0.0), Seq(0.0, 1.0), Seq(0.0, 0.0))
-    val f = JFeatureSpec.of[String]()
+    val f = JFeatureSpec.create[String]()
       .optional(new SerializableFunction[String, Optional[String]] {
         override def apply(input: String): Optional[String] = Optional.ofNullable(input)
       }, OneHotEncoder("one_hot"))

@@ -36,7 +36,7 @@ public class JavaExample {
     List<Record> records = randomRecords();
 
     // Start building a feature specification
-    JFeatureSpec<Record> fs = JFeatureSpec.<Record>of()
+    JFeatureSpec<Record> fs = JFeatureSpec.<Record>create()
         .required(r -> r.d, MinMaxScaler.apply("min-max", 0.0, 1.0))
         .optional(r -> r.s, OneHotEncoder.apply("one-hot"));
 

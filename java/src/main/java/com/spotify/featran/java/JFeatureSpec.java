@@ -42,7 +42,7 @@ public class JFeatureSpec<T> {
   /**
    * Create a new {{@link JFeatureSpec}} instance.
    */
-  public static <T> JFeatureSpec<T> of() {
+  public static <T> JFeatureSpec<T> create() {
     return wrap(FeatureSpec.<T>of());
   }
 
