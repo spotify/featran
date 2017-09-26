@@ -277,8 +277,8 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
     val featureCount = Array.fill[Int](dims)(0)
     var i = 0
     while (i < n) {
-      val feature = features(i)
-      val idx = feature.toIndex(mapping)
+      val f = features(i)
+      val idx = f.toIndex(mapping)
       featureCount(idx) += features(i).unsafeFeatureDimension(c(i))
       i += 1
     }
@@ -298,9 +298,9 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
 
     i = 0
     while (i < n) {
-      val feature = features(i)
-      val builder = fbs(mapping(feature.transformer.name))
-      feature.unsafeBuildFeatures(a(i), c(i), builder)
+      val f = features(i)
+      val fb = fbs(mapping(f.transformer.name))
+      f.unsafeBuildFeatures(a(i), c(i), fb)
       i += 1
     }
   }
