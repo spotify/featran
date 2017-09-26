@@ -17,9 +17,6 @@
 
 package com.spotify.featran.java
 
-import java.util.Optional
-
-import com.spotify.featran.transformers._
 import org.scalatest._
 
 import scala.collection.JavaConverters._
@@ -29,14 +26,8 @@ class JavaTest extends FlatSpec with Matchers {
   import com.spotify.featran.Fixtures._
 
   "JFeatureSpec" should "work" in {
-    val f = JFeatureSpec.create[(String, Int)]()
-      .required(new SerializableFunction[(String, Int), String] {
-        override def apply(input: (String, Int)): String = input._1
-      }, OneHotEncoder("one_hot"))
-      .required(new SerializableFunction[(String, Int), Double] {
-        override def apply(input: (String, Int)): Double = input._2.toDouble
-      }, MinMaxScaler("min_max"))
-      .extract(testData.asJava)
+    val in = testData.asInstanceOf[Seq[(String, Integer)]]
+    val f = JavaTestUtil.spec().extract(in.asJava)
     f.featureNames().asScala shouldBe expectedNames
     f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
@@ -48,11 +39,7 @@ class JavaTest extends FlatSpec with Matchers {
     val in = Seq("a", "b", null)
     val names = Seq("one_hot_a", "one_hot_b")
     val values = Seq(Seq(1.0, 0.0), Seq(0.0, 1.0), Seq(0.0, 0.0))
-    val f = JFeatureSpec.create[String]()
-      .optional(new SerializableFunction[String, Optional[String]] {
-        override def apply(input: String): Optional[String] = Optional.ofNullable(input)
-      }, OneHotEncoder("one_hot"))
-      .extract(in.asJava)
+    val f = JavaTestUtil.optionalSpec().extract(in.asJava)
     f.featureNames().asScala shouldBe names
     f.featureValuesFloat().asScala.map(_.toSeq) shouldBe values
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe values
