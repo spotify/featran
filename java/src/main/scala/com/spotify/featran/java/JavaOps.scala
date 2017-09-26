@@ -80,9 +80,17 @@ private object JavaOps {
 }
 
 /** A sparse array of float values. */
-class FloatSparseArray private[java] (indices: Array[Int], values: Array[Float], length: Int)
-  extends SparseArray[Float](indices, values, length)
+class FloatSparseArray private[java] (indices: Array[Int],
+                                      override val values: Array[Float],
+                                      length: Int)
+  extends SparseArray[Float](indices, values, length) {
+  def toDense: Array[Float] = super.toDense
+}
 
 /** A sparse array of double values. */
-class DoubleSparseArray private[java] (indices: Array[Int], values: Array[Double], length: Int)
-  extends SparseArray[Double](indices, values, length)
+class DoubleSparseArray private[java] (indices: Array[Int],
+                                       override val values: Array[Double],
+                                       length: Int)
+  extends SparseArray[Double](indices, values, length) {
+  def toDense: Array[Double] = super.toDense
+}

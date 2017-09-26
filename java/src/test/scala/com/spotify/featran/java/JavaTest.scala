@@ -68,4 +68,20 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
   }
 
+  it should "work with sparse arrays" in {
+    val in = Seq("a", "b")
+    val indices = Seq(Seq(0), Seq(1))
+    val values = Seq(Seq(1.0), Seq(1.0))
+    val dense = Seq(Seq(1.0, 0.0), Seq(0.0, 1.0))
+    val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+    val fs = f.featureValuesFloatSparse().asScala
+    fs.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
+    fs.map(JavaTestUtil.getValues(_).toSeq) shouldBe values
+    fs.map(JavaTestUtil.getDense(_).toSeq) shouldBe dense
+    val ds = f.featureValuesDoubleSparse().asScala
+    ds.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
+    ds.map(JavaTestUtil.getValues(_).toSeq) shouldBe values
+    ds.map(JavaTestUtil.getDense(_).toSeq) shouldBe dense
+  }
+
 }

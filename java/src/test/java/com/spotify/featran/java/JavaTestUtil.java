@@ -21,4 +21,28 @@ public class JavaTestUtil {
         .optional(Optional::ofNullable, OneHotEncoder.apply("one_hot"));
   }
 
+  public static int[] getIndicies(FloatSparseArray a) {
+    return a.indices();
+  }
+
+  public static int[] getIndicies(DoubleSparseArray a) {
+    return a.indices();
+  }
+
+  public static float[] getValues(FloatSparseArray a) {
+    return a.values();
+  }
+
+  public static double[] getValues(DoubleSparseArray a) {
+    return a.values();
+  }
+
+  public static float[] getDense(FloatSparseArray a) {
+    return a.toDense();
+  }
+
+  public static double[] getDense(DoubleSparseArray a) {
+    return a.toDense();
+  }
+
 }
