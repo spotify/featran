@@ -74,7 +74,7 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
       (m, min.get, max.get)
     }
   override def featureDimension(c: C): Int = numBuckets
-  override def featureNames(c: C): Seq[String] = names(numBuckets).toSeq
+  override def featureNames(c: C): Seq[String] = names(numBuckets)
   override def buildFeatures(a: Option[Double], c: C,
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>

@@ -63,7 +63,7 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   def buildFeatures(a: Option[A], c: C, fb: FeatureBuilder[_]): Unit
 
   protected def nameAt(n: Int): String = name + '_' + n
-  protected def names(n: Int): Iterator[String] = (0 until n).iterator.map(nameAt)
+  protected def names(n: Int): Stream[String] = (0 until n).toStream.map(nameAt)
 
   //================================================================================
   // Special cases when value is missing in all rows

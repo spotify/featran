@@ -106,7 +106,7 @@ private abstract class BaseHashHotEncoder[A](name: String,
       }
     }
   override def featureDimension(c: Int): Int = c
-  override def featureNames(c: Int): Seq[String] = names(c).toSeq
+  override def featureNames(c: Int): Seq[String] = names(c)
 
   override def encodeAggregator(c: Option[Int]): Option[String] = c.map(_.toString)
   override def decodeAggregator(s: Option[String]): Option[Int] = s.map(_.toInt)

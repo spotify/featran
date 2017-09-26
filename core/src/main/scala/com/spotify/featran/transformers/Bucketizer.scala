@@ -67,7 +67,7 @@ private class Bucketizer(name: String, splits: Array[Double])
   }
   override val aggregator: Aggregator[Double, Unit, Unit] = Aggregators.unit[Double]
   override def featureDimension(c: Unit): Int = splits.length - 1
-  override def featureNames(c: Unit): Seq[String] = names(splits.length - 1).toSeq
+  override def featureNames(c: Unit): Seq[String] = names(splits.length - 1)
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
       if (x < lower || x > upper) {

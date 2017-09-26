@@ -80,11 +80,12 @@ trait FeatureBuilder[T] extends Serializable { self =>
    * Add multiple feature values. The total number of values added and skipped should equal to
    * dimension in [[init]].
    */
-  def add[M[_]](names: Iterator[String], values: M[Double])
+  def add[M[_]](names: Iterable[String], values: M[Double])
                (implicit ev: M[Double] => Seq[Double]): Unit = {
-    val i = values.iterator
-    while (names.hasNext && i.hasNext) {
-      add(names.next(), i.next())
+    val i = names.iterator
+    val j = values.iterator
+    while (i.hasNext && j.hasNext) {
+      add(i.next(), j.next())
     }
   }
 

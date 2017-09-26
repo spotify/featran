@@ -88,7 +88,7 @@ private class PolynomialExpansion(name: String, val degree: Int, val expectedLen
   override val aggregator: Aggregator[Array[Double], Int, Int] =
     Aggregators.seqLength(expectedLength)
   override def featureDimension(c: Int): Int = PolynomialExpansion.getPolySize(c, degree) - 1
-  override def featureNames(c: Int): Seq[String] = names(featureDimension(c)).toSeq
+  override def featureNames(c: Int): Seq[String] = names(featureDimension(c))
   override def buildFeatures(a: Option[Array[Double]], c: Int,
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>

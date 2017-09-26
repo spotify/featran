@@ -46,7 +46,7 @@ private class Normalizer(name: String, val p: Double, val expectedLength: Int)
   override val aggregator: Aggregator[Array[Double], Int, Int] =
     Aggregators.seqLength(expectedLength)
   override def featureDimension(c: Int): Int = c
-  override def featureNames(c: Int): Seq[String] = names(c).toSeq
+  override def featureNames(c: Int): Seq[String] = names(c)
   override def buildFeatures(a: Option[Array[Double]], c: Int,
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>

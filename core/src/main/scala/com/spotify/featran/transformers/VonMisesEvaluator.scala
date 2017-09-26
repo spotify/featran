@@ -60,7 +60,7 @@ private class VonMisesEvaluator(name: String,
   require(pMax >= 0 && pMax <= upperBound, s"point $pMax not in the range [0, $upperBound]")
   override val aggregator: Aggregator[Double, Unit, Unit] = Aggregators.unit[Double]
   override def featureDimension(c: Unit): Int = points.length
-  override def featureNames(c: Unit): Seq[String] = names(points.length).toSeq
+  override def featureNames(c: Unit): Seq[String] = names(points.length)
 
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(mu) =>

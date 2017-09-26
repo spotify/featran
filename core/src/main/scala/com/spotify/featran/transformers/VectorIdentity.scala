@@ -47,7 +47,7 @@ private class VectorIdentity[M[_]](name: String, expectedLength: Int)
   extends Transformer[M[Double], Int, Int](name) {
   override val aggregator: Aggregator[M[Double], Int, Int] = Aggregators.seqLength(expectedLength)
   override def featureDimension(c: Int): Int = c
-  override def featureNames(c: Int): Seq[String] = names(c).toSeq
+  override def featureNames(c: Int): Seq[String] = names(c)
   override def buildFeatures(a: Option[M[Double]], c: Int, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
       if (x.length != c) {
