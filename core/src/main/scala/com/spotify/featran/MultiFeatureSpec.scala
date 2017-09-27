@@ -38,7 +38,8 @@ object MultiFeatureSpec {
 class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
                           private[featran] val multiFeatures: Array[Feature[T, _, _, _]]) {
 
-  private val spec = new FeatureSpec(multiFeatures)
+  // FIXME: combine crossings
+  private val spec = new FeatureSpec(multiFeatures, Crossings.empty)
 
   /**
    * Extract features from a input collection.
@@ -49,7 +50,9 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @tparam M input collection type, e.g. `Array`, `List`
    */
   def extract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] =
-    new MultiFeatureExtractor[M, T](new FeatureSet[T](spec.features), input, None, mapping)
+    new MultiFeatureExtractor[M, T](
+      // FIXME: combine crossings
+      new FeatureSet[T](spec.features, Crossings.empty), input, None, mapping)
 
   /**
    * Extract features from a input collection using settings from a previous session.
@@ -62,7 +65,8 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    */
   def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
   : MultiFeatureExtractor[M, T] = {
-    val set = new FeatureSet(spec.features)
+    // FIXME: combine crossings
+    val set = new FeatureSet(spec.features, Crossings.empty)
     new MultiFeatureExtractor[M, T](set, input, Some(settings), mapping)
   }
 

@@ -80,7 +80,8 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
     val bytes = buffer.toByteArray
     val fbs = Array.fill(dims) {
       val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
-      in.readObject().asInstanceOf[FeatureBuilder[F]]
+      val clone = in.readObject().asInstanceOf[FeatureBuilder[F]]
+      CrossingFeatureBuilder(clone, fs.crossings)
     }
     extractor.as.cross(extractor.aggregate).map { case ((o, a), c) =>
       fs.multiFeatureValues(a, c, fbs, dims, mapping)
