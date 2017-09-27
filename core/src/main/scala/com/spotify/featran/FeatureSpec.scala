@@ -19,6 +19,7 @@ package com.spotify.featran
 
 import com.spotify.featran.transformers.{Settings, Transformer}
 
+import scala.collection.mutable
 import scala.language.{higherKinds, implicitConversions}
 
 /**
@@ -32,14 +33,14 @@ object FeatureSpec {
    * Create a new [[FeatureSpec]] for input record type `T`.
    * @tparam T input record type to extract features from
    */
-  def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty)
+  def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty, Crossings.empty)
 
   /**
    * Combine multiple [[FeatureSpec]]s into a single spec.
    */
   def combine[T](specs: FeatureSpec[T]*): FeatureSpec[T] = {
     require(specs.nonEmpty, "Empty specs")
-    new FeatureSpec(specs.map(_.features).reduce(_ ++ _))
+    new FeatureSpec(specs.map(_.features).reduce(_ ++ _), specs.map(_.crossings).reduce(_ ++ _))
   }
 }
 
@@ -47,7 +48,8 @@ object FeatureSpec {
  * Encapsulate specification for feature extraction and transformation.
  * @tparam T input record type to extract features from
  */
-class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feature[T, _, _, _]]) {
+class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feature[T, _, _, _]],
+                                       private val crossings: Crossings) {
 
   /**
    * Add a required field specification.
@@ -67,7 +69,19 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    */
   def optional[A](f: T => Option[A], default: Option[A] = None)
                  (t: Transformer[A, _, _]): FeatureSpec[T] =
-    new FeatureSpec[T](this.features :+ new Feature(f, default, t))
+    new FeatureSpec[T](this.features :+ new Feature(f, default, t), this.crossings)
+
+  /**
+   * Cross feature values of two underlying transformers.
+   * @param k names of transformers to be crossed
+   * @param f function to cross feature value pairs
+   */
+  def cross(k: (String, String))(f: (Double, Double) => Double): FeatureSpec[T] = {
+    val names: Set[String] = features.map(_.transformer.name)(scala.collection.breakOut)
+    val d = Set(k._1, k._2).diff(names)
+    require(d.isEmpty, s"Feature ${d.mkString(", ")} not found")
+    new FeatureSpec[T](this.features, this.crossings + (k -> f))
+  }
 
   /**
    * Extract features from a input collection.
@@ -78,7 +92,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @tparam M input collection type, e.g. `Array`, `List`
    */
   def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] =
-    new FeatureExtractor[M, T](new FeatureSet[T](features), input, None)
+    new FeatureExtractor[M, T](new FeatureSet[T](features, crossings), input, None)
 
   /**
    * Extract features from a input collection using settings from a previous session.
@@ -91,7 +105,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    */
   def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
   : FeatureExtractor[M, T] =
-    new FeatureExtractor[M, T](new FeatureSet[T](features), input, Some(settings))
+    new FeatureExtractor[M, T](new FeatureSet[T](features, crossings), input, Some(settings))
 
 }
 
@@ -138,7 +152,8 @@ private class Feature[T, A, B, C](val f: T => Option[A],
 
 }
 
-private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
+private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
+                            private[featran] val crossings: Crossings)
   extends Serializable {
 
   {
@@ -203,9 +218,18 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
     require(n == c.length)
     var sum = 0
     var i = 0
+    val m = mutable.Map.empty[String, Int]
     while (i < n) {
-      sum += features(i).unsafeFeatureDimension(c(i))
+      val f = features(i)
+      val size = f.unsafeFeatureDimension(c(i))
+      sum += size
+      if (crossings.keys.contains(f.transformer.name)) {
+        m(f.transformer.name) = size
+      }
       i += 1
+    }
+    crossings.map.keys.foreach { case (n1, n2) =>
+      sum += m(n1) * m(n2)
     }
     sum
   }
@@ -215,9 +239,20 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
     require(n == c.length)
     val b = Seq.newBuilder[String]
     var i = 0
+    val m = mutable.Map.empty[String, Seq[String]]
     while (i < n) {
-      features(i).unsafeFeatureNames(c(i)).foreach(b += _)
+      val f = features(i)
+      val names = f.unsafeFeatureNames(c(i))
+      b ++= names
+      if (crossings.keys.contains(f.transformer.name)) {
+        m(f.transformer.name) = names
+      }
       i += 1
+    }
+    crossings.map.keys.foreach { case (n1, n2) =>
+      for (x <- m(n1); y <- m(n2)) {
+        b += Crossings.name(x, y)
+      }
     }
     b.result()
   }
@@ -228,7 +263,9 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]])
     fb.init(featureDimension(c))
     var i = 0
     while (i < n) {
-      features(i).unsafeBuildFeatures(a(i), c(i), fb)
+      val f = features(i)
+      fb.prepare(f.transformer)
+      f.unsafeBuildFeatures(a(i), c(i), fb)
       i += 1
     }
   }

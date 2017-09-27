@@ -69,6 +69,13 @@ trait FeatureBuilder[T] extends Serializable { self =>
   def init(dimension: Int): Unit
 
   /**
+   * Prepare the builder for the next transformer. This should be called only once per transformer
+   * per input row.
+   * @param transformer the next transformer in line
+   */
+  def prepare(transformer: Transformer[_, _, _]): Unit = Unit
+
+  /**
    * Gather builder result for a result. This should be called only once per input row.
    */
   def result: T

@@ -31,6 +31,7 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
                                             (toSeq: F => Seq[T]): Prop = {
     val num = implicitly[Numeric[T]]
     fb.init(xs.size + 2)
+    fb.prepare(null)
     xs.zipWithIndex.foreach {
       case (Some(x), i) => fb.add("key" + i.toString, num.toDouble(x))
       case (None, _) => fb.skip()
