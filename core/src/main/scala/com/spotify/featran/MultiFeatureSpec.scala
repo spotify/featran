@@ -24,11 +24,14 @@ import scala.language.{higherKinds, implicitConversions}
  */
 object MultiFeatureSpec {
   def apply[T](specs: FeatureSpec[T]*): MultiFeatureSpec[T] = {
-    val nameToSpec: Map[String, Int] = specs.zipWithIndex.flatMap { case(spec, index) =>
+    val nameToSpec: Map[String, Int] = specs.zipWithIndex.flatMap { case (spec, index) =>
       spec.features.map(_.transformer.name -> index)
     }(scala.collection.breakOut)
 
-    new MultiFeatureSpec(nameToSpec, specs.map(_.features).reduce(_ ++ _))
+    new MultiFeatureSpec(
+      nameToSpec,
+      specs.map(_.features).reduce(_ ++ _),
+      specs.map(_.crossings).reduce(_ ++ _))
   }
 }
 
@@ -36,10 +39,8 @@ object MultiFeatureSpec {
  * Wrapper for [[FeatureSpec]] that allows for combination and separation of different specs.
  */
 class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
-                          private[featran] val multiFeatures: Array[Feature[T, _, _, _]]) {
-
-  // FIXME: combine crossings
-  private val spec = new FeatureSpec(multiFeatures, Crossings.empty)
+                          private[featran] val features: Array[Feature[T, _, _, _]],
+                          private val crossings: Crossings) {
 
   /**
    * Extract features from a input collection.
@@ -51,8 +52,7 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    */
   def extract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] =
     new MultiFeatureExtractor[M, T](
-      // FIXME: combine crossings
-      new FeatureSet[T](spec.features, Crossings.empty), input, None, mapping)
+      new MultiFeatureSet[T](features, crossings, mapping), input, None)
 
   /**
    * Extract features from a input collection using settings from a previous session.
@@ -64,10 +64,8 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @tparam M input collection type, e.g. `Array`, `List`
    */
   def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
-  : MultiFeatureExtractor[M, T] = {
-    // FIXME: combine crossings
-    val set = new FeatureSet(spec.features, Crossings.empty)
-    new MultiFeatureExtractor[M, T](set, input, Some(settings), mapping)
-  }
+  : MultiFeatureExtractor[M, T] =
+    new MultiFeatureExtractor[M, T](
+      new MultiFeatureSet(features, crossings, mapping), input, Some(settings))
 
 }

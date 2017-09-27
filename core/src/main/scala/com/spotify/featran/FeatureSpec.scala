@@ -17,6 +17,8 @@
 
 package com.spotify.featran
 
+import java.io._
+
 import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.collection.mutable
@@ -49,7 +51,7 @@ object FeatureSpec {
  * @tparam T input record type to extract features from
  */
 class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feature[T, _, _, _]],
-                                       private val crossings: Crossings) {
+                                       private[featran] val crossings: Crossings) {
 
   /**
    * Add a required field specification.
@@ -148,8 +150,6 @@ private class Feature[T, A, B, C](val f: T => Option[A],
   // Option[C]
   def unsafeSettings(c: Option[Any]): Settings = transformer.settings(c.asInstanceOf[Option[C]])
 
-  def toIndex(map: Map[String, Int]): Int = map(transformer.name)
-
 }
 
 private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
@@ -171,7 +171,7 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
 
   import FeatureSpec.ARRAY
 
-  private val n = features.length
+  protected val n: Int = features.length
 
   // T => Array[Option[A]]
   def unsafeGet(t: T): ARRAY = features.map(_.get(t))
@@ -223,8 +223,9 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
       val f = features(i)
       val size = f.unsafeFeatureDimension(c(i))
       sum += size
-      if (crossings.keys.contains(f.transformer.name)) {
-        m(f.transformer.name) = size
+      val name = f.transformer.name
+      if (crossings.keys.contains(name)) {
+        m(name) = size
       }
       i += 1
     }
@@ -244,8 +245,9 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
       val f = features(i)
       val names = f.unsafeFeatureNames(c(i))
       b ++= names
-      if (crossings.keys.contains(f.transformer.name)) {
-        m(f.transformer.name) = names
+      val name = f.transformer.name
+      if (crossings.keys.contains(name)) {
+        m(name) = names
       }
       i += 1
     }
@@ -291,52 +293,101 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
     }
   }
 
-  //================================================================================
-  // For MultiFeatureSpec and MultiFeatureExtractor
-  //================================================================================
+}
+
+private class MultiFeatureSet[T](features: Array[Feature[T, _, _, _]],
+                                 crossings: Crossings,
+                                 private val mapping: Map[String, Int])
+  extends FeatureSet[T](features, crossings) {
+
+  import FeatureSpec.ARRAY
+
+  private val dims = mapping.values.toSet.size
+
+  def multiFeatureBuilders[F](fb: FeatureBuilder[F]): Array[FeatureBuilder[F]] = {
+    // each underlying FeatureSpec should get a unique copy of FeatureBuilder
+    val buffer = new ByteArrayOutputStream()
+    val out = new ObjectOutputStream(buffer)
+    out.writeObject(fb)
+    val bytes = buffer.toByteArray
+    Array.fill(dims) {
+      val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
+      val clone = in.readObject().asInstanceOf[FeatureBuilder[F]]
+      CrossingFeatureBuilder(clone, crossings)
+    }
+  }
 
   // Array[Option[C]] => Array[String]
-  def multiFeatureNames(c: ARRAY, dims: Int, mapping: Map[String, Int]): Seq[Seq[String]] = {
+  def multiFeatureNames(c: ARRAY): Seq[Seq[String]] = {
     require(n == c.length)
-    val b = 0.until(dims).map(_ => Seq.newBuilder[String])
+    val bs = (0 until dims).map(_ => Seq.newBuilder[String])
     var i = 0
+    val maps = Array.fill(dims)(mutable.Map.empty[String, Seq[String]])
     while (i < n) {
-      val feature = features(i)
-      val idx = feature.toIndex(mapping)
-      feature.unsafeFeatureNames(c(i)).foreach(b(idx) += _)
+      val f = features(i)
+      val names = f.unsafeFeatureNames(c(i))
+      val tName = f.transformer.name
+      val idx = mapping(tName)
+      names.foreach(bs(idx) += _)
+      if (crossings.keys.contains(tName)) {
+        maps(idx)(tName) = names
+      }
       i += 1
     }
-    b.map(_.result())
+    var idx = 0
+    while (idx < dims) {
+      val m = maps(idx).withDefaultValue(Nil)
+      crossings.map.keys.foreach { case (n1, n2) =>
+        for (x <- m(n1); y <- m(n2)) {
+          bs(idx) += Crossings.name(x, y)
+        }
+      }
+      idx += 1
+    }
+    bs.map(_.result())
   }
 
   // Array[Option[C]] => Array[Int]
-  def multiFeatureDimension(c: ARRAY, dims: Int, mapping: Map[String, Int]): Array[Int] = {
-    val featureCount = Array.fill[Int](dims)(0)
+  def multiFeatureDimension(c: ARRAY): Array[Int] = {
+    require(n == c.length)
+    val sums = Array.fill[Int](dims)(0)
     var i = 0
+    val maps = Array.fill(dims)(mutable.Map.empty[String, Int])
     while (i < n) {
       val f = features(i)
-      val idx = f.toIndex(mapping)
-      featureCount(idx) += features(i).unsafeFeatureDimension(c(i))
+      val size = f.unsafeFeatureDimension(c(i))
+      val tName = f.transformer.name
+      val idx = mapping(tName)
+      sums(idx) += size
+      if (crossings.keys.contains(tName)) {
+        maps(idx)(tName) = size
+      }
       i += 1
     }
-    featureCount
+    var idx = 0
+    while (idx < dims) {
+      val m = maps(idx).withDefaultValue(0)
+      crossings.map.keys.foreach { case (n1, n2) =>
+        sums(idx) += m(n1) * m(n2)
+      }
+      idx += 1
+    }
+    sums
   }
 
   // (Array[Option[A]], Array[Option[C]], FeatureBuilder[F])
-  def multiFeatureValues[F](a: ARRAY, c: ARRAY, fbs: Array[FeatureBuilder[F]],
-                            dims: Int, mapping: Map[String, Int]): Unit = {
-
+  def multiFeatureValues[F](a: ARRAY, c: ARRAY, fbs: Array[FeatureBuilder[F]]): Unit = {
     var i = 0
-    val counts = multiFeatureDimension(c, dims, mapping)
+    val counts = multiFeatureDimension(c)
     while (i < fbs.length) {
       fbs(i).init(counts(i))
       i += 1
     }
-
     i = 0
     while (i < n) {
       val f = features(i)
       val fb = fbs(mapping(f.transformer.name))
+      fb.prepare(f.transformer)
       f.unsafeBuildFeatures(a(i), c(i), fb)
       i += 1
     }
