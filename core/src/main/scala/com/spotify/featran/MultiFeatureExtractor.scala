@@ -17,8 +17,6 @@
 
 package com.spotify.featran
 
-import java.io._
-
 import scala.reflect.ClassTag
 import scala.language.{higherKinds, implicitConversions}
 
@@ -29,18 +27,15 @@ import scala.language.{higherKinds, implicitConversions}
  * @tparam T input record type to extract features from
  */
 class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
-(private val fs: FeatureSet[T],
+(private val fs: MultiFeatureSet[T],
  @transient private val input: M[T],
- @transient private val settings: Option[M[String]],
- private val mapping: Map[String, Int])
+ @transient private val settings: Option[M[String]])
   extends Serializable {
 
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
 
   private val extractor = new FeatureExtractor(fs, input, settings)
-
-  private lazy val dims: Int = mapping.values.toSet.size
 
   /**
    * JSON settings of the [[MultiFeatureSpec]] and aggregated feature summary.
@@ -54,7 +49,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
    * Names of the extracted features, in the same order as values in [[featureValues]].
    */
   @transient lazy val featureNames: M[Seq[Seq[String]]] =
-  extractor.aggregate.map(a => fs.multiFeatureNames(a, dims, mapping))
+    extractor.aggregate.map(fs.multiFeatureNames)
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]].
@@ -71,20 +66,9 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
    */
   def featureResults[F: FeatureBuilder : ClassTag]
   : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] = {
-    val fb = implicitly[FeatureBuilder[F]]
-
-    // each underlying FeatureSpec should get a unique copy of FeatureBuilder
-    val buffer = new ByteArrayOutputStream()
-    val out = new ObjectOutputStream(buffer)
-    out.writeObject(fb)
-    val bytes = buffer.toByteArray
-    val fbs = Array.fill(dims) {
-      val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
-      val clone = in.readObject().asInstanceOf[FeatureBuilder[F]]
-      CrossingFeatureBuilder(clone, fs.crossings)
-    }
+    val fbs = fs.multiFeatureBuilders(implicitly[FeatureBuilder[F]])
     extractor.as.cross(extractor.aggregate).map { case ((o, a), c) =>
-      fs.multiFeatureValues(a, c, fbs, dims, mapping)
+      fs.multiFeatureValues(a, c, fbs)
       (fbs.map(_.result).toSeq, fbs.map(_.rejections), o)
     }
   }
