@@ -41,12 +41,21 @@ trait FeatureBuilder[T] extends Serializable { self =>
 
   private val _rejections: mutable.Map[String, FeatureRejection] = mutable.Map.empty
 
+  /**
+   * Reject an input row.
+   * @param transformer transformer rejecting the input
+   * @param reason reason for rejection
+   */
   def reject(transformer: Transformer[_, _, _], reason: FeatureRejection): Unit = {
     val name = transformer.name
     require(!rejections.contains(name), s"Transformer $name already rejected")
     _rejections(name) = reason
   }
 
+  /**
+   * Gather rejections. This should be called only once per input row.
+   * @return
+   */
   def rejections: Map[String, FeatureRejection] = {
     val r = _rejections.toMap
     _rejections.clear()
