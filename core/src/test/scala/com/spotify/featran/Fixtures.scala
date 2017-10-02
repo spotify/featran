@@ -72,6 +72,7 @@ object Fixtures {
     .required(_.s1)(HashOneHotEncoder("hash-one-hot"))
     .required(_.s2)(HashNHotEncoder("hash-n-hot"))
     .required(_.s3)(HashNHotWeightedEncoder("hash-n-hot-weighted"))
+    .required(_.s1)(HeavyHitters("heavy-hitters", 10, 0.001, 0.001, 1))
     .required(_.x)(Identity("id"))
     .required(_.x)(MaxAbsScaler("max-abs"))
     .required(_.x)(MinMaxScaler("min-max"))
