@@ -50,7 +50,7 @@ object Bucketizer {
     new Bucketizer(name, splits)
 }
 
-private class Bucketizer(name: String, splits: Array[Double])
+private class Bucketizer(name: String, val splits: Array[Double])
   extends Transformer[Double, Unit, Unit](name) {
   require(splits.length >= 3, "splits.length must be >= 3")
   private val lower = splits.head

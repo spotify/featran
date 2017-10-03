@@ -83,8 +83,8 @@ private class HashOneHotEncoder(name: String, hashBucketSize: Int, sizeScalingFa
 }
 
 private abstract class BaseHashHotEncoder[A](name: String,
-                                             hashBucketSize: Int,
-                                             sizeScalingFactor: Double)
+                                             val hashBucketSize: Int,
+                                             val sizeScalingFactor: Double)
   extends Transformer[A, HLL, Int](name) {
   require(hashBucketSize >= 0, "hashBucketSize must be >= 0")
   require(sizeScalingFactor >= 1.0, "hashBucketSize must be >= 1.0")
