@@ -67,12 +67,10 @@ private class MinMaxScaler(name: String, val min: Double, val max: Double)
     case None => fb.add(name, min)
   }
 
-  override def encodeAggregator(c: Option[C]): Option[String] =
-    c.map(t => s"${t._1},${t._2},${t._3}")
-  override def decodeAggregator(s: Option[String]): Option[C] =
-    s.map { x =>
-      val t = x.split(",")
-      (t(0).toDouble, t(1).toDouble, t(2).toDouble)
-    }
+  override def encodeAggregator(c: C): String = s"${c._1},${c._2},${c._3}"
+  override def decodeAggregator(s: String): C = {
+    val t = s.split(",")
+    (t(0).toDouble, t(1).toDouble, t(2).toDouble)
+  }
   override def params: Map[String, String] = Map("min" -> min.toString, "max" -> max.toString)
 }

@@ -49,6 +49,6 @@ private class MaxAbsScaler(name: String) extends OneDimensional[Double, Max[Doub
       }
     case None => fb.skip()
   }
-  override def encodeAggregator(c: Option[Double]): Option[String] = c.map(_.toString)
-  override def decodeAggregator(s: Option[String]): Option[Double] = s.map(_.toDouble)
+  override def encodeAggregator(c: Double): String = c.toString
+  override def decodeAggregator(s: String): Double = s.toDouble
 }

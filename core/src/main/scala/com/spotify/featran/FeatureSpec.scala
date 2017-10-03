@@ -289,7 +289,7 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
     features.map { feature =>
       val name = feature.transformer.name
       require(m.contains(name), s"Missing settings for $name")
-      feature.transformer.decodeAggregator(m(feature.transformer.name).aggregators)
+      m(feature.transformer.name).aggregators.map(feature.transformer.decodeAggregator)
     }
   }
 

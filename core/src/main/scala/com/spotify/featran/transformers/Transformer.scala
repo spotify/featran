@@ -91,12 +91,12 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   /**
    * Encode aggregator summary of the current extraction.
    */
-  def encodeAggregator(c: Option[C]): Option[String]
+  def encodeAggregator(c: C): String
 
   /**
    * Decode aggregator summary from a previous extraction.
    */
-  def decodeAggregator(s: Option[String]): Option[C]
+  def decodeAggregator(s: String): C
 
   /**
    * Compile time parameters.
@@ -108,7 +108,8 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
    * @param c aggregator summary
    */
   def settings(c: Option[C]): Settings =
-    Settings(this.getClass.getCanonicalName, name, params, optFeatureNames(c), encodeAggregator(c))
+    Settings(
+      this.getClass.getCanonicalName, name, params, optFeatureNames(c), c.map(encodeAggregator))
 
 }
 
@@ -128,8 +129,8 @@ private abstract class MapOne[A](name: String)
     case None => fb.add(name, 0.0)
   }
   def map(a: A): Double
-  override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")
-  override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
+  override def encodeAggregator(c: Unit): String = ""
+  override def decodeAggregator(s: String): Unit = ()
 }
 
 private object Aggregators {

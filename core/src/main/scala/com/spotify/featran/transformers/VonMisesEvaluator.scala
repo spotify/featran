@@ -70,8 +70,8 @@ private class VonMisesEvaluator(name: String,
     case None => fb.skip(points.length)
   }
 
-  override def encodeAggregator(c: Option[Unit]): Option[String] = c.map(_ => "")
-  override def decodeAggregator(s: Option[String]): Option[Unit] = s.map(_ => ())
+  override def encodeAggregator(c: Unit): String = ""
+  override def decodeAggregator(s: String): Unit = ()
   override def params: Map[String, String] = Map(
     "kappa" -> kappa.toString,
     "scale" -> scale.toString,

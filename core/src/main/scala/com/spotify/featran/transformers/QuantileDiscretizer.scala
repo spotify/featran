@@ -90,21 +90,20 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
     case None => fb.skip(numBuckets)
   }
 
-  override def encodeAggregator(c: Option[C]): Option[String] =
-    c.map { case (m, min, max) =>
-      s"$min,$max," + m.asScala.map(kv => s"${kv._1}:${kv._2}").mkString(",")
+  override def encodeAggregator(c: C): String = {
+    val (m, min, max) = c
+    s"$min,$max," + m.asScala.map(kv => s"${kv._1}:${kv._2}").mkString(",")
+  }
+  override def decodeAggregator(s: String): C = {
+    val a = s.split(",")
+    val (min, max) = (a(0).toDouble, a(1).toDouble)
+    val m = new JTreeMap[Double, Int]()
+    (2 until a.length).foreach { i =>
+      val t = a(i).split(":")
+      m.put(t(0).toDouble, t(1).toInt)
     }
-  override def decodeAggregator(s: Option[String]): Option[C] =
-    s.map { x =>
-      val a = x.split(",")
-      val (min, max) = (a(0).toDouble, a(1).toDouble)
-      val m = new JTreeMap[Double, Int]()
-      (2 until a.length).foreach { i =>
-        val t = a(i).split(":")
-        m.put(t(0).toDouble, t(1).toInt)
-      }
-      (m, min, max)
-    }
+    (m, min, max)
+  }
   override def params: Map[String, String] =
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
 }
