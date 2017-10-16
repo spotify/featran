@@ -19,6 +19,8 @@ package com.spotify.featran.transformers
 
 import org.scalacheck._
 
+import scala.util.Try
+
 object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
 
   property("default") = Prop.forAll(
@@ -38,6 +40,40 @@ object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
     testException[Array[Double]](PolynomialExpansion("id", 2, xs.head.length + 1), xs) { e =>
       e.isInstanceOf[IllegalArgumentException] && e.getMessage == msg
     }
+  }
+
+  import org.apache.commons.math3.{util => cmu}
+
+  private val genNK = {
+    // cover all overflow scenarios
+    val genN = Gen.frequency(
+      (10, Gen.choose(0, 61)),
+      (5, Gen.choose(62, 66)),
+      (1, Gen.choose(67, 70)))
+    // n must be >= k
+    for (n <- genN; k <- Gen.choose(0, n)) yield (n, k)
+  }
+
+  property("binomial") = Prop.forAll(genNK) { case (n, k) =>
+    val actual = Try(CombinatoricsUtils.binomialCoefficient(n, k))
+    val expected = Try(cmu.CombinatoricsUtils.binomialCoefficient(n, k))
+    actual.toOption == expected.toOption
+  }
+
+  property("gcd") = Prop.forAll { (x: Int, y: Int) =>
+    val actual = Try(CombinatoricsUtils.gcd(x, y))
+    val expected = Try(cmu.ArithmeticUtils.gcd(x, y))
+    actual.toOption == expected.toOption
+  }
+
+  property("mulAndCheck") = Prop.forAll { (x: Long, y: Long) =>
+    val actual = Try(CombinatoricsUtils.mulAndCheck(x, y))
+    val expected = Try(cmu.ArithmeticUtils.mulAndCheck(x, y))
+    actual.toOption == expected.toOption
+  }
+
+  property("abs") = Prop.forAll { x: Int =>
+    CombinatoricsUtils.abs(x) == math.abs(x)
   }
 
 }

@@ -97,9 +97,9 @@ lazy val core: Project = Project(
   description := "Feature Transformers",
   libraryDependencies ++= Seq(
     "com.twitter" %% "algebird-core" % algebirdVersion,
-    "org.apache.commons" % "commons-math3" % commonsMathVersion,
     "org.scalanlp" %% "breeze" % breezeVersion,
-    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
+    "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
   ),
   libraryDependencies ++= Seq(
     "io.circe" %% "circe-core",
