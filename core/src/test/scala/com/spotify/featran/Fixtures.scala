@@ -76,6 +76,7 @@ object Fixtures {
     .required(_.x)(Identity("id"))
     .required(_.x)(MaxAbsScaler("max-abs"))
     .required(_.x)(MinMaxScaler("min-max"))
+    .required(_.s2)(NGrams("n-grams", 1, 3))
     .required(_.s2)(NHotEncoder("n-hot"))
     .required(_.s3)(NHotWeightedEncoder("n-hot-weighted"))
     .required(_.v)(Normalizer("norm"))
