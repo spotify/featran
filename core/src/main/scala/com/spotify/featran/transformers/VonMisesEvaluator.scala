@@ -21,7 +21,6 @@ import breeze.stats.distributions.VonMises
 import com.spotify.featran.FeatureBuilder
 import com.twitter.algebird.Aggregator
 
-
 /**
  * Transform a column of continuous features that represent the mean of a von Mises distribution
  * to n columns of continuous features. The number n represent the number of points to evaluate
