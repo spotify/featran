@@ -20,6 +20,8 @@ package com.spotify.featran.java
 import org.scalatest._
 
 import scala.collection.JavaConverters._
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 class JavaTest extends FlatSpec with Matchers {
 
@@ -82,6 +84,36 @@ class JavaTest extends FlatSpec with Matchers {
     ds.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
     ds.map(JavaTestUtil.getValues(_).toSeq) shouldBe values
     ds.map(JavaTestUtil.getDense(_).toSeq) shouldBe dense
+  }
+
+  it should "work with sparse arrays in multithreaded environment" in {
+    val in = Seq("a", "b")
+    val indices = Seq(Seq(0), Seq(1))
+    val values = Seq(Seq(1.0), Seq(1.0))
+    val dense = Seq(Seq(1.0, 0.0), Seq(0.0, 1.0))
+    import scala.concurrent.ExecutionContext.Implicits.global
+    (1 to 5).par.map( _ =>
+      Future {
+        val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+        f.featureValuesFloatSparse().asScala
+      }
+    ).map { lfs =>
+      val fs = Await.result(lfs, Duration.Inf)
+      fs.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
+      fs.map(JavaTestUtil.getValues(_).toSeq) shouldBe values
+      fs.map(JavaTestUtil.getDense(_).toSeq) shouldBe dense
+    }
+    (1 to 5).par.map( _ =>
+      Future {
+        val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+        f.featureValuesDoubleSparse().asScala
+      }
+    ).map { lfs =>
+      val fs = Await.result(lfs, Duration.Inf)
+      fs.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
+      fs.map(JavaTestUtil.getValues(_).toSeq) shouldBe values
+      fs.map(JavaTestUtil.getDense(_).toSeq) shouldBe dense
+    }
   }
 
 }
