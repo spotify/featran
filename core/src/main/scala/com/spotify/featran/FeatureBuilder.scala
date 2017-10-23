@@ -48,7 +48,7 @@ trait FeatureBuilder[T] extends Serializable { self =>
    */
   def reject(transformer: Transformer[_, _, _], reason: FeatureRejection): Unit = {
     val name = transformer.name
-    require(!rejections.contains(name), s"Transformer $name already rejected")
+    require(!_rejections.contains(name), s"Transformer $name already rejected")
     _rejections(name) = reason
   }
 
