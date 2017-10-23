@@ -65,10 +65,10 @@ private object JavaOps {
   def featureValuesDouble[T](fe: FeatureExtractor[JList, T]): JList[Array[Double]] =
     fe.featureValues[Array[Double]]
 
-  implicit val floatSparseArrayFB: FeatureBuilder[FloatSparseArray] =
+  implicit def floatSparseArrayFB: FeatureBuilder[FloatSparseArray] =
     implicitly[FeatureBuilder[SparseArray[Float]]]
       .map(a => new FloatSparseArray(a.indices, a.values, a.length))
-  implicit val doubleSparseArrayFB: FeatureBuilder[DoubleSparseArray] =
+  implicit def doubleSparseArrayFB: FeatureBuilder[DoubleSparseArray] =
     implicitly[FeatureBuilder[SparseArray[Double]]]
       .map(a => new DoubleSparseArray(a.indices, a.values, a.length))
 
