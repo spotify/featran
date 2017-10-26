@@ -19,6 +19,7 @@ package com.spotify.featran.transformers
 
 import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 
+import scala.collection.mutable.{Set => MSet}
 import scala.collection.SortedMap
 
 /**
@@ -43,25 +44,25 @@ private class NHotEncoder(name: String) extends BaseHotEncoder[Seq[String]](name
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(xs) =>
-      val keys = xs.toSet
-      val hits = c.filterKeys(keys)
-      if (hits.isEmpty) {
-        fb.skip(c.size)
-      } else {
-        var prev = -1
-        val it = hits.iterator
-        while (it.hasNext) {
-          val (key, curr) = it.next()
-          val gap = curr - prev - 1
-          if (gap > 0) fb.skip(gap)
-          fb.add(name + '_' + key, 1.0)
-          prev = curr
+      val keys = xs.distinct.sorted
+      var prev = -1
+      val totalSeen = MSet[String]()
+      keys.foreach { key =>
+        c.get(key) match {
+          case Some(curr) =>
+            val gap = curr - prev - 1
+            if (gap > 0) fb.skip(gap)
+            fb.add(name + '_' + key, 1.0)
+            prev = curr
+            totalSeen += key
+          case None =>
         }
-        val gap = c.size - prev - 1
-        if (gap > 0) fb.skip(gap)
       }
-      val unseen = keys -- c.keySet
-      if (unseen.nonEmpty) {
+      val gap = c.size - prev - 1
+      if (gap > 0) fb.skip(gap)
+
+      if (totalSeen.size != keys.size) {
+        val unseen = keys.toSet -- totalSeen
         fb.reject(this, FeatureRejection.Unseen(unseen))
       }
     case None => fb.skip(c.size)
