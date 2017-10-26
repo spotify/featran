@@ -21,7 +21,7 @@ import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 
 import scala.collection.SortedMap
 import scala.collection.mutable.{Map => MMap}
-
+import scala.collection.mutable.{Set => MSet}
 /**
  * Weighted label. Also can be thought as a weighted value in a named sparse vector.
  */
@@ -56,25 +56,27 @@ private class NHotWeightedEncoder(name: String) extends BaseHotEncoder[Seq[Weigh
     case Some(xs) =>
       val weights = MMap.empty[String, Double].withDefaultValue(0.0)
       xs.foreach(x => weights(x.name) += x.value)
-      val hits = c.filterKeys(weights.contains)
-      if (hits.isEmpty) {
-        fb.skip(c.size)
-      } else {
-        var prev = -1
-        val it = hits.iterator
-        while (it.hasNext) {
-          val (key, curr) = it.next()
-          val gap = curr - prev - 1
-          if (gap > 0) fb.skip(gap)
-          fb.add(name + '_' + key, weights(key))
-          prev = curr
+
+      val keys = weights.keySet.toList.sorted
+      var prev = -1
+      var totalSeen = MSet[String]()
+      keys.foreach { key =>
+        c.get(key) match {
+          case Some(curr) =>
+            val gap = curr - prev - 1
+            if (gap > 0) fb.skip(gap)
+            fb.add(name + '_' + key, weights(key))
+            prev = curr
+            totalSeen += key
+          case None =>
         }
-        val gap = c.size - prev - 1
-        if (gap > 0) fb.skip(gap)
       }
-      val unseen = weights.keySet -- c.keySet
-      if (unseen.nonEmpty) {
-        fb.reject(this, FeatureRejection.Unseen(unseen.toSet))
+      val gap = c.size - prev - 1
+      if (gap > 0) fb.skip(gap)
+
+      if (totalSeen.size != keys.size) {
+        val unseen = keys.toSet -- totalSeen
+        fb.reject(this, FeatureRejection.Unseen(unseen))
       }
     case None => fb.skip(c.size)
   }
