@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import com.spotify.featran.FeatureBuilder
 
-import scala.collection.SortedMap
+import scala.collection.{SortedMap, mutable}
 
 /**
  * Transform a collection of sentences, where each row is a `Seq[String]` of the words / tokens,
@@ -61,7 +61,38 @@ private class NGrams(name: String, val low: Int, val high: Int, val sep: String)
 
   private[transformers] def ngrams(a: Seq[String]): Seq[String] = {
     val max = if (high == -1) a.length else high
-    val xs = a.toStream
-    (low to max).flatMap(xs.sliding(_).map(_.mkString(sep)))
+    val b = Seq.newBuilder[String]
+    var i = low
+    while (i <= max) {
+      if (i == 1) {
+        b ++= a
+      } else if (i <= a.size) {
+        val q = mutable.Queue[String]()
+        var j = 0
+        val it = a.iterator
+        while (j < i) {
+          q.enqueue(it.next())
+          j += 1
+        }
+        b += mkNGram(q, sep)
+        while (it.hasNext) {
+          q.dequeue()
+          q.enqueue(it.next())
+          b += mkNGram(q, sep)
+        }
+      }
+      i += 1
+    }
+    b.result()
+  }
+
+  private def mkNGram(xs: Seq[String], sep: String): String = {
+    val sb = StringBuilder.newBuilder
+    val i = xs.iterator
+    sb.append(i.next())
+    while (i.hasNext) {
+      sb.append(sep).append(i.next())
+    }
+    sb.mkString
   }
 }
