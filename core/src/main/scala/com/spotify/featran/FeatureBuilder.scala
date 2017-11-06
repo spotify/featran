@@ -246,28 +246,10 @@ object FeatureBuilder {
     implicitly[FeatureBuilder[Array[T]]].map(DenseVector(_))
 
   implicit def sparseVectorFB[T: ClassTag : FloatingPoint : Semiring : Zero]
-  : FeatureBuilder[SparseVector[T]] = new FeatureBuilder[SparseVector[T]] {
-    private var dim: Int = _
-    private var offset: Int = 0
-    private val queue: mutable.Queue[(Int, T)] = mutable.Queue.empty
-    private val fp = implicitly[FloatingPoint[T]]
-    override def init(dimension: Int): Unit = {
-      dim = dimension
-      offset = 0
-      queue.clear()
+  : FeatureBuilder[SparseVector[T]] =
+    implicitly[FeatureBuilder[SparseArray[T]]].map { a =>
+      new SparseVector(a.indices, a.values, a.indices.length, a.length)
     }
-    override def add(name: String, value: Double): Unit = {
-      queue.enqueue((offset, fp.fromDouble(value)))
-      offset += 1
-
-    }
-    override def skip(): Unit = offset += 1
-    override def skip(n: Int): Unit = offset += n
-    override def result: SparseVector[T] = {
-      require(offset == dim)
-      SparseVector(dim)(queue: _*)
-    }
-  }
 
   implicit def mapFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Map[String, T]] =
     new FeatureBuilder[Map[String, T]] { self =>
