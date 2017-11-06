@@ -68,7 +68,8 @@ class TransformerBenchmark {
 private object Fixtures {
   implicit val doubles: Seq[Double] = (0 until 1000).map(_.toDouble)
   implicit val labels: Seq[String] = (0 until 1000).map(x => "l" + (x % 50))
-  implicit val nLabels: Seq[Seq[String]] = (0 until 1000).map(x => (0 until (x % 50)).map("l" + _))
+  implicit val nLabels: Seq[Seq[String]] =
+    (0 until 1000).map(x => (0 until (x % 50 + 1)).map("l" + _))
   implicit val nWeightedLabels: Seq[Seq[WeightedLabel]] = nLabels.map(_.map(WeightedLabel(_, 1.0)))
   implicit val vectors: Seq[Array[Double]] = (0 until 1000).map(x => Array.fill(10)(x / 1000.0))
 }
