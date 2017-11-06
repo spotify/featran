@@ -35,7 +35,7 @@ class TransformerBenchmark {
                   (implicit fixture: Seq[A]): Unit = {
     implicit val fb = new NoOpFeatureBuilder(bh)
     val fe = FeatureSpec.of[A].required(identity)(transformer).extract(fixture)
-    fe.featureValues[Unit]
+    bh.consume(fe.featureValues[Unit])
   }
 
   // TODO: figure out how to verify that all transformers are covered
