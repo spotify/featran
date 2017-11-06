@@ -231,5 +231,6 @@ lazy val featranJmh: Project = Project(
   classDirectory in Jmh := (classDirectory in Test).value,
   dependencyClasspath in Jmh := (dependencyClasspath in Test).value
 ).dependsOn(
-  core
+  core,
+  tensorflow
 ).enablePlugins(JmhPlugin)
