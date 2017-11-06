@@ -23,7 +23,8 @@ package object tensorflow {
   /**
    * [[FeatureBuilder]] for output as TensorFlow `Example` type.
    */
-  implicit object TensorFlowFeatureBuilder extends FeatureBuilder[tf.Example] {
+  implicit def tensorFlowFeatureBuilder
+  : FeatureBuilder[tf.Example] = new FeatureBuilder[tf.Example] {
     @transient private lazy val fb = tf.Features.newBuilder()
     override def init(dimension: Int): Unit = fb.clear()
     override def add(name: String, value: Double): Unit =
@@ -33,6 +34,7 @@ package object tensorflow {
           .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
           .build())
     override def skip(): Unit = Unit
+    override def skip(n: Int): Unit = Unit
     override def result: tf.Example = tf.Example.newBuilder().setFeatures(fb).build()
   }
 }
