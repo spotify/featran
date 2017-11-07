@@ -22,6 +22,7 @@ import breeze.math.Semiring
 import breeze.storage.Zero
 import com.spotify.featran.transformers.Transformer
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.language.higherKinds
 import scala.reflect.ClassTag
@@ -253,13 +254,22 @@ object FeatureBuilder {
 
   implicit def mapFB[T: ClassTag : FloatingPoint]: FeatureBuilder[Map[String, T]] =
     new FeatureBuilder[Map[String, T]] { self =>
-      private var b: mutable.Builder[(String, T), Map[String, T]] = _
+      private var m: java.util.Map[String, T] = _
       private val fp = implicitly[FloatingPoint[T]]
-      override def init(dimension: Int): Unit = b = Map.newBuilder[String, T]
-      override def add(name: String, value: Double): Unit = b += name -> fp.fromDouble(value)
+      override def init(dimension: Int): Unit = m = new java.util.HashMap[String, T]
+      override def add(name: String, value: Double): Unit = m.put(name, fp.fromDouble(value))
       override def skip(): Unit = Unit
       override def skip(n: Int): Unit = Unit
-      override def result: Map[String, T] = b.result()
+      override def result: Map[String, T] = new JMapWrapper(m)
     }
 
+}
+
+private class JMapWrapper[K, V](val m: java.util.Map[K, V]) extends Map[K, V] {
+  // scalastyle:off method.name
+  override def +[B1 >: V](kv: (K, B1)): Map[K, B1] = m.asScala.toMap + kv
+  override def -(key: K): Map[K, V] = m.asScala.toMap - key
+  // scalastyle:on method.name
+  override def get(key: K): Option[V] = Option(m.get(key))
+  override def iterator: Iterator[(K, V)] = m.asScala.iterator
 }
