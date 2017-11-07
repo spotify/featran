@@ -34,7 +34,7 @@ case class WeightedLabel(name: String, value: Double)
  * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
  * [[NHotEncoder]].
  *
- * Missing values are transformed to [0.0, 0.0, ...].
+ * Missing values are transformed to zero vectors.
  *
  * When using aggregated feature summary from a previous session, unseen labels are ignored and
  * [[FeatureRejection.Unseen]] rejections are reported.

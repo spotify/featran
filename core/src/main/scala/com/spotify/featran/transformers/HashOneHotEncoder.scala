@@ -28,7 +28,7 @@ import scala.util.hashing.MurmurHash3
  * one-value. Similar to [[OneHotEncoder]] but uses MurmursHash3 to hash features into buckets to
  * reduce CPU and memory overhead.
  *
- * Missing values are transformed to [0.0, 0.0, ...].
+ * Missing values are transformed to zero vectors.
  *
  * If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce
  * the number of collisions.
