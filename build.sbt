@@ -72,11 +72,15 @@ lazy val root: Project = Project(
   file(".")
 ).enablePlugins(GhpagesPlugin, ScalaUnidocPlugin).settings(
   commonSettings ++ noPublishSettings,
-  siteSubdirName in ScalaUnidoc := "",
+  siteSubdirName in ScalaUnidoc := "api",
   addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
   gitRemoteRepo := "git@github.com:spotify/featran.git",
   // com.spotify.featran.java pollutes namespaces and breaks unidoc class path
-  unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(java)
+  unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(java) -- inProjects(examples),
+  mappings in makeSite ++= Seq(
+    file("site/index.html") -> "index.html",
+    file("examples/target/site/Examples.scala.html") -> "examples/Examples.scala.html"
+  )
 ).aggregate(
   core,
   java,
@@ -220,6 +224,33 @@ lazy val tensorflow: Project = Project(
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
   )
 ).dependsOn(core)
+
+val soccoSettings = if (sys.env.contains("SOCCO")) {
+  Seq(
+    scalacOptions ++= Seq(
+      "-P:socco:out:examples/target/site",
+      "-P:socco:package_com.spotify.featran:http://spotify.github.io/featran/api",
+      "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio"
+    ),
+    autoCompilerPlugins := true,
+    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.7"),
+  )
+} else {
+  Nil
+}
+
+lazy val examples: Project = Project(
+  "examples",
+  file("examples")
+).settings(
+  commonSettings ++ noPublishSettings ++ soccoSettings,
+  moduleName := "featran-examples",
+  description := "Feature Transformers - examples",
+  libraryDependencies ++= Seq(
+    "com.spotify" %% "scio-core" % scioVersion,
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion
+  )
+).dependsOn(core, scio, tensorflow)
 
 lazy val featranJmh: Project = Project(
   "jmh",

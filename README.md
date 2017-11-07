@@ -49,14 +49,14 @@ val names = fe.featureNames
 val features = fe.featureValues[Seq[Double]]
 ```
 
-See [Example.scala](https://github.com/spotify/featran/blob/master/core/src/test/scala/com/spotify/featran/examples/Example.scala) for more example usage. See [transformers](https://github.com/spotify/featran/tree/master/core/src/main/scala/com/spotify/featran/transformers) for a complete list of available feature transformers.
-
 Featran also supports these additional features.
 
 - Extract from Scala collections, [Flink](http://flink.apache.org/) `DataSet`s, [Scalding](https://github.com/twitter/scalding) `TypedPipe`s, [Scio](https://github.com/spotify/scio) `SCollection`s and [Spark](https://spark.apache.org/) `RDD`s
 - Output as Scala collections, [Breeze](https://github.com/scalanlp/breeze) dense and sparse vectors,  [TensorFlow](https://www.tensorflow.org/) Example Protobuf and [NumPy](http://www.numpy.org/) `.npy` file
 - Import aggregation from a previous extraction for training, validation and test sets
 - Compose feature specifications and separate outputs
+
+See [Examples](https://spotify.github.io/featran/examples/Examples.scala.html) ([source](https://github.com/spotify/featran/blob/master/examples/src/main/scala/Examples.scala)) for detailed examples. See [transformers](https://spotify.github.io/featran/api/index.html#com.spotify.featran.transformers.package) package for a complete list of available feature transformers.
 
 See [ScalaDocs](https://spotify.github.io/featran) for current API documentation.
 
