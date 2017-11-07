@@ -49,8 +49,12 @@ object BucketizerSpec extends TransformerProp("Bucketizer") {
         missing
       }
     }
+    val rejections = xs
+      .zip(expected)
+      .filter(x => x._1 < splits.head || x._1 > splits.last)
+      .map(_._2)
     val oob = List((lowerBound(splits.min), missing), (upperBound(splits.max), missing))
-    test(Bucketizer("bucketizer", splits), xs, names, expected, missing, oob)
+    test(Bucketizer("bucketizer", splits), xs, names, expected, missing, oob, rejections)
   }
 
 }
