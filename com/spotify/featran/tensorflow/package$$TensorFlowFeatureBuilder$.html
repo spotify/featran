@@ -166,18 +166,18 @@
 dimension in <a href="#init(dimension:Int):Unit" class="extmbr" name="com.spotify.featran.tensorflow.TensorFlowFeatureBuilder#init">init</a>.
 </p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.spotify.featran.tensorflow.TensorFlowFeatureBuilder">TensorFlowFeatureBuilder</a> → <a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a></dd></dl></div>
     </li><li name="com.spotify.featran.FeatureBuilder#add" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="add[M[_]](names:Iterator[String],values:M[Double])(implicitev:M[Double]=&gt;Seq[Double]):Unit"></a>
-      <a id="add[M[_]](Iterator[String],M[Double])((M[Double])⇒Seq[Double]):Unit"></a>
+      <a id="add[M[_]](names:Iterable[String],values:M[Double])(implicitev:M[Double]=&gt;Seq[Double]):Unit"></a>
+      <a id="add[M[_]](Iterable[String],M[Double])((M[Double])⇒Seq[Double]):Unit"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">add</span><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="params">(<span name="names">names: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="values">values: <span class="extype" name="com.spotify.featran.FeatureBuilder.add.M">M</span>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: (<span class="extype" name="com.spotify.featran.FeatureBuilder.add.M">M</span>[<span class="extype" name="scala.Double">Double</span>]) ⇒ <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">add</span><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="params">(<span name="names">names: <span class="extype" name="scala.Iterable">Iterable</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="values">values: <span class="extype" name="com.spotify.featran.FeatureBuilder.add.M">M</span>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ev">ev: (<span class="extype" name="com.spotify.featran.FeatureBuilder.add.M">M</span>[<span class="extype" name="scala.Double">Double</span>]) ⇒ <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.tensorflow.package$$TensorFlowFeatureBuilder$@add[M[_]](names:Iterator[String],values:M[Double])(implicitev:M[Double]=&gt;Seq[Double]):Unit" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.tensorflow.package$$TensorFlowFeatureBuilder$@add[M[_]](names:Iterable[String],values:M[Double])(implicitev:M[Double]=&gt;Seq[Double]):Unit" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -418,6 +418,24 @@ dimension in <a href="../FeatureBuilder.html#init(dimension:Int):Unit" class="ex
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.spotify.featran.FeatureBuilder#prepare" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="prepare(transformer:com.spotify.featran.transformers.Transformer[_,_,_]):Unit"></a>
+      <a id="prepare(Transformer[_,_,_]):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">prepare</span><span class="params">(<span name="transformer">transformer: <a href="../transformers/Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[_, _, _]</span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.tensorflow.package$$TensorFlowFeatureBuilder$@prepare(transformer:com.spotify.featran.transformers.Transformer[_,_,_]):Unit" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Prepare the builder for the next transformer.</p><div class="fullcomment"><div class="comment cmt"><p>Prepare the builder for the next transformer. This should be called only once per transformer
+per input row.</p></div><dl class="paramcmts block"><dt class="param">transformer</dt><dd class="cmt"><p>the next transformer in line</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a></dd></dl></div>
     </li><li name="com.spotify.featran.FeatureBuilder#reject" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="reject(transformer:com.spotify.featran.transformers.Transformer[_,_,_],reason:com.spotify.featran.FeatureRejection):Unit"></a>
       <a id="reject(Transformer[_,_,_],FeatureRejection):Unit"></a>
@@ -434,7 +452,7 @@ dimension in <a href="../FeatureBuilder.html#init(dimension:Int):Unit" class="ex
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a></dd></dl></div>
+      <p class="shortcomment cmt">Reject an input row.</p><div class="fullcomment"><div class="comment cmt"><p>Reject an input row.</p></div><dl class="paramcmts block"><dt class="param">transformer</dt><dd class="cmt"><p>transformer rejecting the input</p></dd><dt class="param">reason</dt><dd class="cmt"><p>reason for rejection</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a></dd></dl></div>
     </li><li name="com.spotify.featran.FeatureBuilder#rejections" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="rejections:Map[String,com.spotify.featran.FeatureRejection]"></a>
       <a id="rejections:Map[String,FeatureRejection]"></a>
@@ -451,7 +469,7 @@ dimension in <a href="../FeatureBuilder.html#init(dimension:Int):Unit" class="ex
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a></dd></dl></div>
+      <p class="shortcomment cmt">Gather rejections.</p><div class="fullcomment"><div class="comment cmt"><p>Gather rejections. This should be called only once per input row.</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a></dd></dl></div>
     </li><li name="com.spotify.featran.tensorflow.TensorFlowFeatureBuilder#result" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="result:org.tensorflow.example.Example"></a>
       <a id="result:Example"></a>

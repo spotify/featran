@@ -51,7 +51,7 @@
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most N one-values.
 Similar to <a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a> but uses MurmursHash3 to hash features into buckets to reduce CPU
-and memory overhead.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce
+and memory overhead.</p><p>Missing values are transformed to zero vectors.</p><p>If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce
 the number of collisions.</p><p>Rough table of relationship of scaling factor to % collisions, measured from a corpus of 466544
 English words:</p><pre>sizeScalingFactor     % Collisions
 -----------------     ------------

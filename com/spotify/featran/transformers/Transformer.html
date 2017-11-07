@@ -148,35 +148,35 @@
     </span>
       <p class="shortcomment cmt">Build features from a single input value and an aggregator summary.</p><div class="fullcomment"><div class="comment cmt"><p>Build features from a single input value and an aggregator summary.</p></div><dl class="paramcmts block"><dt class="param">a</dt><dd class="cmt"><p>input value</p></dd><dt class="param">c</dt><dd class="cmt"><p>aggregator summary</p></dd><dt class="param">fb</dt><dd class="cmt"><p>feature builder</p></dd></dl></div>
     </li><li name="com.spotify.featran.transformers.Transformer#decodeAggregator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="decodeAggregator(s:Option[String]):Option[C]"></a>
-      <a id="decodeAggregator(Option[String]):Option[C]"></a>
+      <a id="decodeAggregator(s:String):C"></a>
+      <a id="decodeAggregator(String):C"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">decodeAggregator</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="com.spotify.featran.transformers.Transformer.C">C</span>]</span>
+        <span class="name">decodeAggregator</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="com.spotify.featran.transformers.Transformer.C">C</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.transformers.Transformer@decodeAggregator(s:Option[String]):Option[C]" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.transformers.Transformer@decodeAggregator(s:String):C" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
       <p class="shortcomment cmt">Decode aggregator summary from a previous extraction.</p>
     </li><li name="com.spotify.featran.transformers.Transformer#encodeAggregator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="encodeAggregator(c:Option[C]):Option[String]"></a>
-      <a id="encodeAggregator(Option[C]):Option[String]"></a>
+      <a id="encodeAggregator(c:C):String"></a>
+      <a id="encodeAggregator(C):String"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">encodeAggregator</span><span class="params">(<span name="c">c: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="com.spotify.featran.transformers.Transformer.C">C</span>]</span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">encodeAggregator</span><span class="params">(<span name="c">c: <span class="extype" name="com.spotify.featran.transformers.Transformer.C">C</span></span>)</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.transformers.Transformer@encodeAggregator(c:Option[C]):Option[String]" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.transformers.Transformer@encodeAggregator(c:C):String" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -454,18 +454,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="com.spotify.featran.transformers.Transformer#names" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="names(n:Int):Iterator[String]"></a>
-      <a id="names(Int):Iterator[String]"></a>
+      <a id="names(n:Int):Stream[String]"></a>
+      <a id="names(Int):Stream[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">names</span><span class="params">(<span name="n">n: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Iterator">Iterator</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">names</span><span class="params">(<span name="n">n: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Stream">Stream</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.transformers.Transformer@names(n:Int):Iterator[String]" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.transformers.Transformer@names(n:Int):Stream[String]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>

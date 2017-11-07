@@ -189,7 +189,7 @@ prevent a potential <a href="../FeatureRejection$$OutOfBound.html" class="extype
     </span>
       <p class="shortcomment cmt">Transform a collection of categorical features to binary columns, with at most N one-values.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most N one-values.
 Similar to <a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a> but uses MurmursHash3 to hash features into buckets to reduce CPU
-and memory overhead.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce
+and memory overhead.</p><p>Missing values are transformed to zero vectors.</p><p>If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce
 the number of collisions.</p><p>Rough table of relationship of scaling factor to % collisions, measured from a corpus of 466544
 English words:</p><pre>sizeScalingFactor     % Collisions
 -----------------     ------------
@@ -260,7 +260,7 @@ English words:</p><pre>sizeScalingFactor     % Collisions
       <p class="shortcomment cmt">Transform a collection of categorical features to binary columns, with at most a single
 one-value.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most a single
 one-value. Similar to <a href="OneHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.OneHotEncoder">OneHotEncoder</a> but uses MurmursHash3 to hash features into buckets to
-reduce CPU and memory overhead.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce
+reduce CPU and memory overhead.</p><p>Missing values are transformed to zero vectors.</p><p>If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce
 the number of collisions.</p><p>Rough table of relationship of scaling factor to % collisions, measured from a corpus of 466544
 English words:</p><pre>sizeScalingFactor     % Collisions
 -----------------     ------------
@@ -276,6 +276,29 @@ English words:</p><pre>sizeScalingFactor     % Collisions
              <span class="num">1024</span>      <span class="num">0.0478</span>%
              <span class="num">2048</span>      <span class="num">0.0236</span>%
              <span class="num">4096</span>      <span class="num">0.0071</span>%</pre></div></div>
+    </li><li name="com.spotify.featran.transformers.HeavyHitters" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="HeavyHitters"></a>
+      <a id="HeavyHitters:HeavyHitters"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="HeavyHitters$.html"><span class="name">HeavyHitters</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.transformers.package@HeavyHitters" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Transform a collection of categorical features to 2 columns, one for rank and one for count.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to 2 columns, one for rank and one for count.
+Only the top heavyHittersCount items are tracked, with 1.0 being the most frequent rank, 2.0
+the second most, etc. All other items are transformed to [0.0, 0.0].</p><p>Ranks and frequencies are estimated with Algebird's SketchMap data structure. With probability
+at least <code>1 - delta</code>, this estimate is within <code>eps * N</code> of the true frequency (i.e.,
+<code>true frequency &lt;= estimate &lt;= true frequency + eps * N</code>), where N is the total size of the
+input collection.</p><p>Missing values are transformed to [0.0, 0.0].
+</p></div></div>
     </li><li name="com.spotify.featran.transformers.Identity" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="Identity"></a>
       <a id="Identity:Identity"></a>
@@ -336,6 +359,30 @@ truncated to -1.0 or 1.0 and <a href="../FeatureRejection$$OutOfBound.html" clas
 [0, 1]).</p><p>Missing values are transformed to <code>min</code>.</p><p>When using aggregated feature summary from a previous session, out of bound values are
 truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejection$$OutOfBound.html" class="extype" name="com.spotify.featran.FeatureRejection.OutOfBound">FeatureRejection.OutOfBound</a> rejections are reported.
 </p></div></div>
+    </li><li name="com.spotify.featran.transformers.NGrams" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NGrams"></a>
+      <a id="NGrams:NGrams"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NGrams$.html"><span class="name">NGrams</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.transformers.package@NGrams" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Transform a collection of sentences, where each row is a <code>Seq[String]</code> of the words / tokens,
+into a collection containing all the n-grams that can be constructed from each row.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of sentences, where each row is a <code>Seq[String]</code> of the words / tokens,
+into a collection containing all the n-grams that can be constructed from each row. The feature
+representation is an n-hot encoding (see <a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a>) constructed from an expanded
+vocabulary of all of the generated n-grams.</p><p>N-grams are generated based on a specified range of <code>low</code> to <code>high</code> (inclusive) and are joined
+by the given <code>sep</code> (default is &quot; &quot;). For example, with <code>low = 2</code>, <code>high = 3</code> and <code>sep = &quot;&quot;</code>, row
+<code>[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;e&quot;]</code> would produce <code>[&quot;ab&quot;, &quot;bc&quot;, &quot;cd&quot;, &quot;de&quot;, &quot;abc&quot;, &quot;bcd&quot;, &quot;cde&quot;]</code>.</p><p>As with <a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a>, missing values are transformed to [0.0, 0.0, ...].
+</p></div></div>
     </li><li name="com.spotify.featran.transformers.NHotEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="NHotEncoder"></a>
       <a id="NHotEncoder:NHotEncoder"></a>
@@ -352,7 +399,7 @@ truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejecti
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Transform a collection of categorical features to binary columns, with at most N one-values.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most N one-values.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
+      <p class="shortcomment cmt">Transform a collection of categorical features to binary columns, with at most N one-values.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most N one-values.</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
 <a href="../FeatureRejection$$Unseen.html" class="extype" name="com.spotify.featran.FeatureRejection.Unseen">FeatureRejection.Unseen</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.NHotWeightedEncoder" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -374,7 +421,7 @@ truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejecti
       <p class="shortcomment cmt">Transform a collection of weighted categorical features to columns of weight sums, with at most
 N values.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of weighted categorical features to columns of weight sums, with at most
 N values.</p><p>Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
-<a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a>.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
+<a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a>.</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
 <a href="../FeatureRejection$$Unseen.html" class="extype" name="com.spotify.featran.FeatureRejection.Unseen">FeatureRejection.Unseen</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.Normalizer" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -415,7 +462,7 @@ are transformed to zero vectors and <a href="../FeatureRejection$$WrongDimension
     </span>
       <p class="shortcomment cmt">Transform a collection of categorical features to binary columns, with at most a single
 one-value.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a collection of categorical features to binary columns, with at most a single
-one-value.</p><p>Missing values are transformed to [0.0, 0.0, ...].</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
+one-value.</p><p>Missing values are transformed to zero vectors.</p><p>When using aggregated feature summary from a previous session, unseen labels are ignored and
 <a href="../FeatureRejection$$Unseen.html" class="extype" name="com.spotify.featran.FeatureRejection.Unseen">FeatureRejection.Unseen</a> rejections are reported.
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.PolynomialExpansion" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
