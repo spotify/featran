@@ -291,7 +291,7 @@ hr {
               </section>
             
               <section class="">
-                <div class="comment "><p>Input type</p></p></div>
+                <div class="comment "><p>Input record type</p></p></div>
                 <div class="code ">  <span class="keyword">case class</span> <span class="identifier">Record</span>(<span class="identifier">b</span>: <span class="identifier">Boolean</span>, <span class="identifier">f</span>: <span class="identifier">Float</span>, <span class="identifier">d1</span>: <span class="identifier">Double</span>, <span class="identifier">d2</span>: <span class="identifier">Option</span>[<span class="identifier">Double</span>], <span class="identifier">d3</span>: <span class="identifier">Double</span>,
                     <span class="identifier">s1</span>: <span class="identifier">String</span>, <span class="identifier">s2</span>: <span class="identifier">List</span>[<span class="identifier">String</span>])
 &nbsp;</div>
@@ -312,7 +312,13 @@ hr {
               </section>
             
               <section class="">
-                <div class="comment "><p>Start building a feature specification</p></p></div>
+                <div class="comment "><p>A <code>FeatureSpec</code> defines the record type to extract features from plus a set of required or
+optional field extractors and corresponding transformers.</p></p></div>
+                <div class="code empty">&nbsp;</div>
+              </section>
+            
+              <section class="">
+                <div class="comment "><p>Start a specification for input record type <code>Record</code></p></p></div>
                 <div class="code ">    <span class="keyword">val</span> <span class="identifier">spec</span> = <span class="identifier">FeatureSpec</span>.<span class="identifier">of</span>[<span class="identifier">Record</span>]&nbsp;</div>
               </section>
             
@@ -325,7 +331,7 @@ Identity transformer</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><p>Vector Identity</p></p></div>
+                <div class="comment "><p>Pass through with Vector Identity</p></p></div>
                 <div class="code ">      .<span class="identifier">required</span>(<span class="identifier">v</span> => <span class="identifier">Seq</span>(<span class="identifier">v</span>.<span class="identifier">f</span>.<span class="identifier">toDouble</span>))(<span class="identifier">VectorIdentity</span>(<span class="string">"vec_id"</span>, <span class="number">1</span>))
 &nbsp;</div>
               </section>
@@ -378,6 +384,15 @@ max</p></p></div>
               </section>
             
               <section class="">
+                <div class="comment "><p>Encoders that hash features into buckets to reduce CPU and memory overhead</p></p></div>
+                <div class="code ">      .<span class="identifier">required</span>(_.<span class="identifier">s1</span>)(<span class="identifier">HashOneHotEncoder</span>(<span class="string">"hash_one_hot"</span>))
+      .<span class="identifier">required</span>(_.<span class="identifier">s2</span>)(<span class="identifier">HashNHotEncoder</span>(<span class="string">"hash_n_hot"</span>))
+      .<span class="identifier">required</span>(_.<span class="identifier">s2</span>.<span class="identifier">map</span>(<span class="identifier">s</span> => <span class="identifier">WeightedLabel</span>(<span class="identifier">s</span>, <span class="number">0.5</span>)))(
+        <span class="identifier">HashNHotWeightedEncoder</span>(<span class="string">"hash_n_hot_weighted"</span>))
+&nbsp;</div>
+              </section>
+            
+              <section class="">
                 <div class="comment "><p><code>Record</code> to <code>Array[Double]</code> composite feature, polynomial expansion with default degree 2
 and custom degree</p></p></div>
                 <div class="code ">      .<span class="identifier">required</span>(<span class="identifier">toArray</span>)(<span class="identifier">PolynomialExpansion</span>(<span class="string">"poly1"</span>))
@@ -405,6 +420,12 @@ discretize into 4 quantiles</p></p></div>
               </section>
             
               <section class="">
+                <div class="comment "><p>A <code>FeatureExtractor</code> defines the execution logic to extract feature names, values and
+settings from an input collection of records.</p></p></div>
+                <div class="code empty">&nbsp;</div>
+              </section>
+            
+              <section class="">
                 <div class="comment "><p>Extract features from <code>Seq[Record]</code></p></p></div>
                 <div class="code ">    <span class="keyword">val</span> <span class="identifier">f1</span> = <span class="identifier">spec</span>.<span class="identifier">extract</span>(<span class="identifier">records</span>)
 &nbsp;</div>
@@ -418,7 +439,7 @@ discretize into 4 quantiles</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><p>Get feature values in different types</p></p></div>
+                <div class="comment "><p>Get feature values in different output types</p></p></div>
                 <div class="code ">    <span class="keyword">val</span> <span class="identifier">floatA</span> = <span class="identifier">f1</span>.<span class="identifier">featureValues</span>[<span class="identifier">Array</span>[<span class="identifier">Float</span>]]
     <span class="keyword">val</span> <span class="identifier">doubleA</span> = <span class="identifier">f1</span>.<span class="identifier">featureValues</span>[<span class="identifier">Array</span>[<span class="identifier">Double</span>]]
 
@@ -453,6 +474,15 @@ discretize into 4 quantiles</p></p></div>
               </section>
             
               <section class="">
+                <div class="comment "><p>Feature settings is a JSON string representing aggregated global summary of a dataset, used
+by some transformers to transform individual values. In batch pipelines, computing settings
+requires a <code>reduce</code> step over the entire dataset. For cases with unbounded input, e.g.
+streaming pipelines or backend services, computing settings may not be feasible and it&#39;s
+necessary to use a previous saved settings.</p></p></div>
+                <div class="code empty">&nbsp;</div>
+              </section>
+            
+              <section class="">
                 <div class="comment "><p>Extract settings as a JSON string</p></p></div>
                 <div class="code ">    <span class="keyword">val</span> <span class="identifier">settings</span> = <span class="identifier">f1</span>.<span class="identifier">featureSettings</span>
     <span class="identifier">println</span>(<span class="identifier">settings</span>.<span class="identifier">head</span>)
@@ -460,7 +490,8 @@ discretize into 4 quantiles</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><p>Extract features from new records, but reuse previously saved settings</p></p></div>
+                <div class="comment "><p>Extract features from new records, but reuse previously saved settings. This bypasses
+the reduce step that aggregates feature settings from the dataset.</p></p></div>
                 <div class="code ">    <span class="keyword">val</span> <span class="identifier">f2</span> = <span class="identifier">spec</span>.<span class="identifier">extractWithSettings</span>(<span class="identifier">recordsGen</span>.<span class="identifier">sample</span>.<span class="identifier">get</span>, <span class="identifier">settings</span>)
 &nbsp;</div>
               </section>
@@ -472,7 +503,7 @@ discretize into 4 quantiles</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><h1 id="scio" class="title">Scio</h1></p></div>
+                <div class="comment "><h1 id="extraction-with-scio" class="title">Extraction with Scio</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
@@ -529,7 +560,7 @@ This requires <code>&quot;com.spotify&quot; %% &quot;featran-scio&quot;</code> d
               </section>
             
               <section class="">
-                <div class="comment "><p>Random input</p></p></div>
+                <div class="comment "><p>Random input records</p></p></div>
                 <div class="code ">  <span class="keyword">val</span> <span class="identifier">records</span> = <span class="identifier">recordsGen</span>.<span class="identifier">sample</span>.<span class="identifier">get</span>
 
 }&nbsp;</div>
