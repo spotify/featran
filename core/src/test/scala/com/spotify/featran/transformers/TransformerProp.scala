@@ -17,6 +17,8 @@
 
 package com.spotify.featran.transformers
 
+import scala.collection.Set
+
 import com.spotify.featran.FeatureSpec
 import org.scalacheck.Prop.BooleanOperators
 import org.scalacheck._
@@ -45,12 +47,16 @@ abstract class TransformerProp(name: String) extends Properties(name) {
               names: Seq[String],
               expected: List[Seq[Double]],
               missing: Seq[Double],
-              outOfBoundsElems: List[(T, Seq[Double])] = Nil): Prop = {
+              outOfBoundsElems: List[(T, Seq[Double])] = Nil,
+              rejected: List[Seq[Double]] = Nil): Prop = {
     val fsRequired = FeatureSpec.of[T].required(identity)(t)
     val fsOptional = FeatureSpec.of[Option[T]].optional(identity)(t)
 
     // all values present
     val f1 = fsRequired.extract(input)
+    // all rejected
+    val rejections = f1.featureResults[Seq[Double]]
+      .flatMap(r => if (r.rejections.keySet == Set(t.name)) Some(r.value) else None)
     // add one missing value
     val f2 = fsOptional.extract(input.map(Some(_)) :+ None)
 
@@ -61,6 +67,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     // all values plus optional elements out of bound of the previous session
     val f4 = fsRequired.extractWithSettings(outOfBoundsElems.map(_._1), settings)
     val f4results = f4.featureResults[Seq[Double]]
+    val c = f1.featureValues[Seq[Double]]
 
     Prop.all(
       "f1 names" |: f1.featureNames == List(names),
@@ -68,6 +75,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f3 names" |: f3.featureNames == List(names),
       "f4 names" |: f4.featureNames == List(names),
       "f1 values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
+      "f1 rejections" |: safeCompare(rejections, rejected),
       "f2 values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing),
       "f3 values" |: safeCompare(f3.featureValues[Seq[Double]], expected.take(input.size / 2)),
       "f4 values" |: safeCompare(f4results.map(_.value), outOfBoundsElems.map(_._2)),

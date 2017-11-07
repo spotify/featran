@@ -18,6 +18,7 @@
 package com.spotify.featran
 
 import java.io.File
+import java.lang.reflect.Modifier
 
 import com.spotify.featran.transformers._
 
@@ -74,6 +75,7 @@ object Fixtures {
     .required(_.s3)(HashNHotWeightedEncoder("hash-n-hot-weighted"))
     .required(_.s1)(HeavyHitters("heavy-hitters", 10, 0.001, 0.001, 1))
     .required(_.x)(Identity("id"))
+    .required(_.x)(IQROutlierRejector("iqr"))
     .required(_.x)(MaxAbsScaler("max-abs"))
     .required(_.x)(MinMaxScaler("min-max"))
     .required(_.s2)(NGrams("n-grams", 1, 3))
@@ -83,6 +85,7 @@ object Fixtures {
     .required(_.s1)(OneHotEncoder("one-hot"))
     .required(_.v)(PolynomialExpansion("poly"))
     .required(_.x)(QuantileDiscretizer("quantile"))
+    .required(_.x)(QuantileOutlierRejector("quantile_filter"))
     .required(_.x)(StandardScaler("standard"))
     .required(_.v)(VectorIdentity("vec-id"))
     .required(_.x)(VonMisesEvaluator("von-mises", 1.0, 0.01, Array(0.0, 1.0, 2.0)))
@@ -101,6 +104,7 @@ object Fixtures {
       .map(f => classLoader.loadClass(s"$pkg.${f.getName.replace(".class", "")}"))
       .filter(c => (baseCls isAssignableFrom c) && c != baseCls &&
         Try(classLoader.loadClass(c.getName + "$")).isSuccess)
+      .filter(c => !Modifier.isAbstract(c.getModifiers()))
       .toSet
 
     val covered = recordSpec2.features.map(_.transformer.getClass).toSet

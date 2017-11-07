@@ -32,6 +32,7 @@ object FeatureRejection {
   case class OutOfBound(lower: Double, upper: Double, actual: Double) extends FeatureRejection
   case class Unseen(labels: Set[String]) extends FeatureRejection
   case class WrongDimension(expected: Int, actual: Int) extends FeatureRejection
+  case class Outlier(actual: Double) extends FeatureRejection
 }
 
 /**

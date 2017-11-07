@@ -26,8 +26,7 @@ object QuantileDiscretizerSpec extends TransformerProp("QuantileDiscretizer") {
 
   private implicit val arbPosDouble = Arbitrary(Gen.posNum[Double])
 
-  property("default") = Prop.forAll(
-    list[Double].arbitrary,
+  property("default") = Prop.forAll(list[Double].arbitrary,
     Gen.oneOf(2, 4, 5)) { (xs, numBuckets) =>
     // FIXME: make this a black box
     val qt = xs.map(QTree(_)).reduce(new QTreeSemigroup[Double](QTreeAggregator.DefaultK).plus)
@@ -44,6 +43,9 @@ object QuantileDiscretizerSpec extends TransformerProp("QuantileDiscretizer") {
     val expected = xs.map { x =>
       (0 until numBuckets).map(i => if (i == m.higherEntry(x).getValue) 1.0 else 0.0)
     }
+    val rejected = xs.zip(expected)
+      .filter(x => xs.min == xs.max || x._1 < qt.lowerBound || x._1 > qt.upperBound)
+      .map(_._2)
     val names = (0 until numBuckets).map("quantile_" + _)
     val missing = (0 until numBuckets).map(_ => 0.0)
     val oob = List(
