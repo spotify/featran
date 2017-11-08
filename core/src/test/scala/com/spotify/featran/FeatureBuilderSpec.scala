@@ -30,14 +30,15 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
   private def test[T: ClassTag : Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])
                                             (toSeq: F => Seq[T]): Prop = {
     val num = implicitly[Numeric[T]]
-    fb.init(xs.size + 2)
+    fb.init(xs.size + 4)
     fb.prepare(null)
     xs.zipWithIndex.foreach {
       case (Some(x), i) => fb.add("key" + i.toString, num.toDouble(x))
       case (None, _) => fb.skip()
     }
+    fb.add(Iterable("x", "y"), Seq(0.0, 0.0))
     fb.skip(2)
-    toSeq(fb.result) == xs.map(_.getOrElse(num.zero)) ++ List(num.zero, num.zero)
+    toSeq(fb.result) == xs.map(_.getOrElse(num.zero)) ++ List.fill(4)(num.zero)
   }
 
   property("float array") = Prop.forAll(list[Float]) { xs =>
@@ -104,18 +105,25 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
 
   property("map") = Prop.forAll(list[Double]) { xs =>
     val fb = implicitly[FeatureBuilder[Map[String, Double]]]
-    fb.init(xs.size)
+    fb.init(xs.size + 4)
     xs.zipWithIndex.foreach {
       case (Some(x), i) =>
         fb.add("key" + i.toString, x)
       case (None, _) => fb.skip()
     }
+    fb.add(Iterable("x", "y"), Seq(0.0, 0.0))
+    fb.skip(2)
+    val actual = fb.result
     val expected = xs
       .zipWithIndex
       .filter(_._1.isDefined)
       .map(t => ("key" + t._2, t._1.getOrElse(0.0)))
-      .toMap
-    fb.result == expected
+      .toMap ++ Map("x" -> 0.0, "y" -> 0.0)
+    Prop.all(
+      actual == expected,
+      actual + ("z" -> 1.0) == expected + ("z" -> 1.0),
+      actual - "x" == expected - "x",
+      expected.forall(kv => actual(kv._1) == kv._2))
   }
 
 }

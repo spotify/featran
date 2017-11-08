@@ -28,7 +28,7 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
 
   property("TensorFlow Example") = Prop.forAll(list[Double]) { xs =>
     val fb = implicitly[FeatureBuilder[Example]]
-    fb.init(xs.size)
+    fb.init(xs.size + 4)
     val b = Features.newBuilder()
     xs.zipWithIndex.foreach {
       case (Some(x), i) =>
@@ -39,7 +39,15 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
           Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(x.toFloat)).build())
       case (None, _) => fb.skip()
     }
-    fb.result == Example.newBuilder().setFeatures(b).build()
+    fb.add(Iterable("x", "y"), Seq(0.0, 0.0))
+    fb.skip(2)
+    val actual = fb.result
+    b.putFeature(
+      "x", Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build())
+    b.putFeature(
+      "y", Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build())
+    val expected = Example.newBuilder().setFeatures(b).build()
+    actual == expected
   }
 
 }
