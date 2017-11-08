@@ -230,7 +230,7 @@ val soccoSettings = if (sys.env.contains("SOCCO")) {
     scalacOptions ++= Seq(
       "-P:socco:out:examples/target/site",
       "-P:socco:package_com.spotify.featran:http://spotify.github.io/featran/api",
-      "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio"
+      "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
     ),
     autoCompilerPlugins := true,
     addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.7"),
