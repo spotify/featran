@@ -6,7 +6,6 @@ import breeze.linalg._
 import com.spotify.featran._
 import com.spotify.featran.tensorflow._
 import org.openjdk.jmh.annotations._
-import org.openjdk.jmh.infra.Blackhole
 import org.tensorflow.example.Example
 
 @BenchmarkMode(Array(Mode.AverageTime))
@@ -17,7 +16,7 @@ class FeatureBuilderBenchmark {
   private val names = (750 until 1000).map(_.toString)
   private val values = (750 until 1000).map(_.toDouble)
 
-  def benchmark[T: FeatureBuilder](bh: Blackhole): Unit = {
+  def benchmark[T: FeatureBuilder]: T = {
     val fb = implicitly[FeatureBuilder[T]]
     fb.init(1000)
     var i = 0
@@ -28,15 +27,15 @@ class FeatureBuilderBenchmark {
     }
     fb.skip(250)
     fb.add(names, values)
-    bh.consume(fb.result)
+    fb.result
   }
 
-  @Benchmark def array(bh: Blackhole): Unit = benchmark[Array[Double]](bh)
-  @Benchmark def seq(bh: Blackhole): Unit = benchmark[Seq[Double]](bh)
-  @Benchmark def sparseArray(bh: Blackhole): Unit = benchmark[SparseArray[Double]](bh)
-  @Benchmark def denseVector(bh: Blackhole): Unit = benchmark[DenseVector[Double]](bh)
-  @Benchmark def sparseVector(bh: Blackhole): Unit = benchmark[SparseVector[Double]](bh)
-  @Benchmark def map(bh: Blackhole): Unit = benchmark[Map[String, Double]](bh)
-  @Benchmark def tensorflow(bh: Blackhole): Unit = benchmark[Example](bh)
+  @Benchmark def array: Unit = benchmark[Array[Double]]
+  @Benchmark def seq: Unit = benchmark[Seq[Double]]
+  @Benchmark def sparseArray: Unit = benchmark[SparseArray[Double]]
+  @Benchmark def denseVector: Unit = benchmark[DenseVector[Double]]
+  @Benchmark def sparseVector: Unit = benchmark[SparseVector[Double]]
+  @Benchmark def map: Unit = benchmark[Map[String, Double]]
+  @Benchmark def tensorflow: Unit = benchmark[Example]
 
 }
