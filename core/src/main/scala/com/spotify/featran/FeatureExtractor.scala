@@ -99,3 +99,66 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran]
 }
 
 case class FeatureResult[F, T](value: F, rejections: Map[String, FeatureRejection], original: T)
+
+/** Encapsulate [[RecordExtractor]] for extracting individual records. */
+class RecordExtractor[T, F: FeatureBuilder : ClassTag] private[featran]
+(fs: FeatureSet[T], settings: String) {
+
+  private implicit val iteratorCollectionType
+  : CollectionType[Iterator] = new CollectionType[Iterator] {
+    override def map[A, B: ClassTag](ma: Iterator[A], f: A => B): Iterator[B] = ma.map(f)
+    override def reduce[A](ma: Iterator[A], f: (A, A) => A): Iterator[A] = ???
+    override def cross[A, B: ClassTag](ma: Iterator[A], mb: Iterator[B]): Iterator[(A, B)] = {
+      val b = mb.next()
+      ma.map(a => (a, b))
+    }
+  }
+
+  private val input: PipeIterator = new PipeIterator
+  private val extractor: FeatureExtractor[Iterator, T] =
+    new FeatureExtractor[Iterator, T](fs, input, Some(Iterator.continually(settings)))
+  private val output: Iterator[FeatureResult[F, T]] = extractor.featureResults
+
+  /**
+   * JSON settings of the [[FeatureSpec]] and aggregated feature summary.
+   *
+   * This can be used with [[FeatureSpec.extractWithSettings]] to bypass the `reduce` step when
+   * extracting new records of the same type.
+   */
+  val featureSettings: String = settings
+
+  /** Names of the extracted features, in the same order as values in [[featureValue]]. */
+  val featureNames: Seq[String] = extractor.featureNames.next()
+
+  /**
+   * Extract feature values from a single record with values in the same order as names in
+   * [[featureNames]].
+   */
+  def featureValue(record: T): F = featureResult(record).value
+
+  /**
+   * Extract feature values from a single record, with values in the same order as names in
+   * [[featureNames]] with rejections keyed on feature name and the original input record.
+   */
+  def featureResult(record: T): FeatureResult[F, T] = synchronized {
+    input.feed(record)
+    output.next()
+  }
+
+  private class PipeIterator extends Iterator[T] {
+    private var element: T = _
+    private var hasElement: Boolean = false
+    def feed(element: T): Unit = {
+      require(!hasNext)
+      this.element = element
+      hasElement = true
+    }
+    override def hasNext: Boolean = hasElement
+    override def next(): T = {
+      require(hasNext)
+      hasElement = false
+      element
+    }
+  }
+
+}

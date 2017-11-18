@@ -18,10 +18,12 @@
 package com.spotify.featran.java;
 
 import com.spotify.featran.CollectionType;
+import com.spotify.featran.FeatureBuilder;
 import com.spotify.featran.FeatureSpec;
 import com.spotify.featran.transformers.Transformer;
 import scala.Function1;
 import scala.Option;
+import scala.reflect.ClassTag;
 
 import java.util.List;
 import java.util.Optional;
@@ -91,10 +93,40 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Java wrapper for {{@link FeatureSpec#extractWithSettings(Object, Object, CollectionType)}.
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(Object, Object, CollectionType)}.
    */
   public JFeatureExtractor<T> extractWithSettings(List<T> input, String settings) {
     return new JFeatureExtractor<>(JavaOps.extractWithSettings(self, input, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag)}.
+   */
+  public JRecordExtractor<T, float[]> extractWithSettingsFloat(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSettingsFloat(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag)}.
+   */
+  public JRecordExtractor<T, double[]> extractWithSettingsDouble(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSettingsDouble(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag)}.
+   */
+  public JRecordExtractor<T, FloatSparseArray>
+  extractWithSettingsFloatSparseArray(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSettingsFloatSparseArray(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag).
+   */
+  public JRecordExtractor<T, DoubleSparseArray>
+  extractWithSettingsDoubleSparseArray(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSettingsDoubleSparseArray(self, settings));
   }
 
 }

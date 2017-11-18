@@ -118,6 +118,18 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       t.failed.get.getMessage == "requirement failed: Missing settings for id2")
   }
 
+  property("record extractor") = Prop.forAll { xs: List[Record] =>
+    val f1 = FeatureSpec.of[Record].required(_.d)(id)
+    val e1 = f1.extract(xs)
+    val settings = e1.featureSettings.head
+    val e2 = f1.extractWithSettings[Seq[Double]](settings)
+
+    Prop.all(
+      e1.featureNames.head == e2.featureNames,
+      e1.featureValues[Seq[Double]] == xs.map(e2.featureValue),
+      e1.featureResults[Seq[Double]] == xs.map(e2.featureResult))
+  }
+
   property("names") = Prop.forAll(Gen.alphaStr) { s =>
     val msg = if (s == null || s.isEmpty) {
       "requirement failed: name cannot be null or empty"
