@@ -70,6 +70,23 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
   }
 
+  it should "work with extractWithSettings and RecordExtractor" in {
+    val fs = JFeatureSpec.wrap(testSpec)
+    val settings = fs.extract(testData.asJava).featureSettings()
+    val f1 = fs.extractWithSettingsFloat(settings)
+    val f2 = fs.extractWithSettingsDouble(settings)
+    val f3 = fs.extractWithSettingsFloatSparseArray(settings)
+    val f4 = fs.extractWithSettingsDoubleSparseArray(settings)
+    f1.featureNames().asScala shouldBe expectedNames
+    f2.featureNames().asScala shouldBe expectedNames
+    f3.featureNames().asScala shouldBe expectedNames
+    f4.featureNames().asScala shouldBe expectedNames
+    testData.map(f1.featureValue).map(_.toSeq) shouldBe expectedValues
+    testData.map(f2.featureValue).map(_.toSeq) shouldBe expectedValues
+    testData.map(f3.featureValue).map(_.toDense.toSeq) shouldBe expectedValues
+    testData.map(f4.featureValue).map(_.toDense.toSeq) shouldBe expectedValues
+  }
+
   it should "work with sparse arrays" in {
     val in = Seq("a", "b")
     val indices = Seq(Seq(0), Seq(1))

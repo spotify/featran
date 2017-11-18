@@ -54,6 +54,16 @@ private object JavaOps {
   : FeatureExtractor[JList, T] =
     fs.extractWithSettings(input, Collections.singletonList(settings))
 
+  def extractWithSettingsFloat[T](fs: FeatureSpec[T], settings: String)
+  : RecordExtractor[T, Array[Float]] = fs.extractWithSettings(settings)
+  def extractWithSettingsDouble[T](fs: FeatureSpec[T], settings: String)
+  : RecordExtractor[T, Array[Double]] = fs.extractWithSettings(settings)
+
+  def extractWithSettingsFloatSparseArray[T](fs: FeatureSpec[T], settings: String)
+  : RecordExtractor[T, FloatSparseArray] = fs.extractWithSettings(settings)
+  def extractWithSettingsDoubleSparseArray[T](fs: FeatureSpec[T], settings: String)
+  : RecordExtractor[T, DoubleSparseArray] = fs.extractWithSettings(settings)
+
   //================================================================================
   // Wrappers for FeatureExtractor
   //================================================================================
@@ -76,6 +86,12 @@ private object JavaOps {
   : JList[FloatSparseArray] = fe.featureValues[FloatSparseArray]
   def featureValuesDoubleSparseArray[T](fe: FeatureExtractor[JList, T])
   : JList[DoubleSparseArray] = fe.featureValues[DoubleSparseArray]
+
+  //================================================================================
+  // Wrappers for RecordExtractor
+  //================================================================================
+
+  def featureNames[F, T](fe: RecordExtractor[T, F]): JList[String] = fe.featureNames.asJava
 
 }
 

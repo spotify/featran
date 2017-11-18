@@ -1,3 +1,23 @@
+/*
+ * Copyright 2017 Spotify AB.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+// scalastyle:off method.length
+// scalastyle:off regex
+
 // Example: Featran Examples
 
 // # Imports
@@ -135,6 +155,16 @@ object Examples {
 
     // Filter out results with rejections and extract valid values
     val validValues = f2.featureResults[Seq[Double]].filter(_.rejections.isEmpty).map(_.value)
+
+    // # Extract from an unbounded source
+
+    // The record extractor is more efficient and recommended when extracting features from an
+    // unbounded source, e.g. a stream of events or a backend service. This extractor parses the
+    // settings only once and can process one input record at a time.
+    val recordExtractor = spec.extractWithSettings[Seq[Double]](settings.head)
+
+    // Extract from a single record
+    recordExtractor.featureResult(recordGen.sample.get)
 
     // # Extraction with Scio
 

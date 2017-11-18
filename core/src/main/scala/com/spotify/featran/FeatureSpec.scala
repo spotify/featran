@@ -23,6 +23,7 @@ import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.collection.mutable
 import scala.language.{higherKinds, implicitConversions}
+import scala.reflect.ClassTag
 
 /**
  * Companion object for [[FeatureSpec]].
@@ -86,7 +87,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   }
 
   /**
-   * Extract features from a input collection.
+   * Extract features from an input collection.
    *
    * This is done in two steps, a `reduce` step over the collection to aggregate feature summary,
    * and a `map` step to transform values using the summary.
@@ -97,7 +98,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
     new FeatureExtractor[M, T](new FeatureSet[T](features, crossings), input, None)
 
   /**
-   * Extract features from a input collection using settings from a previous session.
+   * Extract features from an input collection using settings from a previous session.
    *
    * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
    * in a previous session.
@@ -108,6 +109,18 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
   : FeatureExtractor[M, T] =
     new FeatureExtractor[M, T](new FeatureSet[T](features, crossings), input, Some(settings))
+
+  /**
+   * Extract features from individual records using settings from a previous session. Since the
+   * settings are parsed only once, this is more efficient and is recommended when the input is
+   * from an unbounded source, e.g. a stream of events or a backend service.
+   *
+   * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
+   * in a previous session.
+   * @param settings JSON settings from a previous session
+   */
+  def extractWithSettings[F: FeatureBuilder : ClassTag](settings: String): RecordExtractor[T, F] =
+    new RecordExtractor[T, F](new FeatureSet[T](features, crossings), settings)
 
 }
 
