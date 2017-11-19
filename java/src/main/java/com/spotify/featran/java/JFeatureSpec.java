@@ -27,9 +27,9 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Java wrapper for {{@link FeatureSpec}}.
+ * Java wrapper for {@link FeatureSpec}.
  *
- * Note that {{@link List}} is the only supported input collection type.
+ * Note that {@link List} is the only supported input collection type.
  */
 public class JFeatureSpec<T> {
 
@@ -40,21 +40,21 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Create a new {{@link JFeatureSpec}} instance.
+   * Create a new {@link JFeatureSpec} instance.
    */
   public static <T> JFeatureSpec<T> create() {
     return wrap(FeatureSpec.<T>of());
   }
 
   /**
-   * Wrap an existing {{@link FeatureSpec}} instance.
+   * Wrap an existing {@link FeatureSpec} instance.
    */
   public static <T> JFeatureSpec<T> wrap(FeatureSpec<T> self) {
     return new JFeatureSpec<>(self);
   }
 
   /**
-   * Java wrapper for {{@link FeatureSpec#required(Function1, Transformer)}}.
+   * Java wrapper for {@link FeatureSpec#required(Function1, Transformer)}.
    */
   public <A> JFeatureSpec<T> required(final SerializableFunction<T, A> f,
                                       final Transformer<A, ?, ?> t) {
@@ -63,7 +63,7 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Java wrapper for {{@link FeatureSpec#optional(Function1, Transformer)}}.
+   * Java wrapper for {@link FeatureSpec#optional(Function1, Transformer)}.
    */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final Transformer<A, ?, ?> t) {
@@ -73,7 +73,7 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Java wrapper for {{@link FeatureSpec#optional(Function1, Transformer)}}.
+   * Java wrapper for {@link FeatureSpec#optional(Function1, Transformer)}.
    */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final A defaultValue,
@@ -84,7 +84,7 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Java wrapper for {{@link FeatureSpec#extract(Object, CollectionType)}}.
+   * Java wrapper for {@link FeatureSpec#extract(Object, CollectionType)}.
    */
   public JFeatureExtractor<T> extract(List<T> input) {
     return new JFeatureExtractor<>(JavaOps.extract(self, input));
