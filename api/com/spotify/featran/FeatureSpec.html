@@ -254,8 +254,28 @@
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Extract features from a input collection.</p><div class="fullcomment"><div class="comment cmt"><p>Extract features from a input collection.</p><p>This is done in two steps, a <code>reduce</code> step over the collection to aggregate feature summary,
+      <p class="shortcomment cmt">Extract features from an input collection.</p><div class="fullcomment"><div class="comment cmt"><p>Extract features from an input collection.</p><p>This is done in two steps, a <code>reduce</code> step over the collection to aggregate feature summary,
 and a <code>map</code> step to transform values using the summary.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>input collection type, e.g. <code>Array</code>, <code>List</code></p></dd><dt class="param">input</dt><dd class="cmt"><p>input collection</p></dd></dl></div>
+    </li><li name="com.spotify.featran.FeatureSpec#extractWithSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="extractWithSettings[F](settings:String)(implicitevidence$3:com.spotify.featran.FeatureBuilder[F],implicitevidence$4:scala.reflect.ClassTag[F]):com.spotify.featran.RecordExtractor[T,F]"></a>
+      <a id="extractWithSettings[F](String)(FeatureBuilder[F],ClassTag[F]):RecordExtractor[T,F]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">extractWithSettings</span><span class="tparams">[<span name="F">F</span>]</span><span class="params">(<span name="settings">settings: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="com.spotify.featran.FeatureSpec.extractWithSettings.F">F</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.spotify.featran.FeatureSpec.extractWithSettings.F">F</span>]</span>)</span><span class="result">: <a href="RecordExtractor.html" class="extype" name="com.spotify.featran.RecordExtractor">RecordExtractor</a>[<span class="extype" name="com.spotify.featran.FeatureSpec.T">T</span>, <span class="extype" name="com.spotify.featran.FeatureSpec.extractWithSettings.F">F</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.FeatureSpec@extractWithSettings[F](settings:String)(implicitevidence$3:com.spotify.featran.FeatureBuilder[F],implicitevidence$4:scala.reflect.ClassTag[F]):com.spotify.featran.RecordExtractor[T,F]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Extract features from individual records using settings from a previous session.</p><div class="fullcomment"><div class="comment cmt"><p>Extract features from individual records using settings from a previous session. Since the
+settings are parsed only once, this is more efficient and is recommended when the input is
+from an unbounded source, e.g. a stream of events or a backend service.</p><p>This bypasses the <code>reduce</code> step in <a href="#extract[M[_]](input:M[T])(implicitevidence$1:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" class="extmbr" name="com.spotify.featran.FeatureSpec#extract">extract</a> and uses feature summary from settings exported
+in a previous session.</p></div><dl class="paramcmts block"><dt class="param">settings</dt><dd class="cmt"><p>JSON settings from a previous session</p></dd></dl></div>
     </li><li name="com.spotify.featran.FeatureSpec#extractWithSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="extractWithSettings[M[_]](input:M[T],settings:M[String])(implicitevidence$2:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]"></a>
       <a id="extractWithSettings[M[_]](M[T],M[String])(CollectionType[M]):FeatureExtractor[M,T]"></a>
@@ -272,7 +292,7 @@ and a <code>map</code> step to transform values using the summary.</p></div><dl 
         <img src="../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Extract features from a input collection using settings from a previous session.</p><div class="fullcomment"><div class="comment cmt"><p>Extract features from a input collection using settings from a previous session.</p><p>This bypasses the <code>reduce</code> step in <a href="#extract[M[_]](input:M[T])(implicitevidence$1:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" class="extmbr" name="com.spotify.featran.FeatureSpec#extract">extract</a> and uses feature summary from settings exported
+      <p class="shortcomment cmt">Extract features from an input collection using settings from a previous session.</p><div class="fullcomment"><div class="comment cmt"><p>Extract features from an input collection using settings from a previous session.</p><p>This bypasses the <code>reduce</code> step in <a href="#extract[M[_]](input:M[T])(implicitevidence$1:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" class="extmbr" name="com.spotify.featran.FeatureSpec#extract">extract</a> and uses feature summary from settings exported
 in a previous session.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>input collection type, e.g. <code>Array</code>, <code>List</code></p></dd><dt class="param">input</dt><dd class="cmt"><p>input collection</p></dd><dt class="param">settings</dt><dd class="cmt"><p>JSON settings from a previous session</p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
