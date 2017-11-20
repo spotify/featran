@@ -26,6 +26,7 @@ import scala.util.Try
 object CoverageSpec extends Properties("Coverage") {
 
   {
+    // RecordExtractor.iteratorCollectionType#reduce
     val fs = FeatureSpec.of[Double].required(identity)(Identity("id"))
     val settings = fs.extract(Seq(1.0)).featureSettings.head
     val e = fs.extractWithSettings[Seq[Double]](settings)
@@ -33,6 +34,20 @@ object CoverageSpec extends Properties("Coverage") {
     f.setAccessible(true)
     val ct = f.get(e).asInstanceOf[CollectionType[Iterator]]
     require(Try(ct.reduce[Double](Iterator(1.0, 1.0), _ + _)).isFailure)
+  }
+
+  {
+    // QuantileOutlierRejector when both rejectLower and rejectUpper are false
+    val t = QuantileOutlierRejector("q")
+    val f1 = t.getClass.getDeclaredField("rejectLower")
+    f1.setAccessible(true)
+    f1.setBoolean(t, false)
+    val f2 = t.getClass.getDeclaredField("rejectUpper")
+    f2.setAccessible(true)
+    f2.setBoolean(t, false)
+    val fb = implicitly[FeatureBuilder[Array[Double]]]
+    fb.init(1)
+    t.buildFeatures(Some(0), (0, 0, Double.MinValue, Double.MaxValue), fb)
   }
 
 }
