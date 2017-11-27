@@ -18,10 +18,13 @@
 package com.spotify.featran.java
 
 import java.util.{Collections, Optional, List => JList}
+import java.util.function.BiFunction
+import java.lang.{Double => BoxedDouble}
 
 import com.spotify.featran._
 
 import scala.collection.JavaConverters._
+
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
@@ -34,6 +37,13 @@ private object JavaOps {
       val o = f(input)
       if (o.isPresent) Some(o.get()) else None
     }
+
+  def crossFn(f: BiFunction[BoxedDouble, BoxedDouble, BoxedDouble]
+             ): (Double, Double) => Double = {
+    case (a: Double, b: Double) =>
+      val o = f(BoxedDouble.valueOf(a), BoxedDouble.valueOf(b))
+      o.doubleValue()
+  }
 
   implicit val jListCollectionType = new CollectionType[JList] {
     override def map[A, B: ClassTag](ma: JList[A], f: A => B) = ma.asScala.map(f).asJava

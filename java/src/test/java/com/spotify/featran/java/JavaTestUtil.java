@@ -22,6 +22,7 @@ import com.spotify.featran.transformers.OneHotEncoder;
 import scala.Tuple2;
 
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 public class JavaTestUtil {
 
@@ -36,6 +37,13 @@ public class JavaTestUtil {
   public static JFeatureSpec<String> optionalSpec() {
     return JFeatureSpec.<String>create()
         .optional(Optional::ofNullable, OneHotEncoder.apply("one_hot"));
+  }
+
+  public static JFeatureSpec<Tuple2<String, String>> crossSpec() {
+    return JFeatureSpec.<Tuple2<String, String>>create()
+        .required(t -> t._1, OneHotEncoder.apply("one_hot_a"))
+        .required(t -> t._2, OneHotEncoder.apply("one_hot_b"))
+        .cross("one_hot_a", "one_hot_b", (a, b) -> a * b);
   }
 
   public static int[] getIndicies(FloatSparseArray a) {

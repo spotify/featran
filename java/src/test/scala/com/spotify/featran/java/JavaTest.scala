@@ -133,4 +133,21 @@ class JavaTest extends FlatSpec with Matchers {
     }
   }
 
+  it should "work with cross terms" in {
+    val data = Seq(("foo", "bar"), ("foo", "baz")).asJava
+    val names = Seq("one_hot_a_foo",
+      "one_hot_b_bar",
+      "one_hot_b_baz",
+      "cross_one_hot_a_foo_x_one_hot_b_bar",
+      "cross_one_hot_a_foo_x_one_hot_b_baz")
+    val values = Seq(Seq(1.0, 1.0, 0.0, 1.0, 0.0),
+      Seq(1.0, 0.0, 1.0, 0.0, 1.0))
+    val fs = JavaTestUtil.crossSpec()
+    val f = fs.extract(data)
+    f.featureNames().asScala shouldBe names
+
+    val ds = f.featureValuesDouble().asScala
+    ds.map(x => x.toSeq) shouldBe values
+  }
+
 }
