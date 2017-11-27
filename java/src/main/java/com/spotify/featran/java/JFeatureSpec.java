@@ -22,11 +22,14 @@ import com.spotify.featran.FeatureBuilder;
 import com.spotify.featran.FeatureSpec;
 import com.spotify.featran.transformers.Transformer;
 import scala.Function1;
+import scala.Function2;
 import scala.Option;
+import scala.Tuple2;
 import scala.reflect.ClassTag;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
  * Java wrapper for {@link FeatureSpec}.
@@ -83,6 +86,15 @@ public class JFeatureSpec<T> {
     Function1<T, Option<A>> g = JavaOps.optionalFn(f);
     Option<A> o = Option.apply(defaultValue);
     return wrap(self.optional(g, o, t));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#cross(Tuple2, Function2)}
+   */
+  public JFeatureSpec<T> cross(final String x1, final String x2,
+                               final BiFunction<Double, Double, Double> f) {
+    Function2<Object, Object, Object> g = JavaOps.crossFn(f);
+    return wrap(self.cross(Tuple2.apply(x1, x2), g));
   }
 
   /**
