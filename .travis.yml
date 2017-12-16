@@ -23,4 +23,4 @@ after_success:
 
 notifications:
   email:
-    - neville.lyh@gmail.com
+    - flatmap-squad@spotify.com
