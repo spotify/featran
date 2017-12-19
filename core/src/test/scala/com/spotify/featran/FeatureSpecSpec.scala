@@ -91,7 +91,6 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       val rSpec = FeatureSpec.of[Record]
         .required(_.d)(Identity("id1"))
         .optional(_.optD, Some(0.5))(Identity("id2"))
-      
       val spec = FeatureSpec
         .of[RecordWrapper]
         .extend(_.record)(rSpec)
