@@ -25,9 +25,15 @@ import scala.util.Try
 object FeatureSpecSpec extends Properties("FeatureSpec") {
 
   case class Record(d: Double, optD: Option[Double])
+  case class RecordWrapper(record: Record, d: Double)
 
   implicit val arbRecords: Arbitrary[List[Record]] = Arbitrary {
     Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(Record.tupled))
+  }
+
+  implicit val arbWrapperRecords: Arbitrary[List[RecordWrapper]] = Arbitrary {
+    Gen.listOfN(100, Arbitrary.arbitrary[(Double, Double, Option[Double])]
+      .map{case(d1, d2, od) => RecordWrapper(Record(d2, od), d1)})
   }
 
   private val id = Identity("id")
@@ -78,6 +84,24 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     Prop.all(
       f.featureNames == Seq(Seq("id1", "id2")),
       f.featureValues[Seq[Double]] == xs.map(r => Seq(r.d, r.optD.getOrElse(0.5))))
+  }
+
+  property("compose") = Prop.forAll { xs: List[RecordWrapper] =>
+    val rSpec = FeatureSpec.of[Record]
+      .required(_.d)(Identity("id1"))
+      .optional(_.optD, Some(0.5))(Identity("id2"))
+    val spec = FeatureSpec
+      .of[RecordWrapper]
+      .compose(rSpec)(_.record)
+      .required(_.d)(Identity("id3"))
+
+    val f = spec.extract(xs)
+
+    Prop.all(
+      f.featureNames == Seq(Seq("id1", "id2", "id3")),
+      f.featureValues[Seq[Double]] == xs.map { r =>
+        Seq(r.record.d, r.record.optD.getOrElse(0.5), r.d)
+      })
   }
 
   property("original") = Prop.forAll { xs: List[Record] =>

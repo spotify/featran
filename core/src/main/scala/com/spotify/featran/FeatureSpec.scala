@@ -87,6 +87,22 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   }
 
   /**
+   * Compose with another spec by applying a prepare function to input records first.
+   *
+   * Useful for reusing an existing spec for a different input record type.
+   * @param spec spec to compose with
+   * @param f function to prepare input records for the other spec
+   * @tparam S input record type of the other spec
+   */
+  def compose[S](spec: FeatureSpec[S])(f: T => S): FeatureSpec[T] = {
+    val composedFeatures = spec.features.map{feature =>
+      val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
+      new Feature(f.andThen(feature.f), feature.default, t)
+    }
+    new FeatureSpec[T](this.features ++ composedFeatures, this.crossings ++ spec.crossings)
+  }
+
+  /**
    * Extract features from an input collection.
    *
    * This is done in two steps, a `reduce` step over the collection to aggregate feature summary,
