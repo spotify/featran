@@ -87,8 +87,8 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   }
 
   /**
-   * Compose this Spec with another Spec but allowing for a function to be called first.
-   * Useful for an existing Spec on a subobject.
+   * Compose this Spec with another Spec while allowing for a function to be called first.
+   * Useful for reusing an existing Spec with another object.
    * @param spec Spec to apply.
    * @param f Function to apply before calling the extending spec.
    * @tparam S Type of the extension spec
