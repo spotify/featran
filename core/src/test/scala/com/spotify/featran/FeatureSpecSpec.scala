@@ -86,13 +86,13 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       f.featureValues[Seq[Double]] == xs.map(r => Seq(r.d, r.optD.getOrElse(0.5))))
   }
 
-  property("extend") = Prop.forAll { xs: List[RecordWrapper] =>
+  property("compose") = Prop.forAll { xs: List[RecordWrapper] =>
     val rSpec = FeatureSpec.of[Record]
       .required(_.d)(Identity("id1"))
       .optional(_.optD, Some(0.5))(Identity("id2"))
     val spec = FeatureSpec
       .of[RecordWrapper]
-      .extend(_.record)(rSpec)
+      .compose(rSpec)(_.record)
       .required(_.d)(Identity("id3"))
 
     val f = spec.extract(xs)

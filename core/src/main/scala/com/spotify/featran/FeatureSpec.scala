@@ -87,13 +87,13 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   }
 
   /**
-   * Extend this Spec with another Spec but allowing for a function to be called first.
+   * Compose this Spec with another Spec but allowing for a function to be called first.
    * Useful for an existing Spec on a subobject.
-   * @param f Function to apply before calling the extending spec.
    * @param spec Spec to apply.
+   * @param f Function to apply before calling the extending spec.
    * @tparam S Type of the extension spec
    */
-  def extend[S](f: T => S)(spec: FeatureSpec[S]): FeatureSpec[T] = {
+  def compose[S](spec: FeatureSpec[S])(f: T => S): FeatureSpec[T] = {
     val composedFeatures = spec.features.map{feature =>
       val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
       new Feature(f.andThen(feature.f), feature.default, t)
