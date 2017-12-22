@@ -187,6 +187,23 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.spotify.featran.FeatureSpec#compose" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="compose[S](spec:com.spotify.featran.FeatureSpec[S])(f:T=&gt;S):com.spotify.featran.FeatureSpec[T]"></a>
+      <a id="compose[S](FeatureSpec[S])((T)⇒S):FeatureSpec[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">compose</span><span class="tparams">[<span name="S">S</span>]</span><span class="params">(<span name="spec">spec: <a href="" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>[<span class="extype" name="com.spotify.featran.FeatureSpec.compose.S">S</span>]</span>)</span><span class="params">(<span name="f">f: (<span class="extype" name="com.spotify.featran.FeatureSpec.T">T</span>) ⇒ <span class="extype" name="com.spotify.featran.FeatureSpec.compose.S">S</span></span>)</span><span class="result">: <a href="" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>[<span class="extype" name="com.spotify.featran.FeatureSpec.T">T</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.FeatureSpec@compose[S](spec:com.spotify.featran.FeatureSpec[S])(f:T=&gt;S):com.spotify.featran.FeatureSpec[T]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Compose with another spec by applying a prepare function to input records first.</p><div class="fullcomment"><div class="comment cmt"><p>Compose with another spec by applying a prepare function to input records first.</p><p>Useful for reusing an existing spec for a different input record type.</p></div><dl class="paramcmts block"><dt class="tparam">S</dt><dd class="cmt"><p>input record type of the other spec</p></dd><dt class="param">spec</dt><dd class="cmt"><p>spec to compose with</p></dd><dt class="param">f</dt><dd class="cmt"><p>function to prepare input records for the other spec</p></dd></dl></div>
     </li><li name="com.spotify.featran.FeatureSpec#cross" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="cross(k:(String,String))(f:(Double,Double)=&gt;Double):com.spotify.featran.FeatureSpec[T]"></a>
       <a id="cross((String,String))((Double,Double)⇒Double):FeatureSpec[T]"></a>
