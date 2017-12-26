@@ -1,3 +1,20 @@
+/*
+ * Copyright 2017 Spotify AB.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.spotify.featran.transformers
 
 import com.spotify.featran.FeatureBuilder
@@ -13,28 +30,28 @@ case class MDLRecord[T](label: T, value: Double)
 import java.util.{TreeMap => JTreeMap}
 
 /**
-  * This Transformer computes the optimal number of buckets using
-  * minimum description length. That is an entropy measurement between
-  * the values and the tagets.
-  *
-  * The Transformer expects an MDLRecord where the first field is a label
-  * and the second value is the scalar that will be transformed into buckets.
-  *
-  * MDL is an iterative algorithm so all of the data needed to compute the buckets
-  * will need to be pulled into memory.  If you run into memory issues the sampleRate
-  * parameter will need to be lowered.
-  */
+ * This Transformer computes the optimal number of buckets using
+ * minimum description length. That is an entropy measurement between
+ * the values and the tagets.
+ *
+ * The Transformer expects an MDLRecord where the first field is a label
+ * and the second value is the scalar that will be transformed into buckets.
+ *
+ * MDL is an iterative algorithm so all of the data needed to compute the buckets
+ * will need to be pulled into memory.  If you run into memory issues the sampleRate
+ * parameter will need to be lowered.
+ */
 object MDL {
   /**
-    * Create an MDL Instance
-    * @param name Name of the Transformer
-    * @param sampleRate The percentage of records to keep to compute the buckets
-    * @param seed Seed for the sampler
-    * @param stoppingCriterion Stopping criterion for MDLP
-    * @param minBinPercentage Min Number of bins
-    * @param maxBins Max number of bins
-    * @tparam T Generic type for the label
-    */
+   * Create an MDL Instance
+   * @param name Name of the Transformer
+   * @param sampleRate The percentage of records to keep to compute the buckets
+   * @param seed Seed for the sampler
+   * @param stoppingCriterion Stopping criterion for MDLP
+   * @param minBinPercentage Min Number of bins
+   * @param maxBins Max number of bins
+   * @tparam T Generic type for the label
+   */
   def apply[T: ClassTag](
     name: String,
     sampleRate: Double = 1.0,
