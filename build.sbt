@@ -103,6 +103,7 @@ lazy val core: Project = Project(
     "com.twitter" %% "algebird-core" % algebirdVersion,
     "org.scalanlp" %% "breeze" % breezeVersion,
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
+    "org.scalatest" %% "scalatest" % scalatestVersion % "test",
     "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
   ),
   libraryDependencies ++= Seq(

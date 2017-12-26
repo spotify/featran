@@ -56,14 +56,14 @@ private class VonMisesEvaluator(name: String,
 
   private val pMax = points.max
   private val upperBound = 2*math.Pi/scale
-  require(pMax >= 0 && pMax <= upperBound, s"point $pMax not in the range [0, $upperBound]")
+  checkRange("point", pMax, 0.0, upperBound)
   override val aggregator: Aggregator[Double, Unit, Unit] = Aggregators.unit[Double]
   override def featureDimension(c: Unit): Int = points.length
   override def featureNames(c: Unit): Seq[String] = names(points.length)
 
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(mu) =>
-      require(mu >= 0 && mu <= upperBound, s"mu $mu not in the range [0, $upperBound]")
+      checkRange("mu", mu, 0.0, upperBound)
       val probs = points.map(VonMisesEvaluator.getProbability(_, mu, kappa, scale))
       fb.add(names(points.length), probs)
     case None => fb.skip(points.length)

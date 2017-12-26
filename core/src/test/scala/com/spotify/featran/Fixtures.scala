@@ -87,6 +87,7 @@ object Fixtures {
     .required(_.x)(QuantileDiscretizer("quantile"))
     .required(_.x)(QuantileOutlierRejector("quantile_filter"))
     .required(_.x)(StandardScaler("standard"))
+    .required(v => MDLRecord(v.s1, v.x))(MDL("mdl"))
     .required(_.v)(VectorIdentity("vec-id"))
     .required(_.x)(VonMisesEvaluator("von-mises", 1.0, 0.01, Array(0.0, 1.0, 2.0)))
 

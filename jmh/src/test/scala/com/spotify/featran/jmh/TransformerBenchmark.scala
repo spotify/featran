@@ -50,6 +50,7 @@ class TransformerBenchmark {
   @Benchmark def heavyHitters(bh: Blackhole): Seq[Unit] = benchmark(HeavyHitters("t", 100), bh)
   @Benchmark def identityB(bh: Blackhole): Seq[Unit] = benchmark(Identity("t"), bh)
   @Benchmark def maxAbsScaler(bh: Blackhole): Seq[Unit] = benchmark(MaxAbsScaler("t"), bh)
+  @Benchmark def mdl(bh: Blackhole): Seq[Unit] = benchmark(MDL[String]("t"), bh)
   @Benchmark def minMaxScaler(bh: Blackhole): Seq[Unit] = benchmark(MinMaxScaler("t"), bh)
   @Benchmark def nGrams(bh: Blackhole): Seq[Unit] = benchmark(NGrams("t"), bh)
   @Benchmark def nHotEncoder(bh: Blackhole): Seq[Unit] = benchmark(NHotEncoder("t"), bh)
@@ -72,6 +73,8 @@ class TransformerBenchmark {
 private object Fixtures {
   implicit val doubles: Seq[Double] = (0 until 1000).map(_.toDouble)
   implicit val labels: Seq[String] = (0 until 1000).map(x => "l" + (x % 50))
+  implicit val mdlRecords: Seq[MDLRecord[String]] =
+    (0 until 1000).map(x => MDLRecord((x % 3).toString, x.toDouble))
   implicit val nLabels: Seq[Seq[String]] =
     (0 until 1000).map(x => (0 until (x % 50 + 1)).map("l" + _))
   implicit val nWeightedLabels: Seq[Seq[WeightedLabel]] = nLabels.map(_.map(WeightedLabel(_, 1.0)))
