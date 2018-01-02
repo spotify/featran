@@ -39,16 +39,8 @@ class MDLPDiscretizer[T: ClassTag](
   private val isBoundary = (f1: Array[Long], f2: Array[Long]) =>
     (f1, f2).zipped.map(_ + _).count(_ != 0) > 1
 
-  private def midpoint(x1: Float, x2: Float): Float = {
-    if (x1.isNaN){
-      x2
-    } else if (x2.isNaN) {
-      x1
-    }
-    else {
-      (x1 + x2) / 2.0F
-    }
-  }
+  private def midpoint(x1: Float, x2: Float): Float =
+    (x1 + x2) / 2.0F
 
   def discretize(maxBins: Int = MAX_BINS): List[Double] = {
     val featureValues = data.map{case(label, dv) =>

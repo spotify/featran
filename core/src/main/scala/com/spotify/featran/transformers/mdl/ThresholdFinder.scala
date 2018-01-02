@@ -72,7 +72,7 @@ class ThresholdFinder(
     * Evaluates boundary points and selects the most relevant candidates (sequential version).
     * Here, the evaluation is bounded by partition as the number of points is small enough.
     *
-    * @param candidates RDD of candidates points (point, class histogram).
+    * @param candidates Candidates points (point, class histogram).
     * @return Sequence of threshold values.
     */
   def findThresholds(candidates: Array[(Float, Array[Long])]): Seq[Float] = {
