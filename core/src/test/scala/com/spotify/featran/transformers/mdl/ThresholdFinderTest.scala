@@ -20,7 +20,7 @@ package com.spotify.featran.transformers.mdl
 import org.scalatest.{FlatSpec, Matchers}
 
 class ThresholdFinderTest extends FlatSpec with Matchers {
-  it should "Run few values finder on nLabels = 3 feature len = 4" in {
+  it should "threshold a few values finder on nLabels = 3 feature len = 4" in {
 
     val finder = new ThresholdFinder(
       nLabels = 3,
@@ -39,5 +39,22 @@ class ThresholdFinderTest extends FlatSpec with Matchers {
     assertResult("-Infinity, 4.0, Infinity") {
       result.mkString(", ")
     }
+  }
+
+  it should "deal with duplicates" in {
+
+    val finder = new ThresholdFinder(
+      nLabels = 3,
+      stoppingCriterion = 0,
+      maxBins = 100,
+      minBinWeight = 1)
+
+    val best = finder.bestThreshold(
+      List((1.0f, Array.empty, Array.empty, Array.empty)),
+      Some(1.0f),
+      Array.empty
+      )
+
+    assert(best.isEmpty)
   }
 }

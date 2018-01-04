@@ -100,6 +100,32 @@ private[transformers] class ThresholdFinder(
     result.sorted :+ Float.PositiveInfinity
   }
 
+  def bestThreshold(
+    entropyFreqs: Seq[(Float, Array[Long], Array[Long], Array[Long])],
+    lastSelected : Option[Float],
+    totals: Array[Long]
+  ): Seq[(Double, Float)] = {
+    val bucketInfo = new BucketInfo(totals)
+    entropyFreqs.flatMap {
+      case (cand, _, leftFreqs, rightFreqs) =>
+
+        val duplicate = lastSelected match {
+          case None => false
+          case Some(last) => cand == last
+        }
+        // avoid computing entropy if we have a dupe
+        if (duplicate) {
+          None
+        } else {
+          val (criterionValue, weightedHs, leftSum, rightSum) =
+            calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
+          val criterion =
+            criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
+          if (criterion) Some((weightedHs, cand)) else None
+        }
+    }
+  }
+
   /**
     * Compute entropy minimization for candidate points in a range,
     * and select the best one according to MDLP criterion (sequential version).
@@ -117,7 +143,6 @@ private[transformers] class ThresholdFinder(
     // Calculate the total frequencies by label
     val totals = candidates.map(_._2).reduce((freq1, freq2) => (freq1, freq2).zipped.map(_ + _))
 
-
     // Compute the accumulated frequencies (both left and right) by label
     var leftAccum = Array.fill(nLabels)(0L)
     var entropyFreqs = Seq.empty[(Float, Array[Long], Array[Long], Array[Long])]
@@ -128,27 +153,9 @@ private[transformers] class ThresholdFinder(
       entropyFreqs = (cand, freq, leftAccum, rightTotal) +: entropyFreqs
     }
 
-    val bucketInfo = new BucketInfo(totals)
-
     // select best threshold according to the criteria
-    val finalCandidates = entropyFreqs.flatMap({
-      case (cand, _, leftFreqs, rightFreqs) =>
+    val finalCandidates = bestThreshold(entropyFreqs, lastSelected, totals)
 
-        val duplicate = lastSelected match {
-          case None => false
-          case Some(last) => cand == last
-        }
-        // avoid computing entropy if we have a dupe
-        if (duplicate){
-          None
-        } else {
-          val (criterionValue, weightedHs, leftSum, rightSum) =
-            calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
-          val criterion =
-            criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
-          if (criterion) Some((weightedHs, cand)) else None
-        }
-    })
     // Select among the list of accepted candidate, that with the minimum weightedHs
     if (finalCandidates.nonEmpty) Some(finalCandidates.min._2) else None
   }
