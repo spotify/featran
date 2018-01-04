@@ -19,7 +19,7 @@ package com.spotify.featran.transformers.mdl
 
 import scala.collection.mutable
 
-class ThresholdFinder(
+private[transformers] class ThresholdFinder(
   nLabels: Int,
   stoppingCriterion: Double,
   maxBins: Int,

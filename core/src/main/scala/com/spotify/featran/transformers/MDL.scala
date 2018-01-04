@@ -43,14 +43,15 @@ import java.util.{TreeMap => JTreeMap}
  */
 object MDL {
   /**
-   * Create an MDL Instance
-   * @param name Name of the Transformer
-   * @param sampleRate The percentage of records to keep to compute the buckets
-   * @param seed Seed for the sampler
-   * @param stoppingCriterion Stopping criterion for MDLP
-   * @param minBinPercentage Min Number of bins
-   * @param maxBins Max number of bins
-   * @tparam T Generic type for the label
+   * Create an MDL Instance.
+   *
+   * @param name name of the Transformer
+   * @param sampleRate the percentage of records to keep to compute the buckets
+   * @param seed seed for the sampler
+   * @param stoppingCriterion stopping criterion for MDLP
+   * @param minBinPercentage min number of bins
+   * @param maxBins max number of bins
+   * @tparam T generic type for the label
    */
   def apply[T: ClassTag](
     name: String,
@@ -59,7 +60,7 @@ object MDL {
     stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
     minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE,
     maxBins: Int = MAX_BINS)
-  : Transformer[MDLRecord[T], List[MDLRecord[T]], JTreeMap[Double, Int]] =
+  : Transformer[MDLRecord[T], Vector[MDLRecord[T]], JTreeMap[Double, Int]] =
     new MDL(name, sampleRate, seed, stoppingCriterion, minBinPercentage, maxBins)
 }
 
@@ -70,7 +71,7 @@ private class MDL[T: ClassTag](
   stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
   minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE,
   maxBins: Int = MAX_BINS)
-  extends Transformer[MDLRecord[T], List[MDLRecord[T]], JTreeMap[Double, Int]](name) {
+  extends Transformer[MDLRecord[T], Vector[MDLRecord[T]], JTreeMap[Double, Int]](name) {
 
   private lazy val random = {
     val r = new Random(seed)
@@ -94,19 +95,19 @@ private class MDL[T: ClassTag](
     }
   }
 
-  val aggregator = new Aggregator[MDLRecord[T], List[MDLRecord[T]], JTreeMap[Double, Int]] {
-    override def prepare(input: MDLRecord[T]): List[MDLRecord[T]] =
-      if(random.nextDouble() < sampleRate) List(input) else Nil
+  val aggregator = new Aggregator[MDLRecord[T], Vector[MDLRecord[T]], JTreeMap[Double, Int]] {
+    override def prepare(input: MDLRecord[T]): Vector[MDLRecord[T]] =
+      if(random.nextDouble() < sampleRate) Vector(input) else Vector.empty
 
-    override def semigroup: Semigroup[List[MDLRecord[T]]] = new Semigroup[List[MDLRecord[T]]] {
-      override def plus(x: List[MDLRecord[T]], y: List[MDLRecord[T]]): List[MDLRecord[T]] = {
+    override def semigroup: Semigroup[Vector[MDLRecord[T]]] = new Semigroup[Vector[MDLRecord[T]]] {
+      override def plus(x: Vector[MDLRecord[T]], y: Vector[MDLRecord[T]]): Vector[MDLRecord[T]] = {
         x ++ y
       }
     }
 
-    override def present(reduction: List[MDLRecord[T]]): JTreeMap[Double, Int] = {
+    override def present(reduction: Vector[MDLRecord[T]]): JTreeMap[Double, Int] = {
       val ranges = new MDLPDiscretizer[T](
-        reduction.map(l => (l.label, l.value)),
+        reduction.map(l => (l.label, l.value)).toList,
         stoppingCriterion,
         minBinPercentage
       ).discretize(maxBins)

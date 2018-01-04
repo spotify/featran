@@ -22,7 +22,7 @@ import org.scalatest.{FlatSpec, Matchers}
 class MDLPDiscretizerTest extends FlatSpec with Matchers {
   import com.spotify.featran.transformers.mdl.TestUtility._
 
-  it should "Run MDLPD on single mpg column in cars data  (maxBins = 10)" in {
+  it should "find bins on single mpg column in cars data  (maxBins = 10)" in {
     val cars = readCars
     val data = cars.map(v => (v.origin, v.mpg))
 
@@ -33,7 +33,7 @@ class MDLPDiscretizerTest extends FlatSpec with Matchers {
     expected.zip(result).map{case(e, r) => assert(e === r)}
   }
 
-  it should "Run MDLPD on single mpg column in cars data (maxBins = 2)" in {
+  it should "find bins on single mpg column in cars data (maxBins = 2)" in {
     val cars = readCars
     val data = cars.map(v => (v.origin, v.mpg))
 
@@ -44,7 +44,7 @@ class MDLPDiscretizerTest extends FlatSpec with Matchers {
     expected.zip(result).map{case(e, r) => assert(e === r)}
   }
 
-  it should "Run MDLPD with no records" in {
+  it should "find bins with no records" in {
     val data: List[(String, Double)] = Nil
     val result = new MDLPDiscretizer(data).discretize(2).sorted
     val expected = List(Double.NegativeInfinity, Double.PositiveInfinity)

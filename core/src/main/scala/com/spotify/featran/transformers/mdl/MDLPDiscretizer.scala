@@ -20,7 +20,7 @@ package com.spotify.featran.transformers.mdl
 import MDLPDiscretizer._
 import scala.reflect.ClassTag
 
-class MDLPDiscretizer[T: ClassTag](
+private[transformers] class MDLPDiscretizer[T: ClassTag](
     val data: List[(T, Double)],
     stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
     minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE
@@ -85,7 +85,7 @@ class MDLPDiscretizer[T: ClassTag](
   }
 }
 
-object MDLPDiscretizer {
+private[transformers] object MDLPDiscretizer {
   val MAX_BINS = 50
   val DEFAULT_STOPPING_CRITERION = 0
   val DEFAULT_MIN_BIN_PERCENTAGE = 0
