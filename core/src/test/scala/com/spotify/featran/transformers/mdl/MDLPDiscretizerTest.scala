@@ -43,4 +43,11 @@ class MDLPDiscretizerTest extends FlatSpec with Matchers {
     assert(expected.length === result.length)
     expected.zip(result).map{case(e, r) => assert(e === r)}
   }
+
+  it should "Run MDLPD with no records" in {
+    val data: List[(String, Double)] = Nil
+    val result = new MDLPDiscretizer(data).discretize(2).sorted
+    val expected = List(Double.NegativeInfinity, Double.PositiveInfinity)
+    assert(expected.length === result.length)
+  }
 }

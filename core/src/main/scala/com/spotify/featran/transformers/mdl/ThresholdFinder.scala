@@ -42,13 +42,12 @@ class ThresholdFinder(
   private val log2 = { x: Double => math.log(x) / LOG2 }
 
   def entropy(frequencies: Seq[Long], n: Long): Double = {
-    -frequencies.aggregate(0.0)(
+    -frequencies.foldLeft(0.0)(
       { case (h, q) => h + (if (q == 0) 0 else {
         val qn = q.toDouble / n
         qn * log2(qn)
       })
-      },
-      { case (h1, h2) => h1 + h2 }
+      }
     )
   }
 
