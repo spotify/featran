@@ -66,7 +66,24 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.spotify.featran.transformers.Settings" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.spotify.featran.transformers.MDLRecord" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MDLRecord[T]extendsProductwithSerializable"></a>
+      <a id="MDLRecord[T]:MDLRecord[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="MDLRecord.html"><span class="name">MDLRecord</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="label">label: <span class="extype" name="com.spotify.featran.transformers.MDLRecord.T">T</span></span>, <span name="value">value: <span class="extype" name="scala.Double">Double</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.transformers.package@MDLRecord[T]extendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Labelled feature for <a href="MDL$.html" class="extype" name="com.spotify.featran.transformers.MDL">MDL</a>.</p>
+    </li><li name="com.spotify.featran.transformers.Settings" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="SettingsextendsProductwithSerializable"></a>
       <a id="Settings:Settings"></a>
       <h4 class="signature">
@@ -339,6 +356,29 @@ seen <code>[min, max]</code> will also report <a href="../FeatureRejection$$Outl
       </a>
     </span>
       <p class="shortcomment cmt">Transform features by passing them through.</p><div class="fullcomment"><div class="comment cmt"><p>Transform features by passing them through.</p><p>Missing values are transformed to 0.0.
+</p></div></div>
+    </li><li name="com.spotify.featran.transformers.MDL" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="MDL"></a>
+      <a id="MDL:MDL"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="MDL$.html"><span class="name">MDL</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.transformers.package@MDL" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Transform a column of continuous labelled features to n columns of binned categorical features.</p><div class="fullcomment"><div class="comment cmt"><p>Transform a column of continuous labelled features to n columns of binned categorical features.
+The optimum number of bins is computed using Minimum Description Length (MDL), which is an
+entropy measurement between the values and the targets.</p><p>The transformer expects an <a href="MDLRecord.html" class="extype" name="com.spotify.featran.transformers.MDLRecord">MDLRecord</a> where the first field is a label and the second value
+is the scalar that will be transformed into buckets.</p><p>MDL is an iterative algorithm so all of the data needed to compute the buckets will be pulled
+into memory. If you run into memory issues the <code>sampleRate</code> parameter should be lowered.</p><p>References:</p><p>- Fayyad, U., &amp; Irani, K. (1993). &quot;Multi-interval discretization of continuous-valued attributes
+for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDLP-discretization
 </p></div></div>
     </li><li name="com.spotify.featran.transformers.MaxAbsScaler" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="MaxAbsScaler"></a>
