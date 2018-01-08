@@ -39,6 +39,9 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
 
   require(name != null && name.nonEmpty, "name cannot be null or empty")
 
+  protected def checkRange(name: String, value: Double, lower: Double, upper: Double): Unit =
+    require(value >= lower && value <= upper, s"$name $value not in the range[$lower, $upper]")
+
   /**
    * Aggregator for computing input values into a summary.
    */
