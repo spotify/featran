@@ -24,10 +24,11 @@ val circeVersion = "0.8.0"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.4.0"
 val hadoopVersion = "2.8.0"
+val hamcrestVersion = "1.3"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.4"
 val scaldingVersion = "0.17.3"
-val scioVersion = "0.4.6"
+val scioVersion = "0.4.7"
 val sparkVersion = "2.2.1"
 val tensorflowVersion = "1.4.0"
 
@@ -175,11 +176,14 @@ lazy val scio: Project = Project(
   description := "Feature Transformers - Scio",
   libraryDependencies ++= Seq(
     "com.spotify" %% "scio-core" % scioVersion % "provided",
-    "com.spotify" %% "scio-test" % scioVersion % "test"
+    "com.spotify" %% "scio-tensorflow" % scioVersion % "provided",
+    "com.spotify" %% "scio-test" % scioVersion % "test",
+    "org.hamcrest" % "hamcrest-all" % hamcrestVersion % "test"
   )
 ).dependsOn(
   core,
-  core % "test->test"
+  core % "test->test",
+  tensorflow % "test"
 )
 
 lazy val spark: Project = Project(

@@ -18,6 +18,7 @@
 package com.spotify.featran
 
 import com.spotify.scio.values.SCollection
+import org.tensorflow.{example => tf}
 
 import scala.reflect.ClassTag
 
@@ -28,9 +29,23 @@ package object scio {
    */
   implicit object ScioCollectionType extends CollectionType[SCollection] {
     override def map[A, B: ClassTag](ma: SCollection[A], f: (A) => B): SCollection[B] = ma.map(f)
+
     override def reduce[A](ma: SCollection[A], f: (A, A) => A): SCollection[A] = ma.reduce(f)
+
     override def cross[A, B: ClassTag](ma: SCollection[A],
                                        mb: SCollection[B]): SCollection[(A, B)] = ma.cross(mb)
   }
 
+  import scala.language.implicitConversions
+
+  /** Companion for [[SCollection]] of [[tf.Example]] to enable use of saveAsTfExampleFile. */
+  implicit def makeTFExampleSCollectionFunctions[T <: tf.Example](s: SCollection[T])
+  : TFExampleSCollectionFunctions[T] = new TFExampleSCollectionFunctions(s)
+
+  /**
+   * Companion for [[SCollection]] of [[Seq]] of [[tf.Example]] to enable use of
+   * saveAsTfExampleFile.
+   **/
+  implicit def makeSeqTFExampleSCollectionFunctions[T <: tf.Example](s: SCollection[Seq[T]])
+  : SeqTFExampleSCollectionFunctions[T] = new SeqTFExampleSCollectionFunctions(s)
 }
