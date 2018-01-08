@@ -45,7 +45,7 @@ object NGrams {
   def apply(name: String, low: Int = 1, high: Int = -1, sep: String = " ")
   : Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
     require(low > 0, "low must be > 0")
-    require(high > 0 || high == -1, "high must > 0 or -1")
+    require(high >= low || high == -1, "high must >= low or -1")
     new NGrams(name, low, high, sep)
   }
 }
