@@ -18,6 +18,7 @@
 package com.spotify.featran.java
 
 import org.scalatest._
+import org.tensorflow.example.Example
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
@@ -27,6 +28,14 @@ class JavaTest extends FlatSpec with Matchers {
 
   import com.spotify.featran.Fixtures._
 
+  private def e2v(names: Seq[String])(e: Example): Seq[Double] = {
+    val m = e.getFeatures.getFeatureMap
+    names.map { n =>
+      val f = m.get(n)
+      if (f == null) 0.0 else f.getFloatList.getValue(0)
+    }
+  }
+
   "JFeatureSpec" should "work" in {
     val in = testData.asInstanceOf[Seq[(String, Integer)]]
     val f = JavaTestUtil.spec().extract(in.asJava)
@@ -35,6 +44,7 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
     f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
     f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
+    f.featureValuesExample().asScala.map(e2v(expectedNames)) shouldBe expectedValues
   }
 
   it should "work with Optional" in {
@@ -47,6 +57,7 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe values
     f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe values
     f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe values
+    f.featureValuesExample().asScala.map(e2v(names)) shouldBe values
   }
 
   it should "work with FeatureSpec" in {
@@ -56,6 +67,7 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
     f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
     f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
+    f.featureValuesExample().asScala.map(e2v(expectedNames)) shouldBe expectedValues
   }
 
   it should "work with extractWithSettings" in {
@@ -68,6 +80,7 @@ class JavaTest extends FlatSpec with Matchers {
     f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues.take(n)
     f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
     f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
+    f.featureValuesExample().asScala.map(e2v(expectedNames)) shouldBe expectedValues.take(n)
   }
 
   it should "work with extractWithSettings and RecordExtractor" in {
@@ -77,14 +90,17 @@ class JavaTest extends FlatSpec with Matchers {
     val f2 = fs.extractWithSettingsDouble(settings)
     val f3 = fs.extractWithSettingsFloatSparseArray(settings)
     val f4 = fs.extractWithSettingsDoubleSparseArray(settings)
+    val f5 = fs.extractWithSettingsExample(settings)
     f1.featureNames().asScala shouldBe expectedNames
     f2.featureNames().asScala shouldBe expectedNames
     f3.featureNames().asScala shouldBe expectedNames
     f4.featureNames().asScala shouldBe expectedNames
+    f5.featureNames().asScala shouldBe expectedNames
     testData.map(f1.featureValue).map(_.toSeq) shouldBe expectedValues
     testData.map(f2.featureValue).map(_.toSeq) shouldBe expectedValues
     testData.map(f3.featureValue).map(_.toDense.toSeq) shouldBe expectedValues
     testData.map(f4.featureValue).map(_.toDense.toSeq) shouldBe expectedValues
+    testData.map(f5.featureValue).map(e2v(expectedNames)) shouldBe expectedValues
   }
 
   it should "work with sparse arrays" in {

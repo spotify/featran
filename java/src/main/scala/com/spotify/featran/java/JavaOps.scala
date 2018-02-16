@@ -17,14 +17,15 @@
 
 package com.spotify.featran.java
 
-import java.util.{Collections, Optional, List => JList}
-import java.util.function.BiFunction
 import java.lang.{Double => JDouble}
+import java.util.function.BiFunction
+import java.util.{Collections, Optional, List => JList}
 
 import com.spotify.featran._
+import com.spotify.featran.tensorflow._
+import org.tensorflow.example.Example
 
 import scala.collection.JavaConverters._
-
 import scala.language.higherKinds
 import scala.reflect.ClassTag
 
@@ -70,6 +71,9 @@ private object JavaOps {
   def extractWithSettingsDoubleSparseArray[T](fs: FeatureSpec[T], settings: String)
   : RecordExtractor[T, DoubleSparseArray] = fs.extractWithSettings(settings)
 
+  def extractWithSettingsExample[T](fs: FeatureSpec[T], settings: String)
+  : RecordExtractor[T, Example] = fs.extractWithSettings(settings)
+
   //================================================================================
   // Wrappers for FeatureExtractor
   //================================================================================
@@ -92,6 +96,9 @@ private object JavaOps {
   : JList[FloatSparseArray] = fe.featureValues[FloatSparseArray]
   def featureValuesDoubleSparseArray[T](fe: FeatureExtractor[JList, T])
   : JList[DoubleSparseArray] = fe.featureValues[DoubleSparseArray]
+
+  def featureValuesExample[T](fe: FeatureExtractor[JList, T]): JList[Example] =
+    fe.featureValues[Example]
 
   //================================================================================
   // Wrappers for RecordExtractor

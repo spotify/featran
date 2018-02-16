@@ -19,6 +19,7 @@ package com.spotify.featran.java;
 
 import com.spotify.featran.FeatureBuilder;
 import com.spotify.featran.FeatureExtractor;
+import org.tensorflow.example.Example;
 import scala.reflect.ClassTag;
 
 import java.util.List;
@@ -77,6 +78,13 @@ public class JFeatureExtractor<T> {
    */
   public List<DoubleSparseArray> featureValuesDoubleSparse() {
     return JavaOps.featureValuesDoubleSparseArray(self);
+  }
+
+  /**
+   * Java wrapper for {@link FeatureExtractor#featureValues(FeatureBuilder, ClassTag)}.
+   */
+  public List<Example> featureValuesExample() {
+    return JavaOps.featureValuesExample(self);
   }
 
 }
