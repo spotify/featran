@@ -21,6 +21,7 @@ import com.spotify.featran.CollectionType;
 import com.spotify.featran.FeatureBuilder;
 import com.spotify.featran.FeatureSpec;
 import com.spotify.featran.transformers.Transformer;
+import org.tensorflow.example.Example;
 import scala.Function1;
 import scala.Function2;
 import scala.Option;
@@ -139,6 +140,14 @@ public class JFeatureSpec<T> {
   public JRecordExtractor<T, DoubleSparseArray>
   extractWithSettingsDoubleSparseArray(String settings) {
     return new JRecordExtractor<>(JavaOps.extractWithSettingsDoubleSparseArray(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag).
+   */
+  public JRecordExtractor<T, Example>
+  extractWithSettingsExample(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSettingsExample(self, settings));
   }
 
 }

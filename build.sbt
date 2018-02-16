@@ -125,6 +125,7 @@ lazy val java: Project = Project(
   )
 ).dependsOn(
   core,
+  tensorflow,
   core % "test->test"
 )
 
