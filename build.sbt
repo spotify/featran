@@ -30,6 +30,7 @@ val scaldingVersion = "0.17.3"
 val scioVersion = "0.4.6"
 val sparkVersion = "2.2.1"
 val tensorflowVersion = "1.4.0"
+val xgBoostVersion = "0.7-20171122-70a4c419"
 
 val commonSettings = Seq(
   organization := "com.spotify",
@@ -223,6 +224,19 @@ lazy val tensorflow: Project = Project(
   description := "Feature Transformers - TensorFlow",
   libraryDependencies ++= Seq(
     "org.tensorflow" % "proto" % tensorflowVersion,
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
+  )
+).dependsOn(core)
+
+lazy val xgBoost: Project = Project(
+  "xgboost",
+  file("xgboost")
+).settings(
+  commonSettings,
+  moduleName := "featran-xgboost",
+  description := "Feature Transformers - XGBoost",
+  libraryDependencies ++= Seq(
+    "me.lyh" % "xgboost4j" % xgBoostVersion,
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
   )
 ).dependsOn(core)
