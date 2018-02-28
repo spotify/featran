@@ -150,4 +150,11 @@ public class JFeatureSpec<T> {
     return new JRecordExtractor<>(JavaOps.extractWithSettingsExample(self, settings));
   }
 
+  /**
+   * Returns internal {@link FeatureSpec}.
+   */
+  public FeatureSpec<T> internal() {
+    return self;
+  }
+
 }
