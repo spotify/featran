@@ -236,7 +236,7 @@ lazy val xgBoost: Project = Project(
   moduleName := "featran-xgboost",
   description := "Feature Transformers - XGBoost",
   libraryDependencies ++= Seq(
-    "me.lyh" % "xgboost4j" % xgBoostVersion,
+    "me.lyh" % "xgboost4j" % xgBoostVersion % "provided",
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
   )
 ).dependsOn(core)
