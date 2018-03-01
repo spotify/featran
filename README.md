@@ -52,7 +52,7 @@ val features = fe.featureValues[Seq[Double]]
 Featran also supports these additional features.
 
 - Extract from Scala collections, [Flink](http://flink.apache.org/) `DataSet`s, [Scalding](https://github.com/twitter/scalding) `TypedPipe`s, [Scio](https://github.com/spotify/scio) `SCollection`s and [Spark](https://spark.apache.org/) `RDD`s
-- Output as Scala collections, [Breeze](https://github.com/scalanlp/breeze) dense and sparse vectors,  [TensorFlow](https://www.tensorflow.org/) Example Protobuf and [NumPy](http://www.numpy.org/) `.npy` file
+- Output as Scala collections, [Breeze](https://github.com/scalanlp/breeze) dense and sparse vectors,  [TensorFlow](https://www.tensorflow.org/) `Example` Protobuf, [XGBoost](https://github.com/dmlc/xgboost) `LabeledPoint` and [NumPy](http://www.numpy.org/) `.npy` file
 - Import aggregation from a previous extraction for training, validation and test sets
 - Compose feature specifications and separate outputs
 
@@ -70,7 +70,8 @@ Feature includes the following artifacts:
 - `featran-scalding` - support for extraction from Scalding `TypedPipe`
 - `featran-scio` - support for extraction from Scio `SCollection`
 - `featran-spark` - support for extraction from Spark `RDD`
-- `featran-tensorflow` - support for output as TensorFlow Example Protobuf
+- `featran-tensorflow` - support for output as TensorFlow `Example` Protobuf
+- `featran-xgboost` - support for output as XGBoost `LabeledPoint`
 - `featran-numpy` - support for output as NumPy `.npy` file
 
 # License
