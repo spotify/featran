@@ -19,6 +19,8 @@ package com.spotify.featran.java;
 
 import com.spotify.featran.FeatureBuilder;
 import com.spotify.featran.FeatureExtractor;
+import com.spotify.featran.xgboost.SparseLabeledPoint;
+import ml.dmlc.xgboost4j.LabeledPoint;
 import org.tensorflow.example.Example;
 import scala.reflect.ClassTag;
 
@@ -85,6 +87,20 @@ public class JFeatureExtractor<T> {
    */
   public List<Example> featureValuesExample() {
     return JavaOps.featureValuesExample(self);
+  }
+
+  /**
+   * Java wrapper for {@link FeatureExtractor#featureValues(FeatureBuilder, ClassTag)}.
+   */
+  public List<LabeledPoint> featureValuesLabeledPoint() {
+    return JavaOps.featureValuesLabeledPoint(self);
+  }
+
+  /**
+   * Java wrapper for {@link FeatureExtractor#featureValues(FeatureBuilder, ClassTag)}.
+   */
+  public List<SparseLabeledPoint> featureValuesSparseLabeledPoint() {
+    return JavaOps.featureValuesSparseLabeledPoint(self);
   }
 
 }

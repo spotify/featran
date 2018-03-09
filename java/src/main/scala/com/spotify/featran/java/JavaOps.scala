@@ -23,6 +23,8 @@ import java.util.{Collections, Optional, List => JList}
 
 import com.spotify.featran._
 import com.spotify.featran.tensorflow._
+import com.spotify.featran.xgboost._
+import ml.dmlc.xgboost4j.LabeledPoint
 import org.tensorflow.example.Example
 
 import scala.collection.JavaConverters._
@@ -74,6 +76,12 @@ private object JavaOps {
   def extractWithSettingsExample[T](fs: FeatureSpec[T], settings: String)
   : RecordExtractor[T, Example] = fs.extractWithSettings(settings)
 
+  def extractWithSettingsLabeledPoint[T](fs: FeatureSpec[T], settings: String)
+  : RecordExtractor[T, LabeledPoint] = fs.extractWithSettings(settings)
+
+  def extractWithSettingsSparseLabeledPoint[T](fs: FeatureSpec[T], settings: String)
+  : RecordExtractor[T, SparseLabeledPoint] = fs.extractWithSettings(settings)
+
   //================================================================================
   // Wrappers for FeatureExtractor
   //================================================================================
@@ -99,6 +107,12 @@ private object JavaOps {
 
   def featureValuesExample[T](fe: FeatureExtractor[JList, T]): JList[Example] =
     fe.featureValues[Example]
+
+  def featureValuesLabeledPoint[T](fe: FeatureExtractor[JList, T]): JList[LabeledPoint] =
+    fe.featureValues[LabeledPoint]
+
+  def featureValuesSparseLabeledPoint[T](fe: FeatureExtractor[JList, T])
+  : JList[SparseLabeledPoint] = fe.featureValues[SparseLabeledPoint]
 
   //================================================================================
   // Wrappers for RecordExtractor
