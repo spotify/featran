@@ -90,7 +90,8 @@ lazy val root: Project = Project(
   scio,
   spark,
   numpy,
-  tensorflow
+  tensorflow,
+  xgboost
 )
 
 lazy val core: Project = Project(
@@ -122,11 +123,13 @@ lazy val java: Project = Project(
   moduleName := "featran-java",
   description := "Feature Transformers - java",
   libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+    "org.scalatest" %% "scalatest" % scalatestVersion % "test",
+    "me.lyh" % "xgboost4j" % xgBoostVersion % "provided"
   )
 ).dependsOn(
   core,
   tensorflow,
+  xgboost,
   core % "test->test"
 )
 
@@ -228,7 +231,7 @@ lazy val tensorflow: Project = Project(
   )
 ).dependsOn(core)
 
-lazy val xgBoost: Project = Project(
+lazy val xgboost: Project = Project(
   "xgboost",
   file("xgboost")
 ).settings(

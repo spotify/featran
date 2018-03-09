@@ -22,22 +22,6 @@ import ml.dmlc.xgboost4j.LabeledPoint
 package object xgboost {
 
   /**
-   * Class to distinguish sparse [[LabeledPoint]] from its dense type.
-   *
-   * See [[LabeledPoint]] doc for field doc.
-   */
-  final class SparseLabeledPoint private[xgboost](label: Float,
-                                                  indices: Array[Int],
-                                                  values: Array[Float],
-                                                  weight: Float = 1f,
-                                                  group: Int = -1,
-                                                  baseMargin: Float = Float.NaN)
-    extends Serializable {
-    require(indices != null, "Indices can't be null")
-    val labeledPoint = LabeledPoint(label, indices, values, weight, group, baseMargin)
-  }
-
-  /**
    * [[FeatureBuilder]] for output as XGBoost's [[LabeledPoint]] type.
    *
    * NOTE: [[LabeledPoint]] stores values as [[Float]]s, so you might loose precision by moving from
