@@ -122,15 +122,25 @@ lazy val java: Project = Project(
   commonSettings,
   moduleName := "featran-java",
   description := "Feature Transformers - java",
-  libraryDependencies ++= Seq(
+  skip in Compile := scalaBinaryVersion.value == "2.12",
+  skip in Test := scalaBinaryVersion.value == "2.12",
+  skip in publish := scalaBinaryVersion.value == "2.12",
+  libraryDependencies ++= { if (scalaBinaryVersion.value == "2.12") Nil else Seq(
+    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test",
     "me.lyh" % "xgboost4j" % xgBoostVersion % "provided"
-  )
+  ) },
+  // workaround for `dependsOn(core % "test->test")` pulling in scalacheck & scalatest dependencies
+  projectDependencies := { if (scalaBinaryVersion.value == "2.12") Nil else Seq(
+    (projectID in core).value,
+    (projectID in tensorflow).value,
+    (projectID in xgboost).value
+  ) }
 ).dependsOn(
   core,
+  core % "test->test",
   tensorflow,
-  xgboost,
-  core % "test->test"
+  xgboost
 )
 
 lazy val flink: Project = Project(
@@ -238,10 +248,13 @@ lazy val xgboost: Project = Project(
   commonSettings,
   moduleName := "featran-xgboost",
   description := "Feature Transformers - XGBoost",
-  libraryDependencies ++= Seq(
+  skip in Compile := scalaBinaryVersion.value == "2.12",
+  skip in Test := scalaBinaryVersion.value == "2.12",
+  skip in publish := scalaBinaryVersion.value == "2.12",
+  libraryDependencies ++= { if (scalaBinaryVersion.value == "2.12") Nil else Seq(
     "me.lyh" % "xgboost4j" % xgBoostVersion % "provided",
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
-  )
+  ) }
 ).dependsOn(core)
 
 val soccoSettings = if (sys.env.contains("SOCCO")) {
