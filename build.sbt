@@ -18,17 +18,17 @@
 import com.typesafe.sbt.SbtSite.SiteKeys._
 import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
 
-val algebirdVersion = "0.13.3"
-val breezeVersion = "0.13.1"
+val algebirdVersion = "0.13.4"
+val breezeVersion = "1.0-RC2"
 val circeVersion = "0.8.0"
 val commonsMathVersion = "3.6.1"
-val flinkVersion = "1.4.0"
+val flinkVersion = "1.4.2"
 val hadoopVersion = "2.8.0"
 val scalacheckVersion = "1.13.5"
-val scalatestVersion = "3.0.4"
-val scaldingVersion = "0.17.3"
+val scalatestVersion = "3.0.5"
+val scaldingVersion = "0.17.4"
 val scioVersion = "0.5.0"
-val sparkVersion = "2.2.1"
+val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.4.0"
 val xgBoostVersion = "0.7-20171122-70a4c419"
 
