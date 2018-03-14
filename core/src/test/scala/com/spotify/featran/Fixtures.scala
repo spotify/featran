@@ -77,6 +77,7 @@ object Fixtures {
     .required(_.x)(Identity("id"))
     .required(_.x)(IQROutlierRejector("iqr"))
     .required(_.x)(MaxAbsScaler("max-abs"))
+    .required(v => MDLRecord(v.s1, v.x))(MDL("mdl"))
     .required(_.x)(MinMaxScaler("min-max"))
     .required(_.s2)(NGrams("n-grams", 1, 3))
     .required(_.s2)(NHotEncoder("n-hot"))
@@ -87,7 +88,7 @@ object Fixtures {
     .required(_.x)(QuantileDiscretizer("quantile"))
     .required(_.x)(QuantileOutlierRejector("quantile_filter"))
     .required(_.x)(StandardScaler("standard"))
-    .required(v => MDLRecord(v.s1, v.x))(MDL("mdl"))
+    .required(_.s1)(TopNOneHotEncoder("tn1h", 10, 0.001, 0.001, 1))
     .required(_.v)(VectorIdentity("vec-id"))
     .required(_.x)(VonMisesEvaluator("von-mises", 1.0, 0.01, Array(0.0, 1.0, 2.0)))
 

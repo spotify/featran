@@ -63,6 +63,8 @@ class TransformerBenchmark {
   @Benchmark def quantileDiscretizer(bh: Blackhole): Seq[Unit] =
     benchmark(QuantileDiscretizer("t"), bh)
   @Benchmark def standardScaler(bh: Blackhole): Seq[Unit] = benchmark(StandardScaler("t"), bh)
+  @Benchmark def topNOneHotEncoder(bh: Blackhole): Seq[Unit] =
+    benchmark(TopNOneHotEncoder("t", 100), bh)
   @Benchmark def vectorIdentity(bh: Blackhole): Seq[Unit] =
     benchmark(VectorIdentity[Array]("t"), bh)
   @Benchmark def vonMisesEvaluator(bh: Blackhole): Seq[Unit] =
