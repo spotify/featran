@@ -83,6 +83,7 @@ object Fixtures {
     .required(_.s3)(NHotWeightedEncoder("n-hot-weighted"))
     .required(_.v)(Normalizer("norm"))
     .required(_.s1)(OneHotEncoder("one-hot"))
+    .required(_.s1)(PositionEncoder("position"))
     .required(_.v)(PolynomialExpansion("poly"))
     .required(_.x)(QuantileDiscretizer("quantile"))
     .required(_.x)(QuantileOutlierRejector("quantile_filter"))
