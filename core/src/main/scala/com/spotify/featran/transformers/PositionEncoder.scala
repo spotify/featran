@@ -22,19 +22,19 @@ import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import scala.collection.SortedMap
 
 /**
-  * Transform a collection of categorical features to a single value that is the position
-  * of that feature within the complete set of categories.
-  *
-  * Missing values are transformed to zero. Thought may need to be done on how to reject these
-  * since the position can overlap the first categorical dimension.
-  *
-  * When using aggregated feature summary from a previous session, unseen labels are ignored and
-  * [[FeatureRejection.Unseen]] rejections are reported.
-  */
+ * Transform a collection of categorical features to a single value that is the position
+ * of that feature within the complete set of categories.
+ *
+ * Missing values are transformed to zero so may collide with the first position. Rejections can be
+ * use to remove this case.
+ *
+ * When using aggregated feature summary from a previous session, unseen labels are ignored and
+ * [[FeatureRejection.Unseen]] rejections are reported.
+ */
 object PositionEncoder {
   /**
-    * Create a new [[PositionEncoder]] instance.
-    */
+   * Create a new [[PositionEncoder]] instance.
+   */
   def apply(name: String): Transformer[String, Set[String], SortedMap[String, Int]] =
     new PositionEncoder(name)
 }
