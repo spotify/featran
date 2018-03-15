@@ -58,7 +58,10 @@ val commonSettings = Seq(
     "scm:git:git@github.com:spotify/featran.git")),
   developers := List(
     Developer(id="sinisa_lyh", name="Neville Li", email="neville.lyh@gmail.com", url=url("https://twitter.com/sinisa_lyh")),
-    Developer(id="rwhitcomb", name="Richard Whitcomb", email="richwhitjr@gmail.com", url=url("https://twitter.com/rwhitcomb"))
+    Developer(id="rwhitcomb", name="Richard Whitcomb", email="richwhitjr@gmail.com", url=url("https://twitter.com/rwhitcomb")),
+    Developer(id="ravwojdyla", name="Rafal Wojdyla", email="ravwojdyla@gmail.com", url=url("https://twitter.com/ravwojdyla")),
+    Developer(id="fallonfofallon", name="Fallon Chen", email="fallon@spotify.com", url=url("https://twitter.com/fallonfofallon")),
+    Developer(id="andrew_martin92", name="Andrew Martin", email="andrewsmartin.mg@gmail.com", url=url("https://twitter.com/andrew_martin92"))
   )
 )
 
