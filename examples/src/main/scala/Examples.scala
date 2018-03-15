@@ -82,6 +82,7 @@ object Examples {
 
       // One hot, n-hot and n-hot weighted encoders
       .required(_.s1)(OneHotEncoder("one_hot"))
+      .required(_.s1)(PositionEncoder("position"))
       .required(_.s2)(NHotEncoder("n_hot"))
       .required(_.s2.map(s => WeightedLabel(s, 0.5)))(NHotWeightedEncoder("n_hot_weighted"))
 
