@@ -29,34 +29,63 @@ object TopNOneHotEncoderSpec extends TransformerProp("TopNOneHotEncoder") {
   }
   private val seed = 1
 
+  def getExpectedOutputVector(missingValueOpt: Option[String],
+                              s: String,
+                              cats: List[String]): Seq[Double] = {
+    val v: Seq[Double] = cats.map(c => if (s == c) 1.0 else 0.0)
+    missingValueOpt match {
+      case Some(missingValueToken) => {
+        v.sum match {
+          case nonZero if nonZero > 0 => v
+          case _ => cats.map(c => if (c == missingValueToken) 1.0 else 0.0)
+        }
+      }
+      case None => v
+    }
+  }
+
   private def test(transformer: Transformer[String, _, _], xs: List[String],
-                   count: Int, eps: Double, delta: Double): Prop = {
+                   count: Int, eps: Double, delta: Double,
+                   missingValueOpt: Option[String]): Prop = {
     val params = SketchMapParams[String](seed, eps, delta, count)(_.getBytes)
     val aggregator = SketchMap.aggregator[String, Long](params)
     val sm = xs.map(x => aggregator.prepare((x, 1L))).reduce(aggregator.monoid.plus)
-    val cats = sm.heavyHitterKeys.sorted
+    val cats = missingValueOpt match {
+      case Some(missingValueToken) => (sm.heavyHitterKeys :+ missingValueToken).sorted
+      case _ => sm.heavyHitterKeys.sorted
+    }
     val names = cats.map("tn1h_" + _)
-    val expected = xs.map(s => cats.map(c => if (s == c) 1.0 else 0.0))
-    val missing = cats.map(_ => 0.0)
+    val expected = xs.map(s => getExpectedOutputVector(missingValueOpt, s, cats))
+    val missing = missingValueOpt match {
+      case Some(missingValueToken) => cats.map(c => if (c == missingValueToken) 1.0 else 0.0)
+      case None => cats.map(_ => 0.0)
+    }
     val oob = List(("s1", missing), ("s2", missing)) // unseen labels
-    val rejected = xs.flatMap(x => if (cats.contains(x)) None else Some(Seq.fill(count)(0.0)))
+    val rejected = xs.flatMap(x => if (cats.contains(x)) None else Some(missing))
+
     test(transformer, xs, names, expected, missing, oob, rejected)
   }
 
   property("default") = Prop.forAll { xs: List[String] =>
-    test(TopNOneHotEncoder("tn1h", 10, seed = 1), xs, 10, 0.001, 0.001)
+    test(TopNOneHotEncoder("tn1h", 10, seed = 1), xs, 10, 0.001, 0.001, None)
   }
 
   property("count") = Prop.forAll { xs: List[String] =>
-    test(TopNOneHotEncoder("tn1h", 100, seed = 1), xs, 100, 0.001, 0.001)
+    test(TopNOneHotEncoder("tn1h", 100, seed = 1), xs, 100, 0.001, 0.001, None)
   }
 
   property("eps") = Prop.forAll { xs: List[String] =>
-    test(TopNOneHotEncoder("tn1h", 10, eps = 0.01, seed = 1), xs, 10, 0.01, 0.001)
+    test(TopNOneHotEncoder("tn1h", 10, eps = 0.01, seed = 1), xs, 10, 0.01, 0.001, None)
   }
 
   property("delta") = Prop.forAll { xs: List[String] =>
-    test(TopNOneHotEncoder("tn1h", 10, delta = 0.01, seed = 1), xs, 10, 0.001, 0.01)
+    test(TopNOneHotEncoder("tn1h", 10, delta = 0.01, seed = 1), xs, 10, 0.001, 0.01, None)
+  }
+
+  property("missingValueOpt") = Prop.forAll { xs: List[String] =>
+    val missingTokenOpt = Some("missingToken")
+    test(TopNOneHotEncoder("tn1h", 10, delta = 0.01, seed = 1, missingValueOpt = missingTokenOpt),
+      xs, 10, 0.001, 0.01, missingTokenOpt)
   }
 
 }

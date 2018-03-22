@@ -34,4 +34,22 @@ object NHotEncoderSpec extends TransformerProp("NHotEncoder") {
     test(NHotEncoder("n_hot"), xs, names, expected, missing, oob)
   }
 
+  property("missingValueOpt") = Prop.forAll { xs: List[List[String]] =>
+    val missingValueToken = "missingToken"
+    val cats = (xs.flatten :+ missingValueToken).distinct.sorted
+    val names = cats.map("n_hot_" + _)
+    val missing = cats.map(c => if (c == missingValueToken) 1.0 else 0.0)
+    val expected = xs.map(s => {
+      s.size match {
+        case 0 => missing
+        case _ => cats.map(c => if (s.contains(c)) 1.0 else 0.0)
+      }
+    })
+    val partialMiss = expected(0).zip(missing).map { case (a, b) => a + b }
+
+    // unseen or partially unseen labels
+    val oob = List((List("s1", "s2"), missing), ((List("s1", "s2") ++ xs(0), partialMiss)))
+    test(NHotEncoder("n_hot", missingValueToken), xs, names, expected, missing, oob)
+  }
+
 }

@@ -25,26 +25,50 @@ import scala.collection.SortedMap
 /**
  * Transform a collection of categorical features to binary columns, with at most N one-values.
  *
- * Missing values are transformed to zero vectors.
+ * Missing values are either transformed to zero vectors or encoded as a missing value.
  *
- * When using aggregated feature summary from a previous session, unseen labels are ignored and
- * [[FeatureRejection.Unseen]] rejections are reported.
+ * When using aggregated feature summary from a previous session, unseen labels are either
+ * transformed to zero vectors or encoded as a missing value (if missingValueOpt is provided) and
+ * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotEncoder {
   /**
-   * Create a new [[NHotEncoder]] instance.
-   */
-  def apply(name: String): Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
-    new NHotEncoder(name)
+    * Create a new [[NHotEncoder]] instance.
+    */
+  def apply(name: String, missingValueOpt: Option[String] = None):
+  Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
+    new NHotEncoder(name, missingValueOpt)
+
+  def apply(name: String, missingValue: String):
+  Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
+    new NHotEncoder(name, Some(missingValue))
+
+  // extra definition for java compatibility
+  def apply(name: String):
+  Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
+    new NHotEncoder(name, None)
 }
 
-private class NHotEncoder(name: String) extends BaseHotEncoder[Seq[String]](name) {
+private class NHotEncoder(name: String, missingValueOpt: Option[String] = None)
+  extends BaseHotEncoder[Seq[String]](name, missingValueOpt) {
   override def prepare(a: Seq[String]): Set[String] = Set(a: _*)
+
+  def getKeys(k: Seq[String], c: SortedMap[String, Int]): Seq[String] = missingValueOpt match {
+    case Some(missingValueToken) => {
+      // check if an item is unseen
+      k.map(!c.contains(_)).exists(identity) match {
+        case true => (k :+ missingValueToken)
+        case false => k
+      }
+    }
+    case None => k
+  }
+
   override def buildFeatures(a: Option[Seq[String]],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(xs) =>
-      val keys = xs.distinct.sorted
+      val keys = getKeys(xs.distinct, c).sorted
       var prev = -1
       val totalSeen = MSet[String]()
       keys.foreach { key =>
@@ -65,6 +89,6 @@ private class NHotEncoder(name: String) extends BaseHotEncoder[Seq[String]](name
         val unseen = keys.toSet -- totalSeen
         fb.reject(this, FeatureRejection.Unseen(unseen))
       }
-    case None => fb.skip(c.size)
+    case None => addMissingItem(c, fb)
   }
 }
