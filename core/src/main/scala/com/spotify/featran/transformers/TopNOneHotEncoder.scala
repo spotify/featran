@@ -38,18 +38,18 @@ import scala.util.Random
   */
 object TopNOneHotEncoder {
 /**
-  * Create a new [[TopNOneHotEncoder]] instance.
-  *
-  * @param n               number of items to keep track of
-  * @param eps             one-sided error bound on the error of each point query, i.e.
-  *                        frequency estimate
-  * @param delta           a bound on the probability that a query estimate does not lie within
-  *                        some small interval (an interval that depends on `eps`) around the
-  *                        truth.
-  * @param seed            a seed to initialize the random number generator used to create
-  *                        the pairwise independent hash functions.
-  * @param missingValueOpt optional name to encode items outside of the top n set.
-  */
+ * Create a new [[TopNOneHotEncoder]] instance.
+ *
+ * @param n               number of items to keep track of
+ * @param eps             one-sided error bound on the error of each point query, i.e.
+ *                        frequency estimate
+ * @param delta           a bound on the probability that a query estimate does not lie within
+ *                        some small interval (an interval that depends on `eps`) around the
+ *                        truth.
+ * @param seed            a seed to initialize the random number generator used to create
+ *                        the pairwise independent hash functions.
+ * @param missingValueOpt optional name to encode items outside of the top n set.
+ */
   def apply(name: String, n: Int,
             eps: Double = 0.001,
             delta: Double = 0.001,
