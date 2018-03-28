@@ -77,7 +77,7 @@ object MissingValue {
 private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean = false)
   extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
 
-  val missingValueToken = MissingValue.missingValueToken
+  private val missingValueToken = MissingValue.missingValueToken
 
   def prepare(a: A): Set[String]
 

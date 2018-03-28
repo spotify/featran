@@ -76,7 +76,7 @@ private class TopNOneHotEncoder(name: String,
                                 val encodeMissingValue: Boolean = false)
   extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
 
-  val missingValueToken = "__unknown__"
+  private val missingValueToken = MissingValue.missingValueToken
 
   private val sketchMapParams =
     SketchMapParams[String](seed, eps, delta, n)(_.getBytes)
