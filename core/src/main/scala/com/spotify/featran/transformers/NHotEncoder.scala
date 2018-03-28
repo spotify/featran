@@ -19,8 +19,8 @@ package com.spotify.featran.transformers
 
 import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 
-import scala.collection.mutable.{Set => MSet}
 import scala.collection.SortedMap
+import scala.collection.mutable.{Set => MSet}
 
 /**
  * Transform a collection of categorical features to binary columns, with at most N one-values.
@@ -28,40 +28,36 @@ import scala.collection.SortedMap
  * Missing values are either transformed to zero vectors or encoded as a missing value.
  *
  * When using aggregated feature summary from a previous session, unseen labels are either
- * transformed to zero vectors or encoded as a missing value (if missingValueOpt is provided) and
+ * transformed to zero vectors or encoded as __unknown__ (if encodeMissingValue is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotEncoder {
   /**
-    * Create a new [[NHotEncoder]] instance.
-    */
-  def apply(name: String, missingValueOpt: Option[String] = None):
+   * Create a new [[NHotEncoder]] instance.
+   */
+  def apply(name: String, encodeMissingValue: Boolean = false):
   Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
-    new NHotEncoder(name, missingValueOpt)
+    new NHotEncoder(name, encodeMissingValue)
 
-  def apply(name: String, missingValue: String):
-  Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
-    new NHotEncoder(name, Some(missingValue))
-
-  // extra definition for java compatibility
+  /** Extra definition for java compatibility. */
   def apply(name: String):
   Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
-    new NHotEncoder(name, None)
+    new NHotEncoder(name, false)
 }
 
-private class NHotEncoder(name: String, missingValueOpt: Option[String] = None)
-  extends BaseHotEncoder[Seq[String]](name, missingValueOpt) {
+private class NHotEncoder(name: String, encodeMissingValue: Boolean = false)
+  extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
   override def prepare(a: Seq[String]): Set[String] = Set(a: _*)
 
-  def getKeys(k: Seq[String], c: SortedMap[String, Int]): Seq[String] = missingValueOpt match {
-    case Some(missingValueToken) => {
+  def getKeys(k: Seq[String], c: SortedMap[String, Int]): Seq[String] = encodeMissingValue match {
+    case true => {
       // check if an item is unseen
       k.map(!c.contains(_)).exists(identity) match {
         case true => (k :+ missingValueToken)
         case false => k
       }
     }
-    case None => k
+    case false => k
   }
 
   override def buildFeatures(a: Option[Seq[String]],

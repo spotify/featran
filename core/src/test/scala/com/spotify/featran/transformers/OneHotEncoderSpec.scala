@@ -33,12 +33,12 @@ object OneHotEncoderSpec extends TransformerProp("OneHotEncoder") {
   }
 
   property("missingValueOpt") = Prop.forAll { xs: List[String] =>
-    val missingValueToken = "missingToken"
+    val missingValueToken = MissingValue.missingValueToken
     val cats = (xs :+ missingValueToken).distinct.sorted
     val names = cats.map("one_hot_" + _)
     val expected = xs.map(s => cats.map(c => if (s == c) 1.0 else 0.0))
     val missing = cats.map(c => if (c == missingValueToken) 1.0 else 0.0)
     val oob = List(("s1", missing), ("s2", missing)) // unseen labels
-    test(OneHotEncoder("one_hot", missingValueToken), xs, names, expected, missing, oob)
+    test(OneHotEncoder("one_hot", true), xs, names, expected, missing, oob)
   }
 }

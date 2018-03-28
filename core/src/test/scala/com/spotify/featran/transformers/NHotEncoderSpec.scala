@@ -35,7 +35,7 @@ object NHotEncoderSpec extends TransformerProp("NHotEncoder") {
   }
 
   property("missingValueOpt") = Prop.forAll { xs: List[List[String]] =>
-    val missingValueToken = "missingToken"
+    val missingValueToken = MissingValue.missingValueToken
     val cats = (xs.flatten :+ missingValueToken).distinct.sorted
     val names = cats.map("n_hot_" + _)
     val missing = cats.map(c => if (c == missingValueToken) 1.0 else 0.0)
@@ -49,7 +49,7 @@ object NHotEncoderSpec extends TransformerProp("NHotEncoder") {
 
     // unseen or partially unseen labels
     val oob = List((List("s1", "s2"), missing), ((List("s1", "s2") ++ xs(0), partialMiss)))
-    test(NHotEncoder("n_hot", missingValueToken), xs, names, expected, missing, oob)
+    test(NHotEncoder("n_hot", true), xs, names, expected, missing, oob)
   }
 
 }

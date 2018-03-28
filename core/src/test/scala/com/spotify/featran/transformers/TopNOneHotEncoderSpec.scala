@@ -83,8 +83,8 @@ object TopNOneHotEncoderSpec extends TransformerProp("TopNOneHotEncoder") {
   }
 
   property("missingValueOpt") = Prop.forAll { xs: List[String] =>
-    val missingTokenOpt = Some("missingToken")
-    test(TopNOneHotEncoder("tn1h", 10, delta = 0.01, seed = 1, missingValueOpt = missingTokenOpt),
+    val missingTokenOpt = Some(MissingValue.missingValueToken)
+    test(TopNOneHotEncoder("tn1h", 10, delta = 0.01, seed = 1, encodeMissingValue = true),
       xs, 10, 0.001, 0.01, missingTokenOpt)
   }
 

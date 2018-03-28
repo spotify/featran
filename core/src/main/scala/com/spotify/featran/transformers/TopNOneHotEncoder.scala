@@ -26,53 +26,46 @@ import scala.collection.SortedMap
 import scala.util.Random
 
 /**
-  * Transform a collection of categorical features to binary columns, with at most a single
-  * one-value. Only the top N items are tracked.
-  *
-  * The list of top N is estimated with Algebird's SketchMap data structure. With probability
-  * at least `1 - delta`, this estimate is within `eps * N` of the true frequency (i.e.,
-  * `true frequency <= estimate <= true frequency + eps * N`), where N is the total size of the
-  * input collection.
-  *
-  * Missing values are either transformed to zero vectors or encoded as a missing value.
-  */
-object TopNOneHotEncoder {
-/**
- * Create a new [[TopNOneHotEncoder]] instance.
+ * Transform a collection of categorical features to binary columns, with at most a single
+ * one-value. Only the top N items are tracked.
  *
- * @param n               number of items to keep track of
- * @param eps             one-sided error bound on the error of each point query, i.e.
- *                        frequency estimate
- * @param delta           a bound on the probability that a query estimate does not lie within
- *                        some small interval (an interval that depends on `eps`) around the
- *                        truth.
- * @param seed            a seed to initialize the random number generator used to create
- *                        the pairwise independent hash functions.
- * @param missingValueOpt optional name to encode items outside of the top n set.
+ * The list of top N is estimated with Algebird's SketchMap data structure. With probability
+ * at least `1 - delta`, this estimate is within `eps * N` of the true frequency (i.e.,
+ * `true frequency <= estimate <= true frequency + eps * N`), where N is the total size of the
+ * input collection.
+ *
+ * Missing values are either transformed to zero vectors or encoded as __unknown__.
  */
+object TopNOneHotEncoder {
+  /**
+   * Create a new [[TopNOneHotEncoder]] instance.
+   *
+   * @param n                  number of items to keep track of
+   * @param eps                one-sided error bound on the error of each point query, i.e.
+   *                           frequency estimate
+   * @param delta              a bound on the probability that a query estimate does not lie within
+   *                           some small interval (an interval that depends on `eps`) around the
+   *                           truth.
+   * @param seed               a seed to initialize the random number generator used to create
+   *                           the pairwise independent hash functions.
+   * @param encodeMissingValue boolean to indicate to encode items outside of the top n set
+   *                           as __unknown__.
+   */
   def apply(name: String, n: Int,
             eps: Double = 0.001,
             delta: Double = 0.001,
             seed: Int = Random.nextInt,
-            missingValueOpt: Option[String] = None)
+            encodeMissingValue: Boolean = false)
   : Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
-    new TopNOneHotEncoder(name, n, eps, delta, seed, missingValueOpt)
+    new TopNOneHotEncoder(name, n, eps, delta, seed, encodeMissingValue)
 
-  def apply(name: String, n: Int,
-            eps: Double,
-            delta: Double,
-            seed: Int,
-            missingValue: String)
-  : Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
-    new TopNOneHotEncoder(name, n, eps, delta, seed, Some(missingValue))
-
-  // extra apply for java compatibility
+  /** Extra definition for java compatibility. */
   def apply(name: String, n: Int,
             eps: Double,
             delta: Double,
             seed: Int)
   : Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
-    new TopNOneHotEncoder(name, n, eps, delta, seed, None)
+    new TopNOneHotEncoder(name, n, eps, delta, seed, false)
 }
 
 private class TopNOneHotEncoder(name: String,
@@ -80,8 +73,10 @@ private class TopNOneHotEncoder(name: String,
                                 val eps: Double,
                                 val delta: Double,
                                 val seed: Int,
-                                val missingValueOpt: Option[String])
+                                val encodeMissingValue: Boolean = false)
   extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
+
+  val missingValueToken = "__unknown__"
 
   private val sketchMapParams =
     SketchMapParams[String](seed, eps, delta, n)(_.getBytes)
@@ -92,8 +87,8 @@ private class TopNOneHotEncoder(name: String,
       .composePrepare[String]((_, 1L))
       .andThenPresent { sm =>
         val b = SortedMap.newBuilder[String, Int]
-        val topItems = missingValueOpt match {
-          case Some(missingValueToken) => sm.heavyHitterKeys :+ missingValueToken
+        val topItems = encodeMissingValue match {
+          case true => sm.heavyHitterKeys :+ missingValueToken
           case _ => sm.heavyHitterKeys
         }
         topItems.sorted.iterator.zipWithIndex.foreach { case (k, r) =>
@@ -108,8 +103,8 @@ private class TopNOneHotEncoder(name: String,
     c.map(name + '_' + _._1)(scala.collection.breakOut)
 
   def addNonTopItem(c: SortedMap[String, Int],
-                    fb: FeatureBuilder[_]): Unit = missingValueOpt match {
-    case Some(missingValueToken) =>
+                    fb: FeatureBuilder[_]): Unit = encodeMissingValue match {
+    case true =>
       val v = c.get(missingValueToken).get // manually added so will exist
       fb.skip(v)
       fb.add(name + '_' + missingValueToken, 1.0)
@@ -151,6 +146,6 @@ private class TopNOneHotEncoder(name: String,
     "eps" -> eps.toString,
     "delta" -> delta.toString,
     "seed" -> seed.toString,
-    "missingValueOpt" -> missingValueOpt.toString)
+    "missingValueOpt" -> encodeMissingValue.toString)
 
 }

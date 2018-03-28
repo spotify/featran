@@ -31,29 +31,25 @@ import scala.collection.SortedMap
  * Missing values are either transformed to zero vectors or encoded as a missing value.
  *
  * When using aggregated feature summary from a previous session, unseen labels are either
- * transformed to zero vectors or encoded as a missing value (if missingValueOpt is provided) and
+ * transformed to zero vectors or encoded as __unknown__ (if encodeMissingValue is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object OneHotEncoder {
   /**
-    * Create a new [[OneHotEncoder]] instance.
-    */
-  def apply(name: String, missingValueOpt: Option[String] = None):
+   * Create a new [[OneHotEncoder]] instance.
+   */
+  def apply(name: String, encodeMissingValue: Boolean = false):
   Transformer[String, Set[String], SortedMap[String, Int]] =
-    new OneHotEncoder(name, missingValueOpt)
+    new OneHotEncoder(name, encodeMissingValue)
 
-  def apply(name: String, missingValue: String):
-  Transformer[String, Set[String], SortedMap[String, Int]] =
-    new OneHotEncoder(name, Some(missingValue))
-
-  // extra definition for java compatibility
+  /** Extra definition for java compatibility. */
   def apply(name: String):
   Transformer[String, Set[String], SortedMap[String, Int]] =
-    new OneHotEncoder(name, None)
+    new OneHotEncoder(name, false)
 }
 
-private class OneHotEncoder(name: String, missingValueOpt: Option[String] = None)
-  extends BaseHotEncoder[String](name, missingValueOpt) {
+private class OneHotEncoder(name: String, encodeMissingValue: Boolean = false)
+  extends BaseHotEncoder[String](name, encodeMissingValue) {
   override def prepare(a: String): Set[String] = Set(a)
 
   override def buildFeatures(a: Option[String],
@@ -74,27 +70,33 @@ private class OneHotEncoder(name: String, missingValueOpt: Option[String] = None
   }
 }
 
-private abstract class BaseHotEncoder[A](name: String, missingValueOpt: Option[String] = None)
+object MissingValue {
+  val missingValueToken = "__unknown__"
+}
+
+private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean = false)
   extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
+
+  val missingValueToken = MissingValue.missingValueToken
 
   def prepare(a: A): Set[String]
 
   def addMissingItem(c: SortedMap[String, Int],
-                     fb: FeatureBuilder[_]): Unit = missingValueOpt match {
-    case Some(missingValueToken) =>
+                     fb: FeatureBuilder[_]): Unit = encodeMissingValue match {
+    case true =>
       val v = c.get(missingValueToken).get // manually added so will exist
       fb.skip(v)
       fb.add(name + '_' + missingValueToken, 1.0)
       fb.skip(math.max(0, c.size - v - 1))
-    case _ => fb.skip(c.size)
+    case false => fb.skip(c.size)
   }
 
   private def present(reduction: Set[String]): SortedMap[String, Int] = {
     val b = SortedMap.newBuilder[String, Int]
     var i = 0
-    val array = missingValueOpt match {
-      case Some(missingValueToken) => reduction.toArray :+ missingValueToken
-      case None => reduction.toArray
+    val array = encodeMissingValue match {
+      case true => reduction.toArray :+ missingValueToken
+      case _ => reduction.toArray
     }
     java.util.Arrays.sort(array, Ordering[String])
     while (i < array.length) {
