@@ -39,7 +39,7 @@ object NHotWeightedEncoderSpec extends TransformerProp("NHotWeightedEncoder") {
     test[Seq[WeightedLabel]](NHotWeightedEncoder("n_hot"), xs, names, expected, missing, oob)
   }
 
-  property("missingValueOpt") = Prop.forAll { xs: List[List[WeightedLabel]] =>
+  property("encodeMissingValue") = Prop.forAll { xs: List[List[WeightedLabel]] =>
     val missingValueToken = MissingValue.missingValueToken
     val cats = (xs.flatten.map(_.name) :+ missingValueToken).distinct.sorted
     val names = cats.map("n_hot_" + _)
