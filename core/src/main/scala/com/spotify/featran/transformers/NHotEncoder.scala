@@ -28,7 +28,7 @@ import scala.collection.mutable.{Set => MSet}
  * Missing values are either transformed to zero vectors or encoded as a missing value.
  *
  * When using aggregated feature summary from a previous session, unseen labels are either
- * transformed to zero vectors or encoded as __unknown__ (if encodeMissingValue is true) and
+ * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotEncoder {
@@ -38,35 +38,21 @@ object NHotEncoder {
   def apply(name: String, encodeMissingValue: Boolean = false):
   Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     new NHotEncoder(name, encodeMissingValue)
-
-  /** Extra definition for java compatibility. */
-  def apply(name: String):
-  Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
-    new NHotEncoder(name, false)
 }
 
-private class NHotEncoder(name: String, encodeMissingValue: Boolean = false)
+private class NHotEncoder(name: String, encodeMissingValue: Boolean)
   extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
+
+  import MissingValue.missingValueToken
+
   override def prepare(a: Seq[String]): Set[String] = Set(a: _*)
-
-  def getKeys(k: Seq[String], c: SortedMap[String, Int]): Seq[String] = encodeMissingValue match {
-    case true => {
-      // check if an item is unseen
-      k.map(!c.contains(_)).exists(identity) match {
-        case true => (k :+ missingValueToken)
-        case false => k
-      }
-    }
-    case false => k
-  }
-
   override def buildFeatures(a: Option[Seq[String]],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(xs) =>
-      val keys = getKeys(xs.distinct, c).sorted
+      val keys = xs.distinct.sorted
       var prev = -1
-      val totalSeen = MSet[String]()
+      val unseen = MSet[String]()
       keys.foreach { key =>
         c.get(key) match {
           case Some(curr) =>
@@ -74,17 +60,19 @@ private class NHotEncoder(name: String, encodeMissingValue: Boolean = false)
             if (gap > 0) fb.skip(gap)
             fb.add(name + '_' + key, 1.0)
             prev = curr
-            totalSeen += key
           case None =>
+            unseen += key
         }
       }
       val gap = c.size - prev - 1
       if (gap > 0) fb.skip(gap)
-
-      if (totalSeen.size != keys.size) {
-        val unseen = keys.toSet -- totalSeen
-        fb.reject(this, FeatureRejection.Unseen(unseen))
+      if (encodeMissingValue) {
+        if (unseen.isEmpty) fb.skip() else fb.add(name + '_' + missingValueToken, 1.0)
+      }
+      if (unseen.nonEmpty) {
+        fb.reject(this, FeatureRejection.Unseen(unseen.toSet))
       }
     case None => addMissingItem(c, fb)
   }
+
 }

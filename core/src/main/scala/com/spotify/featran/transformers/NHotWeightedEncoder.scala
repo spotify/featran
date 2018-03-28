@@ -37,7 +37,7 @@ case class WeightedLabel(name: String, value: Double)
  * Missing values are either transformed to zero vectors or encoded as a missing value.
  *
  * When using aggregated feature summary from a previous session, unseen labels are either
- * transformed to zero vectors or encoded as __unknown__ (if encodeMissingValue is true) and
+ * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotWeightedEncoder {
@@ -47,52 +47,25 @@ object NHotWeightedEncoder {
   def apply(name: String, encodeMissingValue: Boolean = false)
   : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
     new NHotWeightedEncoder(name, encodeMissingValue)
-
-  /** Extra definition for java compatibility. */
-  def apply(name: String)
-  : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
-    new NHotWeightedEncoder(name, false)
 }
 
-private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean = false)
+private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
   extends BaseHotEncoder[Seq[WeightedLabel]](name, encodeMissingValue) {
+
+  import MissingValue.missingValueToken
+
   override def prepare(a: Seq[WeightedLabel]): Set[String] = Set(a.map(_.name): _*)
-
-  /**
-   * Transform sequence of weighted labels to a map where the key is the label name and the
-   * value is the weight value. If encodeMissingValue is true then check to see if any of
-   * the label names are not in the SortedMap. If this is the case then an additional
-   * element is added to the list where the key is __unknown__ and the value is the
-   * sum over all the weights of the missing labels.
-   */
-  def getWeights(xs: Seq[WeightedLabel], c: SortedMap[String, Int]): MMap[String, Double] = {
-    val weights = MMap.empty[String, Double].withDefaultValue(0.0)
-    xs.foreach(x => weights(x.name) += x.value)
-    encodeMissingValue match {
-      case true => {
-        // check if an item is unseen
-        val missingKeys = weights.keySet.filter(!c.contains(_)).toSet
-        missingKeys.size match {
-          case 0 => weights
-          case _ =>
-            // sum weights of missing items
-            val defaultValue = xs.filter(x => missingKeys.contains(x.name)).map(_.value).sum
-            weights(missingValueToken) += defaultValue
-            weights
-        }
-      }
-      case false => weights
-    }
-  }
-
   override def buildFeatures(a: Option[Seq[WeightedLabel]],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
     case Some(xs) =>
-      val weights = getWeights(xs, c)
+      val weights = MMap.empty[String, Double].withDefaultValue(0.0)
+      xs.foreach(x => weights(x.name) += x.value)
+      var unseenWeight = 0.0
+
       val keys = weights.keySet.toList.sorted
       var prev = -1
-      var totalSeen = MSet[String]()
+      var unseen = MSet[String]()
       keys.foreach { key =>
         c.get(key) match {
           case Some(curr) =>
@@ -100,17 +73,20 @@ private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean = fa
             if (gap > 0) fb.skip(gap)
             fb.add(name + '_' + key, weights(key))
             prev = curr
-            totalSeen += key
           case None =>
+            unseen += key
+            unseenWeight += weights(key)
         }
       }
       val gap = c.size - prev - 1
       if (gap > 0) fb.skip(gap)
-
-      if (totalSeen.size != keys.size) {
-        val unseen = keys.toSet -- totalSeen
-        fb.reject(this, FeatureRejection.Unseen(unseen))
+      if (encodeMissingValue) {
+        if (unseen.isEmpty) fb.skip() else fb.add(name + '_' + missingValueToken, unseenWeight)
+      }
+      if (unseen.nonEmpty) {
+        fb.reject(this, FeatureRejection.Unseen(unseen.toSet))
       }
     case None => addMissingItem(c, fb)
   }
+
 }

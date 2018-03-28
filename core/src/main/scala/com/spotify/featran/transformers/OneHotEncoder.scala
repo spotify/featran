@@ -31,7 +31,7 @@ import scala.collection.SortedMap
  * Missing values are either transformed to zero vectors or encoded as a missing value.
  *
  * When using aggregated feature summary from a previous session, unseen labels are either
- * transformed to zero vectors or encoded as __unknown__ (if encodeMissingValue is true) and
+ * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object OneHotEncoder {
@@ -41,14 +41,9 @@ object OneHotEncoder {
   def apply(name: String, encodeMissingValue: Boolean = false):
   Transformer[String, Set[String], SortedMap[String, Int]] =
     new OneHotEncoder(name, encodeMissingValue)
-
-  /** Extra definition for java compatibility. */
-  def apply(name: String):
-  Transformer[String, Set[String], SortedMap[String, Int]] =
-    new OneHotEncoder(name, false)
 }
 
-private class OneHotEncoder(name: String, encodeMissingValue: Boolean = false)
+private class OneHotEncoder(name: String, encodeMissingValue: Boolean)
   extends BaseHotEncoder[String](name, encodeMissingValue) {
   override def prepare(a: String): Set[String] = Set(a)
 
@@ -61,6 +56,7 @@ private class OneHotEncoder(name: String, encodeMissingValue: Boolean = false)
           fb.skip(v)
           fb.add(name + '_' + k, 1.0)
           fb.skip(math.max(0, c.size - v - 1))
+          if (encodeMissingValue) fb.skip()
         case None =>
           addMissingItem(c, fb)
           fb.reject(this, FeatureRejection.Unseen(Set(k)))
@@ -70,34 +66,28 @@ private class OneHotEncoder(name: String, encodeMissingValue: Boolean = false)
   }
 }
 
-object MissingValue {
-  val missingValueToken = "__unknown__"
+private[featran] object MissingValue {
+  val missingValueToken = "__missing__"
 }
 
-private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean = false)
+private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
   extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
 
-  val missingValueToken = MissingValue.missingValueToken
+  import MissingValue.missingValueToken
 
   def prepare(a: A): Set[String]
 
-  def addMissingItem(c: SortedMap[String, Int],
-                     fb: FeatureBuilder[_]): Unit = encodeMissingValue match {
-    case true =>
-      val v = c.get(missingValueToken).get // manually added so will exist
-      fb.skip(v)
+  def addMissingItem(c: SortedMap[String, Int], fb: FeatureBuilder[_]): Unit = {
+    fb.skip(c.size)
+    if (encodeMissingValue) {
       fb.add(name + '_' + missingValueToken, 1.0)
-      fb.skip(math.max(0, c.size - v - 1))
-    case false => fb.skip(c.size)
+    }
   }
 
   private def present(reduction: Set[String]): SortedMap[String, Int] = {
     val b = SortedMap.newBuilder[String, Int]
     var i = 0
-    val array = encodeMissingValue match {
-      case true => reduction.toArray :+ missingValueToken
-      case _ => reduction.toArray
-    }
+    val array = reduction.toArray
     java.util.Arrays.sort(array, Ordering[String])
     while (i < array.length) {
       b += array(i) -> i
@@ -108,16 +98,14 @@ private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boole
 
   override val aggregator: Aggregator[A, Set[String], SortedMap[String, Int]] =
     Aggregators.from[A](prepare).to(present)
-
   override def featureDimension(c: SortedMap[String, Int]): Int = c.size
-
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
-    c.map(name + '_' + _._1)(scala.collection.breakOut)
+    val names = c.map(name + '_' + _._1)(scala.collection.breakOut)
+    if (encodeMissingValue) names :+ (name + '_' + missingValueToken) else names
   }
 
   override def encodeAggregator(c: SortedMap[String, Int]): String =
     c.map(e => "label:" + URLEncoder.encode(e._1, "UTF-8")).mkString(",")
-
   override def decodeAggregator(s: String): SortedMap[String, Int] = {
     val a = s.split(",").filter(_.nonEmpty)
     var i = 0
@@ -128,5 +116,8 @@ private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boole
     }
     b.result()
   }
+
+  override def params: Map[String, String] = Map(
+    "encodeMissingValue" -> encodeMissingValue.toString)
 
 }
