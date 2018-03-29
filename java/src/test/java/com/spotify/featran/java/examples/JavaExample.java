@@ -55,7 +55,7 @@ public class JavaExample {
     // Start building a feature specification
     JFeatureSpec<Record> fs = JFeatureSpec.<Record>create()
         .required(r -> r.d, MinMaxScaler.apply("min-max", 0.0, 1.0))
-        .optional(r -> r.s, OneHotEncoder.apply("one-hot"));
+        .optional(r -> r.s, OneHotEncoder.apply("one-hot", false));
 
     // Extract features from List<Record>
     JFeatureExtractor<Record> f1 = fs.extract(records);

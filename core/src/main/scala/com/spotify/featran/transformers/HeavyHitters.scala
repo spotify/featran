@@ -42,9 +42,9 @@ object HeavyHitters {
    * @param heavyHittersCount number of heavy hitters to keep track of
    * @param eps one-sided error bound on the error of each point query, i.e. frequency estimate
    * @param delta a bound on the probability that a query estimate does not lie within some small
-   *              interval (an interval that depends on `eps`) around the truth.
+   *              interval (an interval that depends on `eps`) around the truth
    * @param seed a seed to initialize the random number generator used to create the pairwise
-   *             independent hash functions.
+   *             independent hash functions
    */
   def apply(name: String, heavyHittersCount: Int,
             eps: Double = 0.001,

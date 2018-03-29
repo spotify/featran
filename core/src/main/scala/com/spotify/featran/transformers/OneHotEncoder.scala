@@ -28,21 +28,25 @@ import scala.collection.SortedMap
  * Transform a collection of categorical features to binary columns, with at most a single
  * one-value.
  *
- * Missing values are transformed to zero vectors.
+ * Missing values are either transformed to zero vectors or encoded as a missing value.
  *
- * When using aggregated feature summary from a previous session, unseen labels are ignored and
- * [[FeatureRejection.Unseen]] rejections are reported.
+ * When using aggregated feature summary from a previous session, unseen labels are either
+ * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
+ * [FeatureRejection.Unseen]] rejections are reported.
  */
 object OneHotEncoder {
   /**
    * Create a new [[OneHotEncoder]] instance.
    */
-  def apply(name: String): Transformer[String, Set[String], SortedMap[String, Int]] =
-    new OneHotEncoder(name)
+  def apply(name: String, encodeMissingValue: Boolean = false):
+  Transformer[String, Set[String], SortedMap[String, Int]] =
+    new OneHotEncoder(name, encodeMissingValue)
 }
 
-private class OneHotEncoder(name: String) extends BaseHotEncoder[String](name) {
+private class OneHotEncoder(name: String, encodeMissingValue: Boolean)
+  extends BaseHotEncoder[String](name, encodeMissingValue) {
   override def prepare(a: String): Set[String] = Set(a)
+
   override def buildFeatures(a: Option[String],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = {
@@ -52,19 +56,33 @@ private class OneHotEncoder(name: String) extends BaseHotEncoder[String](name) {
           fb.skip(v)
           fb.add(name + '_' + k, 1.0)
           fb.skip(math.max(0, c.size - v - 1))
+          if (encodeMissingValue) fb.skip()
         case None =>
-          fb.skip(c.size)
+          addMissingItem(c, fb)
           fb.reject(this, FeatureRejection.Unseen(Set(k)))
       }
-      case None => fb.skip(c.size)
+      case None => addMissingItem(c, fb)
     }
   }
 }
 
-private abstract class BaseHotEncoder[A](name: String)
+private[featran] object MissingValue {
+  val missingValueToken = "__missing__"
+}
+
+private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
   extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
 
+  import MissingValue.missingValueToken
+
   def prepare(a: A): Set[String]
+
+  def addMissingItem(c: SortedMap[String, Int], fb: FeatureBuilder[_]): Unit = {
+    fb.skip(c.size)
+    if (encodeMissingValue) {
+      fb.add(name + '_' + missingValueToken, 1.0)
+    }
+  }
 
   private def present(reduction: Set[String]): SortedMap[String, Int] = {
     val b = SortedMap.newBuilder[String, Int]
@@ -77,11 +95,13 @@ private abstract class BaseHotEncoder[A](name: String)
     }
     b.result()
   }
+
   override val aggregator: Aggregator[A, Set[String], SortedMap[String, Int]] =
     Aggregators.from[A](prepare).to(present)
   override def featureDimension(c: SortedMap[String, Int]): Int = c.size
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
-    c.map(name + '_' + _._1)(scala.collection.breakOut)
+    val names = c.map(name + '_' + _._1)(scala.collection.breakOut)
+    if (encodeMissingValue) names :+ (name + '_' + missingValueToken) else names
   }
 
   override def encodeAggregator(c: SortedMap[String, Int]): String =
@@ -96,5 +116,8 @@ private abstract class BaseHotEncoder[A](name: String)
     }
     b.result()
   }
+
+  override def params: Map[String, String] = Map(
+    "encodeMissingValue" -> encodeMissingValue.toString)
 
 }
