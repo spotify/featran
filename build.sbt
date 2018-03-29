@@ -191,6 +191,7 @@ lazy val scio: Project = Project(
   commonSettings,
   moduleName := "featran-scio",
   description := "Feature Transformers - Scio",
+  addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
   libraryDependencies ++= Seq(
     "com.spotify" %% "scio-core" % scioVersion % "provided",
     "com.spotify" %% "scio-test" % scioVersion % "test"
