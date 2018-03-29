@@ -22,10 +22,10 @@ import ml.dmlc.xgboost4j.LabeledPoint
 package object xgboost {
 
   /**
-   * [[FeatureBuilder]] for output as XGBoost's [[LabeledPoint]] type.
+   * [[FeatureBuilder]] for output as XGBoost's `LabeledPoint` type.
    *
-   * NOTE: [[LabeledPoint]] stores values as [[Float]]s, so you might loose precision by moving from
-   * [[Double]]s to [[Float]]s.
+   * NOTE: `LabeledPoint` stores values as `Float`s, so you might loose precision by moving from
+   * `Double`s to `Float`s.
    */
   implicit def denseXGBoostLabeledPointFeatureBuilder
   : FeatureBuilder[LabeledPoint] = new FeatureBuilder[LabeledPoint] {
@@ -37,10 +37,10 @@ package object xgboost {
   }
 
   /**
-   * [[FeatureBuilder]] for output as XGBoost's sparse [[LabeledPoint]] type.
+   * [[FeatureBuilder]] for output as XGBoost's sparse `LabeledPoint` type.
    *
-   * NOTE: [[LabeledPoint]] stores values as [[Float]]s, so you might loose precision by moving from
-   * [[Double]]s to [[Float]]s.
+   * NOTE: `LabeledPoint` stores values as `Float`s, so you might loose precision by moving from
+   * `Double`s to `Float`s.
    */
   implicit def sparseXGBoostLabeledPointFeatureBuilder
   : FeatureBuilder[SparseLabeledPoint] = new FeatureBuilder[SparseLabeledPoint] {

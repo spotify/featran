@@ -20,9 +20,9 @@ package com.spotify.featran.xgboost
 import ml.dmlc.xgboost4j.LabeledPoint
 
 /**
- * Class to distinguish sparse [[LabeledPoint]] from its dense type.
+ * Class to distinguish sparse `LabeledPoint` from its dense type.
  *
- * See [[LabeledPoint]] doc for field doc.
+ * See `LabeledPoint` doc for field doc.
  */
 final class SparseLabeledPoint private[xgboost](label: Float,
                                                 indices: Array[Int],
