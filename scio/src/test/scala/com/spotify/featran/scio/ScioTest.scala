@@ -49,13 +49,15 @@ class ScioTest extends PipelineSpec {
 
   // scalastyle:off no.whitespace.before.left.bracket
   it should "fail on serialization error" in {
-    runWithContext { sc =>
-      val foo = new NonSerializable()
-      val f = FeatureSpec.of[(String, Int)]
-        .required(e => foo.method(e._1))(Identity("foo"))
-        .extract(sc.parallelize(testData))
+    an [Exception] should be thrownBy {
+      runWithContext { sc =>
+        val foo = new NonSerializable()
+        val f = FeatureSpec.of[(String, Int)]
+          .required(e => foo.method(e._1))(Identity("foo"))
+          .extract(sc.parallelize(testData))
 
-      an [Exception] should be thrownBy f.featureValues[Seq[Double]]
+        f.featureValues[Seq[Double]]
+      }
     }
   }
   // scalastyle:on no.whitespace.before.left.bracket
