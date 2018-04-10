@@ -83,7 +83,8 @@ private class TopNOneHotEncoder(name: String,
         b.result()
       }
 
-  override def featureDimension(c: SortedMap[String, Int]): Int = c.size
+  override def featureDimension(c: SortedMap[String, Int]): Int =
+    if (encodeMissingValue) c.size + 1 else c.size
 
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
     val names = c.map(name + '_' + _._1)(scala.collection.breakOut)
