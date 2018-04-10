@@ -98,7 +98,8 @@ private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boole
 
   override val aggregator: Aggregator[A, Set[String], SortedMap[String, Int]] =
     Aggregators.from[A](prepare).to(present)
-  override def featureDimension(c: SortedMap[String, Int]): Int = c.size
+  override def featureDimension(c: SortedMap[String, Int]): Int =
+    if (encodeMissingValue) c.size + 1 else c.size
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
     val names = c.map(name + '_' + _._1)(scala.collection.breakOut)
     if (encodeMissingValue) names :+ (name + '_' + missingValueToken) else names
