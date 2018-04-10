@@ -17,8 +17,9 @@
 
 package com.spotify.featran.transformers
 
-import scala.collection.Set
+import breeze.linalg.SparseVector
 
+import scala.collection.Set
 import com.spotify.featran.FeatureSpec
 import org.scalacheck.Prop.BooleanOperators
 import org.scalacheck._
@@ -42,6 +43,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
   private def safeCompare(xs: List[Seq[Double]], ys: List[Seq[Double]]): Boolean =
     xs.map(_.map(d2e)) == ys.map(_.map(d2e))
 
+  // scalastyle:off method.length
   def test[T](t: Transformer[T, _, _],
               input: List[T],
               names: Seq[String],
@@ -75,6 +77,9 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f3 names" |: f3.featureNames == List(names),
       "f4 names" |: f4.featureNames == List(names),
       "f1 values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
+      "f1 sparse values" |: safeCompare(
+        f1.featureValues[SparseVector[Double]].map(_.toDenseVector.data.toSeq),
+        expected),
       "f1 rejections" |: safeCompare(rejections, rejected),
       "f2 values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing),
       "f3 values" |: safeCompare(f3.featureValues[Seq[Double]], expected.take(input.size / 2)),
@@ -92,6 +97,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f3 settings" |: settings == f3.featureSettings,
       "f4 settings" |: settings == f4.featureSettings)
   }
+  // scalastyle:on method.length
 
   def testException[T](t: Transformer[T, _, _], input: List[T])(p: Throwable => Boolean): Prop =
     try {
