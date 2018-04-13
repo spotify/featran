@@ -38,14 +38,16 @@ import scala.collection.JavaConverters._
  * rejections are reported.
  */
 object QuantileDiscretizer {
+
   /**
    * Create a new [[QuantileDiscretizer]] instance.
    * @param numBuckets number of buckets (quantiles, or categories) into which data points are
    *                   grouped, must be greater than or equal to 2
    * @param k precision of the underlying Algebird QTree approximation
    */
-  def apply(name: String, numBuckets: Int = 2, k: Int = QTreeAggregator.DefaultK)
-  : Transformer[Double, B, C] =
+  def apply(name: String,
+            numBuckets: Int = 2,
+            k: Int = QTreeAggregator.DefaultK): Transformer[Double, B, C] =
     new QuantileDiscretizer(name, numBuckets, k)
 
   private type B = (QTree[Double], Min[Double], Max[Double])
@@ -53,30 +55,30 @@ object QuantileDiscretizer {
 }
 
 private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
-  extends Transformer[Double, QuantileDiscretizer.B, QuantileDiscretizer.C](name) {
+    extends Transformer[Double, QuantileDiscretizer.B, QuantileDiscretizer.C](name) {
   require(numBuckets >= 2, "numBuckets must be >= 2")
 
   import QuantileDiscretizer.{B, C}
   implicit val sg = new QTreeSemigroup[Double](k)
 
   override val aggregator: Aggregator[Double, B, C] =
-    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to { case (qt, min, max) =>
-      val m = new JTreeMap[Double, Int]()  // upper bound -> offset
-      val interval = 1.0 / numBuckets
-      for (i <- 1 until numBuckets) {
-        val (l, u) = qt.quantileBounds(interval * i)
-        val k = l / 2 + u / 2 // (l + u) might overflow
-        if (!m.containsKey(k)) { // in case of too few distinct values
-          m.put(k, i - 1)
+    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to {
+      case (qt, min, max) =>
+        val m = new JTreeMap[Double, Int]() // upper bound -> offset
+        val interval = 1.0 / numBuckets
+        for (i <- 1 until numBuckets) {
+          val (l, u) = qt.quantileBounds(interval * i)
+          val k = l / 2 + u / 2 // (l + u) might overflow
+          if (!m.containsKey(k)) { // in case of too few distinct values
+            m.put(k, i - 1)
+          }
         }
-      }
-      m.put(qt.upperBound, numBuckets - 1)
-      (m, min.get, max.get)
+        m.put(qt.upperBound, numBuckets - 1)
+        (m, min.get, max.get)
     }
   override def featureDimension(c: C): Int = numBuckets
   override def featureNames(c: C): Seq[String] = names(numBuckets)
-  override def buildFeatures(a: Option[Double], c: C,
-                             fb: FeatureBuilder[_]): Unit = a match {
+  override def buildFeatures(a: Option[Double], c: C, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
       val (m, min, max) = c
       val e = m.higherEntry(x)

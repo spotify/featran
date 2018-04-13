@@ -30,7 +30,8 @@ object NGramsSpec extends TransformerProp("NHotEncoder") {
     val ngrams = xs.map(transformer.ngrams(_))
     val cats = ngrams.flatten.distinct.sorted
     val names = cats.map("n_gram_" + _)
-    val expected = ngrams.map(s => cats.map(c => if (s.contains(c)) 1.0 else 0.0))
+    val expected =
+      ngrams.map(s => cats.map(c => if (s.contains(c)) 1.0 else 0.0))
     val missing = cats.map(_ => 0.0)
     val oob = List((List("s1", "s2"), missing)) // unseen labels
     test(transformer, xs, names, expected, missing, oob)

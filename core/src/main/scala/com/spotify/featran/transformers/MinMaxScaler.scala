@@ -30,6 +30,7 @@ import com.twitter.algebird.{Aggregator, Max, Min}
  * truncated to `min` or `max` and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
 object MinMaxScaler {
+
   /**
    * Create a new [[MinMaxScaler]] instance.
    * @param min lower bound after transformation, shared by all features
@@ -44,7 +45,7 @@ object MinMaxScaler {
 }
 
 private class MinMaxScaler(name: String, val min: Double, val max: Double)
-  extends OneDimensional[Double, (Min[Double], Max[Double]), MinMaxScaler.C](name) {
+    extends OneDimensional[Double, (Min[Double], Max[Double]), MinMaxScaler.C](name) {
   require(max > min, s"max must be > min")
 
   import MinMaxScaler.C
@@ -72,5 +73,6 @@ private class MinMaxScaler(name: String, val min: Double, val max: Double)
     val t = s.split(",")
     (t(0).toDouble, t(1).toDouble, t(2).toDouble)
   }
-  override def params: Map[String, String] = Map("min" -> min.toString, "max" -> max.toString)
+  override def params: Map[String, String] =
+    Map("min" -> min.toString, "max" -> max.toString)
 }

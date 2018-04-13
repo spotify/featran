@@ -38,23 +38,23 @@ object IQROutlierRejectorSpec extends TransformerProp("IQROutlierRejector") {
     val (l, u) = lowerUpper(xs, 4)
     val rejected = xs.filter(_ => xs.min < xs.max).filter(x => x > u || x < l).map(_ => Seq(0D))
     // records that are not within bounds should always be rejected
-    val oob = List(
-      (lowerBound(xs.min), Seq(0D)),
-      (upperBound(xs.max), Seq(0D)))
+    val oob = List((lowerBound(xs.min), Seq(0D)), (upperBound(xs.max), Seq(0D)))
     val r = IQROutlierRejector("iqr")
     test(r, xs, Seq("iqr"), xs.map(_ => Seq(0D)), Seq(0.0), oob, rejected)
   }
 
   property("rejectLower don't rejectUpper") = Prop.forAll(list[Double].arbitrary) { xs =>
     val (l, _) = lowerUpper(xs, 4)
-    val rejected = xs.filter(_ => xs.min < xs.max).filter(_ < l).map(_ => Seq(0D))
+    val rejected =
+      xs.filter(_ => xs.min < xs.max).filter(_ < l).map(_ => Seq(0D))
     val r = IQROutlierRejector("iqr", rejectLower = true, rejectUpper = false)
     test(r, xs, Seq("iqr"), xs.map(_ => Seq(0D)), Seq(0.0), rejected = rejected)
   }
 
   property("rejectUpper don't rejectLower") = Prop.forAll(list[Double].arbitrary) { xs =>
     val (_, u) = lowerUpper(xs, 4)
-    val rejected = xs.filter(_ => xs.min < xs.max).filter(_ > u).map(_ => Seq(0D))
+    val rejected =
+      xs.filter(_ => xs.min < xs.max).filter(_ > u).map(_ => Seq(0D))
     val r = IQROutlierRejector("iqr", rejectLower = false, rejectUpper = true)
     test(r, xs, Seq("iqr"), xs.map(_ => Seq(0D)), Seq(0.0), rejected = rejected)
   }

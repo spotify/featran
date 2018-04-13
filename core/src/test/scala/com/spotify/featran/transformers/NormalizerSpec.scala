@@ -22,17 +22,16 @@ import org.scalacheck._
 
 object NormalizerSpec extends TransformerProp("Normalizer") {
 
-  property("default") = Prop.forAll(
-    list[Array[Double]].arbitrary,
-    Gen.choose(1.0, 3.0)) { (xs, p) =>
-    val names = (0 until 10).map("norm_" + _)
-    val expected = xs.map { x =>
-      val dv = DenseVector(x)
-      (dv / norm(dv, p)).data.toSeq
-    }
-    val missing = (0 until 10).map(_ => 0.0)
-    val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
-    test(Normalizer("norm", p), xs, names, expected, missing, oob)
+  property("default") = Prop.forAll(list[Array[Double]].arbitrary, Gen.choose(1.0, 3.0)) {
+    (xs, p) =>
+      val names = (0 until 10).map("norm_" + _)
+      val expected = xs.map { x =>
+        val dv = DenseVector(x)
+        (dv / norm(dv, p)).data.toSeq
+      }
+      val missing = (0 until 10).map(_ => 0.0)
+      val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
+      test(Normalizer("norm", p), xs, names, expected, missing, oob)
   }
 
   property("length") = Prop.forAll { xs: List[Array[Double]] =>

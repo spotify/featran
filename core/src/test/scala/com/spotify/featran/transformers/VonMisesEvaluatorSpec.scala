@@ -27,8 +27,8 @@ object VonMisesEvaluatorSpec extends TransformerProp("VonMisesEvaluator") {
   private val scale = 2 * math.Pi / maxPoint
 
   private val muGen = Gen.nonEmptyListOf(Gen.choose(minPoint, maxPoint))
-  private val pointGen  = Gen.choose(3, 10)
-    .flatMap(n => Gen.listOfN(n, Gen.choose(minPoint, maxPoint)))
+  private val pointGen =
+    Gen.choose(3, 10).flatMap(n => Gen.listOfN(n, Gen.choose(minPoint, maxPoint)))
   private val kappaGen = Gen.choose(0.0, 100.0)
 
   property("default") = Prop.forAll(muGen, pointGen, kappaGen) { (xs, points, kappa) =>

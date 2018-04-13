@@ -21,8 +21,8 @@ import org.scalacheck._
 
 object BucketizerSpec extends TransformerProp("Bucketizer") {
 
-  private val splitsGen = Gen.choose(3, 10)
-    .flatMap(n => Gen.listOfN(n, Arbitrary.arbitrary[Double]))
+  private val splitsGen =
+    Gen.choose(3, 10).flatMap(n => Gen.listOfN(n, Arbitrary.arbitrary[Double]))
 
   property("default") = Prop.forAll(list[Double].arbitrary, splitsGen) { (xs, sp) =>
     val splits = sp.toArray.sorted
@@ -42,18 +42,18 @@ object BucketizerSpec extends TransformerProp("Bucketizer") {
     val names = (0 until splits.length - 1).map("bucketizer_" + _)
     val missing = (0 until splits.length - 1).map(_ => 0.0)
     val expected = xs.map { x =>
-      val offset = if (x == upper) splits.length - 2 else splits.indexWhere(x < _) - 1
+      val offset =
+        if (x == upper) splits.length - 2 else splits.indexWhere(x < _) - 1
       if (offset >= 0) {
         (0 until splits.length - 1).map(i => if (i == offset) 1.0 else 0.0)
       } else {
         missing
       }
     }
-    val rejections = xs
-      .zip(expected)
-      .filter(x => x._1 < splits.head || x._1 > splits.last)
-      .map(_._2)
-    val oob = List((lowerBound(splits.min), missing), (upperBound(splits.max), missing))
+    val rejections =
+      xs.zip(expected).filter(x => x._1 < splits.head || x._1 > splits.last).map(_._2)
+    val oob =
+      List((lowerBound(splits.min), missing), (upperBound(splits.max), missing))
     test(Bucketizer("bucketizer", splits), xs, names, expected, missing, oob, rejections)
   }
 

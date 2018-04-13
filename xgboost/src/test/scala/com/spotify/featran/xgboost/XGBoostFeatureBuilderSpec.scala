@@ -26,16 +26,16 @@ import scala.reflect.ClassTag
 object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
 
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
-  Gen.listOfN(100, arb.arbitrary)
+    Gen.listOfN(100, arb.arbitrary)
 
-  private def test[T: ClassTag : Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])
-                                            (toSeq: F => Seq[Float]): Prop = {
+  private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])(
+    toSeq: F => Seq[Float]): Prop = {
     val num = implicitly[Numeric[T]]
     fb.init(xs.size + 4)
     fb.prepare(null)
     xs.zipWithIndex.foreach {
       case (Some(x), i) => fb.add("key" + i.toString, num.toDouble(x))
-      case (None, _) => fb.skip()
+      case (None, _)    => fb.skip()
     }
     fb.add(Iterable("x", "y"), Seq(0.0, 0.0))
     fb.skip(2)

@@ -27,14 +27,16 @@ package object xgboost {
    * NOTE: `LabeledPoint` stores values as `Float`s, so you might loose precision by moving from
    * `Double`s to `Float`s.
    */
-  implicit def denseXGBoostLabeledPointFeatureBuilder
-  : FeatureBuilder[LabeledPoint] = new FeatureBuilder[LabeledPoint] {
-    private val denseArrayFB = implicitly[FeatureBuilder[Array[Float]]]
-    override def init(dimension: Int): Unit = denseArrayFB.init(dimension)
-    override def result: LabeledPoint = LabeledPoint(0.0f, null, denseArrayFB.result)
-    override def add(name: String, value: Double): Unit = denseArrayFB.add(name, value)
-    override def skip(): Unit = denseArrayFB.skip()
-  }
+  implicit def denseXGBoostLabeledPointFeatureBuilder: FeatureBuilder[LabeledPoint] =
+    new FeatureBuilder[LabeledPoint] {
+      private val denseArrayFB = implicitly[FeatureBuilder[Array[Float]]]
+      override def init(dimension: Int): Unit = denseArrayFB.init(dimension)
+      override def result: LabeledPoint =
+        LabeledPoint(0.0f, null, denseArrayFB.result)
+      override def add(name: String, value: Double): Unit =
+        denseArrayFB.add(name, value)
+      override def skip(): Unit = denseArrayFB.skip()
+    }
 
   /**
    * [[FeatureBuilder]] for output as XGBoost's sparse `LabeledPoint` type.
@@ -42,14 +44,15 @@ package object xgboost {
    * NOTE: `LabeledPoint` stores values as `Float`s, so you might loose precision by moving from
    * `Double`s to `Float`s.
    */
-  implicit def sparseXGBoostLabeledPointFeatureBuilder
-  : FeatureBuilder[SparseLabeledPoint] = new FeatureBuilder[SparseLabeledPoint] {
-    private val sparseArrayFB = implicitly[FeatureBuilder[SparseArray[Float]]]
-    override def init(dimension: Int): Unit = sparseArrayFB.init(dimension)
-    override def result: SparseLabeledPoint =
-      new SparseLabeledPoint(0.0f, sparseArrayFB.result.indices, sparseArrayFB.result.values)
-    override def add(name: String, value: Double): Unit = sparseArrayFB.add(name, value)
-    override def skip(): Unit = sparseArrayFB.skip()
-  }
+  implicit def sparseXGBoostLabeledPointFeatureBuilder: FeatureBuilder[SparseLabeledPoint] =
+    new FeatureBuilder[SparseLabeledPoint] {
+      private val sparseArrayFB = implicitly[FeatureBuilder[SparseArray[Float]]]
+      override def init(dimension: Int): Unit = sparseArrayFB.init(dimension)
+      override def result: SparseLabeledPoint =
+        new SparseLabeledPoint(0.0f, sparseArrayFB.result.indices, sparseArrayFB.result.values)
+      override def add(name: String, value: Double): Unit =
+        sparseArrayFB.add(name, value)
+      override def skip(): Unit = sparseArrayFB.skip()
+    }
 
 }

@@ -20,39 +20,39 @@ package com.spotify.featran.transformers
 import com.spotify.featran.FeatureRejection
 import com.twitter.algebird.QTreeAggregator
 
- /**
-  * Reject values if they fall outside of either `factor * IQR` below the first quartile or
-  * `factor * IQR` above the third quartile.
-  *
-  * IQR or inter quartile range is the range between the first and the third quartiles.
-  *
-  * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
-  * of the approximation can be controlled with the `k` parameter.
-  *
-  * All values are transformed to zeros.
-  *
-  * Values `factor * IQR` below the first quartile or `factor * IQR` above the third quartile are
-  * rejected as [[FeatureRejection.Outlier]].
-  *
-  * When using aggregated feature summary from a previous session, values outside of previously
-  * seen `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
-  */
+/**
+ * Reject values if they fall outside of either `factor * IQR` below the first quartile or
+ * `factor * IQR` above the third quartile.
+ *
+ * IQR or inter quartile range is the range between the first and the third quartiles.
+ *
+ * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
+ * of the approximation can be controlled with the `k` parameter.
+ *
+ * All values are transformed to zeros.
+ *
+ * Values `factor * IQR` below the first quartile or `factor * IQR` above the third quartile are
+ * rejected as [[FeatureRejection.Outlier]].
+ *
+ * When using aggregated feature summary from a previous session, values outside of previously
+ * seen `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
+ */
 object IQROutlierRejector {
-   private val DefaultFactor = 1.5
+  private val DefaultFactor = 1.5
 
-   /**
-    * Create a new [[IQROutlierRejector]] instance.
-    *
-    * @param rejectLower whether to reject outliers `factor` * IQR below the first quartile
-    * @param rejectUpper whether to reject outliers `factor` * IQR above the third quartile
-    * @param k           precision of the underlying Algebird QTree approximation
-    */
+  /**
+   * Create a new [[IQROutlierRejector]] instance.
+   *
+   * @param rejectLower whether to reject outliers `factor` * IQR below the first quartile
+   * @param rejectUpper whether to reject outliers `factor` * IQR above the third quartile
+   * @param k           precision of the underlying Algebird QTree approximation
+   */
   def apply(name: String,
             rejectLower: Boolean = true,
             rejectUpper: Boolean = true,
             k: Int = QTreeAggregator.DefaultK,
             factor: Double = DefaultFactor)
-  : Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
+    : Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
     new IQROutlierRejector(name, rejectLower, rejectUpper, k, factor)
 
 }
@@ -62,7 +62,7 @@ private class IQROutlierRejector(name: String,
                                  rejectUpper: Boolean,
                                  k: Int,
                                  val factor: Double)
-  extends QuantileOutlierRejector(name, rejectLower, rejectUpper, 4, k) {
+    extends QuantileOutlierRejector(name, rejectLower, rejectUpper, 4, k) {
 
   override def calculateBounds(fq: Double, lq: Double): (Double, Double) = {
     val iqr = lq - fq

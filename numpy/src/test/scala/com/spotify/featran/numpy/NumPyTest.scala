@@ -53,21 +53,24 @@ class NumPyTest extends FlatSpec with Matchers {
     test(NumPy.write(_, a1d.map(_.toDouble)))("/a1d-double.npy")
 
     // scalastyle:off no.whitespace.before.left.bracket
-    the [IllegalArgumentException] thrownBy {
+    the[IllegalArgumentException] thrownBy {
       test(NumPy.write(_, a1d, Seq(20)))("/a1d-int.npy")
     } should have message "requirement failed: Invalid shape, 20 != 10"
     // scalastyle:on no.whitespace.before.left.bracket
   }
 
   it should "work with 2-dimensional arrays" in {
-    val a2d = (for (i <- 0 until 10; j <- 0 until 5) yield i * 10 + j).toArray
+    val a2d = (for {
+      i <- 0 until 10
+      j <- 0 until 5
+    } yield i * 10 + j).toArray
     test(NumPy.write(_, a2d, Seq(10, 5)))("/a2d-int.npy")
     test(NumPy.write(_, a2d.map(_.toLong), Seq(10, 5)))("/a2d-long.npy")
     test(NumPy.write(_, a2d.map(_.toFloat), Seq(10, 5)))("/a2d-float.npy")
     test(NumPy.write(_, a2d.map(_.toDouble), Seq(10, 5)))("/a2d-double.npy")
 
     // scalastyle:off no.whitespace.before.left.bracket
-    the [IllegalArgumentException] thrownBy {
+    the[IllegalArgumentException] thrownBy {
       test(NumPy.write(_, a2d, Seq(20, 5)))("/a1d-int.npy")
     } should have message "requirement failed: Invalid shape, 20 * 5 != 50"
     // scalastyle:on no.whitespace.before.left.bracket
@@ -81,16 +84,16 @@ class NumPyTest extends FlatSpec with Matchers {
     test(NumPy.write(_, a2d.iterator.map(_.map(_.toDouble)), 10, 5))("/a2d-double.npy")
 
     // scalastyle:off no.whitespace.before.left.bracket
-    the [IllegalArgumentException] thrownBy {
+    the[IllegalArgumentException] thrownBy {
       test(NumPy.write(_, a2d.iterator, 10, 10))("/a2d-int.npy")
     } should have message "requirement failed: Invalid row size, expected: 10, actual: 5"
 
-    the [IllegalArgumentException] thrownBy {
+    the[IllegalArgumentException] thrownBy {
       test(NumPy.write(_, a2d.iterator, 20, 5))("/a2d-int.npy")
     } should have message "requirement failed: Invalid number of rows, expected: 20, actual: 10"
 
     // hit the header.length % 16 == 0 condition
-    the [IllegalArgumentException] thrownBy {
+    the[IllegalArgumentException] thrownBy {
       test(NumPy.write(_, a2d.iterator, 1000000000, 50))("/a2d-int.npy")
     } should have message "requirement failed: Invalid row size, expected: 50, actual: 5"
     // scalastyle:on no.whitespace.before.left.bracket

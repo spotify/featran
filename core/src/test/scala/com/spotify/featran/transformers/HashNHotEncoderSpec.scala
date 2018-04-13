@@ -32,17 +32,15 @@ object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
   }
 
   override implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {
-    Gen
-      .listOfN(10, arb.arbitrary)
-      .suchThat(_.nonEmpty) // workaround for shrinking failure
+    Gen.listOfN(10, arb.arbitrary).suchThat(_.nonEmpty) // workaround for shrinking failure
   }
 
-  property("default") = Prop.forAll{ xs: List[List[String]] =>
+  property("default") = Prop.forAll { xs: List[List[String]] =>
     val size = ceil(estimateSize(xs) * 8.0).toInt
     test(HashNHotEncoder("n_hot"), size, xs)
   }
 
-  property("size") = Prop.forAll{ xs: List[List[String]] =>
+  property("size") = Prop.forAll { xs: List[List[String]] =>
     val size = 100
     test(HashNHotEncoder("n_hot", size), size, xs)
   }
@@ -54,12 +52,13 @@ object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
   }
 
   private def test(encoder: Transformer[List[String], _, _],
-                   size: Int, xs: List[List[String]]): Prop = {
+                   size: Int,
+                   xs: List[List[String]]): Prop = {
     val cats = 0 until size
     val names = cats.map("n_hot_" + _)
     val expected = xs.map { s =>
       val hashes = s.map(HashEncoder.bucket(_, size)).toSet
-      cats.map(c => if(hashes.contains(c)) 1.0 else 0.0)
+      cats.map(c => if (hashes.contains(c)) 1.0 else 0.0)
     }
     val missing = cats.map(_ => 0.0)
     test(encoder, xs, names, expected, missing)

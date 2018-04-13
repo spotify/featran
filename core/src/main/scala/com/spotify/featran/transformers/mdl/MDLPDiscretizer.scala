@@ -22,17 +22,18 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 
 private[transformers] class MDLPDiscretizer[T: ClassTag](
-    data: Seq[(T, Double)],
-    stoppingCriterion: Double = MDLPDiscretizer.DEFAULT_STOPPING_CRITERION,
-    minBinPercentage: Double = MDLPDiscretizer.DEFAULT_MIN_BIN_PERCENTAGE
-  ) extends Serializable {
+  data: Seq[(T, Double)],
+  stoppingCriterion: Double = MDLPDiscretizer.DEFAULT_STOPPING_CRITERION,
+  minBinPercentage: Double = MDLPDiscretizer.DEFAULT_MIN_BIN_PERCENTAGE
+) extends Serializable {
 
   private val labels = {
     val m = mutable.Map.empty[T, Int]
-    data.foreach { case (k, _) =>
-      if (!m.contains(k)) {
-        m(k) = m.size
-      }
+    data.foreach {
+      case (k, _) =>
+        if (!m.contains(k)) {
+          m(k) = m.size
+        }
     }
     m
   }
@@ -54,17 +55,18 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
 
   def discretize(maxBins: Int = MDLPDiscretizer.DEFAULT_MAX_BINS): Seq[Double] = {
     val featureValues = new java.util.TreeMap[Float, Array[Long]]()
-    data.foreach { case (label, value) =>
-      val key = value.toFloat
-      val i = labels(label)
-      val x = featureValues.get(key)
-      if (x == null) {
-        val y = Array.fill(labels.size)(0L)
-        y(i) = 1L
-        featureValues.put(key, y)
-      } else {
-        x(i) += 1L
-      }
+    data.foreach {
+      case (label, value) =>
+        val key = value.toFloat
+        val i = labels(label)
+        val x = featureValues.get(key)
+        if (x == null) {
+          val y = Array.fill(labels.size)(0L)
+          y(i) = 1L
+          featureValues.put(key, y)
+        } else {
+          x(i) += 1L
+        }
     }
 
     val cutPoint = if (!featureValues.isEmpty) {
@@ -72,7 +74,7 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
       var (lastX, lastFreqs) = it.next()
       var result = List.empty[(Float, Array[Long])]
       var accumFreqs = lastFreqs
-      while(it.hasNext) {
+      while (it.hasNext) {
         val (x, freqs) = it.next()
         if (isBoundary(freqs, lastFreqs)) {
           result = (midpoint(x, lastX), accumFreqs) :: result
@@ -88,10 +90,9 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
     }
 
     val minBinWeight: Long = (minBinPercentage * data.length / 100.0).toLong
-    val finder = new ThresholdFinder(labels.size, stoppingCriterion, maxBins, minBinWeight)
-    finder
-      .findThresholds(cutPoint.sortBy(_._1))
-      .map(_.toDouble)
+    val finder =
+      new ThresholdFinder(labels.size, stoppingCriterion, maxBins, minBinWeight)
+    finder.findThresholds(cutPoint.sortBy(_._1)).map(_.toDouble)
   }
 
 }

@@ -30,10 +30,12 @@ import com.twitter.algebird.{Aggregator, Max}
  * truncated to -1.0 or 1.0 and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
 object MaxAbsScaler {
+
   /**
    * Create a new [[MaxAbsScaler]] instance.
    */
-  def apply(name: String): Transformer[Double, Max[Double], Double] = new MaxAbsScaler(name)
+  def apply(name: String): Transformer[Double, Max[Double], Double] =
+    new MaxAbsScaler(name)
 }
 
 private class MaxAbsScaler(name: String) extends OneDimensional[Double, Max[Double], Double](name) {

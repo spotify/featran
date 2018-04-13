@@ -20,21 +20,23 @@ package com.spotify.featran
 import org.tensorflow.{example => tf}
 
 package object tensorflow {
+
   /**
    * [[FeatureBuilder]] for output as TensorFlow `Example` type.
    */
-  implicit def tensorFlowFeatureBuilder
-  : FeatureBuilder[tf.Example] = new FeatureBuilder[tf.Example] {
-    @transient private lazy val fb = tf.Features.newBuilder()
-    override def init(dimension: Int): Unit = fb.clear()
-    override def add(name: String, value: Double): Unit =
-      fb.putFeature(
-        name,
-        tf.Feature.newBuilder()
-          .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
-          .build())
-    override def skip(): Unit = Unit
-    override def skip(n: Int): Unit = Unit
-    override def result: tf.Example = tf.Example.newBuilder().setFeatures(fb).build()
-  }
+  implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] =
+    new FeatureBuilder[tf.Example] {
+      @transient private lazy val fb = tf.Features.newBuilder()
+      override def init(dimension: Int): Unit = fb.clear()
+      override def add(name: String, value: Double): Unit =
+        fb.putFeature(name,
+                      tf.Feature
+                        .newBuilder()
+                        .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
+                        .build())
+      override def skip(): Unit = Unit
+      override def skip(n: Int): Unit = Unit
+      override def result: tf.Example =
+        tf.Example.newBuilder().setFeatures(fb).build()
+    }
 }

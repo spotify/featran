@@ -26,11 +26,10 @@ import org.scalacheck._
 
 abstract class TransformerProp(name: String) extends Properties(name) {
 
-  implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {
-    Gen
-      .listOfN(100, arb.arbitrary)
-      .suchThat(_.nonEmpty) // workaround for shrinking failure
-  }
+  implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] =
+    Arbitrary {
+      Gen.listOfN(100, arb.arbitrary).suchThat(_.nonEmpty) // workaround for shrinking failure
+    }
 
   implicit val vectorGen: Arbitrary[Array[Double]] = Arbitrary {
     Gen.buildableOfN[Array[Double], Double](10, Arbitrary.arbitrary[Double])
@@ -38,7 +37,8 @@ abstract class TransformerProp(name: String) extends Properties(name) {
 
   // Double.NaN != Double.NaN
   // Also map to float to workaround precision error
-  private def d2e(x: Double): Either[Int, Float] = if (x.isNaN) Left(0) else Right(x.toFloat)
+  private def d2e(x: Double): Either[Int, Float] =
+    if (x.isNaN) Left(0) else Right(x.toFloat)
 
   private def safeCompare(xs: List[Seq[Double]], ys: List[Seq[Double]]): Boolean =
     xs.map(_.map(d2e)) == ys.map(_.map(d2e))
@@ -57,7 +57,8 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     // all values present
     val f1 = fsRequired.extract(input)
     // all rejected
-    val rejections = f1.featureResults[Seq[Double]]
+    val rejections = f1
+      .featureResults[Seq[Double]]
       .flatMap(r => if (r.rejections.keySet == Set(t.name)) Some(r.value) else None)
     // add one missing value
     val f2 = fsOptional.extract(input.map(Some(_)) :+ None)
@@ -65,9 +66,11 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     // extract with settings from a previous session
     val settings = f1.featureSettings
     // first half of the values
-    val f3 = fsRequired.extractWithSettings(input.take(input.size / 2), settings)
+    val f3 =
+      fsRequired.extractWithSettings(input.take(input.size / 2), settings)
     // all values plus optional elements out of bound of the previous session
-    val f4 = fsRequired.extractWithSettings(outOfBoundsElems.map(_._1), settings)
+    val f4 =
+      fsRequired.extractWithSettings(outOfBoundsElems.map(_._1), settings)
     val f4results = f4.featureResults[Seq[Double]]
     val c = f1.featureValues[Seq[Double]]
 
@@ -89,13 +92,15 @@ abstract class TransformerProp(name: String) extends Properties(name) {
         val fMap = f1.featureValues[Map[String, Double]]
         val eMap = expected.map(v => (names zip v).toMap)
         // expected map is a superset of feature map
-        (fMap zip eMap).forall { case (f, e) =>
-          f.forall { case (k, v) => e.get(k).map(d2e).contains(d2e(v)) }
+        (fMap zip eMap).forall {
+          case (f, e) =>
+            f.forall { case (k, v) => e.get(k).map(d2e).contains(d2e(v)) }
         }
       },
       "f2 settings" |: settings == f2.featureSettings,
       "f3 settings" |: settings == f3.featureSettings,
-      "f4 settings" |: settings == f4.featureSettings)
+      "f4 settings" |: settings == f4.featureSettings
+    )
   }
   // scalastyle:on method.length
 

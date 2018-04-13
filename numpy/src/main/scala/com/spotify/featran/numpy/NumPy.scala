@@ -22,7 +22,7 @@ import java.io.OutputStream
 /**
  * Type class for NumPy numeric types.
  */
-trait NumPyType[@specialized (Int, Long, Float, Double) T] {
+trait NumPyType[@specialized(Int, Long, Float, Double) T] {
   val descr: String
   val sizeOf: Int
   def write(out: OutputStream, value: T)
@@ -52,31 +52,36 @@ object NumPyType {
     }
 
     def writeFloat(v: Float): Unit = writeInt(java.lang.Float.floatToIntBits(v))
-    def writeDouble(v: Double): Unit = writeLong(java.lang.Double.doubleToLongBits(v))
+    def writeDouble(v: Double): Unit =
+      writeLong(java.lang.Double.doubleToLongBits(v))
   }
 
   implicit val intNumPyType = new NumPyType[Int] {
     override val descr: String = "<i4"
     override val sizeOf: Int = 4
-    override def write(out: OutputStream, value: Int): Unit = out.writeInt(value)
+    override def write(out: OutputStream, value: Int): Unit =
+      out.writeInt(value)
   }
 
   implicit val longNumPyType = new NumPyType[Long] {
     override val descr: String = "<i8"
     override val sizeOf: Int = 8
-    override def write(out: OutputStream, value: Long): Unit = out.writeLong(value)
+    override def write(out: OutputStream, value: Long): Unit =
+      out.writeLong(value)
   }
 
   implicit val floatNumPyType = new NumPyType[Float] {
     override val descr: String = "<f4"
     override val sizeOf: Int = 4
-    override def write(out: OutputStream, value: Float): Unit = out.writeFloat(value)
+    override def write(out: OutputStream, value: Float): Unit =
+      out.writeFloat(value)
   }
 
   implicit val doubleNumPyType = new NumPyType[Double] {
     override val descr: String = "<f8"
     override val sizeOf: Int = 8
-    override def write(out: OutputStream, value: Double): Unit = out.writeDouble(value)
+    override def write(out: OutputStream, value: Double): Unit =
+      out.writeDouble(value)
   }
 
 }
@@ -90,7 +95,8 @@ object NumPy {
     // https://docs.scipy.org/doc/numpy/neps/npy-format.html
     val dims = dimensions.mkString(", ")
     val shape = if (dimensions.length > 1) s"($dims)" else s"($dims,)"
-    val h = s"{'descr': '${nt.descr}', 'fortran_order': False, 'shape': $shape, }"
+    val h =
+      s"{'descr': '${nt.descr}', 'fortran_order': False, 'shape': $shape, }"
     // 11 bytes: magic "0x93NUMPY", major version, minor version, (short) HEADER_LEN, '\n'
     val l = h.length + 11
     // pad magic string + 4 + HEADER_LEN to be evenly divisible by 16
@@ -127,16 +133,17 @@ object NumPy {
   /**
    * Write an array as a NumPy `.npy` file to an output stream. Default shape is `(data.length)`.
    */
-  def write[@specialized (Int, Long, Float, Double) T: NumPyType]
-  (out: OutputStream, data: Array[T], shape: Seq[Int] = Seq.empty): Unit = {
+  def write[@specialized(Int, Long, Float, Double) T: NumPyType](
+    out: OutputStream,
+    data: Array[T],
+    shape: Seq[Int] = Seq.empty): Unit = {
     val nt = implicitly[NumPyType[T]]
 
     val dims = if (shape.isEmpty) {
       Seq(data.length)
     } else {
-      require(
-        data.length == shape.product,
-        s"Invalid shape, ${shape.mkString(" * ")} != ${data.length}")
+      require(data.length == shape.product,
+              s"Invalid shape, ${shape.mkString(" * ")} != ${data.length}")
       shape
     }
     writeHeader(out, dims, nt)
@@ -148,8 +155,10 @@ object NumPy {
    * Write an iterator of arrays as a 2-dimensional NumPy `.npy` file to an output stream. Each
    * array should have length `numCols` and the iterator should have `numRows` elements.
    */
-  def write[@specialized (Int, Long, Float, Double) T: NumPyType]
-  (out: OutputStream, data: Iterator[Array[T]], numRows: Int, numCols: Int): Unit = {
+  def write[@specialized(Int, Long, Float, Double) T: NumPyType](out: OutputStream,
+                                                                 data: Iterator[Array[T]],
+                                                                 numRows: Int,
+                                                                 numCols: Int): Unit = {
     val nt = implicitly[NumPyType[T]]
 
     val dims = Seq(numRows, numCols)

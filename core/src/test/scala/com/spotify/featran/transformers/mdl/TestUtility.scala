@@ -32,23 +32,21 @@ case class CarRecord(mpg: Double,
                      origin: String)
 
 object TestUtility {
-  implicit val doubleEquality: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(0.01)
+  implicit val doubleEquality: Equality[Double] =
+    TolerantNumerics.tolerantDoubleEquality(0.01)
 
   lazy val cars: List[CarRecord] =
-    Source.fromInputStream(this.getClass.getResourceAsStream("/cars.data"))
-      .getLines
-      .toList
-      .map { line =>
+    Source.fromInputStream(this.getClass.getResourceAsStream("/cars.data")).getLines.toList.map {
+      line =>
         val x = line.split(",").map(elem => elem.trim)
-        CarRecord(
-          x(0).toDouble,
-          x(1).toInt,
-          x(2).toInt,
-          x(3).toDouble,
-          x(4).toDouble,
-          x(5).toDouble,
-          x(6).toInt,
-          x(7),
-          x(8))
-      }
+        CarRecord(x(0).toDouble,
+                  x(1).toInt,
+                  x(2).toInt,
+                  x(3).toDouble,
+                  x(4).toDouble,
+                  x(5).toDouble,
+                  x(6).toInt,
+                  x(7),
+                  x(8))
+    }
 }

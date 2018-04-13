@@ -41,20 +41,22 @@ case class WeightedLabel(name: String, value: Double)
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotWeightedEncoder {
+
   /**
    * Create a new [[NHotWeightedEncoder]] instance.
    */
   def apply(name: String, encodeMissingValue: Boolean = false)
-  : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
+    : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
     new NHotWeightedEncoder(name, encodeMissingValue)
 }
 
 private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
-  extends BaseHotEncoder[Seq[WeightedLabel]](name, encodeMissingValue) {
+    extends BaseHotEncoder[Seq[WeightedLabel]](name, encodeMissingValue) {
 
   import MissingValue.missingValueToken
 
-  override def prepare(a: Seq[WeightedLabel]): Set[String] = Set(a.map(_.name): _*)
+  override def prepare(a: Seq[WeightedLabel]): Set[String] =
+    Set(a.map(_.name): _*)
   override def buildFeatures(a: Option[Seq[WeightedLabel]],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
@@ -81,7 +83,11 @@ private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
       val gap = c.size - prev - 1
       if (gap > 0) fb.skip(gap)
       if (encodeMissingValue) {
-        if (unseen.isEmpty) fb.skip() else fb.add(name + '_' + missingValueToken, unseenWeight)
+        if (unseen.isEmpty) {
+          fb.skip()
+        } else {
+          fb.add(name + '_' + missingValueToken, unseenWeight)
+        }
       }
       if (unseen.nonEmpty) {
         fb.reject(this, FeatureRejection.Unseen(unseen.toSet))

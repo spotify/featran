@@ -20,7 +20,7 @@ package com.spotify.featran
 /**
  * Type class for floating point primitives.
  */
-trait FloatingPoint[@specialized (Float, Double) T] extends Serializable {
+trait FloatingPoint[@specialized(Float, Double) T] extends Serializable {
   def fromDouble(x: Double): T
 }
 

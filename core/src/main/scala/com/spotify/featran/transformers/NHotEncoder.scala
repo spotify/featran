@@ -32,16 +32,17 @@ import scala.collection.mutable.{Set => MSet}
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotEncoder {
+
   /**
    * Create a new [[NHotEncoder]] instance.
    */
-  def apply(name: String, encodeMissingValue: Boolean = false):
-  Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
+  def apply(name: String, encodeMissingValue: Boolean = false)
+    : Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     new NHotEncoder(name, encodeMissingValue)
 }
 
 private class NHotEncoder(name: String, encodeMissingValue: Boolean)
-  extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
+    extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
 
   import MissingValue.missingValueToken
 
@@ -67,7 +68,11 @@ private class NHotEncoder(name: String, encodeMissingValue: Boolean)
       val gap = c.size - prev - 1
       if (gap > 0) fb.skip(gap)
       if (encodeMissingValue) {
-        if (unseen.isEmpty) fb.skip() else fb.add(name + '_' + missingValueToken, 1.0)
+        if (unseen.isEmpty) {
+          fb.skip()
+        } else {
+          fb.add(name + '_' + missingValueToken, 1.0)
+        }
       }
       if (unseen.nonEmpty) {
         fb.reject(this, FeatureRejection.Unseen(unseen.toSet))

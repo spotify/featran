@@ -25,9 +25,8 @@ import com.twitter.chill._
 
 @KryoRegistrar
 class FeatranKryoRegistrar extends IKryoRegistrar {
-  override def apply(k: Kryo): Unit = {
+  override def apply(k: Kryo): Unit =
     k.forClass(new QTreeSerializer)
-  }
 }
 
 private class QTreeSerializer extends Serializer[QTree[Any]] {

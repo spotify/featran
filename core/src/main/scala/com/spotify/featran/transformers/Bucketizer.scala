@@ -42,6 +42,7 @@ import com.twitter.algebird.Aggregator
  * Missing values are transformed to zero vectors.
  */
 object Bucketizer {
+
   /**
    * Create a new [[Bucketizer]] instance.
    * @param splits parameter for mapping continuous features into buckets
@@ -51,7 +52,7 @@ object Bucketizer {
 }
 
 private class Bucketizer(name: String, val splits: Array[Double])
-  extends Transformer[Double, Unit, Unit](name) {
+    extends Transformer[Double, Unit, Unit](name) {
   require(splits.length >= 3, "splits.length must be >= 3")
   private val lower = splits.head
   private val upper = splits.last
@@ -65,7 +66,8 @@ private class Bucketizer(name: String, val splits: Array[Double])
     }
     m
   }
-  override val aggregator: Aggregator[Double, Unit, Unit] = Aggregators.unit[Double]
+  override val aggregator: Aggregator[Double, Unit, Unit] =
+    Aggregators.unit[Double]
   override def featureDimension(c: Unit): Int = splits.length - 1
   override def featureNames(c: Unit): Seq[String] = names(splits.length - 1)
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
@@ -85,5 +87,6 @@ private class Bucketizer(name: String, val splits: Array[Double])
 
   override def encodeAggregator(c: Unit): String = ""
   override def decodeAggregator(s: String): Unit = ()
-  override def params: Map[String, String] = Map("splits" -> splits.mkString("[", ",", "]"))
+  override def params: Map[String, String] =
+    Map("splits" -> splits.mkString("[", ",", "]"))
 }

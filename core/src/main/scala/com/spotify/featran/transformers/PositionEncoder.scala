@@ -32,6 +32,7 @@ import scala.collection.SortedMap
  * [[FeatureRejection.Unseen]] rejections are reported.
  */
 object PositionEncoder {
+
   /**
    * Create a new [[PositionEncoder]] instance.
    */
@@ -47,12 +48,13 @@ private class PositionEncoder(name: String) extends BaseHotEncoder[String](name,
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = {
     a match {
-      case Some(k) => c.get(k) match {
-        case Some(v) => fb.add(name, v.toDouble)
-        case None =>
-          fb.skip(1)
-          fb.reject(this, FeatureRejection.Unseen(Set(k)))
-      }
+      case Some(k) =>
+        c.get(k) match {
+          case Some(v) => fb.add(name, v.toDouble)
+          case None =>
+            fb.skip(1)
+            fb.reject(this, FeatureRejection.Unseen(Set(k)))
+        }
       case None =>
         fb.skip(1)
         fb.reject(this, FeatureRejection.Collision)

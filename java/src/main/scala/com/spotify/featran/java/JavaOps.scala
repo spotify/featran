@@ -33,7 +33,8 @@ import scala.reflect.ClassTag
 
 private object JavaOps {
 
-  def requiredFn[I, O](f: SerializableFunction[I, O]): I => O = (input: I) => f(input)
+  def requiredFn[I, O](f: SerializableFunction[I, O]): I => O =
+    (input: I) => f(input)
 
   def optionalFn[I, O](f: SerializableFunction[I, Optional[O]]): I => Option[O] =
     (input: I) => {
@@ -45,7 +46,8 @@ private object JavaOps {
     (a, b) => f(a, b)
 
   implicit val jListCollectionType = new CollectionType[JList] {
-    override def map[A, B: ClassTag](ma: JList[A], f: A => B) = ma.asScala.map(f).asJava
+    override def map[A, B: ClassTag](ma: JList[A], f: A => B) =
+      ma.asScala.map(f).asJava
     override def reduce[A](ma: JList[A], f: (A, A) => A) =
       Collections.singletonList(ma.asScala.reduce(f))
     override def cross[A, B: ClassTag](ma: JList[A], mb: JList[B]) =
@@ -59,51 +61,64 @@ private object JavaOps {
   def extract[T](fs: FeatureSpec[T], input: JList[T]): FeatureExtractor[JList, T] =
     fs.extract(input)
 
-  def extractWithSettings[T](fs: FeatureSpec[T], input: JList[T], settings: String)
-  : FeatureExtractor[JList, T] =
+  def extractWithSettings[T](fs: FeatureSpec[T],
+                             input: JList[T],
+                             settings: String): FeatureExtractor[JList, T] =
     fs.extractWithSettings(input, Collections.singletonList(settings))
 
-  def extractWithSettingsFloat[T](fs: FeatureSpec[T], settings: String)
-  : RecordExtractor[T, Array[Float]] = fs.extractWithSettings(settings)
-  def extractWithSettingsDouble[T](fs: FeatureSpec[T], settings: String)
-  : RecordExtractor[T, Array[Double]] = fs.extractWithSettings(settings)
+  def extractWithSettingsFloat[T](fs: FeatureSpec[T],
+                                  settings: String): RecordExtractor[T, Array[Float]] =
+    fs.extractWithSettings(settings)
+  def extractWithSettingsDouble[T](fs: FeatureSpec[T],
+                                   settings: String): RecordExtractor[T, Array[Double]] =
+    fs.extractWithSettings(settings)
 
-  def extractWithSettingsFloatSparseArray[T](fs: FeatureSpec[T], settings: String)
-  : RecordExtractor[T, FloatSparseArray] = fs.extractWithSettings(settings)
-  def extractWithSettingsDoubleSparseArray[T](fs: FeatureSpec[T], settings: String)
-  : RecordExtractor[T, DoubleSparseArray] = fs.extractWithSettings(settings)
+  def extractWithSettingsFloatSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatSparseArray] =
+    fs.extractWithSettings(settings)
+  def extractWithSettingsDoubleSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, DoubleSparseArray] =
+    fs.extractWithSettings(settings)
 
-  def extractWithSettingsExample[T](fs: FeatureSpec[T], settings: String)
-  : RecordExtractor[T, Example] = fs.extractWithSettings(settings)
+  def extractWithSettingsExample[T](fs: FeatureSpec[T],
+                                    settings: String): RecordExtractor[T, Example] =
+    fs.extractWithSettings(settings)
 
-  def extractWithSettingsLabeledPoint[T](fs: FeatureSpec[T], settings: String)
-  : RecordExtractor[T, LabeledPoint] = fs.extractWithSettings(settings)
+  def extractWithSettingsLabeledPoint[T](fs: FeatureSpec[T],
+                                         settings: String): RecordExtractor[T, LabeledPoint] =
+    fs.extractWithSettings(settings)
 
-  def extractWithSettingsSparseLabeledPoint[T](fs: FeatureSpec[T], settings: String)
-  : RecordExtractor[T, SparseLabeledPoint] = fs.extractWithSettings(settings)
+  def extractWithSettingsSparseLabeledPoint[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, SparseLabeledPoint] =
+    fs.extractWithSettings(settings)
 
   //================================================================================
   // Wrappers for FeatureExtractor
   //================================================================================
 
-  def featureSettings[T](fe: FeatureExtractor[JList, T]): String = fe.featureSettings.get(0)
-  def featureNames[T](fe: FeatureExtractor[JList, T]): JList[String] = fe.featureNames.get(0).asJava
+  def featureSettings[T](fe: FeatureExtractor[JList, T]): String =
+    fe.featureSettings.get(0)
+  def featureNames[T](fe: FeatureExtractor[JList, T]): JList[String] =
+    fe.featureNames.get(0).asJava
   def featureValuesFloat[T](fe: FeatureExtractor[JList, T]): JList[Array[Float]] =
     fe.featureValues[Array[Float]]
   def featureValuesDouble[T](fe: FeatureExtractor[JList, T]): JList[Array[Double]] =
     fe.featureValues[Array[Double]]
 
   implicit def floatSparseArrayFB: FeatureBuilder[FloatSparseArray] =
-    implicitly[FeatureBuilder[SparseArray[Float]]]
-      .map(a => new FloatSparseArray(a.indices, a.values, a.length))
+    implicitly[FeatureBuilder[SparseArray[Float]]].map(a =>
+      new FloatSparseArray(a.indices, a.values, a.length))
   implicit def doubleSparseArrayFB: FeatureBuilder[DoubleSparseArray] =
-    implicitly[FeatureBuilder[SparseArray[Double]]]
-      .map(a => new DoubleSparseArray(a.indices, a.values, a.length))
+    implicitly[FeatureBuilder[SparseArray[Double]]].map(a =>
+      new DoubleSparseArray(a.indices, a.values, a.length))
 
-  def featureValuesFloatSparseArray[T](fe: FeatureExtractor[JList, T])
-  : JList[FloatSparseArray] = fe.featureValues[FloatSparseArray]
-  def featureValuesDoubleSparseArray[T](fe: FeatureExtractor[JList, T])
-  : JList[DoubleSparseArray] = fe.featureValues[DoubleSparseArray]
+  def featureValuesFloatSparseArray[T](fe: FeatureExtractor[JList, T]): JList[FloatSparseArray] =
+    fe.featureValues[FloatSparseArray]
+  def featureValuesDoubleSparseArray[T](fe: FeatureExtractor[JList, T]): JList[DoubleSparseArray] =
+    fe.featureValues[DoubleSparseArray]
 
   def featureValuesExample[T](fe: FeatureExtractor[JList, T]): JList[Example] =
     fe.featureValues[Example]
@@ -111,14 +126,16 @@ private object JavaOps {
   def featureValuesLabeledPoint[T](fe: FeatureExtractor[JList, T]): JList[LabeledPoint] =
     fe.featureValues[LabeledPoint]
 
-  def featureValuesSparseLabeledPoint[T](fe: FeatureExtractor[JList, T])
-  : JList[SparseLabeledPoint] = fe.featureValues[SparseLabeledPoint]
+  def featureValuesSparseLabeledPoint[T](
+    fe: FeatureExtractor[JList, T]): JList[SparseLabeledPoint] =
+    fe.featureValues[SparseLabeledPoint]
 
   //================================================================================
   // Wrappers for RecordExtractor
   //================================================================================
 
-  def featureNames[F, T](fe: RecordExtractor[T, F]): JList[String] = fe.featureNames.asJava
+  def featureNames[F, T](fe: RecordExtractor[T, F]): JList[String] =
+    fe.featureNames.asJava
 
 }
 
@@ -126,7 +143,7 @@ private object JavaOps {
 class FloatSparseArray private[java] (indices: Array[Int],
                                       override val values: Array[Float],
                                       length: Int)
-  extends SparseArray[Float](indices, values, length) {
+    extends SparseArray[Float](indices, values, length) {
   def toDense: Array[Float] = super.toDense
 }
 
@@ -134,6 +151,6 @@ class FloatSparseArray private[java] (indices: Array[Int],
 class DoubleSparseArray private[java] (indices: Array[Int],
                                        override val values: Array[Double],
                                        length: Int)
-  extends SparseArray[Double](indices, values, length) {
+    extends SparseArray[Double](indices, values, length) {
   def toDense: Array[Double] = super.toDense
 }

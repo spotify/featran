@@ -33,19 +33,21 @@ import scala.language.higherKinds
  * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
 object VectorIdentity {
+
   /**
    * Create a new [[VectorIdentity]] instance.
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
-  def apply[M[_]](name: String, expectedLength: Int = 0)
-                 (implicit ev: M[Double] => Seq[Double]): Transformer[M[Double], Int, Int] =
+  def apply[M[_]](name: String, expectedLength: Int = 0)(
+    implicit ev: M[Double] => Seq[Double]): Transformer[M[Double], Int, Int] =
     new VectorIdentity(name, expectedLength)(ev)
 }
 
-private class VectorIdentity[M[_]](name: String, val expectedLength: Int)
-                                  (implicit ev: M[Double] => Seq[Double])
-  extends Transformer[M[Double], Int, Int](name) {
-  override val aggregator: Aggregator[M[Double], Int, Int] = Aggregators.seqLength(expectedLength)
+private class VectorIdentity[M[_]](name: String, val expectedLength: Int)(
+  implicit ev: M[Double] => Seq[Double])
+    extends Transformer[M[Double], Int, Int](name) {
+  override val aggregator: Aggregator[M[Double], Int, Int] =
+    Aggregators.seqLength(expectedLength)
   override def featureDimension(c: Int): Int = c
   override def featureNames(c: Int): Seq[String] = names(c)
   override def buildFeatures(a: Option[M[Double]], c: Int, fb: FeatureBuilder[_]): Unit = a match {
@@ -61,5 +63,6 @@ private class VectorIdentity[M[_]](name: String, val expectedLength: Int)
 
   override def encodeAggregator(c: Int): String = c.toString
   override def decodeAggregator(s: String): Int = s.toInt
-  override def params: Map[String, String] = Map("expectedLength" -> expectedLength.toString)
+  override def params: Map[String, String] =
+    Map("expectedLength" -> expectedLength.toString)
 }

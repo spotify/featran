@@ -23,6 +23,7 @@ package com.spotify.featran.transformers
  * Missing values are transformed to 0.0.
  */
 object Identity {
+
   /**
    * Create a new [[Identity]] instance.
    */

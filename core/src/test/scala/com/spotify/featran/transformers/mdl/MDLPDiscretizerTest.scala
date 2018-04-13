@@ -26,7 +26,8 @@ class MDLPDiscretizerTest extends FlatSpec with Matchers {
   "MDLPDiscretizer" should "work with cars data (maxBins = 10)" in {
     val data = cars.map(v => (v.origin, v.mpg))
     val result = new MDLPDiscretizer(data).discretize(10).sorted
-    val expected = List(Double.NegativeInfinity, 16.1, 21.05, 30.95, Double.PositiveInfinity)
+    val expected =
+      List(Double.NegativeInfinity, 16.1, 21.05, 30.95, Double.PositiveInfinity)
     result.length shouldBe expected.length
     result.zip(expected).map { case (r, e) => r shouldEqual e }
   }
