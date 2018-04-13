@@ -28,6 +28,7 @@ import com.twitter.algebird.{Aggregator, Moments}
  * Missing values are transformed to 0.0 if `withMean` is true or population mean otherwise.
  */
 object StandardScaler {
+
   /**
    * Create a new [[StandardScaler]] instance.
    * @param withStd whether to scale the data to unit standard deviation
@@ -40,22 +41,23 @@ object StandardScaler {
 }
 
 private class StandardScaler(name: String, val withStd: Boolean, val withMean: Boolean)
-  extends OneDimensional[Double, Moments, (Double, Double)](name) {
+    extends OneDimensional[Double, Moments, (Double, Double)](name) {
   override val aggregator: Aggregator[Double, Moments, (Double, Double)] =
     Aggregators.from[Double](Moments(_)).to(r => (r.mean, r.stddev))
-  override def buildFeatures(a: Option[Double], c: (Double, Double),
-                             fb: FeatureBuilder[_]): Unit = a match {
-    case Some(x) =>
-      val r = (withStd, withMean) match {
-        case (true, true) => (x - c._1) / c._2
-        case (true, false) => (x - c._1) / c._2 + c._1
-        case (false, true) => x - c._1
-        case (false, false) => x
-      }
-      fb.add(name, r)
-    case None => fb.add(name, if (withMean) 0.0 else c._1)
-  }
-  override def encodeAggregator(c: (Double, Double)): String = s"${c._1},${c._2}"
+  override def buildFeatures(a: Option[Double], c: (Double, Double), fb: FeatureBuilder[_]): Unit =
+    a match {
+      case Some(x) =>
+        val r = (withStd, withMean) match {
+          case (true, true)   => (x - c._1) / c._2
+          case (true, false)  => (x - c._1) / c._2 + c._1
+          case (false, true)  => x - c._1
+          case (false, false) => x
+        }
+        fb.add(name, r)
+      case None => fb.add(name, if (withMean) 0.0 else c._1)
+    }
+  override def encodeAggregator(c: (Double, Double)): String =
+    s"${c._1},${c._2}"
   override def decodeAggregator(s: String): (Double, Double) = {
     val t = s.split(",")
     (t(0).toDouble, t(1).toDouble)

@@ -26,6 +26,7 @@ package com.spotify.featran.transformers
  * Missing values are binarized to 0.0.
  */
 object Binarizer {
+
   /**
    * Create a new [[Binarizer]] instance.
    * @param threshold threshold to binarize continuous features
@@ -36,5 +37,6 @@ object Binarizer {
 
 private class Binarizer(name: String, val threshold: Double) extends MapOne[Double](name) {
   override def map(a: Double): Double = if (a > threshold) 1.0 else 0.0
-  override def params: Map[String, String] = Map("threshold" -> threshold.toString)
+  override def params: Map[String, String] =
+    Map("threshold" -> threshold.toString)
 }

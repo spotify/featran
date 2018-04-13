@@ -53,6 +53,7 @@ import scala.collection.SortedSet
  * }}}
  */
 object HashNHotEncoder {
+
   /**
    * Create a new [[HashNHotEncoder]] instance.
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
@@ -65,20 +66,20 @@ object HashNHotEncoder {
 }
 
 private class HashNHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
-  extends BaseHashHotEncoder[Seq[String]](name, hashBucketSize, sizeScalingFactor) {
-  override def prepare(a: Seq[String]): HLL = a.map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)
+    extends BaseHashHotEncoder[Seq[String]](name, hashBucketSize, sizeScalingFactor) {
+  override def prepare(a: Seq[String]): HLL =
+    a.map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)
 
   override def buildFeatures(a: Option[Seq[String]], c: Int, fb: FeatureBuilder[_]): Unit = {
     a match {
       case Some(xs) =>
         var prev = -1
-        SortedSet(xs.map(HashEncoder.bucket(_, c)): _*)
-          .foreach { curr =>
-            val gap = curr - prev - 1
-            if (gap > 0) fb.skip(gap)
-            fb.add(name + '_' + curr, 1.0)
-            prev = curr
-          }
+        SortedSet(xs.map(HashEncoder.bucket(_, c)): _*).foreach { curr =>
+          val gap = curr - prev - 1
+          if (gap > 0) fb.skip(gap)
+          fb.add(name + '_' + curr, 1.0)
+          prev = curr
+        }
         val gap = c - prev - 1
         if (gap > 0) fb.skip(gap)
       case None => fb.skip(c)

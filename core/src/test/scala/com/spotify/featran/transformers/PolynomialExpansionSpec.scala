@@ -23,15 +23,14 @@ import scala.util.Try
 
 object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
 
-  property("default") = Prop.forAll(
-    list[Array[Double]].arbitrary,
-    Gen.choose(2, 4)) { (xs, degree) =>
-    val dim = PolynomialExpansion.expand(xs.head, degree).length
-    val names = (0 until dim).map("poly_" + _)
-    val expected = xs.map(v => PolynomialExpansion.expand(v, degree).toSeq)
-    val missing = (0 until dim).map(_ => 0.0)
-    val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
-    test(PolynomialExpansion("poly", degree), xs, names, expected, missing, oob)
+  property("default") = Prop.forAll(list[Array[Double]].arbitrary, Gen.choose(2, 4)) {
+    (xs, degree) =>
+      val dim = PolynomialExpansion.expand(xs.head, degree).length
+      val names = (0 until dim).map("poly_" + _)
+      val expected = xs.map(v => PolynomialExpansion.expand(v, degree).toSeq)
+      val missing = (0 until dim).map(_ => 0.0)
+      val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
+      test(PolynomialExpansion("poly", degree), xs, names, expected, missing, oob)
   }
 
   property("length") = Prop.forAll { xs: List[Array[Double]] =>
@@ -46,18 +45,20 @@ object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
 
   private val genNK = {
     // cover all overflow scenarios
-    val genN = Gen.frequency(
-      (10, Gen.choose(0, 61)),
-      (5, Gen.choose(62, 66)),
-      (1, Gen.choose(67, 70)))
+    val genN =
+      Gen.frequency((10, Gen.choose(0, 61)), (5, Gen.choose(62, 66)), (1, Gen.choose(67, 70)))
     // n must be >= k
-    for (n <- genN; k <- Gen.choose(0, n)) yield (n, k)
+    for {
+      n <- genN
+      k <- Gen.choose(0, n)
+    } yield (n, k)
   }
 
-  property("binomial") = Prop.forAll(genNK) { case (n, k) =>
-    val actual = Try(CombinatoricsUtils.binomialCoefficient(n, k))
-    val expected = Try(cmu.CombinatoricsUtils.binomialCoefficient(n, k))
-    actual.toOption == expected.toOption
+  property("binomial") = Prop.forAll(genNK) {
+    case (n, k) =>
+      val actual = Try(CombinatoricsUtils.binomialCoefficient(n, k))
+      val expected = Try(cmu.CombinatoricsUtils.binomialCoefficient(n, k))
+      actual.toOption == expected.toOption
   }
 
   property("gcd") = Prop.forAll { (x: Int, y: Int) =>

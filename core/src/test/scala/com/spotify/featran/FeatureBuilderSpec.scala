@@ -27,14 +27,14 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
-  private def test[T: ClassTag : Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])
-                                            (toSeq: F => Seq[T]): Prop = {
+  private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])(
+    toSeq: F => Seq[T]): Prop = {
     val num = implicitly[Numeric[T]]
     fb.init(xs.size + 4)
     fb.prepare(null)
     xs.zipWithIndex.foreach {
       case (Some(x), i) => fb.add("key" + i.toString, num.toDouble(x))
-      case (None, _) => fb.skip()
+      case (None, _)    => fb.skip()
     }
     fb.add(Iterable("x", "y"), Seq(0.0, 0.0))
     fb.skip(2)
@@ -56,7 +56,8 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
       test(xs, implicitly[FeatureBuilder[Seq[Float]]])(identity),
       test(xs, implicitly[FeatureBuilder[IndexedSeq[Float]]])(identity),
       test(xs, implicitly[FeatureBuilder[List[Float]]])(identity),
-      test(xs, implicitly[FeatureBuilder[Vector[Float]]])(identity))
+      test(xs, implicitly[FeatureBuilder[Vector[Float]]])(identity)
+    )
   }
 
   property("double traversable") = Prop.forAll(list[Double]) { xs =>
@@ -66,7 +67,8 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
       test(xs, implicitly[FeatureBuilder[Seq[Double]]])(identity),
       test(xs, implicitly[FeatureBuilder[IndexedSeq[Double]]])(identity),
       test(xs, implicitly[FeatureBuilder[List[Double]]])(identity),
-      test(xs, implicitly[FeatureBuilder[Vector[Double]]])(identity))
+      test(xs, implicitly[FeatureBuilder[Vector[Double]]])(identity)
+    )
   }
 
   property("double traversable") = Prop.forAll(list[Double]) { xs =>
@@ -114,16 +116,14 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
     fb.add(Iterable("x", "y"), Seq(0.0, 0.0))
     fb.skip(2)
     val actual = fb.result
-    val expected = xs
-      .zipWithIndex
+    val expected = xs.zipWithIndex
       .filter(_._1.isDefined)
       .map(t => ("key" + t._2, t._1.getOrElse(0.0)))
       .toMap ++ Map("x" -> 0.0, "y" -> 0.0)
-    Prop.all(
-      actual == expected,
-      actual + ("z" -> 1.0) == expected + ("z" -> 1.0),
-      actual - "x" == expected - "x",
-      expected.forall(kv => actual(kv._1) == kv._2))
+    Prop.all(actual == expected,
+             actual + ("z" -> 1.0) == expected + ("z" -> 1.0),
+             actual - "x" == expected - "x",
+             expected.forall(kv => actual(kv._1) == kv._2))
   }
 
 }

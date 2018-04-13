@@ -29,45 +29,50 @@ object Fixtures {
 
   val testData = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
 
-  val testSpec = FeatureSpec.of[(String, Int)]
+  val testSpec = FeatureSpec
+    .of[(String, Int)]
     .required(_._1)(OneHotEncoder("one_hot"))
     .required(_._2.toDouble)(MinMaxScaler("min_max"))
 
-  val expectedNames = Seq(
-    "one_hot_a",
-    "one_hot_b",
-    "one_hot_c",
-    "one_hot_d",
-    "one_hot_e",
-    "min_max")
+  val expectedNames =
+    Seq("one_hot_a", "one_hot_b", "one_hot_c", "one_hot_d", "one_hot_e", "min_max")
 
-  val expectedValues = Seq(
-    Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
-    Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
-    Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
-    Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
-    Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
+  val expectedValues = Seq(Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
+                           Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
+                           Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
+                           Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
+                           Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
 
-  case class Record(x: Double, xo: Option[Double],
-                    v: Array[Double], vo: Option[Array[Double]],
-                    s1: String, s2: Seq[String], s3: Seq[WeightedLabel])
+  case class Record(x: Double,
+                    xo: Option[Double],
+                    v: Array[Double],
+                    vo: Option[Array[Double]],
+                    s1: String,
+                    s2: Seq[String],
+                    s3: Seq[WeightedLabel])
 
   val records = (1 to 100).map { x =>
     val d = x.toDouble
     val s = "v" + d
-    Record(
-      d, Some(d), Array.fill(10)(d), Some(Array.fill(10)(d)),
-      s, Seq(s), Seq(WeightedLabel(s, 1.0)))
+    Record(d,
+           Some(d),
+           Array.fill(10)(d),
+           Some(Array.fill(10)(d)),
+           s,
+           Seq(s),
+           Seq(WeightedLabel(s, 1.0)))
   }
 
-  private val recordSpec1 = FeatureSpec.of[Record]
+  private val recordSpec1 = FeatureSpec
+    .of[Record]
     .required(_.x)(Identity("x"))
     .optional(_.xo)(Identity("xo"))
     .required(_.v)(VectorIdentity("v"))
     .optional(_.vo)(VectorIdentity("vo"))
 
   // cover all transformers here
-  private val recordSpec2 = FeatureSpec.of[Record]
+  private val recordSpec2 = FeatureSpec
+    .of[Record]
     .required(_.x)(Binarizer("bin"))
     .required(_.x)(Bucketizer("bucket", Array(0.0, 10.0, 100.0)))
     .required(_.s1)(HashOneHotEncoder("hash-one-hot"))
@@ -99,21 +104,25 @@ object Fixtures {
     val pkg = "com.spotify.featran.transformers"
     val classLoader = Thread.currentThread().getContextClassLoader
     val baseCls = classOf[Transformer[_, _, _]]
-    val transformers = classLoader.getResources("").asScala
+    val transformers = classLoader
+      .getResources("")
+      .asScala
       .map(url => new File(url.getFile + pkg.replace('.', '/')))
       .filter(_.isDirectory)
       .flatMap(_.listFiles())
       .filter(f => f.getName.endsWith(".class") && !f.getName.contains("$"))
       .map(f => classLoader.loadClass(s"$pkg.${f.getName.replace(".class", "")}"))
-      .filter(c => (baseCls isAssignableFrom c) && c != baseCls &&
-        Try(classLoader.loadClass(c.getName + "$")).isSuccess)
+      .filter(c =>
+        (baseCls isAssignableFrom c) && c != baseCls &&
+          Try(classLoader.loadClass(c.getName + "$")).isSuccess)
       .filter(c => !Modifier.isAbstract(c.getModifiers()))
       .toSet
 
     val covered = recordSpec2.features.map(_.transformer.getClass).toSet
     val missing = transformers -- covered
-    require(missing.isEmpty, "Not all transformers are covered in Fixtures, missing: " +
-      missing.map(_.getSimpleName).mkString(", "))
+    require(missing.isEmpty,
+            "Not all transformers are covered in Fixtures, missing: " +
+              missing.map(_.getSimpleName).mkString(", "))
   }
 
 }

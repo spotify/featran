@@ -20,37 +20,37 @@ package com.spotify.featran.transformers
 import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird._
 
- /**
-  * Reject values in the first and/or last quantiles defined by the number of buckets in the
-  * `numBuckets` parameter.
-  *
-  * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
-  * of the approximation can be controlled with the `k` parameter.
-  *
-  * All values are transformed to zeros.
-  *
-  * Values in the first and/or last quantiles are rejected as [[FeatureRejection.Outlier]].
-  *
-  * When using aggregated feature summary from a previous session, values outside of previously
-  * seen `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
-  */
+/**
+ * Reject values in the first and/or last quantiles defined by the number of buckets in the
+ * `numBuckets` parameter.
+ *
+ * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
+ * of the approximation can be controlled with the `k` parameter.
+ *
+ * All values are transformed to zeros.
+ *
+ * Values in the first and/or last quantiles are rejected as [[FeatureRejection.Outlier]].
+ *
+ * When using aggregated feature summary from a previous session, values outside of previously
+ * seen `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
+ */
 object QuantileOutlierRejector {
 
-   /**
-    * Create a new [[QuantileOutlierRejector]] instance.
-    *
-    * @param rejectLower whether to reject outliers in the first quantile
-    * @param rejectUpper whether to reject outliers in the last quantile
-    * @param numBuckets  number of buckets (quantiles, or categories) into which data points are
-    *                    grouped, must be greater than or equal to 2
-    * @param k           precision of the underlying Algebird QTree approximation
-    */
+  /**
+   * Create a new [[QuantileOutlierRejector]] instance.
+   *
+   * @param rejectLower whether to reject outliers in the first quantile
+   * @param rejectUpper whether to reject outliers in the last quantile
+   * @param numBuckets  number of buckets (quantiles, or categories) into which data points are
+   *                    grouped, must be greater than or equal to 2
+   * @param k           precision of the underlying Algebird QTree approximation
+   */
   def apply(name: String,
             rejectLower: Boolean = true,
             rejectUpper: Boolean = true,
             numBuckets: Int = 3,
             k: Int = QTreeAggregator.DefaultK)
-  : Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
+    : Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
     new QuantileOutlierRejector(name, rejectLower, rejectUpper, numBuckets, k)
 }
 
@@ -59,12 +59,13 @@ private class QuantileOutlierRejector(name: String,
                                       val rejectUpper: Boolean,
                                       numBuckets: Int,
                                       k: Int)
-  extends BaseQuantileRejector(name, numBuckets, k) {
+    extends BaseQuantileRejector(name, numBuckets, k) {
   require(rejectLower || rejectUpper, "at least one of [rejectLower, rejectLower] must be set")
 
   import BaseQuantileRejector.C
 
-  protected def calculateBounds(fq: Double, lq: Double): (Double, Double) = (fq, lq)
+  protected def calculateBounds(fq: Double, lq: Double): (Double, Double) =
+    (fq, lq)
 
   // scalastyle:off cyclomatic.complexity
   override def buildFeatures(a: Option[Double], c: C, fb: FeatureBuilder[_]): Unit = {
@@ -78,10 +79,10 @@ private class QuantileOutlierRejector(name: String,
         fb.reject(this, FeatureRejection.Outlier(x))
       } else if (min < max) {
         val r = (rejectLower, rejectUpper) match {
-          case (true, true) => x < l || x > u
+          case (true, true)  => x < l || x > u
           case (true, false) => x < l
           case (false, true) => x > u
-          case _ => false
+          case _             => false
         }
         if (r) fb.reject(this, FeatureRejection.Outlier(x))
       }
@@ -101,10 +102,8 @@ private[transformers] object BaseQuantileRejector {
   type C = (Double, Double, Double, Double)
 }
 
-private abstract class BaseQuantileRejector(name: String,
-                                            val numBuckets: Int,
-                                            val k: Int)
-  extends OneDimensional[Double, BaseQuantileRejector.B, BaseQuantileRejector.C](name) {
+private abstract class BaseQuantileRejector(name: String, val numBuckets: Int, val k: Int)
+    extends OneDimensional[Double, BaseQuantileRejector.B, BaseQuantileRejector.C](name) {
   require(numBuckets >= 3, "numBuckets must be >= 3")
 
   import BaseQuantileRejector.{B, C}
@@ -112,12 +111,13 @@ private abstract class BaseQuantileRejector(name: String,
   implicit val sg = new QTreeSemigroup[Double](k)
 
   override val aggregator: Aggregator[Double, B, C] =
-    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to { case (qt, min, max) =>
-      val lq = (numBuckets - 1.0) / numBuckets
-      val fq = 1.0 / numBuckets
-      val (u, _) = qt.quantileBounds(lq)
-      val (_, l) = qt.quantileBounds(fq)
-      (l, u, min.get, max.get)
+    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to {
+      case (qt, min, max) =>
+        val lq = (numBuckets - 1.0) / numBuckets
+        val fq = 1.0 / numBuckets
+        val (u, _) = qt.quantileBounds(lq)
+        val (_, l) = qt.quantileBounds(fq)
+        (l, u, min.get, max.get)
     }
 
   override def encodeAggregator(c: (Double, Double, Double, Double)): String =

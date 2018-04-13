@@ -33,43 +33,39 @@ object QuantileOutlierRejectorSpec extends TransformerProp("QuantileOutlierRejec
     (l, u)
   }
 
-  property("default") = Prop.forAll(
-    list[Double].arbitrary,
-    Gen.oneOf(3 to 20)) { (xs, numBuckets) =>
-    val (l, u) = lowerUpper(xs, numBuckets)
-    val rejected = xs.filter(_ => xs.min < xs.max).filter(x => x > u || x < l).map(_ => Seq(0D))
-    // records that are not within bounds should always be rejected
-    val oob = List(
-      (lowerBound(xs.min), Seq(0D)),
-      (upperBound(xs.max), Seq(0D)))
-    val r = QuantileOutlierRejector("quantile", numBuckets = numBuckets)
-    test(r, xs, Seq("quantile"), xs.map(_ => Seq(0D)), Seq(0.0), oob, rejected)
+  property("default") = Prop.forAll(list[Double].arbitrary, Gen.oneOf(3 to 20)) {
+    (xs, numBuckets) =>
+      val (l, u) = lowerUpper(xs, numBuckets)
+      val rejected = xs.filter(_ => xs.min < xs.max).filter(x => x > u || x < l).map(_ => Seq(0D))
+      // records that are not within bounds should always be rejected
+      val oob =
+        List((lowerBound(xs.min), Seq(0D)), (upperBound(xs.max), Seq(0D)))
+      val r = QuantileOutlierRejector("quantile", numBuckets = numBuckets)
+      test(r, xs, Seq("quantile"), xs.map(_ => Seq(0D)), Seq(0.0), oob, rejected)
   }
 
-  property("rejectLower don't rejectUpper") = Prop.forAll(
-    list[Double].arbitrary,
-    Gen.oneOf(3 to 20)) { (xs, numBuckets) =>
-    val (l, u) = lowerUpper(xs, numBuckets)
-    val rejected = xs.filter(_ => xs.min < xs.max).filter(_ < l).map(_ => Seq(0D))
-    val r = QuantileOutlierRejector(
-      "quantile",
-      rejectLower = true,
-      rejectUpper = false,
-      numBuckets = numBuckets)
-    test(r, xs, Seq("quantile"), xs.map(_ => Seq(0D)), Seq(0.0), rejected = rejected)
-  }
+  property("rejectLower don't rejectUpper") =
+    Prop.forAll(list[Double].arbitrary, Gen.oneOf(3 to 20)) { (xs, numBuckets) =>
+      val (l, u) = lowerUpper(xs, numBuckets)
+      val rejected =
+        xs.filter(_ => xs.min < xs.max).filter(_ < l).map(_ => Seq(0D))
+      val r = QuantileOutlierRejector("quantile",
+                                      rejectLower = true,
+                                      rejectUpper = false,
+                                      numBuckets = numBuckets)
+      test(r, xs, Seq("quantile"), xs.map(_ => Seq(0D)), Seq(0.0), rejected = rejected)
+    }
 
-  property("rejectUpper don't rejectLower") = Prop.forAll(
-    list[Double].arbitrary,
-    Gen.oneOf(3 to 20)) { (xs, numBuckets) =>
-    val (l, u) = lowerUpper(xs, numBuckets)
-    val rejected = xs.filter(_ => xs.min < xs.max).filter(_ > u).map(_ => Seq(0D))
-    val r = QuantileOutlierRejector(
-      "quantile",
-      rejectLower = false,
-      rejectUpper = true,
-      numBuckets = numBuckets)
-    test(r, xs, Seq("quantile"), xs.map(_ => Seq(0D)), Seq(0.0), rejected = rejected)
-  }
+  property("rejectUpper don't rejectLower") =
+    Prop.forAll(list[Double].arbitrary, Gen.oneOf(3 to 20)) { (xs, numBuckets) =>
+      val (l, u) = lowerUpper(xs, numBuckets)
+      val rejected =
+        xs.filter(_ => xs.min < xs.max).filter(_ > u).map(_ => Seq(0D))
+      val r = QuantileOutlierRejector("quantile",
+                                      rejectLower = false,
+                                      rejectUpper = true,
+                                      numBuckets = numBuckets)
+      test(r, xs, Seq("quantile"), xs.map(_ => Seq(0D)), Seq(0.0), rejected = rejected)
+    }
 
 }

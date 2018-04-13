@@ -54,6 +54,7 @@ import scala.collection.JavaConverters._
  * }}}
  */
 object HashNHotWeightedEncoder {
+
   /**
    * Create a new [[HashNHotWeightedEncoder]] instance.
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
@@ -66,17 +67,16 @@ object HashNHotWeightedEncoder {
 }
 
 private class HashNHotWeightedEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
-  extends BaseHashHotEncoder[Seq[WeightedLabel]](name, hashBucketSize, sizeScalingFactor) {
+    extends BaseHashHotEncoder[Seq[WeightedLabel]](name, hashBucketSize, sizeScalingFactor) {
 
   override def prepare(a: Seq[WeightedLabel]): HLL =
     a.map(_.name).map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)
 
-  override def buildFeatures(a: Option[Seq[WeightedLabel]],
-                             c: Int,
-                             fb: FeatureBuilder[_]): Unit = {
+  override def buildFeatures(a: Option[Seq[WeightedLabel]], c: Int, fb: FeatureBuilder[_]): Unit = {
     a match {
       case Some(xs) =>
-        val weights = new java.util.TreeMap[Int,Double]().asScala.withDefaultValue(0.0)
+        val weights =
+          new java.util.TreeMap[Int, Double]().asScala.withDefaultValue(0.0)
         xs.foreach(x => weights(HashEncoder.bucket(x.name, c)) += x.value)
         var prev = -1
         weights.foreach { v =>

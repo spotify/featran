@@ -51,6 +51,7 @@ case class MDLRecord[T](label: T, value: Double)
  * - https://github.com/sramirez/spark-MDLP-discretization
  */
 object MDL {
+
   /**
    * Create an MDL Instance.
    *
@@ -65,8 +66,7 @@ object MDL {
                          stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
                          minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE,
                          maxBins: Int = DEFAULT_MAX_BINS,
-                         seed: Int = Random.nextInt())
-  : Transformer[MDLRecord[T], B[T], C] =
+                         seed: Int = Random.nextInt()): Transformer[MDLRecord[T], B[T], C] =
     new MDL(name, sampleRate, stoppingCriterion, minBinPercentage, maxBins, seed)
 
   // Use WrappedArray to workaround Beam immutability enforcement
@@ -74,9 +74,13 @@ object MDL {
   private type C = JTreeMap[Double, Int]
 }
 
-private class MDL[T: ClassTag](name: String, val sampleRate: Double, val stoppingCriterion: Double,
-                               val minBinPercentage: Double, val maxBins: Int, val seed: Int)
-  extends Transformer[MDLRecord[T], MDL.B[T], MDL.C](name) {
+private class MDL[T: ClassTag](name: String,
+                               val sampleRate: Double,
+                               val stoppingCriterion: Double,
+                               val minBinPercentage: Double,
+                               val maxBins: Int,
+                               val seed: Int)
+    extends Transformer[MDLRecord[T], MDL.B[T], MDL.C](name) {
   checkRange("sampleRate", sampleRate, 0.0, 1.0)
   require(stoppingCriterion >= 0, "stoppingCriterion must be > 0")
   checkRange("minBinPercentage", minBinPercentage, 0.0, 1.0)
@@ -108,8 +112,8 @@ private class MDL[T: ClassTag](name: String, val sampleRate: Double, val stoppin
   override val aggregator: Aggregator[MDLRecord[T], B[T], C] =
     new Aggregator[MDLRecord[T], B[T], C] {
       override def prepare(input: MDLRecord[T]): B[T] =
-        mutable.WrappedArray.make[MDLRecord[T]](
-          if (rng.nextDouble() < sampleRate) Array(input) else Array.empty[T])
+        mutable.WrappedArray
+          .make[MDLRecord[T]](if (rng.nextDouble() < sampleRate) Array(input) else Array.empty[T])
 
       override def semigroup: Semigroup[B[T]] = new Semigroup[B[T]] {
         override def plus(x: B[T], y: B[T]): B[T] = x ++ y
@@ -123,10 +127,7 @@ private class MDL[T: ClassTag](name: String, val sampleRate: Double, val stoppin
         ).discretize(maxBins)
 
         val m = new C()
-        ranges
-          .tail
-          .zipWithIndex
-          .map{case(v, i) => m.put(v, i)}
+        ranges.tail.zipWithIndex.map { case (v, i) => m.put(v, i) }
 
         m
       }
@@ -144,10 +145,12 @@ private class MDL[T: ClassTag](name: String, val sampleRate: Double, val stoppin
     m
   }
 
-  override def params: Map[String, String] = Map(
-    "sampleRate" -> sampleRate.toString,
-    "stoppingCriterion" -> stoppingCriterion.toString,
-    "minBinPercentage" -> minBinPercentage.toString,
-    "maxBins" -> maxBins.toString,
-    "seed" -> seed.toString)
+  override def params: Map[String, String] =
+    Map(
+      "sampleRate" -> sampleRate.toString,
+      "stoppingCriterion" -> stoppingCriterion.toString,
+      "minBinPercentage" -> minBinPercentage.toString,
+      "maxBins" -> maxBins.toString,
+      "seed" -> seed.toString
+    )
 }

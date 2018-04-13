@@ -28,8 +28,8 @@ class ScioTest extends PipelineSpec {
   "Scio" should "work with FeatureSpec" in {
     runWithContext { sc =>
       val f = testSpec.extract(sc.parallelize(testData))
-      f.featureNames should containSingleValue (expectedNames)
-      f.featureValues[Seq[Double]] should containInAnyOrder (expectedValues)
+      f.featureNames should containSingleValue(expectedNames)
+      f.featureValues[Seq[Double]] should containInAnyOrder(expectedValues)
     }
   }
 
@@ -49,10 +49,11 @@ class ScioTest extends PipelineSpec {
 
   // scalastyle:off no.whitespace.before.left.bracket
   it should "fail on serialization error" in {
-    an [Exception] should be thrownBy {
+    an[Exception] should be thrownBy {
       runWithContext { sc =>
         val foo = new NonSerializable()
-        val f = FeatureSpec.of[(String, Int)]
+        val f = FeatureSpec
+          .of[(String, Int)]
           .required(e => foo.method(e._1))(Identity("foo"))
           .extract(sc.parallelize(testData))
 

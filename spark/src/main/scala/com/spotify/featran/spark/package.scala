@@ -27,7 +27,8 @@ package object spark {
    * [[CollectionType]] for extraction from Apache Spark `RDD` type.
    */
   implicit object SparkCollectionType extends CollectionType[RDD] {
-    override def map[A, B: ClassTag](ma: RDD[A], f: (A) => B): RDD[B] = ma.map(f)
+    override def map[A, B: ClassTag](ma: RDD[A], f: (A) => B): RDD[B] =
+      ma.map(f)
     override def reduce[A](ma: RDD[A], f: (A, A) => A): RDD[A] =
       ma.context.parallelize(Seq(ma.reduce(f)))(RDDUtil.classTag(ma))
     override def cross[A, B: ClassTag](ma: RDD[A], mb: RDD[B]): RDD[(A, B)] = {

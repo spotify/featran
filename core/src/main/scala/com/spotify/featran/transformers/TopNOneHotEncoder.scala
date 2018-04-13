@@ -37,6 +37,7 @@ import scala.util.Random
  * Missing values are either transformed to zero vectors or encoded as `__unknown__`.
  */
 object TopNOneHotEncoder {
+
   /**
    * Create a new [[TopNOneHotEncoder]] instance.
    *
@@ -49,12 +50,13 @@ object TopNOneHotEncoder {
    * @param encodeMissingValue whether to indicate to encode items outside of the top n set as
    *                           `__unknown__`
    */
-  def apply(name: String, n: Int,
+  def apply(name: String,
+            n: Int,
             eps: Double = 0.001,
             delta: Double = 0.001,
             seed: Int = Random.nextInt,
             encodeMissingValue: Boolean = false)
-  : Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
+    : Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
     new TopNOneHotEncoder(name, n, eps, delta, seed, encodeMissingValue)
 }
 
@@ -64,7 +66,7 @@ private class TopNOneHotEncoder(name: String,
                                 val delta: Double,
                                 val seed: Int,
                                 val encodeMissingValue: Boolean)
-  extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
+    extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
 
   import MissingValue.missingValueToken
 
@@ -77,8 +79,9 @@ private class TopNOneHotEncoder(name: String,
       .composePrepare[String]((_, 1L))
       .andThenPresent { sm =>
         val b = SortedMap.newBuilder[String, Int]
-        sm.heavyHitterKeys.sorted.iterator.zipWithIndex.foreach { case (k, r) =>
-          b += k -> r
+        sm.heavyHitterKeys.sorted.iterator.zipWithIndex.foreach {
+          case (k, r) =>
+            b += k -> r
         }
         b.result()
       }
@@ -101,16 +104,17 @@ private class TopNOneHotEncoder(name: String,
   override def buildFeatures(a: Option[String],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = a match {
-    case Some(k) => c.get(k) match {
-      case Some(v) =>
-        fb.skip(v)
-        fb.add(name + '_' + k, 1.0)
-        fb.skip(math.max(0, c.size - v - 1))
-        if (encodeMissingValue) fb.skip()
-      case None =>
-        addNonTopItem(c, fb)
-        fb.reject(this, FeatureRejection.Unseen(Set(k)))
-    }
+    case Some(k) =>
+      c.get(k) match {
+        case Some(v) =>
+          fb.skip(v)
+          fb.add(name + '_' + k, 1.0)
+          fb.skip(math.max(0, c.size - v - 1))
+          if (encodeMissingValue) fb.skip()
+        case None =>
+          addNonTopItem(c, fb)
+          fb.reject(this, FeatureRejection.Unseen(Set(k)))
+      }
     case None => addNonTopItem(c, fb)
   }
 
@@ -126,11 +130,11 @@ private class TopNOneHotEncoder(name: String,
     }
     b.result()
   }
-  override def params: Map[String, String] = Map(
-    "n" -> n.toString,
-    "eps" -> eps.toString,
-    "delta" -> delta.toString,
-    "seed" -> seed.toString,
-    "encodeMissingValue" -> encodeMissingValue.toString)
+  override def params: Map[String, String] =
+    Map("n" -> n.toString,
+        "eps" -> eps.toString,
+        "delta" -> delta.toString,
+        "seed" -> seed.toString,
+        "encodeMissingValue" -> encodeMissingValue.toString)
 
 }

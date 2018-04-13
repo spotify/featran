@@ -54,6 +54,7 @@ import scala.util.hashing.MurmurHash3
  * }}}
  */
 object HashOneHotEncoder {
+
   /**
    * Create a new [[HashOneHotEncoder]] instance.
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
@@ -66,7 +67,7 @@ object HashOneHotEncoder {
 }
 
 private class HashOneHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
-  extends BaseHashHotEncoder[String](name, hashBucketSize, sizeScalingFactor) {
+    extends BaseHashHotEncoder[String](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: String): HLL = hllMonoid.toHLL(a)
 
   override def buildFeatures(a: Option[String], c: Int, fb: FeatureBuilder[_]): Unit = {
@@ -85,7 +86,7 @@ private class HashOneHotEncoder(name: String, hashBucketSize: Int, sizeScalingFa
 private abstract class BaseHashHotEncoder[A](name: String,
                                              val hashBucketSize: Int,
                                              val sizeScalingFactor: Double)
-  extends Transformer[A, HLL, Int](name) {
+    extends Transformer[A, HLL, Int](name) {
   require(hashBucketSize >= 0, "hashBucketSize must be >= 0")
   require(sizeScalingFactor >= 1.0, "hashBucketSize must be >= 1.0")
 
@@ -101,7 +102,8 @@ private abstract class BaseHashHotEncoder[A](name: String,
       // dummy aggregator
       new Aggregator[A, HLL, Int] {
         override def prepare(input: A): HLL = SparseHLL(4, Map.empty)
-        override def semigroup: Semigroup[HLL] = Semigroup.from[HLL]((x, _) => x)
+        override def semigroup: Semigroup[HLL] =
+          Semigroup.from[HLL]((x, _) => x)
         override def present(reduction: HLL): Int = hashBucketSize
       }
     }
@@ -110,9 +112,9 @@ private abstract class BaseHashHotEncoder[A](name: String,
 
   override def encodeAggregator(c: Int): String = c.toString
   override def decodeAggregator(s: String): Int = s.toInt
-  override def params: Map[String, String] = Map(
-    "hashBucketSize" -> hashBucketSize.toString,
-    "sizeScalingFactor" -> sizeScalingFactor.toString)
+  override def params: Map[String, String] =
+    Map("hashBucketSize" -> hashBucketSize.toString,
+        "sizeScalingFactor" -> sizeScalingFactor.toString)
 }
 
 private object HashEncoder {

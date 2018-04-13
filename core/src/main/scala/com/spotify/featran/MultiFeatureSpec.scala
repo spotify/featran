@@ -24,14 +24,14 @@ import scala.language.{higherKinds, implicitConversions}
  */
 object MultiFeatureSpec {
   def apply[T](specs: FeatureSpec[T]*): MultiFeatureSpec[T] = {
-    val nameToSpec: Map[String, Int] = specs.zipWithIndex.flatMap { case (spec, index) =>
-      spec.features.map(_.transformer.name -> index)
+    val nameToSpec: Map[String, Int] = specs.zipWithIndex.flatMap {
+      case (spec, index) =>
+        spec.features.map(_.transformer.name -> index)
     }(scala.collection.breakOut)
 
-    new MultiFeatureSpec(
-      nameToSpec,
-      specs.map(_.features).reduce(_ ++ _),
-      specs.map(_.crossings).reduce(_ ++ _))
+    new MultiFeatureSpec(nameToSpec,
+                         specs.map(_.features).reduce(_ ++ _),
+                         specs.map(_.crossings).reduce(_ ++ _))
   }
 }
 
@@ -51,8 +51,9 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @tparam M input collection type, e.g. `Array`, `List`
    */
   def extract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] =
-    new MultiFeatureExtractor[M, T](
-      new MultiFeatureSet[T](features, crossings, mapping), input, None)
+    new MultiFeatureExtractor[M, T](new MultiFeatureSet[T](features, crossings, mapping),
+                                    input,
+                                    None)
 
   /**
    * Extract features from a input collection using settings from a previous session.
@@ -63,9 +64,10 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @param settings JSON settings from a previous session
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extractWithSettings[M[_]: CollectionType](input: M[T], settings: M[String])
-  : MultiFeatureExtractor[M, T] =
-    new MultiFeatureExtractor[M, T](
-      new MultiFeatureSet(features, crossings, mapping), input, Some(settings))
+  def extractWithSettings[M[_]: CollectionType](input: M[T],
+                                                settings: M[String]): MultiFeatureExtractor[M, T] =
+    new MultiFeatureExtractor[M, T](new MultiFeatureSet(features, crossings, mapping),
+                                    input,
+                                    Some(settings))
 
 }

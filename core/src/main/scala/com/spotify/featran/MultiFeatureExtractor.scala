@@ -26,11 +26,11 @@ import scala.language.{higherKinds, implicitConversions}
  * @tparam M input collection type, e.g. `Array`, List
  * @tparam T input record type to extract features from
  */
-class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
-(private val fs: MultiFeatureSet[T],
- @transient private val input: M[T],
- @transient private val settings: Option[M[String]])
-  extends Serializable {
+class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
+  private val fs: MultiFeatureSet[T],
+  @transient private val input: M[T],
+  @transient private val settings: Option[M[String]])
+    extends Serializable {
 
   @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
   import dt.Ops._
@@ -56,7 +56,8 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureValues[F: FeatureBuilder : ClassTag]: M[Seq[F]] = featureResults.map(_._1)
+  def featureValues[F: FeatureBuilder: ClassTag]: M[Seq[F]] =
+    featureResults.map(_._1)
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]] with
@@ -64,12 +65,13 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran]
    * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *           `DenseVector[Double]`
    */
-  def featureResults[F: FeatureBuilder : ClassTag]
-  : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] = {
+  def featureResults[F: FeatureBuilder: ClassTag]
+    : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] = {
     val fbs = fs.multiFeatureBuilders(implicitly[FeatureBuilder[F]])
-    extractor.as.cross(extractor.aggregate).map { case ((o, a), c) =>
-      fs.multiFeatureValues(a, c, fbs)
-      (fbs.map(_.result).toSeq, fbs.map(_.rejections), o)
+    extractor.as.cross(extractor.aggregate).map {
+      case ((o, a), c) =>
+        fs.multiFeatureValues(a, c, fbs)
+        (fbs.map(_.result).toSeq, fbs.map(_.rejections), o)
     }
   }
 

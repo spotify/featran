@@ -35,32 +35,35 @@ import scala.collection.SortedMap
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object OneHotEncoder {
+
   /**
    * Create a new [[OneHotEncoder]] instance.
    */
-  def apply(name: String, encodeMissingValue: Boolean = false):
-  Transformer[String, Set[String], SortedMap[String, Int]] =
+  def apply(
+    name: String,
+    encodeMissingValue: Boolean = false): Transformer[String, Set[String], SortedMap[String, Int]] =
     new OneHotEncoder(name, encodeMissingValue)
 }
 
 private class OneHotEncoder(name: String, encodeMissingValue: Boolean)
-  extends BaseHotEncoder[String](name, encodeMissingValue) {
+    extends BaseHotEncoder[String](name, encodeMissingValue) {
   override def prepare(a: String): Set[String] = Set(a)
 
   override def buildFeatures(a: Option[String],
                              c: SortedMap[String, Int],
                              fb: FeatureBuilder[_]): Unit = {
     a match {
-      case Some(k) => c.get(k) match {
-        case Some(v) =>
-          fb.skip(v)
-          fb.add(name + '_' + k, 1.0)
-          fb.skip(math.max(0, c.size - v - 1))
-          if (encodeMissingValue) fb.skip()
-        case None =>
-          addMissingItem(c, fb)
-          fb.reject(this, FeatureRejection.Unseen(Set(k)))
-      }
+      case Some(k) =>
+        c.get(k) match {
+          case Some(v) =>
+            fb.skip(v)
+            fb.add(name + '_' + k, 1.0)
+            fb.skip(math.max(0, c.size - v - 1))
+            if (encodeMissingValue) fb.skip()
+          case None =>
+            addMissingItem(c, fb)
+            fb.reject(this, FeatureRejection.Unseen(Set(k)))
+        }
       case None => addMissingItem(c, fb)
     }
   }
@@ -71,7 +74,7 @@ private[featran] object MissingValue {
 }
 
 private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
-  extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
+    extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
 
   import MissingValue.missingValueToken
 
@@ -118,7 +121,7 @@ private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boole
     b.result()
   }
 
-  override def params: Map[String, String] = Map(
-    "encodeMissingValue" -> encodeMissingValue.toString)
+  override def params: Map[String, String] =
+    Map("encodeMissingValue" -> encodeMissingValue.toString)
 
 }

@@ -29,15 +29,20 @@ object HeavyHittersSpec extends TransformerProp("HeavyHitters") {
   }
   private val seed = 1
 
-  private def test(transformer: Transformer[String, _, _], xs: List[String],
-                   count: Int, eps: Double, delta: Double): Prop = {
+  private def test(transformer: Transformer[String, _, _],
+                   xs: List[String],
+                   count: Int,
+                   eps: Double,
+                   delta: Double): Prop = {
     val params = SketchMapParams[String](seed, eps, delta, count)(_.getBytes)
     val aggregator = SketchMap.aggregator[String, Long](params)
-    val sm = xs.map(x => aggregator.prepare((x, 1L))).reduce(aggregator.monoid.plus)
+    val sm =
+      xs.map(x => aggregator.prepare((x, 1L))).reduce(aggregator.monoid.plus)
     val m = sm.heavyHitterKeys.zipWithIndex.toMap.mapValues(_ + 1)
     val expected = xs.map { x =>
       m.get(x) match {
-        case Some(rank) => Seq(rank.toDouble, params.frequency(x, sm.valuesTable).toDouble)
+        case Some(rank) =>
+          Seq(rank.toDouble, params.frequency(x, sm.valuesTable).toDouble)
         case None => Seq(0.0, 0.0)
       }
     }

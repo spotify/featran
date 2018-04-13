@@ -43,28 +43,30 @@ trait CollectionType[M[_]] { self =>
 }
 
 object CollectionType {
-  implicit def scalaCollectionType[M[_] <: Traversable[_]]
-  (implicit cbf: CanBuildFrom[M[_], _, M[_]]): CollectionType[M] = new CollectionType[M] {
-    override def map[A, B: ClassTag](ma: M[A], f: (A) => B): M[B] = {
-      val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]
-      ma.asInstanceOf[Seq[A]].foreach(a => builder += f(a))
-      builder.result()
+  implicit def scalaCollectionType[M[_] <: Traversable[_]](
+    implicit cbf: CanBuildFrom[M[_], _, M[_]]): CollectionType[M] =
+    new CollectionType[M] {
+      override def map[A, B: ClassTag](ma: M[A], f: (A) => B): M[B] = {
+        val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]
+        ma.asInstanceOf[Seq[A]].foreach(a => builder += f(a))
+        builder.result()
+      }
+      override def reduce[A](ma: M[A], f: (A, A) => A): M[A] = {
+        val builder = cbf().asInstanceOf[mutable.Builder[A, M[A]]]
+        builder += ma.asInstanceOf[Seq[A]].reduce(f)
+        builder.result()
+      }
+      override def cross[A, B: ClassTag](ma: M[A], mb: M[B]): M[(A, B)] = {
+        val builder = cbf().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
+        val b = mb.asInstanceOf[Seq[B]].head
+        ma.asInstanceOf[Seq[A]].foreach(a => builder += ((a, b)))
+        builder.result()
+      }
     }
-    override def reduce[A](ma: M[A], f: (A, A) => A): M[A] = {
-      val builder = cbf().asInstanceOf[mutable.Builder[A, M[A]]]
-      builder += ma.asInstanceOf[Seq[A]].reduce(f)
-      builder.result()
-    }
-    override def cross[A, B: ClassTag](ma: M[A], mb: M[B]): M[(A, B)] = {
-      val builder = cbf().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
-      val b = mb.asInstanceOf[Seq[B]].head
-      ma.asInstanceOf[Seq[A]].foreach(a => builder += ((a, b)))
-      builder.result()
-    }
-  }
 
   implicit val arrayCollectionType = new CollectionType[Array] {
-    override def map[A, B: ClassTag](ma: Array[A], f: (A) => B): Array[B] = ma.map(f)
+    override def map[A, B: ClassTag](ma: Array[A], f: (A) => B): Array[B] =
+      ma.map(f)
     override def reduce[A](ma: Array[A], f: (A, A) => A): Array[A] = {
       // workaround for "No ClassTag available for A"
       val r = ma.take(1)

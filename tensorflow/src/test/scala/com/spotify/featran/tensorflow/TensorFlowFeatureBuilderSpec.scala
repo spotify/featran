@@ -42,10 +42,10 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     fb.add(Iterable("x", "y"), Seq(0.0, 0.0))
     fb.skip(2)
     val actual = fb.result
-    b.putFeature(
-      "x", Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build())
-    b.putFeature(
-      "y", Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build())
+    b.putFeature("x",
+                 Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build())
+    b.putFeature("y",
+                 Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build())
     val expected = Example.newBuilder().setFeatures(b).build()
     actual == expected
   }

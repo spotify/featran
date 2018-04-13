@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import com.spotify.featran.FeatureBuilder
 
-import scala.collection.{SortedMap, mutable}
+import scala.collection.{mutable, SortedMap}
 
 /**
  * Transform a collection of sentences, where each row is a `Seq[String]` of the words / tokens,
@@ -34,6 +34,7 @@ import scala.collection.{SortedMap, mutable}
  * As with [[NHotEncoder]], missing values are transformed to [0.0, 0.0, ...].
  */
 object NGrams {
+
   /**
    * Create a new [[NGrams]] instance.
    *
@@ -42,8 +43,10 @@ object NGrams {
    *             input `Seq[String]`
    * @param sep a string separator used to join individual tokens
    */
-  def apply(name: String, low: Int = 1, high: Int = -1, sep: String = " ")
-  : Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
+  def apply(name: String,
+            low: Int = 1,
+            high: Int = -1,
+            sep: String = " "): Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
     require(low > 0, "low must be > 0")
     require(high >= low || high == -1, "high must >= low or -1")
     new NGrams(name, low, high, sep)
@@ -51,7 +54,7 @@ object NGrams {
 }
 
 private class NGrams(name: String, val low: Int, val high: Int, val sep: String)
-  extends NHotEncoder(name, false) {
+    extends NHotEncoder(name, false) {
   override def prepare(a: Seq[String]): Set[String] = ngrams(a).toSet
 
   override def buildFeatures(a: Option[Seq[String]],
