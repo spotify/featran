@@ -274,11 +274,14 @@ object FeatureBuilder {
 
 }
 
-private class JMapWrapper[K, V](val m: java.util.Map[K, V]) extends Map[K, V] {
+private final case class JMapWrapper[K, V](m: java.util.Map[K, V]) extends Map[K, V] {
   // scalastyle:off method.name
   override def +[B1 >: V](kv: (K, B1)): Map[K, B1] = m.asScala.toMap + kv
+
   override def -(key: K): Map[K, V] = m.asScala.toMap - key
   // scalastyle:on method.name
+
   override def get(key: K): Option[V] = Option(m.get(key))
+
   override def iterator: Iterator[(K, V)] = m.asScala.iterator
 }
