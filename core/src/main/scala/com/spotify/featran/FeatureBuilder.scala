@@ -21,6 +21,7 @@ import breeze.linalg.{DenseVector, SparseVector}
 import breeze.math.Semiring
 import breeze.storage.Zero
 import com.spotify.featran.transformers.Transformer
+import shapeless.Lazy.Values
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -132,8 +133,11 @@ trait FeatureBuilder[T] extends Serializable { self =>
       delegate.add(name, value)
     override def skip(): Unit = delegate.skip()
     override def result: U = g(delegate.result)
+
+    override def newBuilder: FeatureBuilder[U] = delegate.newBuilder.map(g)
   }
 
+  def newBuilder: FeatureBuilder[T]
 }
 
 /**
@@ -155,29 +159,39 @@ case class SparseArray[@specialized(Float, Double) T](indices: Array[Int],
 
 object FeatureBuilder {
 
-  implicit def arrayFB[T: ClassTag: FloatingPoint]: FeatureBuilder[Array[T]] =
-    new FeatureBuilder[Array[T]] {
-      private var array: Array[T] = _
-      private var offset: Int = 0
-      private val fp = implicitly[FloatingPoint[T]]
-      override def init(dimension: Int): Unit = array = new Array[T](dimension)
-      override def add(name: String, value: Double): Unit = {
-        array(offset) = fp.fromDouble(value)
-        offset += 1
-      }
-      override def skip(): Unit = offset += 1
-      override def skip(n: Int): Unit = offset += n
-      override def result: Array[T] = {
-        require(offset == array.length)
-        offset = 0
-        array.clone()
-      }
+  private final case class ArrayFB[T: ClassTag: FloatingPoint](
+    private var underlying: Array[T] = null)
+      extends FeatureBuilder[Array[T]] {
+    private var offset: Int = 0
+    private val fp = implicitly[FloatingPoint[T]]
+
+    override def init(dimension: Int): Unit = underlying = new Array[T](dimension)
+
+    override def add(name: String, value: Double): Unit = {
+      underlying(offset) = fp.fromDouble(value)
+      offset += 1
     }
+
+    override def skip(): Unit = offset += 1
+
+    override def skip(n: Int): Unit = offset += n
+
+    override def result: Array[T] = {
+      require(offset == underlying.length)
+      offset = 0
+      underlying.clone()
+    }
+
+    override def newBuilder: FeatureBuilder[Array[T]] = ArrayFB()
+  }
+
+  implicit def arrayFB[T: ClassTag: FloatingPoint]: FeatureBuilder[Array[T]] = ArrayFB()
 
   // Workaround for CanBuildFrom not serializable
   trait CanBuild[T, M] extends Serializable {
     def apply(): mutable.Builder[T, M]
   }
+
   private def newCB[T, M](f: () => mutable.Builder[T, M]) = new CanBuild[T, M] {
     override def apply(): mutable.Builder[T, M] = f()
   }
@@ -185,34 +199,49 @@ object FeatureBuilder {
   // Collection types in _root_.scala.*
   //scalastyle:off public.methods.have.type
   implicit def traversableCB[T] = newCB(() => Traversable.newBuilder[T])
+
   implicit def iterableCB[T] = newCB(() => Iterable.newBuilder[T])
+
   implicit def seqCB[T] = newCB(() => Seq.newBuilder[T])
+
   implicit def indexedSeqCB[T] = newCB(() => IndexedSeq.newBuilder[T])
+
   implicit def listCB[T] = newCB(() => List.newBuilder[T])
+
   implicit def vectorCB[T] = newCB(() => Vector.newBuilder[T])
+
   //scalastyle:on public.methods.have.type
 
-  implicit def traversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
-    implicit cb: CanBuild[T, M[T]]): FeatureBuilder[M[T]] =
-    new FeatureBuilder[M[T]] {
-      private var b: mutable.Builder[T, M[T]] = _
-      private val fp = implicitly[FloatingPoint[T]]
-      override def init(dimension: Int): Unit = b = cb()
-      override def add(name: String, value: Double): Unit =
-        b += fp.fromDouble(value)
-      override def skip(): Unit = b += fp.fromDouble(0.0)
-      override def result: M[T] = b.result()
-    }
+  private final case class TraversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
+    private var underlying: mutable.Builder[T, M[T]] = null)(implicit cb: CanBuild[T, M[T]])
+      extends FeatureBuilder[M[T]] {
+    private val fp = implicitly[FloatingPoint[T]]
 
-  implicit def sparseArrayFB[@specialized(Float, Double) T: ClassTag: FloatingPoint]
-    : FeatureBuilder[SparseArray[T]] = new FeatureBuilder[SparseArray[T]] {
+    override def init(dimension: Int): Unit = underlying = cb()
+
+    override def add(name: String, value: Double): Unit =
+      underlying += fp.fromDouble(value)
+
+    override def skip(): Unit = underlying += fp.fromDouble(0.0)
+
+    override def result: M[T] = underlying.result()
+
+    override def newBuilder: FeatureBuilder[M[T]] = TraversableFB[M, T]()
+  }
+
+  implicit def traversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
+    implicit cb: CanBuild[T, M[T]]): FeatureBuilder[M[T]] = TraversableFB[M, T]()
+
+  private final case class SparseArrayFB[T: ClassTag: FloatingPoint](
+    private var indices: Array[Int] = null,
+    private var values: Array[T] = null)
+      extends FeatureBuilder[SparseArray[T]] {
     private val initCapacity = 1024
     private var dim: Int = _
     private var offset: Int = 0
     private var i: Int = 0
-    private var indices: Array[Int] = _
-    private var values: Array[T] = _
     private val fp = implicitly[FloatingPoint[T]]
+
     override def init(dimension: Int): Unit = {
       dim = dimension
       offset = 0
@@ -223,6 +252,7 @@ object FeatureBuilder {
         values = new Array[T](n)
       }
     }
+
     override def add(name: String, value: Double): Unit = {
       indices(i) = offset
       values(i) = fp.fromDouble(value)
@@ -238,8 +268,11 @@ object FeatureBuilder {
         values = newValues
       }
     }
+
     override def skip(): Unit = offset += 1
+
     override def skip(n: Int): Unit = offset += n
+
     override def result: SparseArray[T] = {
       require(offset == dim)
       val rIndices = new Array[Int](i)
@@ -248,7 +281,12 @@ object FeatureBuilder {
       Array.copy(values, 0, rValues, 0, i)
       SparseArray(rIndices, rValues, dim)
     }
+
+    override def newBuilder: FeatureBuilder[SparseArray[T]] = SparseArrayFB()
   }
+
+  implicit def sparseArrayFB[@specialized(Float, Double) T: ClassTag: FloatingPoint]
+    : FeatureBuilder[SparseArray[T]] = SparseArrayFB()
 
   implicit def denseVectorFB[T: ClassTag: FloatingPoint]: FeatureBuilder[DenseVector[T]] =
     implicitly[FeatureBuilder[Array[T]]].map(DenseVector(_))
@@ -259,19 +297,27 @@ object FeatureBuilder {
       new SparseVector(a.indices, a.values, a.indices.length, a.length)
     }
 
-  implicit def mapFB[T: ClassTag: FloatingPoint]: FeatureBuilder[Map[String, T]] =
-    new FeatureBuilder[Map[String, T]] { self =>
-      private var m: java.util.Map[String, T] = _
-      private val fp = implicitly[FloatingPoint[T]]
-      override def init(dimension: Int): Unit =
-        m = new java.util.HashMap[String, T]
-      override def add(name: String, value: Double): Unit =
-        m.put(name, fp.fromDouble(value))
-      override def skip(): Unit = Unit
-      override def skip(n: Int): Unit = Unit
-      override def result: Map[String, T] = new JMapWrapper(m)
-    }
+  private final case class MapFB[T: ClassTag: FloatingPoint](
+    private var underlying: java.util.Map[String, T] = null)
+      extends FeatureBuilder[Map[String, T]] { self =>
+    private val fp = implicitly[FloatingPoint[T]]
 
+    override def init(dimension: Int): Unit =
+      underlying = new java.util.HashMap[String, T]
+
+    override def add(name: String, value: Double): Unit =
+      underlying.put(name, fp.fromDouble(value))
+
+    override def skip(): Unit = Unit
+
+    override def skip(n: Int): Unit = Unit
+
+    override def result: Map[String, T] = new JMapWrapper(underlying)
+
+    override def newBuilder: FeatureBuilder[Map[String, T]] = MapFB()
+  }
+
+  implicit def mapFB[T: ClassTag: FloatingPoint]: FeatureBuilder[Map[String, T]] = MapFB()
 }
 
 private final class JMapWrapper[K, V](m: java.util.Map[K, V]) extends Map[K, V] with Serializable {

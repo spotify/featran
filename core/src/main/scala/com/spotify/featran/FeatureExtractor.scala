@@ -90,7 +90,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
    *           `DenseVector[Double]`
    */
   def featureResults[F: FeatureBuilder: ClassTag]: M[FeatureResult[F, T]] = {
-    val fb = CrossingFeatureBuilder(implicitly[FeatureBuilder[F]], fs.crossings)
+    val fb = CrossingFeatureBuilder(implicitly[FeatureBuilder[F]].newBuilder, fs.crossings)
     as.cross(aggregate).map {
       case ((o, a), c) =>
         fs.featureValues(a, c, fb)
@@ -116,10 +116,23 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
       }
     }
 
-  private val input: PipeIterator = new PipeIterator
-  private val extractor: FeatureExtractor[Iterator, T] =
-    new FeatureExtractor[Iterator, T](fs, input, Some(Iterator.continually(settings)))
-  private val output: Iterator[FeatureResult[F, T]] = extractor.featureResults
+  private final case class State(fs: FeatureSet[T], settings: String) {
+    private val input: PipeIterator = new PipeIterator
+    private val extractor: FeatureExtractor[Iterator, T] =
+      new FeatureExtractor[Iterator, T](fs, input, Some(Iterator.continually(settings)))
+    private val output: Iterator[FeatureResult[F, T]] = extractor.featureResults
+
+    val featureNames: Seq[String] = extractor.featureNames.next()
+
+    def featureResult(record: T): FeatureResult[F, T] = {
+      input.feed(record)
+      output.next()
+    }
+  }
+
+  private val state = new ThreadLocal[State] {
+    override def initialValue(): State = State(fs, settings)
+  }
 
   /**
    * JSON settings of the [[FeatureSpec]] and aggregated feature summary.
@@ -130,7 +143,7 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
   val featureSettings: String = settings
 
   /** Names of the extracted features, in the same order as values in [[featureValue]]. */
-  val featureNames: Seq[String] = extractor.featureNames.next()
+  val featureNames: Seq[String] = state.get().featureNames
 
   /**
    * Extract feature values from a single record with values in the same order as names in
@@ -142,10 +155,7 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
    * Extract feature values from a single record, with values in the same order as names in
    * [[featureNames]] with rejections keyed on feature name and the original input record.
    */
-  def featureResult(record: T): FeatureResult[F, T] = synchronized {
-    input.feed(record)
-    output.next()
-  }
+  def featureResult(record: T): FeatureResult[F, T] = state.get().featureResult(record)
 
   private class PipeIterator extends Iterator[T] {
     private var element: T = _

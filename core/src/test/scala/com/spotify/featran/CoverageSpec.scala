@@ -30,7 +30,8 @@ object CoverageSpec extends Properties("Coverage") {
     val fs = FeatureSpec.of[Double].required(identity)(Identity("id"))
     val settings = fs.extract(Seq(1.0)).featureSettings.head
     val e = fs.extractWithSettings[Seq[Double]](settings)
-    val f = e.getClass.getDeclaredField("iteratorCollectionType")
+    val f =
+      e.getClass.getDeclaredField("com$spotify$featran$RecordExtractor$$iteratorCollectionType")
     f.setAccessible(true)
     val ct = f.get(e).asInstanceOf[CollectionType[Iterator]]
     require(Try(ct.reduce[Double](Iterator(1.0, 1.0), _ + _)).isFailure)
