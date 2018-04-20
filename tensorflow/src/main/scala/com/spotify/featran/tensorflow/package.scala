@@ -38,7 +38,7 @@ package object tensorflow {
     override def result: tf.Example =
       tf.Example.newBuilder().setFeatures(underlying).build()
 
-    override def newBuilder: FeatureBuilder[Example] = TensorFlowFeatureBuilder(underlying.clear())
+    override def newBuilder: FeatureBuilder[Example] = TensorFlowFeatureBuilder()
   }
 
   /**
