@@ -116,22 +116,19 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
       }
     }
 
-  private final case class State(fs: FeatureSet[T], settings: String) {
-    private val input: PipeIterator = new PipeIterator
-    private val extractor: FeatureExtractor[Iterator, T] =
-      new FeatureExtractor[Iterator, T](fs, input, Some(Iterator.continually(settings)))
-    private val output: Iterator[FeatureResult[F, T]] = extractor.featureResults
-
-    val featureNames: Seq[String] = extractor.featureNames.next()
-
-    def featureResult(record: T): FeatureResult[F, T] = {
-      input.feed(record)
-      output.next()
-    }
-  }
+  private final case class State(input: PipeIterator,
+                                 extractor: FeatureExtractor[Iterator, T],
+                                 output: Iterator[FeatureResult[F, T]])
 
   private val state = new ThreadLocal[State] {
-    override def initialValue(): State = State(fs, settings)
+    override def initialValue(): State = {
+      val input: PipeIterator = new PipeIterator
+      val extractor: FeatureExtractor[Iterator, T] =
+        new FeatureExtractor[Iterator, T](fs, input, Some(Iterator.continually(settings)))
+      val output: Iterator[FeatureResult[F, T]] = extractor.featureResults
+
+      State(input, extractor, output)
+    }
   }
 
   /**
@@ -143,7 +140,7 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
   val featureSettings: String = settings
 
   /** Names of the extracted features, in the same order as values in [[featureValue]]. */
-  val featureNames: Seq[String] = state.get().featureNames
+  val featureNames: Seq[String] = state.get().extractor.featureNames.next()
 
   /**
    * Extract feature values from a single record with values in the same order as names in
@@ -155,7 +152,11 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
    * Extract feature values from a single record, with values in the same order as names in
    * [[featureNames]] with rejections keyed on feature name and the original input record.
    */
-  def featureResult(record: T): FeatureResult[F, T] = state.get().featureResult(record)
+  def featureResult(record: T): FeatureResult[F, T] = {
+    val s = state.get()
+    s.input.feed(record)
+    s.output.next()
+  }
 
   private class PipeIterator extends Iterator[T] {
     private var element: T = _
