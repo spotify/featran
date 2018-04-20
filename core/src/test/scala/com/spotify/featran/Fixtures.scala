@@ -44,8 +44,8 @@ object Fixtures {
                            Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
 
   val expectedMapValues = Seq(
-    Map("min_max" -> 0.0, "one_hot_a" -> 1.0),
-    Map("min_max" -> 0.25, "one_hot_b" -> 1.0),
+    Map("one_hot_a" -> 1.0, "min_max" -> 0.0),
+    Map("one_hot_b" -> 1.0, "min_max" -> 0.25),
     Map("one_hot_c" -> 1.0, "min_max" -> 0.5),
     Map("one_hot_d" -> 1.0, "min_max" -> 0.75),
     Map("one_hot_e" -> 1.0, "min_max" -> 1.0)
