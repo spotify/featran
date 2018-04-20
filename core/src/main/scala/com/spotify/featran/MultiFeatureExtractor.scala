@@ -67,7 +67,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
    */
   def featureResults[F: FeatureBuilder: ClassTag]
     : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] = {
-    val fbs = fs.multiFeatureBuilders(implicitly[FeatureBuilder[F]])
+    val fbs = fs.multiFeatureBuilders
     extractor.as.cross(extractor.aggregate).map {
       case ((o, a), c) =>
         fs.multiFeatureValues(a, c, fbs)

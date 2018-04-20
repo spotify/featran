@@ -17,8 +17,6 @@
 
 package com.spotify.featran
 
-import java.io._
-
 import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.collection.mutable
@@ -342,18 +340,11 @@ private class MultiFeatureSet[T](features: Array[Feature[T, _, _, _]],
 
   private val dims = mapping.values.toSet.size
 
-  def multiFeatureBuilders[F](fb: FeatureBuilder[F]): Array[FeatureBuilder[F]] = {
+  def multiFeatureBuilders[F: FeatureBuilder]: Array[FeatureBuilder[F]] =
     // each underlying FeatureSpec should get a unique copy of FeatureBuilder
-    val buffer = new ByteArrayOutputStream()
-    val out = new ObjectOutputStream(buffer)
-    out.writeObject(fb)
-    val bytes = buffer.toByteArray
     Array.fill(dims) {
-      val in = new ObjectInputStream(new ByteArrayInputStream(bytes))
-      val clone = in.readObject().asInstanceOf[FeatureBuilder[F]]
-      CrossingFeatureBuilder(clone, crossings)
+      CrossingFeatureBuilder(implicitly[FeatureBuilder[F]].newBuilder, crossings)
     }
-  }
 
   // Array[Option[C]] => Array[String]
   def multiFeatureNames(c: ARRAY): Seq[Seq[String]] = {
