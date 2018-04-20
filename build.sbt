@@ -27,9 +27,9 @@ val hadoopVersion = "2.8.0"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.5"
 val scaldingVersion = "0.17.4"
-val scioVersion = "0.5.1"
+val scioVersion = "0.5.2"
 val sparkVersion = "2.3.0"
-val tensorflowVersion = "1.4.0"
+val tensorflowVersion = "1.7.0"
 val xgBoostVersion = "0.7-20171122-70a4c419"
 
 val commonSettings = Seq(
