@@ -30,6 +30,9 @@ class SparkTest extends FlatSpec with Matchers {
     val f = testSpec.extract(sc.parallelize(testData))
     f.featureNames.collect() shouldBe Array(expectedNames)
     f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
+    f.featureValues[Map[String, Double]]
+      .collect() should contain theSameElementsAs expectedMapValues
+
     sc.stop()
   }
 
