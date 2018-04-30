@@ -285,7 +285,10 @@ lazy val tensorflow: Project = Project(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )
-  .dependsOn(core)
+  .dependsOn(
+    core,
+    core % "test->test"
+  )
 
 lazy val xgboost: Project = Project(
   "xgboost",
@@ -306,7 +309,10 @@ lazy val xgboost: Project = Project(
         )
     }
   )
-  .dependsOn(core)
+  .dependsOn(
+    core,
+    core % "test->test"
+  )
 
 val soccoSettings = if (sys.env.contains("SOCCO")) {
   Seq(
