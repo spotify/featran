@@ -17,7 +17,7 @@
 
 package com.spotify.featran.xgboost
 
-import com.spotify.featran.{FeatureBuilder, SparseArray}
+import com.spotify.featran.{FeatureBuilder, SerializableUtils, SparseArray}
 import ml.dmlc.xgboost4j.LabeledPoint
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
 
@@ -28,9 +28,10 @@ object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
-  private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])(
+  private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], builder: FeatureBuilder[F])(
     toSeq: F => Seq[Float]): Prop = {
     val num = implicitly[Numeric[T]]
+    val fb = SerializableUtils.ensureSerializable(builder)
     fb.init(xs.size + 4)
     fb.prepare(null)
     xs.zipWithIndex.foreach {

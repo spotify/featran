@@ -17,7 +17,7 @@
 
 package com.spotify.featran.tensorflow
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, SerializableUtils}
 import org.scalacheck._
 import org.tensorflow.example.{Example, Feature, Features, FloatList}
 
@@ -27,7 +27,7 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     Gen.listOfN(100, arb.arbitrary)
 
   property("TensorFlow Example") = Prop.forAll(list[Double]) { xs =>
-    val fb = implicitly[FeatureBuilder[Example]]
+    val fb = SerializableUtils.ensureSerializable(implicitly[FeatureBuilder[Example]])
     fb.init(xs.size + 4)
     val b = Features.newBuilder()
     xs.zipWithIndex.foreach {

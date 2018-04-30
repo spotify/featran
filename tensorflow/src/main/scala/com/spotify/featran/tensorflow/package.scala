@@ -23,9 +23,14 @@ import org.tensorflow.{example => tf}
 package object tensorflow {
 
   case class TensorFlowFeatureBuilder(
-    @transient private val underlying: Features.Builder = tf.Features.newBuilder())
+    @transient private var underlying: Features.Builder = tf.Features.newBuilder())
       extends FeatureBuilder[tf.Example] {
-    override def init(dimension: Int): Unit = underlying.clear()
+    override def init(dimension: Int): Unit = {
+      if (underlying == null) {
+        underlying = tf.Features.newBuilder()
+      }
+      underlying.clear()
+    }
     override def add(name: String, value: Double): Unit = {
       val feature = tf.Feature
         .newBuilder()
