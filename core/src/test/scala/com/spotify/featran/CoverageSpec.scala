@@ -51,4 +51,13 @@ object CoverageSpec extends Properties("Coverage") {
     t.buildFeatures(Some(0), (0, 0, Double.MinValue, Double.MaxValue), fb)
   }
 
+  {
+    val fb = implicitly[FeatureBuilder[Seq[Double]]]
+    val f = classOf[CrossingFeatureBuilder[_]]
+      .getConstructor(classOf[FeatureBuilder[_]], classOf[Crossings])
+    f.setAccessible(true)
+    val cfb = f.newInstance(fb, Crossings.empty)
+    cfb.newBuilder
+  }
+
 }
