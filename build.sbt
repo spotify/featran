@@ -123,9 +123,8 @@ lazy val core: Project = Project(
   moduleName := "featran-core",
   description := "Feature Transformers",
   libraryDependencies ++= Seq(
-    "com.twitter" %% "algebird-core" % algebirdVersion excludeAll ("org.typelevel" %% "algebra"),
+    "com.twitter" %% "algebird-core" % algebirdVersion,
     "org.scalanlp" %% "breeze" % breezeVersion,
-    "org.typelevel" %% "algebra" % "1.0.0",
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
     "org.scalatest" %% "scalatest" % scalatestVersion % "test",
     "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
