@@ -27,10 +27,10 @@ val hadoopVersion = "2.8.0"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.5"
 val scaldingVersion = "0.17.4"
-val scioVersion = "0.5.2"
+val scioVersion = "0.5.4"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
-val xgBoostVersion = "0.7-20171122-70a4c419"
+val xgBoostVersion = "0.71-20180420-230cb9b7"
 
 val commonSettings = Seq(
   organization := "com.spotify",
