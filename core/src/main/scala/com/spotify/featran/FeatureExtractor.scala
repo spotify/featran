@@ -32,11 +32,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
   @transient private val input: M[T],
   @transient private val settings: Option[M[String]])
     extends Serializable {
-
-  import FeatureSpec.ARRAY
-
-  @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
-  import dt.Ops._
+  import FeatureSpec.ARRAY, CollectionType.ops._
 
   @transient private[featran] lazy val as: M[(T, ARRAY)] = {
     val g = fs // defeat closure
@@ -108,9 +104,9 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
 
   private implicit val iteratorCollectionType: CollectionType[Iterator] =
     new CollectionType[Iterator] {
-      override def map[A, B: ClassTag](ma: Iterator[A], f: A => B): Iterator[B] = ma.map(f)
-      override def reduce[A](ma: Iterator[A], f: (A, A) => A): Iterator[A] = ???
-      override def cross[A, B: ClassTag](ma: Iterator[A], mb: Iterator[B]): Iterator[(A, B)] = {
+      override def map[A, B: ClassTag](ma: Iterator[A])(f: A => B): Iterator[B] = ma.map(f)
+      override def reduce[A](ma: Iterator[A])(f: (A, A) => A): Iterator[A] = ???
+      override def cross[A, B: ClassTag](ma: Iterator[A])(mb: Iterator[B]): Iterator[(A, B)] = {
         val b = mb.next()
         ma.map(a => (a, b))
       }

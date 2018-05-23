@@ -31,9 +31,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
   @transient private val input: M[T],
   @transient private val settings: Option[M[String]])
     extends Serializable {
-
-  @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
-  import dt.Ops._
+  import CollectionType.ops._
 
   private val extractor = new FeatureExtractor(fs, input, settings)
 

@@ -24,10 +24,12 @@ val circeVersion = "0.9.1"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.4.2"
 val hadoopVersion = "2.8.0"
+val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.5"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.5.4"
+val simulacrumVersion = "0.12.0"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
 val xgBoostVersion = "0.71-20180420-230cb9b7"
@@ -122,7 +124,9 @@ lazy val core: Project = Project(
   commonSettings,
   moduleName := "featran-core",
   description := "Feature Transformers",
+  addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full),
   libraryDependencies ++= Seq(
+    "com.github.mpilquist" %% "simulacrum" % simulacrumVersion,
     "com.twitter" %% "algebird-core" % algebirdVersion,
     "org.scalanlp" %% "breeze" % breezeVersion,
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
@@ -224,7 +228,7 @@ lazy val scio: Project = Project(
     commonSettings,
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
+    addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
