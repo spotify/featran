@@ -63,10 +63,11 @@ private class HeavyHitters(name: String,
                            val seed: Int)
     extends Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]](name) {
 
-  private val sketchMapParams =
+  @transient private lazy val sketchMapParams =
     SketchMapParams[String](seed, eps, delta, heavyHittersCount)(_.getBytes)
 
-  override val aggregator: Aggregator[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
+  @transient override lazy val aggregator
+    : Aggregator[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
     SketchMap
       .aggregator[String, Long](sketchMapParams)
       .composePrepare[String]((_, 1L))

@@ -29,12 +29,16 @@ package object spark {
   implicit object SparkCollectionType extends CollectionType[RDD] {
     override def map[A, B: ClassTag](ma: RDD[A])(f: A => B): RDD[B] =
       ma.map(f)
+
     override def reduce[A](ma: RDD[A])(f: (A, A) => A): RDD[A] =
       ma.context.parallelize(Seq(ma.reduce(f)))(RDDUtil.classTag(ma))
+
     override def cross[A, B: ClassTag](ma: RDD[A])(mb: RDD[B]): RDD[(A, B)] = {
       val b = mb.first()
       ma.map((_, b))
     }
+
+    override def pure[A: ClassTag](ma: RDD[_])(a: A): RDD[A] = ma.context.parallelize(Seq(a))
   }
 
 }

@@ -38,6 +38,18 @@ object CoverageSpec extends Properties("Coverage") {
   }
 
   {
+    // RecordExtractor.iteratorCollectionType#pure
+    val fs = FeatureSpec.of[Double].required(identity)(Identity("id"))
+    val settings = fs.extract(Seq(1.0)).featureSettings.head
+    val e = fs.extractWithSettings[Seq[Double]](settings)
+    val f =
+      e.getClass.getDeclaredField("com$spotify$featran$RecordExtractor$$iteratorCollectionType")
+    f.setAccessible(true)
+    val ct = f.get(e).asInstanceOf[CollectionType[Iterator]]
+    require(ct.pure[Double](Iterator(), 1.0).nonEmpty)
+  }
+
+  {
     // QuantileOutlierRejector when both rejectLower and rejectUpper are false
     val t = QuantileOutlierRejector("q")
     val f1 = t.getClass.getDeclaredField("rejectLower")

@@ -17,6 +17,8 @@
 
 package com.spotify.featran
 
+import com.spotify.featran.transformers.Settings
+
 /**
  * Companion object for [[MultiFeatureSpec]].
  */
@@ -45,13 +47,37 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    *
    * This is done in two steps, a `reduce` step over the collection to aggregate feature summary,
    * and a `map` step to transform values using the summary.
+   *
    * @param input input collection
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] =
-    new MultiFeatureExtractor[M, T](new MultiFeatureSet[T](features, crossings, mapping),
-                                    input,
-                                    None)
+  def extract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] = {
+    import CollectionType.ops._
+
+    val fs = input.pure(new MultiFeatureSet[T](features, crossings, mapping))
+    new MultiFeatureExtractor[M, T](fs, input, None)
+  }
+
+  /**
+   * Extract features from an input collection based on the provided predicate
+   *
+   * @param input input collection
+   * @param predicate Function determining whether or not to include the feature
+   * @tparam M input collection type, e.g. `Array`, `List`
+   */
+  def extract[M[_]: CollectionType](
+    input: M[T],
+    predicate: Feature[T, _, _, _] => Boolean): MultiFeatureExtractor[M, T] = {
+    import CollectionType.ops._
+
+    val filteredFeatures: Map[String, Feature[T, _, _, _]] =
+      features.filter(predicate).map(f => f.transformer.name -> f).toMap
+    val filteredMapping = mapping.filterKeys(filteredFeatures.contains)
+    val fs = input.pure(
+      new MultiFeatureSet[T](filteredFeatures.values.toArray, crossings, filteredMapping))
+
+    new MultiFeatureExtractor[M, T](fs, input, None)
+  }
 
   /**
    * Extract features from a input collection using settings from a previous session.
@@ -62,10 +88,47 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @param settings JSON settings from a previous session
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extractWithSettings[M[_]: CollectionType](input: M[T],
-                                                settings: M[String]): MultiFeatureExtractor[M, T] =
-    new MultiFeatureExtractor[M, T](new MultiFeatureSet(features, crossings, mapping),
-                                    input,
-                                    Some(settings))
+  def extractWithSettings[M[_]: CollectionType](
+    input: M[T],
+    settings: M[String]): MultiFeatureExtractor[M, T] = {
+    import CollectionType.ops._
+
+    val fs = input.pure(new MultiFeatureSet(features, crossings, mapping))
+    new MultiFeatureExtractor[M, T](fs, input, Some(settings))
+  }
+
+  /**
+   * Extract features from a input collection using partial settings from a previous session.
+   *
+   * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
+   * in a previous session.
+   * @param input input collection
+   * @param settings JSON settings from a previous session
+   * @tparam M input collection type, e.g. `Array`, `List`
+   */
+  def extractWithPartialSettings[M[_]: CollectionType](
+    input: M[T],
+    settings: M[String]): MultiFeatureExtractor[M, T] = {
+    import CollectionType.ops._
+
+    val featureSet = settings.map { s =>
+      import io.circe.generic.auto._
+      import io.circe.parser._
+
+      val settingsJson = decode[Seq[Settings]](s).right.get
+      val filteredFeatures: Map[String, Feature[T, _, _, _]] = features
+        .filter { f =>
+          settingsJson.exists(x => x.name == f.transformer.name)
+        }
+        .map(f => f.transformer.name -> f)
+        .toMap
+
+      val filteredMapping = mapping.filterKeys(filteredFeatures.contains)
+
+      new MultiFeatureSet[T](filteredFeatures.values.toArray, crossings, filteredMapping)
+    }
+
+    new MultiFeatureExtractor[M, T](featureSet, input, Some(settings))
+  }
 
 }

@@ -39,6 +39,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
 
   private val id = Identity("id")
   private val id2 = Identity("id2")
+  private val id3 = Identity("id3")
 
   property("required") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
@@ -136,6 +137,42 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val e1 = f1.extract(xs)
     val settings = e1.featureSettings.head
     val e2 = f1.extractWithSettings[Seq[Double]](settings)
+
+    Prop.all(e1.featureNames.head == e2.featureNames,
+             e1.featureValues[Seq[Double]] == xs.map(e2.featureValue),
+             e1.featureResults[Seq[Double]] == xs.map(e2.featureResult))
+  }
+
+  property("extract specified list of features according to predicate") = Prop.forAll {
+    xs: List[Record] =>
+      val f = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
+      val includeFeatures = Set(id.name)
+      val extracted = f.extract(xs, f => includeFeatures.contains(f.transformer.name))
+      Prop.all(
+        extracted.featureNames.head == Seq("id"),
+        extracted.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d), Map.empty, r)))
+  }
+
+  property("extract with partial settings") = Prop.forAll { xs: List[Record] =>
+    val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
+    val includeList = Set(id.name, id3.name)
+    val e1 = f1.extract(xs, f => includeList.contains(f.transformer.name))
+    val settings = e1.featureSettings
+    val e2 = f1.extractWithPartialSettings(xs, settings)
+
+    Prop.all(
+      e1.featureNames == e2.featureNames,
+      e2.featureValues[Seq[Double]] == e1.featureValues[Seq[Double]],
+      e2.featureResults[Seq[Double]] == e1.featureResults[Seq[Double]]
+    )
+  }
+
+  property("record extractor with partial settings") = Prop.forAll { xs: List[Record] =>
+    val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
+    val includeList = Set(id.name, id3.name)
+    val e1 = f1.extract(xs, f => includeList.contains(f.transformer.name))
+    val settings = e1.featureSettings.head
+    val e2 = f1.extractWithPartialSettings[Seq[Double]](settings)
 
     Prop.all(e1.featureNames.head == e2.featureNames,
              e1.featureValues[Seq[Double]] == xs.map(e2.featureValue),

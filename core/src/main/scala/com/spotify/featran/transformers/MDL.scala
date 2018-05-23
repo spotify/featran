@@ -88,7 +88,7 @@ private class MDL[T: ClassTag](name: String,
 
   import MDL.{B, C}
 
-  private lazy val rng = {
+  @transient private lazy val rng = {
     val r = new Random(seed)
     r.nextDouble()
     r

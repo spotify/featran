@@ -29,10 +29,15 @@ package object scalding {
    */
   implicit object ScaldingCollectionType extends CollectionType[TypedPipe] {
     override def map[A, B: ClassTag](ma: TypedPipe[A])(f: A => B): TypedPipe[B] = ma.map(f)
+
     override def reduce[A](ma: TypedPipe[A])(f: (A, A) => A): TypedPipe[A] =
       ma.sum(Semigroup.from(f))
+
     override def cross[A, B: ClassTag](ma: TypedPipe[A])(mb: TypedPipe[B]): TypedPipe[(A, B)] =
       ma.cross(mb)
+
+    override def pure[A: ClassTag](ma: TypedPipe[_],)(a: A): TypedPipe[A] =
+      TypedPipe.from(Iterable(a))
   }
 
 }

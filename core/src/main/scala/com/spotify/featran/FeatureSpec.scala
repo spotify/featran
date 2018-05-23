@@ -108,8 +108,59 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param input input collection
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] =
-    new FeatureExtractor[M, T](new FeatureSet[T](features, crossings), input, None)
+  def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] = {
+    import CollectionType.ops._
+
+    val fs = input.pure(new FeatureSet[T](features, crossings))
+    new FeatureExtractor[M, T](fs, input, None)
+  }
+
+  /**
+   * Extract features from an input collection based on the provided predicate
+   *
+   * @param input input collection
+   * @param predicate Function determining whether or not to include the feature
+   * @tparam M input collection type, e.g. `Array`, `List`
+   */
+  def extract[M[_]: CollectionType](
+    input: M[T],
+    predicate: Feature[T, _, _, _] => Boolean): FeatureExtractor[M, T] = {
+    import CollectionType.ops._
+
+    val filteredFeatures = features.filter(predicate)
+    val fs = input.pure(new FeatureSet[T](filteredFeatures, crossings))
+
+    new FeatureExtractor[M, T](fs, input, None)
+  }
+
+  /**
+   * Extract features from an input collection using a partial settings from a previous session.
+   *
+   * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
+   * in a previous session.
+   * @param input input collection
+   * @param settings JSON settings from a previous session
+   * @tparam M input collection type, e.g. `Array`, `List`
+   */
+  def extractWithPartialSettings[M[_]: CollectionType](
+    input: M[T],
+    settings: M[String]): FeatureExtractor[M, T] = {
+    import CollectionType.ops._
+
+    val featureSet = settings.map { s =>
+      import io.circe.generic.auto._
+      import io.circe.parser._
+
+      val settingsJson = decode[Seq[Settings]](s).right.get
+      val filteredFeatures = features.filter { f =>
+        settingsJson.exists(x => x.name == f.transformer.name)
+      }
+
+      new FeatureSet[T](filteredFeatures, crossings)
+    }
+
+    new FeatureExtractor[M, T](featureSet, input, Some(settings))
+  }
 
   /**
    * Extract features from an input collection using settings from a previous session.
@@ -121,8 +172,34 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @tparam M input collection type, e.g. `Array`, `List`
    */
   def extractWithSettings[M[_]: CollectionType](input: M[T],
-                                                settings: M[String]): FeatureExtractor[M, T] =
-    new FeatureExtractor[M, T](new FeatureSet[T](features, crossings), input, Some(settings))
+                                                settings: M[String]): FeatureExtractor[M, T] = {
+    import CollectionType.ops._
+
+    val featureSet = input.pure(new FeatureSet(features, crossings))
+    new FeatureExtractor[M, T](featureSet, input, Some(settings))
+  }
+
+  /**
+   * Extract features from individual records using partial settings. Since the
+   * settings are parsed only once, this is more efficient and is recommended when the input is
+   * from an unbounded source, e.g. a stream of events or a backend service.
+   *
+   * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
+   * in a previous session.
+   * @param settings JSON settings from a previous session
+   */
+  def extractWithPartialSettings[F: FeatureBuilder: ClassTag](
+    settings: String): RecordExtractor[T, F] = {
+    import io.circe.generic.auto._
+    import io.circe.parser._
+
+    val s = decode[Seq[Settings]](settings).right.get
+    val filteredFeatures = features.filter { f =>
+      s.exists(x => x.name == f.transformer.name)
+    }
+
+    new RecordExtractor[T, F](new FeatureSet[T](filteredFeatures, crossings), settings)
+  }
 
   /**
    * Extract features from individual records using settings from a previous session. Since the
@@ -181,7 +258,7 @@ private class Feature[T, A, B, C](val f: T => Option[A],
 
 }
 
-private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
+private class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _, _]],
                             private[featran] val crossings: Crossings)
     extends Serializable {
 
@@ -333,7 +410,8 @@ private class FeatureSet[T](private val features: Array[Feature[T, _, _, _]],
 private class MultiFeatureSet[T](features: Array[Feature[T, _, _, _]],
                                  crossings: Crossings,
                                  private val mapping: Map[String, Int])
-    extends FeatureSet[T](features, crossings) {
+    extends FeatureSet[T](features, crossings)
+    with Serializable {
 
   import FeatureSpec.ARRAY
 
