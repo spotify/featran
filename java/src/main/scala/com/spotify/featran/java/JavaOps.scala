@@ -45,12 +45,12 @@ private object JavaOps {
   def crossFn(f: BiFunction[JDouble, JDouble, JDouble]): (Double, Double) => Double =
     (a, b) => f(a, b)
 
-  implicit val jListCollectionType = new CollectionType[JList] {
-    override def map[A, B: ClassTag](ma: JList[A], f: A => B) =
+  implicit val jListCollectionType: CollectionType[JList] = new CollectionType[JList] {
+    override def map[A, B: ClassTag](ma: JList[A])(f: A => B): JList[B] =
       ma.asScala.map(f).asJava
-    override def reduce[A](ma: JList[A], f: (A, A) => A) =
+    override def reduce[A](ma: JList[A])(f: (A, A) => A): JList[A] =
       Collections.singletonList(ma.asScala.reduce(f))
-    override def cross[A, B: ClassTag](ma: JList[A], mb: JList[B]) =
+    override def cross[A, B: ClassTag](ma: JList[A])(mb: JList[B]): JList[(A, B)] =
       ma.asScala.map((_, mb.get(0))).asJava
   }
 

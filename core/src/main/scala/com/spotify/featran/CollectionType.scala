@@ -17,6 +17,8 @@
 
 package com.spotify.featran
 
+import simulacrum._
+
 import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable
 import scala.language.{higherKinds, implicitConversions}
@@ -26,37 +28,29 @@ import scala.reflect.ClassTag
  * Type class for collections to extract features from.
  * @tparam M collection type
  */
-trait CollectionType[M[_]] { self =>
-  def map[A, B: ClassTag](ma: M[A], f: A => B): M[B]
-  def reduce[A](ma: M[A], f: (A, A) => A): M[A]
-  def cross[A, B: ClassTag](ma: M[A], mb: M[B]): M[(A, B)]
+@typeclass trait CollectionType[M[_]] {
+  def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B]
 
-  class MOps[A](ma: M[A]) {
-    def map[B: ClassTag](f: A => B): M[B] = self.map(ma, f)
-    def reduce(f: (A, A) => A): M[A] = self.reduce(ma, f)
-    def cross[B: ClassTag](mb: M[B]): M[(A, B)] = self.cross(ma, mb)
-  }
+  def reduce[A](ma: M[A])(f: (A, A) => A): M[A]
 
-  object Ops {
-    implicit def mkMOps[A](xs: M[A]): MOps[A] = new MOps[A](xs)
-  }
+  def cross[A, B: ClassTag](ma: M[A])(mb: M[B]): M[(A, B)]
 }
 
 object CollectionType {
   implicit def scalaCollectionType[M[_] <: Traversable[_]](
     implicit cbf: CanBuildFrom[M[_], _, M[_]]): CollectionType[M] =
     new CollectionType[M] {
-      override def map[A, B: ClassTag](ma: M[A], f: (A) => B): M[B] = {
+      override def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B] = {
         val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]
         ma.asInstanceOf[Seq[A]].foreach(a => builder += f(a))
         builder.result()
       }
-      override def reduce[A](ma: M[A], f: (A, A) => A): M[A] = {
+      override def reduce[A](ma: M[A])(f: (A, A) => A): M[A] = {
         val builder = cbf().asInstanceOf[mutable.Builder[A, M[A]]]
         builder += ma.asInstanceOf[Seq[A]].reduce(f)
         builder.result()
       }
-      override def cross[A, B: ClassTag](ma: M[A], mb: M[B]): M[(A, B)] = {
+      override def cross[A, B: ClassTag](ma: M[A])(mb: M[B]): M[(A, B)] = {
         val builder = cbf().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
         val b = mb.asInstanceOf[Seq[B]].head
         ma.asInstanceOf[Seq[A]].foreach(a => builder += ((a, b)))
@@ -64,16 +58,16 @@ object CollectionType {
       }
     }
 
-  implicit val arrayCollectionType = new CollectionType[Array] {
-    override def map[A, B: ClassTag](ma: Array[A], f: (A) => B): Array[B] =
+  implicit val arrayCollectionType: CollectionType[Array] = new CollectionType[Array] {
+    override def map[A, B: ClassTag](ma: Array[A])(f: A => B): Array[B] =
       ma.map(f)
-    override def reduce[A](ma: Array[A], f: (A, A) => A): Array[A] = {
+    override def reduce[A](ma: Array[A])(f: (A, A) => A): Array[A] = {
       // workaround for "No ClassTag available for A"
       val r = ma.take(1)
       r(0) = ma.reduce(f)
       r
     }
-    override def cross[A, B: ClassTag](ma: Array[A], mb: Array[B]): Array[(A, B)] =
+    override def cross[A, B: ClassTag](ma: Array[A])(mb: Array[B]): Array[(A, B)] =
       ma.map((_, mb.head))
   }
 }
