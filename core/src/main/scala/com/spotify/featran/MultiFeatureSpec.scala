@@ -105,7 +105,7 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @param settings JSON settings from a previous session
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extractWithPartialSettings[M[_]: CollectionType](
+  def extractWithSubsetSettings[M[_]: CollectionType](
     input: M[T],
     settings: M[String]): MultiFeatureExtractor[M, T] = {
     import CollectionType.ops._

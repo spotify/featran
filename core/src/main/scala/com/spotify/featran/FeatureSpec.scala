@@ -141,7 +141,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param settings JSON settings from a previous session
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extractWithPartialSettings[M[_]: CollectionType](
+  def extractWithSubsetSettings[M[_]: CollectionType](
     input: M[T],
     settings: M[String]): FeatureExtractor[M, T] = {
     import CollectionType.ops._

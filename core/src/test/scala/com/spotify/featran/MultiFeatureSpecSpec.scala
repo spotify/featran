@@ -60,7 +60,7 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
       }
       .featureSettings
 
-    val multi = MultiFeatureSpec(f, f2).extractWithPartialSettings(xs, settings)
+    val multi = MultiFeatureSpec(f, f2).extractWithSubsetSettings(xs, settings)
     Prop.all(
       multi.featureNames == Seq(Seq(Seq(id.name))),
       multi.featureValues[Seq[Double]] == xs.map(r => Seq(Seq(r.d)))

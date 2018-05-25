@@ -162,7 +162,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       includeList.contains(f.transformer.name)
     }
     val settings = e1.featureSettings
-    val e2 = f1.extractWithPartialSettings(xs, settings)
+    val e2 = f1.extractWithSubsetSettings(xs, settings)
 
     Prop.all(
       e1.featureNames == e2.featureNames,
