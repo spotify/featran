@@ -65,8 +65,7 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @param predicate Function determining whether or not to include the feature
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extract[M[_]: CollectionType](
-    input: M[T],
+  def extractSubset[M[_]: CollectionType](input: M[T])(
     predicate: Feature[T, _, _, _] => Boolean): MultiFeatureExtractor[M, T] = {
     import CollectionType.ops._
 

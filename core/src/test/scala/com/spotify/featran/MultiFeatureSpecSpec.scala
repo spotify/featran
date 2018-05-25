@@ -44,7 +44,9 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
   }
 
   property("multi feature extraction based on predicate") = Prop.forAll { xs: List[Record] =>
-    val multi = MultiFeatureSpec(f, f2).extract(xs, feature => feature.transformer.name == id.name)
+    val multi = MultiFeatureSpec(f, f2).extractSubset(xs) { feature =>
+      feature.transformer.name == id.name
+    }
     Prop.all(
       multi.featureNames == Seq(Seq(Seq(id.name))),
       multi.featureValues[Seq[Double]] == xs.map(r => Seq(Seq(r.d)))
@@ -53,7 +55,9 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
 
   property("multi feature extraction based on partial settings") = Prop.forAll { xs: List[Record] =>
     val settings: Seq[String] = MultiFeatureSpec(f, f2)
-      .extract(xs, feature => feature.transformer.name == id.name)
+      .extractSubset(xs) { feature =>
+        feature.transformer.name == id.name
+      }
       .featureSettings
 
     val multi = MultiFeatureSpec(f, f2).extractWithPartialSettings(xs, settings)

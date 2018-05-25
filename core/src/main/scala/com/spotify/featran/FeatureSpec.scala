@@ -122,8 +122,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param predicate Function determining whether or not to include the feature
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extract[M[_]: CollectionType](
-    input: M[T],
+  def extractSubset[M[_]: CollectionType](input: M[T])(
     predicate: Feature[T, _, _, _] => Boolean): FeatureExtractor[M, T] = {
     import CollectionType.ops._
 
