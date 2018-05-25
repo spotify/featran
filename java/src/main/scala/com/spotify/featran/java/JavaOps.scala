@@ -108,10 +108,9 @@ private object JavaOps {
     fe.featureValues[Array[Double]]
 
   implicit def floatSparseArrayFB: FeatureBuilder[FloatSparseArray] =
-    implicitly[FeatureBuilder[SparseArray[Float]]].map(a =>
-      new FloatSparseArray(a.indices, a.values, a.length))
+    FeatureBuilder[SparseArray[Float]].map(a => new FloatSparseArray(a.indices, a.values, a.length))
   implicit def doubleSparseArrayFB: FeatureBuilder[DoubleSparseArray] =
-    implicitly[FeatureBuilder[SparseArray[Double]]].map(a =>
+    FeatureBuilder[SparseArray[Double]].map(a =>
       new DoubleSparseArray(a.indices, a.values, a.length))
 
   def featureValuesFloatSparseArray[T](fe: FeatureExtractor[JList, T]): JList[FloatSparseArray] =

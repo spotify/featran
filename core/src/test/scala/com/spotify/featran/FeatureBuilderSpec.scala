@@ -43,71 +43,71 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
   }
 
   property("float array") = Prop.forAll(list[Float]) { xs =>
-    test(xs, implicitly[FeatureBuilder[Array[Float]]])(_.toSeq)
+    test(xs, FeatureBuilder[Array[Float]])(_.toSeq)
   }
 
   property("double array") = Prop.forAll(list[Double]) { xs =>
-    test(xs, implicitly[FeatureBuilder[Array[Double]]])(_.toSeq)
+    test(xs, FeatureBuilder[Array[Double]])(_.toSeq)
   }
 
   property("float traversable") = Prop.forAll(list[Float]) { xs =>
     Prop.all(
-      test(xs, implicitly[FeatureBuilder[Traversable[Float]]])(_.toSeq),
-      test(xs, implicitly[FeatureBuilder[Iterable[Float]]])(_.toSeq),
-      test(xs, implicitly[FeatureBuilder[Seq[Float]]])(identity),
-      test(xs, implicitly[FeatureBuilder[IndexedSeq[Float]]])(identity),
-      test(xs, implicitly[FeatureBuilder[List[Float]]])(identity),
-      test(xs, implicitly[FeatureBuilder[Vector[Float]]])(identity)
+      test(xs, FeatureBuilder[Traversable[Float]])(_.toSeq),
+      test(xs, FeatureBuilder[Iterable[Float]])(_.toSeq),
+      test(xs, FeatureBuilder[Seq[Float]])(identity),
+      test(xs, FeatureBuilder[IndexedSeq[Float]])(identity),
+      test(xs, FeatureBuilder[List[Float]])(identity),
+      test(xs, FeatureBuilder[Vector[Float]])(identity)
     )
   }
 
   property("double traversable") = Prop.forAll(list[Double]) { xs =>
     Prop.all(
-      test(xs, implicitly[FeatureBuilder[Traversable[Double]]])(_.toSeq),
-      test(xs, implicitly[FeatureBuilder[Iterable[Double]]])(_.toSeq),
-      test(xs, implicitly[FeatureBuilder[Seq[Double]]])(identity),
-      test(xs, implicitly[FeatureBuilder[IndexedSeq[Double]]])(identity),
-      test(xs, implicitly[FeatureBuilder[List[Double]]])(identity),
-      test(xs, implicitly[FeatureBuilder[Vector[Double]]])(identity)
+      test(xs, FeatureBuilder[Traversable[Double]])(_.toSeq),
+      test(xs, FeatureBuilder[Iterable[Double]])(_.toSeq),
+      test(xs, FeatureBuilder[Seq[Double]])(identity),
+      test(xs, FeatureBuilder[IndexedSeq[Double]])(identity),
+      test(xs, FeatureBuilder[List[Double]])(identity),
+      test(xs, FeatureBuilder[Vector[Double]])(identity)
     )
   }
 
   property("double traversable") = Prop.forAll(list[Double]) { xs =>
-    test(xs, implicitly[FeatureBuilder[Seq[Double]]])(identity)
+    test(xs, FeatureBuilder[Seq[Double]])(identity)
   }
 
   property("float sparse array") = Prop.forAll(list[Float]) { xs =>
-    test(xs, implicitly[FeatureBuilder[SparseArray[Float]]])(_.toDense.toSeq)
+    test(xs, FeatureBuilder[SparseArray[Float]])(_.toDense.toSeq)
     val n = 1024 / xs.size + 1
     val xs2 = Seq.fill(n)(xs).reduce(_ ++ _)
-    test(xs2, implicitly[FeatureBuilder[SparseArray[Float]]])(_.toDense.toSeq)
+    test(xs2, FeatureBuilder[SparseArray[Float]])(_.toDense.toSeq)
   }
 
   property("double sparse array") = Prop.forAll(list[Double]) { xs =>
-    test(xs, implicitly[FeatureBuilder[SparseArray[Double]]])(_.toDense.toSeq)
+    test(xs, FeatureBuilder[SparseArray[Double]])(_.toDense.toSeq)
     val n = 1024 / xs.size + 1
     val xs2 = Seq.fill(n)(xs).reduce(_ ++ _)
-    test(xs2, implicitly[FeatureBuilder[SparseArray[Double]]])(_.toDense.toSeq)
+    test(xs2, FeatureBuilder[SparseArray[Double]])(_.toDense.toSeq)
   }
 
   property("float dense vector") = Prop.forAll(list[Float]) { xs =>
-    test(xs, implicitly[FeatureBuilder[DenseVector[Float]]])(_.data.toSeq)
+    test(xs, FeatureBuilder[DenseVector[Float]])(_.data.toSeq)
   }
 
   property("double dense vector") = Prop.forAll(list[Double]) { xs =>
-    test(xs, implicitly[FeatureBuilder[DenseVector[Double]]])(_.data.toSeq)
+    test(xs, FeatureBuilder[DenseVector[Double]])(_.data.toSeq)
   }
 
   property("float sparse vector") = Prop.forAll(list[Float]) { xs =>
-    test(xs, implicitly[FeatureBuilder[SparseVector[Float]]])(_.toDenseVector.data.toSeq)
+    test(xs, FeatureBuilder[SparseVector[Float]])(_.toDenseVector.data.toSeq)
   }
 
   property("double sparse vector") = Prop.forAll(list[Double]) { xs =>
-    test(xs, implicitly[FeatureBuilder[SparseVector[Double]]])(_.toDenseVector.data.toSeq)
+    test(xs, FeatureBuilder[SparseVector[Double]])(_.toDenseVector.data.toSeq)
   }
 
   property("map") = Prop.forAll(list[Double]) { xs =>
-    val fb = implicitly[FeatureBuilder[Map[String, Double]]]
+    val fb = FeatureBuilder[Map[String, Double]]
     fb.init(xs.size + 4)
     xs.zipWithIndex.foreach {
       case (Some(x), i) =>

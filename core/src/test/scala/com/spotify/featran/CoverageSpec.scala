@@ -46,13 +46,13 @@ object CoverageSpec extends Properties("Coverage") {
     val f2 = t.getClass.getDeclaredField("rejectUpper")
     f2.setAccessible(true)
     f2.setBoolean(t, false)
-    val fb = implicitly[FeatureBuilder[Array[Double]]]
+    val fb = FeatureBuilder[Array[Double]]
     fb.init(1)
     t.buildFeatures(Some(0), (0, 0, Double.MinValue, Double.MaxValue), fb)
   }
 
   {
-    val fb = implicitly[FeatureBuilder[Seq[Double]]]
+    val fb = FeatureBuilder[Seq[Double]]
     val f = classOf[CrossingFeatureBuilder[_]]
       .getConstructor(classOf[FeatureBuilder[_]], classOf[Crossings])
     f.setAccessible(true)

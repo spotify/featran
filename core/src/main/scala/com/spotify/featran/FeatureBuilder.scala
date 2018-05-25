@@ -22,6 +22,7 @@ import breeze.math.Semiring
 import breeze.storage.Zero
 import com.spotify.featran.transformers.Transformer
 import shapeless.Lazy.Values
+import simulacrum.typeclass
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -40,7 +41,7 @@ object FeatureRejection {
  * Type class for types to build feature into.
  * @tparam T output feature type
  */
-trait FeatureBuilder[T] extends Serializable { self =>
+@typeclass trait FeatureBuilder[T] extends Serializable { self =>
 
   private val _rejections: mutable.Map[String, FeatureRejection] =
     mutable.Map.empty
@@ -288,11 +289,11 @@ object FeatureBuilder {
     : FeatureBuilder[SparseArray[T]] = SparseArrayFB()
 
   implicit def denseVectorFB[T: ClassTag: FloatingPoint]: FeatureBuilder[DenseVector[T]] =
-    implicitly[FeatureBuilder[Array[T]]].map(DenseVector(_))
+    FeatureBuilder[Array[T]].map(DenseVector(_))
 
   implicit def sparseVectorFB[T: ClassTag: FloatingPoint: Semiring: Zero]
     : FeatureBuilder[SparseVector[T]] =
-    implicitly[FeatureBuilder[SparseArray[T]]].map { a =>
+    FeatureBuilder[SparseArray[T]].map { a =>
       new SparseVector(a.indices, a.values, a.indices.length, a.length)
     }
 

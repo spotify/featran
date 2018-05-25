@@ -342,7 +342,7 @@ private class MultiFeatureSet[T](features: Array[Feature[T, _, _, _]],
   def multiFeatureBuilders[F: FeatureBuilder]: Array[FeatureBuilder[F]] =
     // each underlying FeatureSpec should get a unique copy of FeatureBuilder
     Array.fill(dims) {
-      CrossingFeatureBuilder(implicitly[FeatureBuilder[F]].newBuilder, crossings)
+      CrossingFeatureBuilder(FeatureBuilder[F].newBuilder, crossings)
     }
 
   // Array[Option[C]] => Array[String]
