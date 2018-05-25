@@ -33,10 +33,9 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
     extends Serializable {
   import FeatureSpec.ARRAY, CollectionType.ops._
 
-  @transient private[featran] lazy val as: M[(T, ARRAY)] = {
-    val g = fs // defeat closure
-    input.cross(g).map { case (in, spec) => (in, spec.unsafeGet(in)) }
-  }
+  @transient private[featran] lazy val as: M[(T, ARRAY)] =
+    input.cross(fs).map { case (in, spec) => (in, spec.unsafeGet(in)) }
+
   @transient private[featran] lazy val aggregate: M[ARRAY] = settings match {
     case Some(x) =>
       x.cross(fs).map {
@@ -143,7 +142,7 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
         ma.map(a => (a, b))
       }
 
-      override def pure[A: ClassTag](ma: Iterator[_])(a: A): Iterator[A] = Iterator[A](a)
+      override def pure[A, B: ClassTag](ma: Iterator[A])(b: B): Iterator[B] = Iterator(b)
     }
 
   private val state = new ThreadLocal[State[F, T]] {

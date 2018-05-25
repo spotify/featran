@@ -28,7 +28,7 @@ import scala.reflect.ClassTag
  * @tparam M collection type
  */
 @typeclass trait CollectionType[M[_]] {
-  def pure[A: ClassTag](ma: M[_])(a: A): M[A]
+  def pure[A, B: ClassTag](ma: M[A])(a: B): M[B]
 
   def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B]
 
@@ -47,9 +47,9 @@ object CollectionType {
         builder.result()
       }
 
-      override def pure[A: ClassTag](ma: M[_])(a: A): M[A] = {
-        val builder = cbf().asInstanceOf[mutable.Builder[A, M[A]]]
-        builder += a
+      override def pure[A, B: ClassTag](ma: M[A])(b: B): M[B] = {
+        val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]
+        builder += b
         builder.result()
       }
 
@@ -70,7 +70,7 @@ object CollectionType {
     }
 
   implicit val arrayCollectionType: CollectionType[Array] = new CollectionType[Array] {
-    override def pure[A: ClassTag](ma: Array[_])(a: A): Array[A] = Array(a)
+    override def pure[A, B: ClassTag](ma: Array[A])(b: B): Array[B] = Array(b)
 
     override def map[A, B: ClassTag](ma: Array[A])(f: A => B): Array[B] =
       ma.map(f)

@@ -42,9 +42,9 @@ package object flink {
       ma.crossWithTiny(mb)
     }
 
-    override def pure[A: ClassTag](ma: DataSet[_])(a: A): DataSet[A] = {
-      implicit val tib = ti.asInstanceOf[TypeInformation[A]]
-      ma.getExecutionEnvironment.fromElements(a)
+    override def pure[A, B: ClassTag](ma: DataSet[A])(b: B): DataSet[B] = {
+      implicit val tib = ti.asInstanceOf[TypeInformation[B]]
+      ma.getExecutionEnvironment.fromElements(b)
     }
   }
 

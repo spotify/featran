@@ -35,8 +35,8 @@ package object scio {
     override def cross[A, B: ClassTag](ma: SCollection[A])(
       mb: SCollection[B]): SCollection[(A, B)] = ma.cross(mb)
 
-    override def pure[A: ClassTag](ma: SCollection[_])(a: A): SCollection[A] =
-      ma.context.parallelize(Seq(a))
+    override def pure[A, B: ClassTag](ma: SCollection[A])(b: B): SCollection[B] =
+      ma.context.parallelize(Seq(b))
   }
 
 }

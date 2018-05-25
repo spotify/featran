@@ -36,8 +36,8 @@ package object scalding {
     override def cross[A, B: ClassTag](ma: TypedPipe[A])(mb: TypedPipe[B]): TypedPipe[(A, B)] =
       ma.cross(mb)
 
-    override def pure[A: ClassTag](ma: TypedPipe[_],)(a: A): TypedPipe[A] =
-      TypedPipe.from(Iterable(a))
+    override def pure[A, B: ClassTag](ma: TypedPipe[A])(b: B): TypedPipe[B] =
+      TypedPipe.from(Iterable(b))
   }
 
 }

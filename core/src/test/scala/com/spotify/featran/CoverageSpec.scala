@@ -46,7 +46,7 @@ object CoverageSpec extends Properties("Coverage") {
       e.getClass.getDeclaredField("com$spotify$featran$RecordExtractor$$iteratorCollectionType")
     f.setAccessible(true)
     val ct = f.get(e).asInstanceOf[CollectionType[Iterator]]
-    require(ct.pure[Double](Iterator(), 1.0).nonEmpty)
+    require(ct.pure(Iterator())(1.0).nonEmpty)
   }
 
   {

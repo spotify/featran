@@ -54,7 +54,7 @@ private object JavaOps {
     override def cross[A, B: ClassTag](ma: JList[A])(mb: JList[B]): JList[(A, B)] =
       ma.asScala.map((_, mb.get(0))).asJava
 
-    override def pure[A: ClassTag](ma: JList[_])(a: A): JList[A] = Collections.singletonList(a)
+    override def pure[A, B: ClassTag](ma: JList[A])(b: B): JList[B] = Collections.singletonList(b)
   }
 
   //================================================================================

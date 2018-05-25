@@ -38,7 +38,7 @@ package object spark {
       ma.map((_, b))
     }
 
-    override def pure[A: ClassTag](ma: RDD[_])(a: A): RDD[A] = ma.context.parallelize(Seq(a))
+    override def pure[A, B: ClassTag](ma: RDD[A])(b: B): RDD[B] = ma.context.parallelize(Seq(b))
   }
 
 }
