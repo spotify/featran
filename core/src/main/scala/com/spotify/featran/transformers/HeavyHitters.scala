@@ -74,7 +74,7 @@ private class HeavyHitters(name: String,
         val b = Map.newBuilder[String, (Int, Long)]
         sm.heavyHitterKeys.iterator.zipWithIndex.foreach {
           case (k, r) =>
-            b += (k -> (r + 1, sketchMapParams.frequency(k, sm.valuesTable)))
+            b += ((k, (r + 1, sketchMapParams.frequency(k, sm.valuesTable))))
         }
         b.result()
       }
@@ -104,7 +104,7 @@ private class HeavyHitters(name: String,
     val b = Map.newBuilder[String, (Int, Long)]
     kvs.foreach { kv =>
       val t = kv.split(":")
-      b += (URLDecoder.decode(t(0), "UTF-8") -> (t(1).toInt, t(2).toLong))
+      b += ((URLDecoder.decode(t(0), "UTF-8"), (t(1).toInt, t(2).toLong)))
     }
     b.result()
   }

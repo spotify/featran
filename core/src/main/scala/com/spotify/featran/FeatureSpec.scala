@@ -20,7 +20,6 @@ package com.spotify.featran
 import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.collection.mutable
-import scala.language.{higherKinds, implicitConversions}
 import scala.reflect.ClassTag
 
 /**

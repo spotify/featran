@@ -17,8 +17,6 @@
 
 package com.spotify.featran
 
-import scala.language.{higherKinds, implicitConversions}
-
 /**
  * Companion object for [[MultiFeatureSpec]].
  */

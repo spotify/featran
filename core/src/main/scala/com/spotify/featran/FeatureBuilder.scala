@@ -25,7 +25,6 @@ import shapeless.Lazy.Values
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
-import scala.language.higherKinds
 import scala.reflect.ClassTag
 
 sealed trait FeatureRejection

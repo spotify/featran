@@ -97,7 +97,7 @@ private class MDL[T: ClassTag](name: String,
   override def featureDimension(c: C): Int = c.size()
   override def featureNames(c: C): Seq[String] = names(c.size())
 
-  def buildFeatures(a: Option[MDLRecord[T]], c: C, fb: FeatureBuilder[_]) {
+  def buildFeatures(a: Option[MDLRecord[T]], c: C, fb: FeatureBuilder[_]): Unit = {
     a match {
       case Some(x) =>
         val e = c.higherEntry(x.value)

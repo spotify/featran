@@ -25,7 +25,7 @@ import java.io.OutputStream
 trait NumPyType[@specialized(Int, Long, Float, Double) T] {
   val descr: String
   val sizeOf: Int
-  def write(out: OutputStream, value: T)
+  def write(out: OutputStream, value: T): Unit
 }
 
 object NumPyType {

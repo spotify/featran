@@ -18,7 +18,6 @@
 package com.spotify.featran
 
 import scala.reflect.ClassTag
-import scala.language.{higherKinds, implicitConversions}
 
 /**
  * Encapsulate features extracted from a [[MultiFeatureSpec]].

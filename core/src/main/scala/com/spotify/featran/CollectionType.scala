@@ -21,7 +21,6 @@ import simulacrum._
 
 import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable
-import scala.language.{higherKinds, implicitConversions}
 import scala.reflect.ClassTag
 
 /**

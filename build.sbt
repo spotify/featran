@@ -40,7 +40,7 @@ val commonSettings = Seq(
   description := "Feature Transformers",
   scalaVersion := "2.11.12",
   crossScalaVersions := Seq("2.11.12", "2.12.6"),
-  scalacOptions ++= Seq("-target:jvm-1.8", "-deprecation", "-feature", "-unchecked"),
+  scalacOptions ++= commonScalacOptions,
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
@@ -360,3 +360,19 @@ lazy val featranJmh: Project = Project(
     tensorflow
   )
   .enablePlugins(JmhPlugin)
+
+lazy val commonScalacOptions = Seq(
+  "-deprecation",
+  "-encoding",
+  "UTF-8",
+  "-feature",
+  "-language:higherKinds",
+  "-language:implicitConversions",
+  "-unchecked",
+  "-Xfatal-warnings",
+  "-Yno-adapted-args",
+  "-Ywarn-dead-code",
+//  "-Ywarn-numeric-widen",
+//  "-Ywarn-value-discard",
+  "-Xfuture"
+)
