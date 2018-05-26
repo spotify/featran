@@ -41,9 +41,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
   @transient private[featran] lazy val aggregate: M[ARRAY] = settings match {
     case Some(x) =>
       x.map { s =>
-        import io.circe.generic.auto._
-        import io.circe.parser._
-        fs.decodeAggregators(decode[Seq[Settings]](s).right.get)
+        fs.decodeAggregators(JsonSerializable[Seq[Settings]].decode(s).right.get)
       }
     case None =>
       as.map(t => fs.unsafePrepare(t._2)).reduce(fs.unsafeSum).map(fs.unsafePresent)
@@ -59,9 +57,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
     case Some(x) => x
     case None =>
       aggregate.map { a =>
-        import io.circe.generic.auto._
-        import io.circe.syntax._
-        fs.featureSettings(a).asJson.noSpaces
+        JsonSerializable[Seq[Settings]].encode(fs.featureSettings(a)).noSpaces
       }
   }
 
