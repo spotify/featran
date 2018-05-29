@@ -21,7 +21,6 @@ import com.spotify.featran.transformers.Transformer
 
 import scala.collection.immutable.SortedMap
 import scala.collection.mutable
-import scala.language.higherKinds
 
 private object Crossings {
   type KEY = (String, String)

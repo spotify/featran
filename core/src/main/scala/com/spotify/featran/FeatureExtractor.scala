@@ -19,7 +19,6 @@ package com.spotify.featran
 
 import com.spotify.featran.transformers.Settings
 
-import scala.language.{higherKinds, implicitConversions}
 import scala.reflect.ClassTag
 
 /**
@@ -94,9 +93,32 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
 
 case class FeatureResult[F, T](value: F, rejections: Map[String, FeatureRejection], original: T)
 
+object RecordExtractor {
+  private class PipeIterator[T] extends Iterator[T] {
+    private var element: T = _
+    private var hasElement: Boolean = false
+    def feed(element: T): Unit = {
+      require(!hasNext)
+      this.element = element
+      hasElement = true
+    }
+    override def hasNext: Boolean = hasElement
+    override def next(): T = {
+      require(hasNext)
+      hasElement = false
+      element
+    }
+  }
+
+  private final case class State[F, T](input: PipeIterator[T],
+                                       extractor: FeatureExtractor[Iterator, T],
+                                       output: Iterator[FeatureResult[F, T]])
+}
+
 /** Encapsulate [[RecordExtractor]] for extracting individual records. */
 class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: FeatureSet[T],
                                                                         settings: String) {
+  import RecordExtractor._
 
   private implicit val iteratorCollectionType: CollectionType[Iterator] =
     new CollectionType[Iterator] {
@@ -108,13 +130,9 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
       }
     }
 
-  private final case class State(input: PipeIterator,
-                                 extractor: FeatureExtractor[Iterator, T],
-                                 output: Iterator[FeatureResult[F, T]])
-
-  private val state = new ThreadLocal[State] {
-    override def initialValue(): State = {
-      val input: PipeIterator = new PipeIterator
+  private val state = new ThreadLocal[State[F, T]] {
+    override def initialValue(): State[F, T] = {
+      val input: PipeIterator[T] = new PipeIterator[T]
       val extractor: FeatureExtractor[Iterator, T] =
         new FeatureExtractor[Iterator, T](fs, input, Some(Iterator.continually(settings)))
       val output: Iterator[FeatureResult[F, T]] = extractor.featureResults
@@ -149,21 +167,4 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
     s.input.feed(record)
     s.output.next()
   }
-
-  private class PipeIterator extends Iterator[T] {
-    private var element: T = _
-    private var hasElement: Boolean = false
-    def feed(element: T): Unit = {
-      require(!hasNext)
-      this.element = element
-      hasElement = true
-    }
-    override def hasNext: Boolean = hasElement
-    override def next(): T = {
-      require(hasNext)
-      hasElement = false
-      element
-    }
-  }
-
 }

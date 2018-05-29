@@ -28,7 +28,6 @@ import ml.dmlc.xgboost4j.LabeledPoint
 import org.tensorflow.example.Example
 
 import scala.collection.JavaConverters._
-import scala.language.higherKinds
 import scala.reflect.ClassTag
 
 private object JavaOps {

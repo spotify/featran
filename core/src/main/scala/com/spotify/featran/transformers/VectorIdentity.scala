@@ -20,8 +20,6 @@ package com.spotify.featran.transformers
 import com.spotify.featran.{FeatureBuilder, FeatureRejection}
 import com.twitter.algebird.Aggregator
 
-import scala.language.higherKinds
-
 /**
  * Takes fixed length vectors by passing them through.
  *
