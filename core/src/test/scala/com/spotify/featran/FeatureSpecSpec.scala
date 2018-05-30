@@ -184,7 +184,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       }
       .extract(xs)
     val settings = e1.featureSettings.head
-    val e2 = f1.extractWithPartialSettings[Seq[Double]](settings)
+    val e2 = f1.extractWithSubsetSettings[Seq[Double]](settings)
 
     Prop.all(e1.featureNames.head == e2.featureNames,
              e1.featureValues[Seq[Double]] == xs.map(e2.featureValue),

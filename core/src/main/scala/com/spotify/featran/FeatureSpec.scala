@@ -176,7 +176,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * in a previous session.
    * @param settings JSON settings from a previous session
    */
-  def extractWithPartialSettings[F: FeatureBuilder: ClassTag](
+  def extractWithSubsetSettings[F: FeatureBuilder: ClassTag](
     settings: String): RecordExtractor[T, F] = {
     val s = JsonSerializable[Seq[Settings]].decode(settings).right.get
     val predicate: Feature[T, _, _, _] => Boolean = f => s.exists(x => x.name == f.transformer.name)
