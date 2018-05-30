@@ -51,6 +51,8 @@ object FeatureSpec {
 class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feature[T, _, _, _]],
                                        private[featran] val crossings: Crossings) {
 
+  private def featureSet: FeatureSet[T] = new FeatureSet[T](features, crossings)
+
   /**
    * Add a required field specification.
    * @param f function to extract feature `A` from record `T`
@@ -111,26 +113,17 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] = {
     import CollectionType.ops._
 
-    val fs = input.pure(new FeatureSet[T](features, crossings))
+    val fs = input.pure(featureSet)
     new FeatureExtractor[M, T](fs, input, None)
   }
 
   /**
-   * Extract features from an input collection based on the provided predicate
+   * Creates a new FeatureSpec with only the features that respect the given predicate.
    *
-   * @param input input collection
    * @param predicate Function determining whether or not to include the feature
-   * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extractSubset[M[_]: CollectionType](input: M[T])(
-    predicate: Feature[T, _, _, _] => Boolean): FeatureExtractor[M, T] = {
-    import CollectionType.ops._
-
-    val filteredFeatures = features.filter(predicate)
-    val fs = input.pure(new FeatureSet[T](filteredFeatures, crossings))
-
-    new FeatureExtractor[M, T](fs, input, None)
-  }
+  def filter(predicate: Feature[T, _, _, _] => Boolean): FeatureSpec[T] =
+    new FeatureSpec[T](features.filter(predicate), crossings)
 
   /**
    * Extract features from an input collection using a partial settings from a previous session.
@@ -147,15 +140,11 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
     import CollectionType.ops._
 
     val featureSet = settings.map { s =>
-      import io.circe.generic.auto._
-      import io.circe.parser._
+      val settingsJson = JsonSerializable[Seq[Settings]].decode(s).right.get
+      val predicate: Feature[T, _, _, _] => Boolean =
+        f => settingsJson.exists(x => x.name == f.transformer.name)
 
-      val settingsJson = decode[Seq[Settings]](s).right.get
-      val filteredFeatures = features.filter { f =>
-        settingsJson.exists(x => x.name == f.transformer.name)
-      }
-
-      new FeatureSet[T](filteredFeatures, crossings)
+      filter(predicate).featureSet
     }
 
     new FeatureExtractor[M, T](featureSet, input, Some(settings))
@@ -174,8 +163,8 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
                                                 settings: M[String]): FeatureExtractor[M, T] = {
     import CollectionType.ops._
 
-    val featureSet = input.pure(new FeatureSet(features, crossings))
-    new FeatureExtractor[M, T](featureSet, input, Some(settings))
+    val fs = input.pure(featureSet)
+    new FeatureExtractor[M, T](fs, input, Some(settings))
   }
 
   /**
@@ -189,15 +178,10 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    */
   def extractWithPartialSettings[F: FeatureBuilder: ClassTag](
     settings: String): RecordExtractor[T, F] = {
-    import io.circe.generic.auto._
-    import io.circe.parser._
+    val s = JsonSerializable[Seq[Settings]].decode(settings).right.get
+    val predicate: Feature[T, _, _, _] => Boolean = f => s.exists(x => x.name == f.transformer.name)
 
-    val s = decode[Seq[Settings]](settings).right.get
-    val filteredFeatures = features.filter { f =>
-      s.exists(x => x.name == f.transformer.name)
-    }
-
-    new RecordExtractor[T, F](new FeatureSet[T](filteredFeatures, crossings), settings)
+    new RecordExtractor[T, F](filter(predicate).featureSet, settings)
   }
 
   /**
