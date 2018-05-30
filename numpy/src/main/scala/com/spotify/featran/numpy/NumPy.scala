@@ -29,7 +29,7 @@ import simulacrum.typeclass
 
   def sizeOf: Int
 
-  def write(out: OutputStream, value: T)
+  def write(out: OutputStream, value: T): Unit
 }
 
 object NumPyType {
