@@ -70,8 +70,9 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
     val filteredFeatures: Map[String, Feature[T, _, _, _]] =
       features.filter(predicate).map(f => f.transformer.name -> f).toMap
     val filteredMapping = mapping.filterKeys(filteredFeatures.contains)
+    val filteredCrossings = crossings.filter(filteredFeatures.contains)
 
-    new MultiFeatureSpec[T](filteredMapping, filteredFeatures.values.toArray, crossings)
+    new MultiFeatureSpec[T](filteredMapping, filteredFeatures.values.toArray, filteredCrossings)
   }
 
   /**
