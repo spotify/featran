@@ -27,7 +27,7 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     Gen.listOfN(100, arb.arbitrary)
 
   property("TensorFlow Example") = Prop.forAll(list[Double]) { xs =>
-    val fb = SerializableUtils.ensureSerializable(implicitly[FeatureBuilder[Example]])
+    val fb = SerializableUtils.ensureSerializable(FeatureBuilder[Example])
     fb.init(xs.size + 4)
     val b = Features.newBuilder()
     xs.zipWithIndex.foreach {

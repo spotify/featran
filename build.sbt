@@ -270,7 +270,9 @@ lazy val numpy: Project = Project(
     commonSettings,
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
+    addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full),
     libraryDependencies ++= Seq(
+      "com.github.mpilquist" %% "simulacrum" % simulacrumVersion,
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )

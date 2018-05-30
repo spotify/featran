@@ -22,6 +22,7 @@ import breeze.math.Semiring
 import breeze.storage.Zero
 import com.spotify.featran.transformers.Transformer
 import shapeless.Lazy.Values
+import simulacrum.typeclass
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable
@@ -40,7 +41,7 @@ object FeatureRejection {
  * Type class for types to build feature into.
  * @tparam T output feature type
  */
-trait FeatureBuilder[T] extends Serializable { self =>
+@typeclass trait FeatureBuilder[T] extends Serializable { self =>
 
   private val _rejections: mutable.Map[String, FeatureRejection] =
     mutable.Map.empty
@@ -162,12 +163,11 @@ object FeatureBuilder {
     private var underlying: Array[T] = null)
       extends FeatureBuilder[Array[T]] {
     private var offset: Int = 0
-    private val fp = implicitly[FloatingPoint[T]]
 
     override def init(dimension: Int): Unit = underlying = new Array[T](dimension)
 
     override def add(name: String, value: Double): Unit = {
-      underlying(offset) = fp.fromDouble(value)
+      underlying(offset) = FloatingPoint[T].fromDouble(value)
       offset += 1
     }
 
@@ -214,14 +214,13 @@ object FeatureBuilder {
   private final case class TraversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
     private var underlying: mutable.Builder[T, M[T]] = null)(implicit cb: CanBuild[T, M[T]])
       extends FeatureBuilder[M[T]] {
-    private val fp = implicitly[FloatingPoint[T]]
 
     override def init(dimension: Int): Unit = underlying = cb()
 
     override def add(name: String, value: Double): Unit =
-      underlying += fp.fromDouble(value)
+      underlying += FloatingPoint[T].fromDouble(value)
 
-    override def skip(): Unit = underlying += fp.fromDouble(0.0)
+    override def skip(): Unit = underlying += FloatingPoint[T].fromDouble(0.0)
 
     override def result: M[T] = underlying.result()
 
@@ -239,7 +238,6 @@ object FeatureBuilder {
     private var dim: Int = _
     private var offset: Int = 0
     private var i: Int = 0
-    private val fp = implicitly[FloatingPoint[T]]
 
     override def init(dimension: Int): Unit = {
       dim = dimension
@@ -254,7 +252,7 @@ object FeatureBuilder {
 
     override def add(name: String, value: Double): Unit = {
       indices(i) = offset
-      values(i) = fp.fromDouble(value)
+      values(i) = FloatingPoint[T].fromDouble(value)
       i += 1
       offset += 1
       if (indices.length == i) {
@@ -288,24 +286,23 @@ object FeatureBuilder {
     : FeatureBuilder[SparseArray[T]] = SparseArrayFB()
 
   implicit def denseVectorFB[T: ClassTag: FloatingPoint]: FeatureBuilder[DenseVector[T]] =
-    implicitly[FeatureBuilder[Array[T]]].map(DenseVector(_))
+    FeatureBuilder[Array[T]].map(DenseVector(_))
 
   implicit def sparseVectorFB[T: ClassTag: FloatingPoint: Semiring: Zero]
     : FeatureBuilder[SparseVector[T]] =
-    implicitly[FeatureBuilder[SparseArray[T]]].map { a =>
+    FeatureBuilder[SparseArray[T]].map { a =>
       new SparseVector(a.indices, a.values, a.indices.length, a.length)
     }
 
   private final case class MapFB[T: ClassTag: FloatingPoint](
     private var underlying: java.util.Map[String, T] = null)
       extends FeatureBuilder[Map[String, T]] { self =>
-    private val fp = implicitly[FloatingPoint[T]]
 
     override def init(dimension: Int): Unit =
       underlying = new java.util.HashMap[String, T]
 
     override def add(name: String, value: Double): Unit =
-      underlying.put(name, fp.fromDouble(value))
+      underlying.put(name, FloatingPoint[T].fromDouble(value))
 
     override def skip(): Unit = Unit
 

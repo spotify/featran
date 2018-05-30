@@ -34,7 +34,7 @@ class FeatureBuilderBenchmark {
   private val values = (750 until 1000).map(_.toDouble)
 
   def benchmark[T: FeatureBuilder]: T = {
-    val fb = implicitly[FeatureBuilder[T]]
+    val fb = FeatureBuilder[T]
     fb.init(1000)
     var i = 0
     while (i < 500) {

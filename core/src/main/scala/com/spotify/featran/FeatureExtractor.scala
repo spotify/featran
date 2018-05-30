@@ -81,7 +81,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
    *           `DenseVector[Double]`
    */
   def featureResults[F: FeatureBuilder: ClassTag]: M[FeatureResult[F, T]] = {
-    val fb = CrossingFeatureBuilder(implicitly[FeatureBuilder[F]].newBuilder, fs.crossings)
+    val fb = CrossingFeatureBuilder(FeatureBuilder[F].newBuilder, fs.crossings)
     as.cross(aggregate).map {
       case ((o, a), c) =>
         fs.featureValues(a, c, fb)

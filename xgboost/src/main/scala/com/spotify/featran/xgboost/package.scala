@@ -22,8 +22,7 @@ import ml.dmlc.xgboost4j.LabeledPoint
 package object xgboost {
 
   private final case class LabeledPointFB(
-    private val underlying: FeatureBuilder[Array[Float]] =
-      implicitly[FeatureBuilder[Array[Float]]].newBuilder)
+    private val underlying: FeatureBuilder[Array[Float]] = FeatureBuilder[Array[Float]].newBuilder)
       extends FeatureBuilder[LabeledPoint] {
 
     override def init(dimension: Int): Unit =
@@ -51,7 +50,7 @@ package object xgboost {
 
   private final case class SparseLabeledPointFB(
     private val underlying: FeatureBuilder[SparseArray[Float]] =
-      implicitly[FeatureBuilder[SparseArray[Float]]].newBuilder
+      FeatureBuilder[SparseArray[Float]].newBuilder
   ) extends FeatureBuilder[SparseLabeledPoint] {
     override def init(dimension: Int): Unit = underlying.init(dimension)
     override def result: SparseLabeledPoint =
