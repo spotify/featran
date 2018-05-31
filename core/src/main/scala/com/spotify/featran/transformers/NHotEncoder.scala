@@ -46,6 +46,16 @@ private class NHotEncoder(name: String, encodeMissingValue: Boolean)
 
   import MissingValue.missingValueToken
 
+  def checkForMissingValue(fb: FeatureBuilder[_],
+                           unseen: MSet[String],
+                           keys: Seq[String]): Unit = {
+    if (unseen.isEmpty && !keys.isEmpty) {
+      fb.skip()
+    } else {
+      fb.add(name + '_' + missingValueToken, 1.0)
+    }
+  }
+
   override def prepare(a: Seq[String]): Set[String] = Set(a: _*)
   override def buildFeatures(a: Option[Seq[String]],
                              c: SortedMap[String, Int],
@@ -68,11 +78,7 @@ private class NHotEncoder(name: String, encodeMissingValue: Boolean)
       val gap = c.size - prev - 1
       if (gap > 0) fb.skip(gap)
       if (encodeMissingValue) {
-        if (unseen.isEmpty) {
-          fb.skip()
-        } else {
-          fb.add(name + '_' + missingValueToken, 1.0)
-        }
+        checkForMissingValue(fb, unseen, keys)
       }
       if (unseen.nonEmpty) {
         fb.reject(this, FeatureRejection.Unseen(unseen.toSet))
