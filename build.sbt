@@ -371,7 +371,7 @@ lazy val commonScalacOptions = Seq(
   "-language:higherKinds",
   "-language:implicitConversions",
   "-unchecked",
-  "-Xfatal-warnings",
+//  "-Xfatal-warnings",
   "-Yno-adapted-args",
   "-Ywarn-dead-code",
 //  "-Ywarn-numeric-widen",
