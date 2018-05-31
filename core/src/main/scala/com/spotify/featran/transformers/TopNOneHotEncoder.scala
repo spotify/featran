@@ -70,10 +70,11 @@ private class TopNOneHotEncoder(name: String,
 
   import MissingValue.missingValueToken
 
-  private val sketchMapParams =
+  @transient private lazy val sketchMapParams =
     SketchMapParams[String](seed, eps, delta, n)(_.getBytes)
 
-  override val aggregator: Aggregator[String, SketchMap[String, Long], SortedMap[String, Int]] =
+  @transient override lazy val aggregator
+    : Aggregator[String, SketchMap[String, Long], SortedMap[String, Int]] =
     SketchMap
       .aggregator[String, Long](sketchMapParams)
       .composePrepare[String]((_, 1L))

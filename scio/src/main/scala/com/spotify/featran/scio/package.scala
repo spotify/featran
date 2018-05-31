@@ -28,10 +28,15 @@ package object scio {
    */
   implicit object ScioCollectionType extends CollectionType[SCollection] {
     override def map[A, B: ClassTag](ma: SCollection[A])(f: A => B): SCollection[B] = ma.map(f)
+
     override def reduce[A](ma: SCollection[A])(f: (A, A) => A): SCollection[A] =
       ma.reduce(f)
+
     override def cross[A, B: ClassTag](ma: SCollection[A])(
       mb: SCollection[B]): SCollection[(A, B)] = ma.cross(mb)
+
+    override def pure[A, B: ClassTag](ma: SCollection[A])(b: B): SCollection[B] =
+      ma.context.parallelize(Seq(b))
   }
 
 }

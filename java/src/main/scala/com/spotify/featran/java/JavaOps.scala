@@ -47,10 +47,14 @@ private object JavaOps {
   implicit val jListCollectionType: CollectionType[JList] = new CollectionType[JList] {
     override def map[A, B: ClassTag](ma: JList[A])(f: A => B): JList[B] =
       ma.asScala.map(f).asJava
+
     override def reduce[A](ma: JList[A])(f: (A, A) => A): JList[A] =
       Collections.singletonList(ma.asScala.reduce(f))
+
     override def cross[A, B: ClassTag](ma: JList[A])(mb: JList[B]): JList[(A, B)] =
       ma.asScala.map((_, mb.get(0))).asJava
+
+    override def pure[A, B: ClassTag](ma: JList[A])(b: B): JList[B] = Collections.singletonList(b)
   }
 
   //================================================================================
