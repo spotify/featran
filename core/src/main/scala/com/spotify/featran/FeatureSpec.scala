@@ -19,7 +19,7 @@ package com.spotify.featran
 
 import com.spotify.featran.transformers.{Settings, Transformer}
 
-import scala.collection.mutable
+import scala.collection.{breakOut, mutable}
 import scala.reflect.ClassTag
 
 /**
@@ -125,8 +125,8 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   def filter(predicate: Feature[T, _, _, _] => Boolean): FeatureSpec[T] = {
     val filteredFeatures = features
       .filter(predicate)
-      .map(f => f.transformer.name -> f)
-      .toMap[String, Feature[T, _, _, _]]
+      .map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](f =>
+        (f.transformer.name, f))(breakOut)
     val filteredCrossings = crossings.filter[T](filteredFeatures.contains)
 
     new FeatureSpec[T](filteredFeatures.values.toArray, filteredCrossings)

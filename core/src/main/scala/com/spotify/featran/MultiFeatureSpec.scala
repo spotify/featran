@@ -19,6 +19,8 @@ package com.spotify.featran
 
 import com.spotify.featran.transformers.Settings
 
+import scala.collection.breakOut
+
 /**
  * Companion object for [[MultiFeatureSpec]].
  */
@@ -27,7 +29,7 @@ object MultiFeatureSpec {
     val nameToSpec: Map[String, Int] = specs.zipWithIndex.flatMap {
       case (spec, index) =>
         spec.features.map(_.transformer.name -> index)
-    }(scala.collection.breakOut)
+    }(breakOut)
 
     new MultiFeatureSpec(nameToSpec,
                          specs.map(_.features).reduce(_ ++ _),
@@ -67,8 +69,11 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @param predicate Function determining whether or not to include the feature
    */
   def filter(predicate: Feature[T, _, _, _] => Boolean): MultiFeatureSpec[T] = {
-    val filteredFeatures: Map[String, Feature[T, _, _, _]] =
-      features.filter(predicate).map(f => f.transformer.name -> f).toMap
+    val filteredFeatures =
+      features
+        .filter(predicate)
+        .map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](f =>
+          f.transformer.name -> f)(breakOut)
     val filteredMapping = mapping.filterKeys(filteredFeatures.contains)
     val filteredCrossings = crossings.filter(filteredFeatures.contains)
 
