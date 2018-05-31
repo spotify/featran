@@ -55,14 +55,13 @@ private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
 
   import MissingValue.missingValueToken
 
-  def checkForMissingValue(fb: FeatureBuilder[_],
-                           unseen: MSet[String],
-                           keys: Seq[String],
-                           unseenWeight: Double): Unit = {
+  def addMissingValue(fb: FeatureBuilder[_],
+                      unseen: MSet[String],
+                      keys: Seq[String],
+                      unseenWeight: Double): Unit = {
     if (keys.isEmpty) {
       fb.add(name + '_' + missingValueToken, 1.0)
-    }
-    else if (unseen.isEmpty) {
+    } else if (unseen.isEmpty) {
       fb.skip()
     } else {
       fb.add(name + '_' + missingValueToken, unseenWeight)
@@ -97,7 +96,7 @@ private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
       val gap = c.size - prev - 1
       if (gap > 0) fb.skip(gap)
       if (encodeMissingValue) {
-        checkForMissingValue(fb, unseen, keys, unseenWeight)
+        addMissingValue(fb, unseen, keys, unseenWeight)
       }
       if (unseen.nonEmpty) {
         fb.reject(this, FeatureRejection.Unseen(unseen.toSet))
