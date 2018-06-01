@@ -1,9 +1,9 @@
 <!DOCTYPE html >
 <html>
         <head>
-          <title>scio - com.spotify.featran.scio</title>
-          <meta name="description" content="scio - com.spotify.featran.scio" />
-          <meta name="keywords" content="scio com.spotify.featran.scio" />
+          <title>tensorflow - com.spotify.featran.tensorflow</title>
+          <meta name="description" content="tensorflow - com.spotify.featran.tensorflow" />
+          <meta name="keywords" content="tensorflow com.spotify.featran.tensorflow" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -16,7 +16,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
-            var hash = 'com.spotify.featran.scio.package';
+            var hash = 'com.spotify.featran.tensorflow.package';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -30,8 +30,8 @@
       <div id="definition">
         <img alt="Package" src="../../../../lib/package_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.spotify">spotify</a>.<a href="../package.html" class="extype" name="com.spotify.featran">featran</a></p>
-        <h1>scio</h1><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.scio.package" title="Permalink" target="_top">
+        <h1>tensorflow</h1><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.tensorflow.package" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -43,7 +43,7 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <span class="name">scio</span>
+        <span class="name">tensorflow</span>
       </span>
       </h4>
       
@@ -67,7 +67,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.spotify.featran.scio"><span>scio</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.spotify.featran.tensorflow"><span>tensorflow</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -88,19 +88,19 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.spotify.featran.scio.FeatranKryoRegistrar" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="FeatranKryoRegistrarextendsIKryoRegistrarwithAnnotatedKryoRegistrar"></a>
-      <a id="FeatranKryoRegistrar:FeatranKryoRegistrar"></a>
+              <ol><li name="com.spotify.featran.tensorflow.TensorFlowFeatureBuilder" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TensorFlowFeatureBuilderextendsFeatureBuilder[org.tensorflow.example.Example]withProductwithSerializable"></a>
+      <a id="TensorFlowFeatureBuilder:TensorFlowFeatureBuilder"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">class</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="FeatranKryoRegistrar.html"><span class="name">FeatranKryoRegistrar</span></a><span class="result"> extends <span class="extype" name="com.twitter.chill.IKryoRegistrar">IKryoRegistrar</span> with <span class="extype" name="com.spotify.scio.coders.AnnotatedKryoRegistrar">AnnotatedKryoRegistrar</span></span>
+        <a href="package$$TensorFlowFeatureBuilder.html"><span class="name">TensorFlowFeatureBuilder</span></a><span class="params">(<span name="underlying">underlying: <span class="extype" name="org.tensorflow.example.Features.Builder">Builder</span> = <span class="symbol">tf.Features.newBuilder()</span></span>)</span><span class="result"> extends <a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="org.tensorflow.example.Example">Example</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.scio.package@FeatranKryoRegistrarextendsIKryoRegistrarwithAnnotatedKryoRegistrar" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.tensorflow.package@TensorFlowFeatureBuilderextendsFeatureBuilder[org.tensorflow.example.Example]withProductwithSerializable" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -112,23 +112,23 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.spotify.featran.scio.ScioCollectionType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ScioCollectionType"></a>
-      <a id="ScioCollectionType:ScioCollectionType"></a>
+              <ol><li name="com.spotify.featran.tensorflow#tensorFlowFeatureBuilder" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tensorFlowFeatureBuilder:com.spotify.featran.FeatureBuilder[org.tensorflow.example.Example]"></a>
+      <a id="tensorFlowFeatureBuilder:FeatureBuilder[Example]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
-        <span class="kind">object</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <a href="package$$ScioCollectionType$.html"><span class="name">ScioCollectionType</span></a><span class="result"> extends <a href="../CollectionType.html" class="extype" name="com.spotify.featran.CollectionType">CollectionType</a>[<span class="extype" name="com.spotify.scio.values.SCollection">SCollection</span>]</span>
+        <span class="name">tensorFlowFeatureBuilder</span><span class="result">: <a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="org.tensorflow.example.Example">Example</span>]</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.scio.package@ScioCollectionType" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.tensorflow.package@tensorFlowFeatureBuilder:com.spotify.featran.FeatureBuilder[org.tensorflow.example.Example]" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt"><a href="../CollectionType.html" class="extype" name="com.spotify.featran.CollectionType">CollectionType</a> for extraction from Scio <code>SCollection</code> type.</p>
+      <p class="shortcomment cmt"><a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a> for output as TensorFlow <code>Example</code> type.</p>
     </li></ol>
             </div>
 

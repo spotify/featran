@@ -47,13 +47,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">CollectionType</span>
+        <span class="name">CollectionType</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.spotify.featran.CollectionType"><span>CollectionType</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.spotify.featran.CollectionType"><span>CollectionType</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -90,7 +90,61 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.spotify.featran.CollectionType.AllOps" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AllOps[M[_],A]extendsCollectionType.Ops[M,A]"></a>
+      <a id="AllOps[M[_],A]:AllOps[M,A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CollectionType$$AllOps.html"><span class="name">AllOps</span></a><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>]</span><span class="result"> extends <a href="CollectionType$$Ops.html" class="extype" name="com.spotify.featran.CollectionType.Ops">Ops</a>[<span class="extype" name="com.spotify.featran.CollectionType.AllOps.M">M</span>, <span class="extype" name="com.spotify.featran.CollectionType.AllOps.A">A</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.CollectionType$@AllOps[M[_],A]extendsCollectionType.Ops[M,A]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.spotify.featran.CollectionType.Ops" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Ops[M[_],A]extendsAnyRef"></a>
+      <a id="Ops[M[_],A]:Ops[M,A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CollectionType$$Ops.html"><span class="name">Ops</span></a><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.CollectionType$@Ops[M[_],A]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.spotify.featran.CollectionType.ToCollectionTypeOps" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ToCollectionTypeOpsextendsAnyRef"></a>
+      <a id="ToCollectionTypeOps:ToCollectionTypeOps"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CollectionType$$ToCollectionTypeOps.html"><span class="name">ToCollectionTypeOps</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.CollectionType$@ToCollectionTypeOpsextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li></ol>
+            </div>
 
         
 
@@ -147,6 +201,26 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="com.spotify.featran.CollectionType#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply[M[_]](implicitinstance:com.spotify.featran.CollectionType[M]):com.spotify.featran.CollectionType[M]"></a>
+      <a id="apply[M[_]](CollectionType[M]):CollectionType[M]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">apply</span><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="instance">instance: <a href="CollectionType.html" class="extype" name="com.spotify.featran.CollectionType">CollectionType</a>[<span class="extype" name="com.spotify.featran.CollectionType.apply.M">M</span>]</span>)</span><span class="result">: <a href="CollectionType.html" class="extype" name="com.spotify.featran.CollectionType">CollectionType</a>[<span class="extype" name="com.spotify.featran.CollectionType.apply.M">M</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.CollectionType$@apply[M[_]](implicitinstance:com.spotify.featran.CollectionType[M]):com.spotify.featran.CollectionType[M]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@inline</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="com.spotify.featran.CollectionType#arrayCollectionType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="arrayCollectionType:com.spotify.featran.CollectionType[Array]"></a>
       <a id="arrayCollectionType:CollectionType[Array]"></a>
@@ -329,6 +403,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.spotify.featran.CollectionType.nonInheritedOps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="nonInheritedOps"></a>
+      <a id="nonInheritedOps:nonInheritedOps"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="CollectionType$$nonInheritedOps$.html"><span class="name">nonInheritedOps</span></a><span class="result"> extends <a href="CollectionType$$ToCollectionTypeOps.html" class="extype" name="com.spotify.featran.CollectionType.ToCollectionTypeOps">ToCollectionTypeOps</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.CollectionType$@nonInheritedOps" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
@@ -363,6 +454,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.spotify.featran.CollectionType.ops" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ops"></a>
+      <a id="ops:ops"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="CollectionType$$ops$.html"><span class="name">ops</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.CollectionType$@ops" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="com.spotify.featran.CollectionType#scalaCollectionType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="scalaCollectionType[M[_]&lt;:Traversable[_]](implicitcbf:scala.collection.generic.CanBuildFrom[M[_],_,M[_]]):com.spotify.featran.CollectionType[M]"></a>
       <a id="scalaCollectionType[M[_]&lt;:Traversable[_]](CanBuildFrom[M[_],_,M[_]]):CollectionType[M]"></a>
@@ -492,7 +600,11 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

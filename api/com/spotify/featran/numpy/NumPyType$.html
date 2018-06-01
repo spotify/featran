@@ -47,13 +47,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">NumPyType</span>
+        <span class="name">NumPyType</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.spotify.featran.numpy.NumPyType"><span>NumPyType</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.spotify.featran.numpy.NumPyType"><span>NumPyType</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -92,7 +92,24 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.spotify.featran.numpy.NumPyType.LittleEndianOutputStream" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.spotify.featran.numpy.NumPyType.AllOps" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AllOps[T]extendsNumPyType.Ops[T]"></a>
+      <a id="AllOps[T]:AllOps[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="NumPyType$$AllOps.html"><span class="name">AllOps</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="NumPyType$$Ops.html" class="extype" name="com.spotify.featran.numpy.NumPyType.Ops">Ops</a>[<span class="extype" name="com.spotify.featran.numpy.NumPyType.AllOps.T">T</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@AllOps[T]extendsNumPyType.Ops[T]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.spotify.featran.numpy.NumPyType.LittleEndianOutputStream" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="LittleEndianOutputStreamextendsAnyVal"></a>
       <a id="LittleEndianOutputStream:LittleEndianOutputStream"></a>
       <h4 class="signature">
@@ -105,6 +122,40 @@
       </span>
       </h4><span class="permalink">
       <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@LittleEndianOutputStreamextendsAnyVal" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.spotify.featran.numpy.NumPyType.Ops" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Ops[T]extendsAnyRef"></a>
+      <a id="Ops[T]:Ops[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="NumPyType$$Ops.html"><span class="name">Ops</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@Ops[T]extendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.spotify.featran.numpy.NumPyType.ToNumPyTypeOps" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ToNumPyTypeOpsextendsAnyRef"></a>
+      <a id="ToNumPyTypeOps:ToNumPyTypeOps"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="NumPyType$$ToNumPyTypeOps.html"><span class="name">ToNumPyTypeOps</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@ToNumPyTypeOpsextendsAnyRef" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -167,6 +218,26 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="com.spotify.featran.numpy.NumPyType#apply" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="apply[T](implicitinstance:com.spotify.featran.numpy.NumPyType[T]):com.spotify.featran.numpy.NumPyType[T]"></a>
+      <a id="apply[T](NumPyType[T]):NumPyType[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span class="implicit">implicit </span><span name="instance">instance: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="com.spotify.featran.numpy.NumPyType.apply.T">T</span>]</span>)</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="com.spotify.featran.numpy.NumPyType.apply.T">T</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@apply[T](implicitinstance:com.spotify.featran.numpy.NumPyType[T]):com.spotify.featran.numpy.NumPyType[T]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@inline</span><span class="args">()</span>
+              
+        </dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -208,18 +279,18 @@
               
         </dd></dl></div>
     </li><li name="com.spotify.featran.numpy.NumPyType#doubleNumPyType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="doubleNumPyType:com.spotify.featran.numpy.NumPyType[Double]"></a>
-      <a id="doubleNumPyType:NumPyType[Double]"></a>
+      <a id="doubleNumPyType:com.spotify.featran.numpy.NumPyType[Double]{valdescr:String;valsizeOf:Int}"></a>
+      <a id="doubleNumPyType:NumPyType[Double]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">doubleNumPyType</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="scala.Double">Double</span>]</span>
+        <span class="name">doubleNumPyType</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="scala.Double">Double</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@doubleNumPyType:com.spotify.featran.numpy.NumPyType[Double]" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@doubleNumPyType:com.spotify.featran.numpy.NumPyType[Double]{valdescr:String;valsizeOf:Int}" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -282,18 +353,18 @@
               
         </dd></dl></div>
     </li><li name="com.spotify.featran.numpy.NumPyType#floatNumPyType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="floatNumPyType:com.spotify.featran.numpy.NumPyType[Float]"></a>
-      <a id="floatNumPyType:NumPyType[Float]"></a>
+      <a id="floatNumPyType:com.spotify.featran.numpy.NumPyType[Float]{valdescr:String;valsizeOf:Int}"></a>
+      <a id="floatNumPyType:NumPyType[Float]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">floatNumPyType</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="scala.Float">Float</span>]</span>
+        <span class="name">floatNumPyType</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="scala.Float">Float</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@floatNumPyType:com.spotify.featran.numpy.NumPyType[Float]" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@floatNumPyType:com.spotify.featran.numpy.NumPyType[Float]{valdescr:String;valsizeOf:Int}" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -333,18 +404,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.spotify.featran.numpy.NumPyType#intNumPyType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="intNumPyType:com.spotify.featran.numpy.NumPyType[Int]"></a>
-      <a id="intNumPyType:NumPyType[Int]"></a>
+      <a id="intNumPyType:com.spotify.featran.numpy.NumPyType[Int]{valdescr:String;valsizeOf:Int}"></a>
+      <a id="intNumPyType:NumPyType[Int]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">intNumPyType</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="scala.Int">Int</span>]</span>
+        <span class="name">intNumPyType</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="scala.Int">Int</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@intNumPyType:com.spotify.featran.numpy.NumPyType[Int]" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@intNumPyType:com.spotify.featran.numpy.NumPyType[Int]{valdescr:String;valsizeOf:Int}" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -367,18 +438,18 @@
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="com.spotify.featran.numpy.NumPyType#longNumPyType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="longNumPyType:com.spotify.featran.numpy.NumPyType[Long]"></a>
-      <a id="longNumPyType:NumPyType[Long]"></a>
+      <a id="longNumPyType:com.spotify.featran.numpy.NumPyType[Long]{valdescr:String;valsizeOf:Int}"></a>
+      <a id="longNumPyType:NumPyType[Long]{.../*2definitionsintyperefinement*/}"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">longNumPyType</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="scala.Long">Long</span>]</span>
+        <span class="name">longNumPyType</span><span class="result">: <a href="NumPyType.html" class="extype" name="com.spotify.featran.numpy.NumPyType">NumPyType</a>[<span class="extype" name="scala.Long">Long</span>] { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4><span class="permalink">
-      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@longNumPyType:com.spotify.featran.numpy.NumPyType[Long]" title="Permalink" target="_top">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@longNumPyType:com.spotify.featran.numpy.NumPyType[Long]{valdescr:String;valsizeOf:Int}" title="Permalink" target="_top">
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
@@ -400,6 +471,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.spotify.featran.numpy.NumPyType.nonInheritedOps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="nonInheritedOps"></a>
+      <a id="nonInheritedOps:nonInheritedOps"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NumPyType$$nonInheritedOps$.html"><span class="name">nonInheritedOps</span></a><span class="result"> extends <a href="NumPyType$$ToNumPyTypeOps.html" class="extype" name="com.spotify.featran.numpy.NumPyType.ToNumPyTypeOps">ToNumPyTypeOps</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@nonInheritedOps" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <a id="notify():Unit"></a>
@@ -434,6 +522,23 @@
       </a>
     </span>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.spotify.featran.numpy.NumPyType.ops" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ops"></a>
+      <a id="ops:ops"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NumPyType$$ops$.html"><span class="name">ops</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.numpy.NumPyType$@ops" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -546,7 +651,11 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
