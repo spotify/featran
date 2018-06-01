@@ -15,7 +15,6 @@
  * under the License.
  */
 
-import com.typesafe.sbt.SbtSite.SiteKeys._
 import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
 
 val algebirdVersion = "0.13.4"
@@ -34,6 +33,8 @@ val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
 val xgBoostVersion = "0.71-20180420-230cb9b7"
 
+val CompileTime = config("compile-time").hide
+
 val commonSettings = Seq(
   organization := "com.spotify",
   name := "featran",
@@ -44,6 +45,12 @@ val commonSettings = Seq(
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
+  libraryDependencies ++= Seq(
+    "com.github.mpilquist" %% "simulacrum" % simulacrumVersion % CompileTime,
+    compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
+  ),
+  ivyConfigurations += CompileTime,
+  unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name)),
   // Release settings
   publishTo := Some(
     if (isSnapshot.value) Opts.resolver.sonatypeSnapshots
@@ -124,9 +131,7 @@ lazy val core: Project = Project(
   commonSettings,
   moduleName := "featran-core",
   description := "Feature Transformers",
-  addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full),
   libraryDependencies ++= Seq(
-    "com.github.mpilquist" %% "simulacrum" % simulacrumVersion,
     "com.twitter" %% "algebird-core" % algebirdVersion,
     "org.scalanlp" %% "breeze" % breezeVersion,
     "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
@@ -228,7 +233,6 @@ lazy val scio: Project = Project(
     commonSettings,
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
-    addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -270,9 +274,7 @@ lazy val numpy: Project = Project(
     commonSettings,
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    addCompilerPlugin("org.scalamacros" % "paradise" % paradiseVersion cross CrossVersion.full),
     libraryDependencies ++= Seq(
-      "com.github.mpilquist" %% "simulacrum" % simulacrumVersion,
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )
