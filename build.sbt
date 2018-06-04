@@ -85,7 +85,11 @@ val commonSettings = Seq(
     Developer(id = "andrew_martin92",
               name = "Andrew Martin",
               email = "andrewsmartin.mg@gmail.com",
-              url = url("https://twitter.com/andrew_martin92"))
+              url = url("https://twitter.com/andrew_martin92")),
+    Developer(id = "regadas",
+              name = "Filipe Regadas",
+              email = "filiperegadas@gmail.com",
+              url = url("https://twitter.com/regadas"))
   )
 )
 
