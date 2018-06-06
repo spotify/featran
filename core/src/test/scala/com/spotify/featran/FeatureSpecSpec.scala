@@ -222,4 +222,9 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
+  property("transformerNames") = Prop.forAll(Gen.alphaStr) { s =>
+    val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
+    Prop.all(f1.transformerNames == Set(id.name, id2.name))
+  }
+
 }

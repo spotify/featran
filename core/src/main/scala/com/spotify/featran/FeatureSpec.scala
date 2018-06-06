@@ -133,6 +133,12 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   }
 
   /**
+   * A Set of transformer names included in this FeatureSpec.
+   */
+  def transformerNames: Set[String] =
+    features.map(_.transformer.name).toSet
+
+  /**
    * Extract features from an input collection using a partial settings from a previous session.
    *
    * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
