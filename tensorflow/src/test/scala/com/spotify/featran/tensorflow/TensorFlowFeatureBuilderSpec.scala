@@ -50,4 +50,12 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     actual == expected
   }
 
+  property("feature names") = Prop.forAll { key: String =>
+    val fb = SerializableUtils.ensureSerializable(FeatureBuilder[Example])
+    fb.init(1)
+    fb.add(key, 0.0)
+    val actual = fb.result.getFeatures.getFeatureMap.keySet().iterator().next()
+    Prop.all(actual.length == key.length, actual.replaceAll("[^A-Za-z0-9_]", "_") == actual)
+  }
+
 }

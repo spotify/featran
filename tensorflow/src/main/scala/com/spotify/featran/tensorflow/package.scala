@@ -36,7 +36,8 @@ package object tensorflow {
         .newBuilder()
         .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
         .build()
-      underlying.putFeature(name, feature)
+      val normalized = name.replaceAll("[^A-Za-z0-9_]", "_")
+      underlying.putFeature(normalized, feature)
     }
     override def skip(): Unit = Unit
     override def skip(n: Int): Unit = Unit
