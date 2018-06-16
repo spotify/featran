@@ -297,6 +297,7 @@ lazy val tensorflow: Project = Project(
     description := "Feature Transformers - TensorFlow",
     libraryDependencies ++= Seq(
       "org.tensorflow" % "proto" % tensorflowVersion,
+      "org.tensorflow" % "tensorflow" % tensorflowVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )

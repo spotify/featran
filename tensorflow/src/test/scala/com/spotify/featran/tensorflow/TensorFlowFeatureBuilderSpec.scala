@@ -20,6 +20,8 @@ package com.spotify.featran.tensorflow
 import com.spotify.featran.{FeatureBuilder, SerializableUtils}
 import org.scalacheck._
 import org.tensorflow.example.{Example, Feature, Features, FloatList}
+import java.nio.{FloatBuffer, LongBuffer}
+import org.tensorflow.Tensor
 
 object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder") {
 
@@ -50,4 +52,37 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     actual == expected
   }
 
+  property("TensorFlow SparseTensor") = Prop.forAll(list[Float]) { xs =>
+    val fb = SerializableUtils.ensureSerializable(FeatureBuilder[SparseTensor])
+    fb.init(xs.size)
+    val indices = Array[Long]()
+    val values = Array[Float]()
+
+    var offset = 0
+    xs.zipWithIndex.foreach {
+      case (Some(x), i) =>
+        val key = "key" + i.toString
+        fb.add(key, x)
+        indices(offset) = i
+        values(offset) = x
+        offset += 1
+      case (None, _) => fb.skip()
+    }
+
+    val actual = fb.result
+
+    val shapeShape = Array[Long](1)
+    val shape = LongBuffer.wrap(Array[Long](offset))
+    val shapeTensor = Tensor.create(shapeShape, shape)
+
+    val indicesShape = Array[Long](offset)
+    val indicesTensor = Tensor.create(indicesShape, LongBuffer.wrap(indices))
+
+    val valuesShape = Array[Long](offset)
+    val valuesTensor = Tensor.create(valuesShape, FloatBuffer.wrap(values))
+    val expected = SparseTensor(indicesTensor, valuesTensor, shapeTensor)
+
+    // TODO this occasionally breaks when all values in xs are none
+    actual == expected
+  }
 }
