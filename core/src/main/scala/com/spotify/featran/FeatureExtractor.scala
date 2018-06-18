@@ -97,12 +97,15 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
       case (((o, a), c), spec) =>
         val cfb = CrossingFeatureBuilder(fb, spec.crossings)
         spec.featureValues(a, c, cfb)
-        FeatureResult(cfb.result, cfb.rejections, o)
+        FeatureResult(cfb.result, cfb.rejections, o, cfb.names)
     }
   }
 }
 
-case class FeatureResult[F, T](value: F, rejections: Map[String, FeatureRejection], original: T)
+case class FeatureResult[F, T](value: F,
+                               rejections: Map[String, FeatureRejection],
+                               original: T,
+                               names: Seq[String])
 
 object RecordExtractor {
   private class PipeIterator[T] extends Iterator[T] {
