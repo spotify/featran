@@ -151,6 +151,7 @@ object FeatureRejection {
       delegate.add(name, value)
     override def skip(): Unit = delegate.skip()
     override def result: U = g(delegate.result)
+    override def names: Seq[String] = delegate.names
 
     override def newBuilder: FeatureBuilder[U] = delegate.newBuilder.map(g)
   }
