@@ -150,6 +150,7 @@ private class CrossingFeatureBuilder[F] private (private val fb: FeatureBuilder[
   override def reject(transformer: Transformer[_, _, _], reason: FeatureRejection): Unit =
     fb.reject(transformer, reason)
   override def rejections: Map[String, FeatureRejection] = fb.rejections
+  override def names: Seq[String] = fb.names
 
   override def newBuilder: FeatureBuilder[F] = CrossingFeatureBuilder(fb, crossings)
 }

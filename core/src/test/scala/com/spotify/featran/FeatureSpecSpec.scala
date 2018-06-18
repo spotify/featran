@@ -100,16 +100,17 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   property("original") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
     Prop.all(f.featureNames == Seq(Seq("id")),
-             f.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d), Map.empty, r)))
+             f.featureResults[Seq[Double]] ==
+               xs.map(r => FeatureResult(Seq(r.d), Map.empty, r, Seq("id"))))
   }
 
   property("combine") = Prop.forAll { xs: List[Record] =>
     val f1 = FeatureSpec.of[Record].required(_.d)(id)
     val f2 = FeatureSpec.of[Record].required(_.d)(id2)
     val result = FeatureSpec.combine(f1, f2).extract(xs)
-    Prop.all(
-      result.featureNames == Seq(Seq("id", "id2")),
-      result.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d, r.d), Map.empty, r)))
+    Prop.all(result.featureNames == Seq(Seq("id", "id2")),
+             result.featureResults[Seq[Double]] ==
+               xs.map(r => FeatureResult(Seq(r.d, r.d), Map.empty, r, Seq("id", "id2"))))
   }
 
   property("extra feature in settings") = Prop.forAll { xs: List[Record] =>
@@ -118,7 +119,8 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val settings = f1.extract(xs).featureSettings
     val f = f2.extractWithSettings(xs, settings)
     Prop.all(f.featureNames == Seq(Seq("id")),
-             f.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d), Map.empty, r)))
+             f.featureResults[Seq[Double]] ==
+               xs.map(r => FeatureResult(Seq(r.d), Map.empty, r, Seq("id"))))
   }
 
   property("missing feature in settings") = Prop.forAll { xs: List[Record] =>
@@ -152,9 +154,9 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
           includeFeatures.contains(f.transformer.name)
         }
         .extract(xs)
-      Prop.all(
-        extracted.featureNames.head == Seq("id"),
-        extracted.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d), Map.empty, r)))
+      Prop.all(extracted.featureNames.head == Seq("id"),
+               extracted.featureResults[Seq[Double]] ==
+                 xs.map(r => FeatureResult(Seq(r.d), Map.empty, r, List("id"))))
   }
 
   property("extract with partial settings") = Prop.forAll { xs: List[Record] =>

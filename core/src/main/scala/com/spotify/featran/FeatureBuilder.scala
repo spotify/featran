@@ -46,6 +46,8 @@ object FeatureRejection {
   private val _rejections: mutable.Map[String, FeatureRejection] =
     mutable.Map.empty
 
+  private val _names: mutable.ListBuffer[String] = mutable.ListBuffer.empty
+
   /**
    * Reject an input row.
    * @param transformer transformer rejecting the input
@@ -65,6 +67,22 @@ object FeatureRejection {
     val r = _rejections.toMap
     _rejections.clear()
     r
+  }
+
+  /**
+   * Add name of nonzero feature.
+   * @param name name of nonzero element
+   */
+  def addName(name: String): Unit = _names += name
+
+  /**
+   * Gather names of nonzero feature elements. This should be called only once per input row.
+   * @return
+   */
+  def names: Seq[String] = {
+    val n = _names.toSeq
+    _names.clear()
+    n
   }
 
   /**
@@ -168,6 +186,7 @@ object FeatureBuilder {
 
     override def add(name: String, value: Double): Unit = {
       underlying(offset) = FloatingPoint[T].fromDouble(value)
+      addName(name)
       offset += 1
     }
 
@@ -217,8 +236,10 @@ object FeatureBuilder {
 
     override def init(dimension: Int): Unit = underlying = cb()
 
-    override def add(name: String, value: Double): Unit =
+    override def add(name: String, value: Double): Unit = {
       underlying += FloatingPoint[T].fromDouble(value)
+      addName(name)
+    }
 
     override def skip(): Unit = underlying += FloatingPoint[T].fromDouble(0.0)
 
@@ -253,6 +274,7 @@ object FeatureBuilder {
     override def add(name: String, value: Double): Unit = {
       indices(i) = offset
       values(i) = FloatingPoint[T].fromDouble(value)
+      addName(name)
       i += 1
       offset += 1
       if (indices.length == i) {
