@@ -21,7 +21,6 @@ import breeze.linalg.{DenseVector, SparseVector}
 import breeze.math.Semiring
 import breeze.storage.Zero
 import com.spotify.featran.transformers.Transformer
-import shapeless.Lazy.Values
 import simulacrum.typeclass
 
 import scala.collection.JavaConverters._
