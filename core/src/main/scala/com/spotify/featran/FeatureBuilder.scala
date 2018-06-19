@@ -211,8 +211,9 @@ object FeatureBuilder {
   //scalastyle:on public.methods.have.type
 
   private final case class TraversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
-    private var underlying: mutable.Builder[T, M[T]] = null)(implicit cb: CanBuild[T, M[T]])
+    implicit cb: CanBuild[T, M[T]])
       extends FeatureBuilder[M[T]] {
+    private var underlying: mutable.Builder[T, M[T]] = null
 
     override def init(dimension: Int): Unit = underlying = cb()
 
@@ -229,10 +230,10 @@ object FeatureBuilder {
   implicit def traversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
     implicit cb: CanBuild[T, M[T]]): FeatureBuilder[M[T]] = TraversableFB[M, T]()
 
-  private final case class SparseArrayFB[T: ClassTag: FloatingPoint](
-    private var indices: Array[Int] = null,
-    private var values: Array[T] = null)
+  private final case class SparseArrayFB[T: ClassTag: FloatingPoint]()
       extends FeatureBuilder[SparseArray[T]] {
+    private var indices: Array[Int] = null
+    private var values: Array[T] = null
     private val initCapacity = 1024
     private var dim: Int = _
     private var offset: Int = 0
@@ -293,9 +294,9 @@ object FeatureBuilder {
       new SparseVector(a.indices, a.values, a.indices.length, a.length)
     }
 
-  private final case class MapFB[T: ClassTag: FloatingPoint](
-    private var underlying: java.util.Map[String, T] = null)
+  private final case class MapFB[T: ClassTag: FloatingPoint]()
       extends FeatureBuilder[Map[String, T]] { self =>
+    private var underlying: java.util.Map[String, T] = null
 
     override def init(dimension: Int): Unit =
       underlying = new java.util.HashMap[String, T]
