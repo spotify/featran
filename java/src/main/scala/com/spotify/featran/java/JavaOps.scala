@@ -30,6 +30,7 @@ import org.tensorflow.example.Example
 import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
 
+// scalastyle:off number.of.methods
 private object JavaOps {
 
   def requiredFn[I, O](f: SerializableFunction[I, O]): I => O =
@@ -85,6 +86,15 @@ private object JavaOps {
     settings: String): RecordExtractor[T, DoubleSparseArray] =
     fs.extractWithSettings(settings)
 
+  def extractWithSettingsFloatNamedSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatNamedSparseArray] =
+    fs.extractWithSettings(settings)
+  def extractWithSettingsDoubleNamedSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, DoubleNamedSparseArray] =
+    fs.extractWithSettings(settings)
+
   def extractWithSettingsExample[T](fs: FeatureSpec[T],
                                     settings: String): RecordExtractor[T, Example] =
     fs.extractWithSettings(settings)
@@ -122,6 +132,20 @@ private object JavaOps {
   def featureValuesDoubleSparseArray[T](fe: FeatureExtractor[JList, T]): JList[DoubleSparseArray] =
     fe.featureValues[DoubleSparseArray]
 
+  implicit def floatNamedSparseArrayFB: FeatureBuilder[FloatNamedSparseArray] =
+    FeatureBuilder[NamedSparseArray[Float]].map(a =>
+      new FloatNamedSparseArray(a.indices, a.values, a.length, a.names))
+  implicit def doubleNamedSparseArrayFB: FeatureBuilder[DoubleNamedSparseArray] =
+    FeatureBuilder[NamedSparseArray[Double]].map(a =>
+      new DoubleNamedSparseArray(a.indices, a.values, a.length, a.names))
+
+  def featureValuesFloatNamedSparseArray[T](
+    fe: FeatureExtractor[JList, T]): JList[FloatNamedSparseArray] =
+    fe.featureValues[FloatNamedSparseArray]
+  def featureValuesDoubleNamedSparseArray[T](
+    fe: FeatureExtractor[JList, T]): JList[DoubleNamedSparseArray] =
+    fe.featureValues[DoubleNamedSparseArray]
+
   def featureValuesExample[T](fe: FeatureExtractor[JList, T]): JList[Example] =
     fe.featureValues[Example]
 
@@ -140,6 +164,7 @@ private object JavaOps {
     fe.featureNames.asJava
 
 }
+// scalastyle:on number.of.methods
 
 /** A sparse array of float values. */
 class FloatSparseArray private[java] (indices: Array[Int],
@@ -154,5 +179,23 @@ class DoubleSparseArray private[java] (indices: Array[Int],
                                        override val values: Array[Double],
                                        length: Int)
     extends SparseArray[Double](indices, values, length) {
+  def toDense: Array[Double] = super.toDense
+}
+
+/** A named sparse array of float values. */
+class FloatNamedSparseArray private[java] (indices: Array[Int],
+                                           override val values: Array[Float],
+                                           length: Int,
+                                           names: Seq[String])
+    extends NamedSparseArray[Float](indices, values, length, names) {
+  def toDense: Array[Float] = super.toDense
+}
+
+/** A named sparse array of double values. */
+class DoubleNamedSparseArray private[java] (indices: Array[Int],
+                                            override val values: Array[Double],
+                                            length: Int,
+                                            names: Seq[String])
+    extends NamedSparseArray[Double](indices, values, length, names) {
   def toDense: Array[Double] = super.toDense
 }
