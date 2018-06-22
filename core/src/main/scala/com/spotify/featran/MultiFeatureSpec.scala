@@ -69,15 +69,15 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * @param predicate Function determining whether or not to include the feature
    */
   def filter(predicate: Feature[T, _, _, _] => Boolean): MultiFeatureSpec[T] = {
-    val filteredFeatures =
-      features
-        .filter(predicate)
-        .map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](f =>
-          f.transformer.name -> f)(breakOut)
-    val filteredMapping = mapping.filterKeys(filteredFeatures.contains)
-    val filteredCrossings = crossings.filter(filteredFeatures.contains)
+    val filteredFeatures = features.filter(predicate)
+    val featuresByName =
+      filteredFeatures.map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](f =>
+        f.transformer.name -> f)(breakOut)
 
-    new MultiFeatureSpec[T](filteredMapping, filteredFeatures.values.toArray, filteredCrossings)
+    val filteredMapping = mapping.filterKeys(featuresByName.contains)
+    val filteredCrossings = crossings.filter(featuresByName.contains)
+
+    new MultiFeatureSpec[T](filteredMapping, filteredFeatures, filteredCrossings)
   }
 
   /**
