@@ -157,6 +157,22 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
         extracted.featureResults[Seq[Double]] == xs.map(r => FeatureResult(Seq(r.d), Map.empty, r)))
   }
 
+  property("extract specified list of features according to predicate keeps order") = Prop.forAll {
+    xs: List[Record] =>
+      val spec = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
+      val filtered = spec
+        .filter { feature =>
+          Set(id.name, id3.name).contains(feature.transformer.name)
+        }
+        .extract(xs)
+
+      val expectedSpec = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id3)
+      val expected = expectedSpec.extract(xs)
+
+      Prop.all(filtered.featureNames == expected.featureNames,
+               filtered.featureResults[Seq[Double]] == expected.featureResults[Seq[Double]])
+  }
+
   property("extract with partial settings") = Prop.forAll { xs: List[Record] =>
     val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
     val includeList = Set(id.name, id3.name)

@@ -123,13 +123,13 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param predicate Function determining whether or not to include the feature
    */
   def filter(predicate: Feature[T, _, _, _] => Boolean): FeatureSpec[T] = {
-    val filteredFeatures = features
-      .filter(predicate)
-      .map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](f =>
-        (f.transformer.name, f))(breakOut)
-    val filteredCrossings = crossings.filter[T](filteredFeatures.contains)
+    val filteredFeatures = features.filter(predicate)
+    val featuresByName =
+      filteredFeatures.map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](f =>
+        f.transformer.name -> f)(breakOut)
+    val filteredCrossings = crossings.filter[T](featuresByName.contains)
 
-    new FeatureSpec[T](filteredFeatures.values.toArray, filteredCrossings)
+    new FeatureSpec[T](filteredFeatures, filteredCrossings)
   }
 
   /**
