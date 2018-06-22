@@ -103,12 +103,12 @@ val noPublishSettings = Seq(
   publishArtifact := false
 )
 
-lazy val root: Project = Project(
-  "root",
-  file(".")
-).enablePlugins(GhpagesPlugin, ScalaUnidocPlugin)
+lazy val root: Project = project
+  .in(file("."))
+  .enablePlugins(GhpagesPlugin, ScalaUnidocPlugin)
+  .settings(commonSettings)
+  .settings(noPublishSettings)
   .settings(
-    commonSettings ++ noPublishSettings,
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
     gitRemoteRepo := "git@github.com:spotify/featran.git",
@@ -132,32 +132,32 @@ lazy val root: Project = Project(
     xgboost
   )
 
-lazy val core: Project = Project(
-  "core",
-  file("core")
-).settings(
-  commonSettings,
-  moduleName := "featran-core",
-  description := "Feature Transformers",
-  libraryDependencies ++= Seq(
-    "com.twitter" %% "algebird-core" % algebirdVersion,
-    "org.scalanlp" %% "breeze" % breezeVersion,
-    "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
-    "org.scalatest" %% "scalatest" % scalatestVersion % "test",
-    "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
-  ),
-  libraryDependencies ++= Seq(
-    "io.circe" %% "circe-core",
-    "io.circe" %% "circe-generic",
-    "io.circe" %% "circe-parser"
-  ).map(_ % circeVersion)
-)
+lazy val core: Project = project
+  .in(file("core"))
+  .settings(commonSettings)
+  .settings(
+    name := "core",
+    moduleName := "featran-core",
+    description := "Feature Transformers",
+    libraryDependencies ++= Seq(
+      "com.twitter" %% "algebird-core" % algebirdVersion,
+      "org.scalanlp" %% "breeze" % breezeVersion,
+      "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
+      "org.scalatest" %% "scalatest" % scalatestVersion % "test",
+      "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
+    ),
+    libraryDependencies ++= Seq(
+      "io.circe" %% "circe-core",
+      "io.circe" %% "circe-generic",
+      "io.circe" %% "circe-parser"
+    ).map(_ % circeVersion)
+  )
 
-lazy val java: Project = Project(
-  "java",
-  file("java")
-).settings(
-    commonSettings,
+lazy val java: Project = project
+  .in(file("java"))
+  .settings(commonSettings)
+  .settings(
+    name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
     skip in Compile := scalaBinaryVersion.value == "2.12",
@@ -190,11 +190,11 @@ lazy val java: Project = Project(
     xgboost
   )
 
-lazy val flink: Project = Project(
-  "flink",
-  file("flink")
-).settings(
-    commonSettings,
+lazy val flink: Project = project
+  .in(file("flink"))
+  .settings(commonSettings)
+  .settings(
+    name := "flink",
     moduleName := "featran-flink",
     description := "Feature Transformers - Flink",
     skip in Compile := scalaBinaryVersion.value == "2.12",
@@ -215,11 +215,11 @@ lazy val flink: Project = Project(
     core % "test->test"
   )
 
-lazy val scalding: Project = Project(
-  "scalding",
-  file("scalding")
-).settings(
-    commonSettings,
+lazy val scalding: Project = project
+  .in(file("scalding"))
+  .settings(commonSettings)
+  .settings(
+    name := "scalding",
     moduleName := "featran-scalding",
     description := "Feature Transformers - Scalding",
     resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
@@ -234,11 +234,11 @@ lazy val scalding: Project = Project(
     core % "test->test"
   )
 
-lazy val scio: Project = Project(
-  "scio",
-  file("scio")
-).settings(
-    commonSettings,
+lazy val scio: Project = project
+  .in(file("scio"))
+  .settings(commonSettings)
+  .settings(
+    name := "scio",
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
     libraryDependencies ++= Seq(
@@ -251,11 +251,11 @@ lazy val scio: Project = Project(
     core % "test->test"
   )
 
-lazy val spark: Project = Project(
-  "spark",
-  file("spark")
-).settings(
-    commonSettings,
+lazy val spark: Project = project
+  .in(file("spark"))
+  .settings(commonSettings)
+  .settings(
+    name := "spark",
     moduleName := "featran-spark",
     description := "Feature Transformers - Spark",
     skip in Compile := scalaBinaryVersion.value == "2.12",
@@ -275,11 +275,11 @@ lazy val spark: Project = Project(
     core % "test->test"
   )
 
-lazy val numpy: Project = Project(
-  "numpy",
-  file("numpy")
-).settings(
-    commonSettings,
+lazy val numpy: Project = project
+  .in(file("numpy"))
+  .settings(commonSettings)
+  .settings(
+    name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
     libraryDependencies ++= Seq(
@@ -288,11 +288,11 @@ lazy val numpy: Project = Project(
   )
   .dependsOn(core)
 
-lazy val tensorflow: Project = Project(
-  "tensorflow",
-  file("tensorflow")
-).settings(
-    commonSettings,
+lazy val tensorflow: Project = project
+  .in(file("tensorflow"))
+  .settings(commonSettings)
+  .settings(
+    name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
     libraryDependencies ++= Seq(
@@ -305,11 +305,11 @@ lazy val tensorflow: Project = Project(
     core % "test->test"
   )
 
-lazy val xgboost: Project = Project(
-  "xgboost",
-  file("xgboost")
-).settings(
-    commonSettings,
+lazy val xgboost: Project = project
+  .in(file("xgboost"))
+  .settings(commonSettings)
+  .settings(
+    name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
     skip in Compile := scalaBinaryVersion.value == "2.12",
@@ -329,25 +329,13 @@ lazy val xgboost: Project = Project(
     core % "test->test"
   )
 
-val soccoSettings = if (sys.env.contains("SOCCO")) {
-  Seq(
-    scalacOptions ++= Seq(
-      "-P:socco:out:examples/target/site",
-      "-P:socco:package_com.spotify.featran:http://spotify.github.io/featran/api",
-      "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
-    ),
-    autoCompilerPlugins := true,
-    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9"),
-  )
-} else {
-  Nil
-}
-
-lazy val examples: Project = Project(
-  "examples",
-  file("examples")
-).settings(
-    commonSettings ++ noPublishSettings ++ soccoSettings,
+lazy val examples: Project = project
+  .in(file("examples"))
+  .settings(commonSettings)
+  .settings(noPublishSettings)
+  .settings(soccoSettings)
+  .settings(
+    name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
     libraryDependencies ++= Seq(
@@ -357,11 +345,12 @@ lazy val examples: Project = Project(
   )
   .dependsOn(core, scio, tensorflow)
 
-lazy val featranJmh: Project = Project(
-  "jmh",
-  file("jmh")
-).settings(
-    commonSettings ++ noPublishSettings,
+lazy val featranJmh: Project = project
+  .in(file("jmh"))
+  .settings(commonSettings)
+  .settings(noPublishSettings)
+  .settings(
+    name := "jmh",
     description := "Featran JMH Microbenchmarks",
     sourceDirectory in Jmh := (sourceDirectory in Test).value,
     classDirectory in Jmh := (classDirectory in Test).value,
@@ -381,10 +370,21 @@ lazy val commonScalacOptions = Seq(
   "-language:higherKinds",
   "-language:implicitConversions",
   "-unchecked",
-//  "-Xfatal-warnings",
   "-Yno-adapted-args",
   "-Ywarn-dead-code",
-//  "-Ywarn-numeric-widen",
-//  "-Ywarn-value-discard",
   "-Xfuture"
 )
+
+lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
+  Seq(
+    scalacOptions ++= Seq(
+      "-P:socco:out:examples/target/site",
+      "-P:socco:package_com.spotify.featran:http://spotify.github.io/featran/api",
+      "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
+    ),
+    autoCompilerPlugins := true,
+    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9"),
+  )
+} else {
+  Nil
+}
