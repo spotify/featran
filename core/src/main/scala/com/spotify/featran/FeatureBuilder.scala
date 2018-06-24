@@ -228,7 +228,7 @@ object FeatureBuilder {
 
   //scalastyle:on public.methods.have.type
 
-  private final case class TraversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
+  private final case class TraversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint]()(
     implicit cb: CanBuild[T, M[T]])
       extends FeatureBuilder[M[T]] {
     private var underlying: mutable.Builder[T, M[T]] = null
