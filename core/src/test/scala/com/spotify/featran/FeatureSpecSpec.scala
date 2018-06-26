@@ -72,6 +72,15 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
              f.featureValues[Seq[Double]] == xs.map(r => Seq(0.5)))
   }
 
+  property("generator") = Prop.forAll { xs: List[Record] =>
+    val spec = FeatureSpec.from[Record]
+    val f = spec.extract(xs)
+    Prop.all(f.featureNames == Seq(Seq("d", "optD")),
+      f.featureValues[Seq[Double]] == xs.map{r =>
+        r.optD.map(v => Seq(r.d, v)).getOrElse(Seq(r.d, 0.0))
+      })
+  }
+
   property("composite") = Prop.forAll { xs: List[Record] =>
     val f = FeatureSpec
       .of[Record]

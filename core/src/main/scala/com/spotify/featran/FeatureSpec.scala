@@ -17,10 +17,12 @@
 
 package com.spotify.featran
 
+import com.spotify.featran.converters.{CaseClassConverter, DefaultTransform, IdentityDefault}
 import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.collection.{breakOut, mutable}
 import scala.reflect.ClassTag
+import scala.reflect.runtime.universe.TypeTag
 
 /**
  * Companion object for [[FeatureSpec]].
@@ -28,6 +30,17 @@ import scala.reflect.ClassTag
 object FeatureSpec {
 
   private[featran] type ARRAY = Array[Option[Any]]
+
+  /**
+   * Generates a new [[FeatureSpec]] for case class of type `T`.  This method
+   * defaults the transformers based on the types of the fields.
+   *
+   * The implicit parameter can be used to change the default of the Transformer used for
+   * continuous values.  When another isn't suppilied Identity will be used.
+   */
+  def from[T <: Product: ClassTag: TypeTag]
+  (implicit dt: DefaultTransform[Double] = IdentityDefault): FeatureSpec[T] =
+    CaseClassConverter.toSpec[T]
 
   /**
    * Create a new [[FeatureSpec]] for input record type `T`.
