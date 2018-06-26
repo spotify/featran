@@ -28,7 +28,7 @@ import java.util.*;
 public class JavaExample {
 
   private static class Record {
-    private final double d;
+    private final Double d;
     private final Optional<String> s;
 
     Record(double d, Optional<String> s) {
@@ -54,8 +54,8 @@ public class JavaExample {
 
     // Start building a feature specification
     JFeatureSpec<Record> fs = JFeatureSpec.<Record>create()
-        .required(r -> r.d, MinMaxScaler.apply("min-max", 0.0, 1.0))
-        .optional(r -> r.s, OneHotEncoder.apply("one-hot", false));
+        .required(r -> r.d, MinMaxScaler.apply("min-max", 0.0, 1.0), Double.class)
+        .optional(r -> r.s, OneHotEncoder.apply("one-hot", false), String.class);
 
     // Extract features from List<Record>
     JFeatureExtractor<Record> f1 = fs.extract(records);

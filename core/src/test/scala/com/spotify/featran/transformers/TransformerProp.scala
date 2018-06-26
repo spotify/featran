@@ -24,6 +24,8 @@ import com.spotify.featran.FeatureSpec
 import org.scalacheck.Prop.BooleanOperators
 import org.scalacheck._
 
+import scala.reflect.runtime.universe.TypeTag
+
 abstract class TransformerProp(name: String) extends Properties(name) {
 
   implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] =
@@ -44,7 +46,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     xs.map(_.map(d2e)) == ys.map(_.map(d2e))
 
   // scalastyle:off method.length
-  def test[T](t: Transformer[T, _, _],
+  def test[T: TypeTag](t: Transformer[T, _, _],
               input: List[T],
               names: Seq[String],
               expected: List[Seq[Double]],
@@ -104,7 +106,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
   }
   // scalastyle:on method.length
 
-  def testException[T](t: Transformer[T, _, _], input: List[T])(p: Throwable => Boolean): Prop =
+  def testException[T: TypeTag](t: Transformer[T, _, _], input: List[T])(p: Throwable => Boolean): Prop =
     try {
       FeatureSpec.of[T].required(identity)(t).extract(input).featureValues[Seq[Double]]
       false

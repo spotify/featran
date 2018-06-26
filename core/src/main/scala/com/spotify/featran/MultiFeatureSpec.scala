@@ -17,7 +17,10 @@
 
 package com.spotify.featran
 
+import com.spotify.featran.transformers.Converter
+
 import scala.language.{higherKinds, implicitConversions}
+import scala.reflect.ClassTag
 
 /**
  * Companion object for [[MultiFeatureSpec]].
@@ -41,6 +44,12 @@ object MultiFeatureSpec {
 class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
                           private[featran] val features: Array[Feature[T, _, _, _]],
                           private val crossings: Crossings) {
+
+  def convert[M[_], C](input: M[T])
+    (implicit fw: Converter[C], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
+    import dt.Ops._
+    input.map{row => fw.convert(row, features.toList)}
+  }
 
   /**
    * Extract features from a input collection.

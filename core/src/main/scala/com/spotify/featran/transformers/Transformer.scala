@@ -17,10 +17,21 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{Feature, FeatureBuilder}
 import com.twitter.algebird.{Aggregator, Semigroup}
 
 import scala.language.higherKinds
+
+case class NamedFn[T, A](name: String, fn: T => A)
+
+trait Converter[C]{
+  def convert[T](row: T, feat: List[Feature[T, _, _, _]]): C
+}
+
+abstract class ConvertFunction[+C] {
+  import scala.reflect.runtime.universe._
+  def apply[A: TypeTag](name: String, a: A): C
+}
 
 // TODO: port more transformers from Spark
 // https://spark.apache.org/docs/2.1.0/ml-features.html
@@ -116,7 +127,6 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
              params,
              optFeatureNames(c),
              c.map(encodeAggregator))
-
 }
 
 case class Settings(cls: String,

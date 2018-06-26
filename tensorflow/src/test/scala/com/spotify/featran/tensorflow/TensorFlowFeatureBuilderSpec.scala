@@ -17,14 +17,20 @@
 
 package com.spotify.featran.tensorflow
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FeatureSpec}
+import com.spotify.featran.transformers.Identity
 import org.scalacheck._
 import org.tensorflow.example.{Example, Feature, Features, FloatList}
 
 object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder") {
+  case class Record(d: Double, optD: Option[Double])
 
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
+
+  implicit val arbRecords: Arbitrary[List[Record]] = Arbitrary {
+    Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(Record.tupled))
+  }
 
   property("TensorFlow Example") = Prop.forAll(list[Double]) { xs =>
     val fb = implicitly[FeatureBuilder[Example]]
@@ -50,4 +56,13 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     actual == expected
   }
 
+  private val id = Identity("id")
+  private val id2 = Identity("id2")
+
+  property("converter") = Prop.forAll { xs: List[Record] =>
+    val f = FeatureSpec.of[Record].required(_.d)(id).convert(xs)
+    Prop.all(
+      f.map(_.getFeatures.getFeatureMap.get("id").getFloatList.getValue(0)) == xs.map(_.d.toFloat)
+    )
+  }
 }
