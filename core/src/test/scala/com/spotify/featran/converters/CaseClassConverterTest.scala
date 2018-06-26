@@ -34,16 +34,15 @@ class CaseClassConverterTest extends FlatSpec with Matchers {
   implicit val df = IdentityDefault
   it should "convert a case class to a spec" in {
     val data = List(
-      TestData(1, "a", 1.0, 1L, List("c"), b=true),
-      TestData(2, "b", 1.0, 1L, List("d"), b=true)
+      TestData(1, "a", 1.0, 1L, List("c"), b = true),
+      TestData(2, "b", 1.0, 1L, List("d"), b = true)
     )
 
     val spec = CaseClassConverter.toSpec[TestData]
     val features = spec.extract(data).featureValues[Seq[Double]]
-    assert(features === List(
-      Seq(1.0,1.0,0.0,1.0,1.0,1.0,0.0,1.0),
-      Seq(2.0,0.0,1.0,1.0,1.0,0.0,1.0,1.0))
-    )
+    assert(
+      features === List(Seq(1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0),
+                        Seq(2.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0)))
   }
 
   it should "convert a simple option" in {
@@ -54,10 +53,7 @@ class CaseClassConverterTest extends FlatSpec with Matchers {
 
     val spec = CaseClassConverter.toSpec[TestOpt]
     val features = spec.extract(data).featureValues[Seq[Double]]
-    assert(features === List(
-      Seq(1.0),
-      Seq(0.0))
-    )
+    assert(features === List(Seq(1.0), Seq(0.0)))
   }
 
   it should "convert a case class to a spec with optionals" in {
@@ -68,10 +64,7 @@ class CaseClassConverterTest extends FlatSpec with Matchers {
 
     val spec = CaseClassConverter.toSpec[TestDataOpt]
     val features = spec.extract(data).featureValues[Seq[Double]]
-    assert(features === List(
-      Seq(1.0,1.0),
-      Seq(0.0,0.0))
-    )
+    assert(features === List(Seq(1.0, 1.0), Seq(0.0, 0.0)))
   }
 
   it should "test all native types" in {

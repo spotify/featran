@@ -38,8 +38,8 @@ object FeatureSpec {
    * The implicit parameter can be used to change the default of the Transformer used for
    * continuous values.  When another isn't suppilied Identity will be used.
    */
-  def from[T <: Product: ClassTag: TypeTag]
-  (implicit dt: DefaultTransform[Double] = IdentityDefault): FeatureSpec[T] =
+  def from[T <: Product: ClassTag: TypeTag](
+    implicit dt: DefaultTransform[Double] = IdentityDefault): FeatureSpec[T] =
     CaseClassConverter.toSpec[T]
 
   /**
