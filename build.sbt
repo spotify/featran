@@ -31,7 +31,7 @@ val scioVersion = "0.5.5"
 val simulacrumVersion = "0.12.0"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
-val xgBoostVersion = "0.71-20180420-230cb9b7"
+val xgBoostVersion = "0.72"
 
 val CompileTime = config("compile-time").hide
 
@@ -319,7 +319,7 @@ lazy val xgboost: Project = project
       if (scalaBinaryVersion.value == "2.12") Nil
       else
         Seq(
-          "me.lyh" % "xgboost4j" % xgBoostVersion % "provided",
+          "ml.dmlc" % "xgboost4j" % xgBoostVersion % "provided",
           "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
         )
     }
