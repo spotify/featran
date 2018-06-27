@@ -30,15 +30,21 @@ package object flink {
   implicit object FlinkCollectionType extends CollectionType[DataSet] {
     // force fallback to default serializer
     private val ti = TypeInformation.of(classOf[Any])
-    override def map[A, B: ClassTag](ma: DataSet[A], f: (A) => B): DataSet[B] = {
+    override def map[A, B: ClassTag](ma: DataSet[A])(f: A => B): DataSet[B] = {
       implicit val tib = ti.asInstanceOf[TypeInformation[B]]
       ma.map(f)
     }
-    override def reduce[A](ma: DataSet[A], f: (A, A) => A): DataSet[A] =
+    override def reduce[A](ma: DataSet[A])(f: (A, A) => A): DataSet[A] =
       ma.reduce(f)
-    override def cross[A, B: ClassTag](ma: DataSet[A], mb: DataSet[B]): DataSet[(A, B)] = {
+
+    override def cross[A, B: ClassTag](ma: DataSet[A])(mb: DataSet[B]): DataSet[(A, B)] = {
       implicit val tib = ti.asInstanceOf[TypeInformation[B]]
       ma.crossWithTiny(mb)
+    }
+
+    override def pure[A, B: ClassTag](ma: DataSet[A])(b: B): DataSet[B] = {
+      implicit val tib = ti.asInstanceOf[TypeInformation[B]]
+      ma.getExecutionEnvironment.fromElements(b)
     }
   }
 

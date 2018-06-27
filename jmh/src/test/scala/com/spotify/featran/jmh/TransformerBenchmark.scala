@@ -91,4 +91,5 @@ private class NoOpFeatureBuilder(val bh: Blackhole) extends FeatureBuilder[Unit]
     bh.consume(value)
   }
   override def skip(): Unit = bh.consume(Unit)
+  override def newBuilder: FeatureBuilder[Unit] = new NoOpFeatureBuilder(bh)
 }

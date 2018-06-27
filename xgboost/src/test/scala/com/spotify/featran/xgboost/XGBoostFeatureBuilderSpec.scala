@@ -17,7 +17,7 @@
 
 package com.spotify.featran.xgboost
 
-import com.spotify.featran.{FeatureBuilder, SparseArray}
+import com.spotify.featran.{FeatureBuilder, SerializableUtils, SparseArray}
 import ml.dmlc.xgboost4j.LabeledPoint
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
 
@@ -28,9 +28,10 @@ object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
-  private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], fb: FeatureBuilder[F])(
+  private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], builder: FeatureBuilder[F])(
     toSeq: F => Seq[Float]): Prop = {
     val num = implicitly[Numeric[T]]
+    val fb = SerializableUtils.ensureSerializable(builder)
     fb.init(xs.size + 4)
     fb.prepare(null)
     xs.zipWithIndex.foreach {
@@ -44,28 +45,28 @@ object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
   }
 
   property("LabeledPoint on Float input") = Prop.forAll(list[Float]) { xs =>
-    test(xs, implicitly[FeatureBuilder[LabeledPoint]])(_.values.toSeq)
+    test(xs, FeatureBuilder[LabeledPoint])(_.values.toSeq)
   }
 
   property("LabeledPoint on Double input") = Prop.forAll(list[Double]) { xs =>
-    test(xs, implicitly[FeatureBuilder[LabeledPoint]])(_.values.toSeq)
+    test(xs, FeatureBuilder[LabeledPoint])(_.values.toSeq)
   }
 
   property("Sparse LabeledPoint on Float input") = Prop.forAll(list[Float]) { xs =>
-    test(xs, implicitly[FeatureBuilder[SparseLabeledPoint]])(r =>
+    test(xs, FeatureBuilder[SparseLabeledPoint])(r =>
       SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs.size).toDense.toSeq)
     val n = 1024 / xs.size + 1
     val xs2 = Seq.fill(n)(xs).reduce(_ ++ _)
-    test(xs2, implicitly[FeatureBuilder[SparseLabeledPoint]])(r =>
+    test(xs2, FeatureBuilder[SparseLabeledPoint])(r =>
       SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs2.size).toDense.toSeq)
   }
 
   property("Sparse LabeledPoint on Double input") = Prop.forAll(list[Double]) { xs =>
-    test(xs, implicitly[FeatureBuilder[SparseLabeledPoint]])(r =>
+    test(xs, FeatureBuilder[SparseLabeledPoint])(r =>
       SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs.size).toDense.toSeq)
     val n = 1024 / xs.size + 1
     val xs2 = Seq.fill(n)(xs).reduce(_ ++ _)
-    test(xs2, implicitly[FeatureBuilder[SparseLabeledPoint]])(r =>
+    test(xs2, FeatureBuilder[SparseLabeledPoint])(r =>
       SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs2.size).toDense.toSeq)
   }
 

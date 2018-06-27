@@ -34,7 +34,19 @@ object CoverageSpec extends Properties("Coverage") {
       e.getClass.getDeclaredField("com$spotify$featran$RecordExtractor$$iteratorCollectionType")
     f.setAccessible(true)
     val ct = f.get(e).asInstanceOf[CollectionType[Iterator]]
-    require(Try(ct.reduce[Double](Iterator(1.0, 1.0), _ + _)).isFailure)
+    require(Try(ct.reduce[Double](Iterator(1.0, 1.0))(_ + _)).isFailure)
+  }
+
+  {
+    // RecordExtractor.iteratorCollectionType#pure
+    val fs = FeatureSpec.of[Double].required(identity)(Identity("id"))
+    val settings = fs.extract(Seq(1.0)).featureSettings.head
+    val e = fs.extractWithSettings[Seq[Double]](settings)
+    val f =
+      e.getClass.getDeclaredField("com$spotify$featran$RecordExtractor$$iteratorCollectionType")
+    f.setAccessible(true)
+    val ct = f.get(e).asInstanceOf[CollectionType[Iterator]]
+    require(ct.pure(Iterator())(1.0).nonEmpty)
   }
 
   {
@@ -46,9 +58,18 @@ object CoverageSpec extends Properties("Coverage") {
     val f2 = t.getClass.getDeclaredField("rejectUpper")
     f2.setAccessible(true)
     f2.setBoolean(t, false)
-    val fb = implicitly[FeatureBuilder[Array[Double]]]
+    val fb = FeatureBuilder[Array[Double]]
     fb.init(1)
     t.buildFeatures(Some(0), (0, 0, Double.MinValue, Double.MaxValue), fb)
+  }
+
+  {
+    val fb = FeatureBuilder[Seq[Double]]
+    val f = classOf[CrossingFeatureBuilder[_]]
+      .getConstructor(classOf[FeatureBuilder[_]], classOf[Crossings])
+    f.setAccessible(true)
+    val cfb = f.newInstance(fb, Crossings.empty)
+    cfb.newBuilder
   }
 
 }

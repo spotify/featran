@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{Feature, FeatureBuilder}
+import com.spotify.featran.{Feature, FeatureBuilder, JsonSerializable}
 import com.twitter.algebird.{Aggregator, Semigroup}
 
 import scala.language.higherKinds
@@ -134,6 +134,21 @@ case class Settings(cls: String,
                     params: Map[String, String],
                     featureNames: Seq[String],
                     aggregators: Option[String])
+
+object Settings {
+  implicit val jsonSeqSettings: JsonSerializable[Seq[Settings]] =
+    new JsonSerializable[Seq[Settings]] {
+      import io.circe.generic.auto._
+      import io.circe.parser.{decode => circeDecode}
+      import io.circe.syntax._
+      import io.circe.{Error, Json}
+
+      override def decode(seq: String): Either[Error, Seq[Settings]] =
+        circeDecode[Seq[Settings]](seq).left.map(a => a)
+
+      override def encode(settings: Seq[Settings]): Json = settings.asJson
+    }
+}
 
 private abstract class OneDimensional[A, B, C](name: String) extends Transformer[A, B, C](name) {
   override def featureDimension(c: C): Int = 1

@@ -19,7 +19,6 @@ package com.spotify.featran
 
 import com.spotify.featran.transformers.Settings
 
-import scala.language.{higherKinds, implicitConversions}
 import scala.reflect.ClassTag
 
 /**
@@ -28,29 +27,33 @@ import scala.reflect.ClassTag
  * @tparam T input record type to extract features from
  */
 class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
-  private val fs: FeatureSet[T],
+  private val fs: M[FeatureSet[T]],
   @transient private val input: M[T],
   @transient private val settings: Option[M[String]])
     extends Serializable {
+  import FeatureSpec.ARRAY, CollectionType.ops._
 
-  import FeatureSpec.ARRAY
+  @transient private[featran] lazy val as: M[(T, ARRAY)] =
+    input.cross(fs).map { case (in, spec) => (in, spec.unsafeGet(in)) }
 
-  @transient private val dt: CollectionType[M] = implicitly[CollectionType[M]]
-  import dt.Ops._
-
-  @transient private[featran] lazy val as: M[(T, ARRAY)] = {
-    val g = fs // defeat closure
-    input.map(o => (o, g.unsafeGet(o)))
-  }
   @transient private[featran] lazy val aggregate: M[ARRAY] = settings match {
     case Some(x) =>
-      x.map { s =>
-        import io.circe.generic.auto._
-        import io.circe.parser._
-        fs.decodeAggregators(decode[Seq[Settings]](s).right.get)
+      x.cross(fs).map {
+        case (s, spec) =>
+          spec.decodeAggregators(JsonSerializable[Seq[Settings]].decode(s).right.get)
       }
     case None =>
-      as.map(t => fs.unsafePrepare(t._2)).reduce(fs.unsafeSum).map(fs.unsafePresent)
+      as.cross(fs)
+        .map {
+          case ((_, array), featureSet) =>
+            val asd = featureSet.unsafePrepare(array)
+            (featureSet, asd)
+        }
+        .reduce {
+          case ((featureSet, a), (_, b)) =>
+            (featureSet, featureSet.unsafeSum(a, b))
+        }
+        .map { case (featureSet, array) => featureSet.unsafePresent(array) }
   }
 
   /**
@@ -62,10 +65,9 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
   @transient lazy val featureSettings: M[String] = settings match {
     case Some(x) => x
     case None =>
-      aggregate.map { a =>
-        import io.circe.generic.auto._
-        import io.circe.syntax._
-        fs.featureSettings(a).asJson.noSpaces
+      aggregate.cross(fs).map {
+        case (a, featureSet) =>
+          JsonSerializable[Seq[Settings]].encode(featureSet.featureSettings(a)).noSpaces
       }
   }
 
@@ -73,7 +75,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
    * Names of the extracted features, in the same order as values in [[featureValues]].
    */
   @transient lazy val featureNames: M[Seq[String]] =
-    aggregate.map(fs.featureNames)
+    aggregate.cross(fs).map(x => x._2.featureNames(x._1))
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]].
@@ -90,41 +92,66 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
    *           `DenseVector[Double]`
    */
   def featureResults[F: FeatureBuilder: ClassTag]: M[FeatureResult[F, T]] = {
-    val fb = CrossingFeatureBuilder(implicitly[FeatureBuilder[F]].newBuilder, fs.crossings)
-    as.cross(aggregate).map {
-      case ((o, a), c) =>
-        fs.featureValues(a, c, fb)
-        FeatureResult(fb.result, fb.rejections, o)
+    val fb = FeatureBuilder[F].newBuilder
+    as.cross(aggregate).cross(fs).map {
+      case (((o, a), c), spec) =>
+        val cfb = CrossingFeatureBuilder(fb, spec.crossings)
+        spec.featureValues(a, c, cfb)
+        FeatureResult(cfb.result, cfb.rejections, o)
     }
   }
-
 }
 
 case class FeatureResult[F, T](value: F, rejections: Map[String, FeatureRejection], original: T)
 
+object RecordExtractor {
+  private class PipeIterator[T] extends Iterator[T] {
+    private var element: T = _
+    private var hasElement: Boolean = false
+    def feed(element: T): Unit = {
+      require(!hasNext)
+      this.element = element
+      hasElement = true
+    }
+    override def hasNext: Boolean = hasElement
+    override def next(): T = {
+      require(hasNext)
+      hasElement = false
+      element
+    }
+  }
+
+  private final case class State[F, T](input: PipeIterator[T],
+                                       extractor: FeatureExtractor[Iterator, T],
+                                       output: Iterator[FeatureResult[F, T]])
+}
+
 /** Encapsulate [[RecordExtractor]] for extracting individual records. */
 class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: FeatureSet[T],
                                                                         settings: String) {
+  import RecordExtractor._
 
   private implicit val iteratorCollectionType: CollectionType[Iterator] =
     new CollectionType[Iterator] {
-      override def map[A, B: ClassTag](ma: Iterator[A], f: A => B): Iterator[B] = ma.map(f)
-      override def reduce[A](ma: Iterator[A], f: (A, A) => A): Iterator[A] = ???
-      override def cross[A, B: ClassTag](ma: Iterator[A], mb: Iterator[B]): Iterator[(A, B)] = {
+      override def map[A, B: ClassTag](ma: Iterator[A])(f: A => B): Iterator[B] = ma.map(f)
+
+      override def reduce[A](ma: Iterator[A])(f: (A, A) => A): Iterator[A] = ???
+
+      override def cross[A, B: ClassTag](ma: Iterator[A])(mb: Iterator[B]): Iterator[(A, B)] = {
         val b = mb.next()
         ma.map(a => (a, b))
       }
+
+      override def pure[A, B: ClassTag](ma: Iterator[A])(b: B): Iterator[B] = Iterator(b)
     }
 
-  private final case class State(input: PipeIterator,
-                                 extractor: FeatureExtractor[Iterator, T],
-                                 output: Iterator[FeatureResult[F, T]])
-
-  private val state = new ThreadLocal[State] {
-    override def initialValue(): State = {
-      val input: PipeIterator = new PipeIterator
+  private val state = new ThreadLocal[State[F, T]] {
+    override def initialValue(): State[F, T] = {
+      val input: PipeIterator[T] = new PipeIterator[T]
       val extractor: FeatureExtractor[Iterator, T] =
-        new FeatureExtractor[Iterator, T](fs, input, Some(Iterator.continually(settings)))
+        new FeatureExtractor[Iterator, T](Iterator.continually(fs),
+                                          input,
+                                          Some(Iterator.continually(settings)))
       val output: Iterator[FeatureResult[F, T]] = extractor.featureResults
 
       State(input, extractor, output)
@@ -157,21 +184,4 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
     s.input.feed(record)
     s.output.next()
   }
-
-  private class PipeIterator extends Iterator[T] {
-    private var element: T = _
-    private var hasElement: Boolean = false
-    def feed(element: T): Unit = {
-      require(!hasNext)
-      this.element = element
-      hasElement = true
-    }
-    override def hasNext: Boolean = hasElement
-    override def next(): T = {
-      require(hasNext)
-      hasElement = false
-      element
-    }
-  }
-
 }

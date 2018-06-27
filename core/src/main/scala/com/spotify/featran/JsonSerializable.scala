@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Spotify AB.
+ * Copyright 2018 Spotify AB.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,16 @@
 
 package com.spotify.featran
 
+import io.circe.{Error, Json}
 import simulacrum.typeclass
 
 import scala.language.implicitConversions
 
 /**
- * Type class for floating point primitives.
+ * Type class for json serialization.
  */
-@typeclass trait FloatingPoint[@specialized(Float, Double) T] extends Serializable {
-  def fromDouble(x: Double): T
-}
+@typeclass private[featran] trait JsonSerializable[T] {
+  def encode(t: T): Json
 
-object FloatingPoint {
-  implicit val floatFP: FloatingPoint[Float] = new FloatingPoint[Float] {
-    override def fromDouble(x: Double): Float = x.toFloat
-  }
-  implicit val doubleFP: FloatingPoint[Double] = new FloatingPoint[Double] {
-    override def fromDouble(x: Double): Double = x
-  }
+  def decode(str: String): Either[Error, T]
 }

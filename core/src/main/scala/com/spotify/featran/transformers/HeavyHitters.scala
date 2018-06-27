@@ -63,10 +63,11 @@ private class HeavyHitters(name: String,
                            val seed: Int)
     extends Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]](name) {
 
-  private val sketchMapParams =
+  @transient private lazy val sketchMapParams =
     SketchMapParams[String](seed, eps, delta, heavyHittersCount)(_.getBytes)
 
-  override val aggregator: Aggregator[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
+  @transient override lazy val aggregator
+    : Aggregator[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
     SketchMap
       .aggregator[String, Long](sketchMapParams)
       .composePrepare[String]((_, 1L))
@@ -74,7 +75,7 @@ private class HeavyHitters(name: String,
         val b = Map.newBuilder[String, (Int, Long)]
         sm.heavyHitterKeys.iterator.zipWithIndex.foreach {
           case (k, r) =>
-            b += (k -> (r + 1, sketchMapParams.frequency(k, sm.valuesTable)))
+            b += ((k, (r + 1, sketchMapParams.frequency(k, sm.valuesTable))))
         }
         b.result()
       }
@@ -104,7 +105,7 @@ private class HeavyHitters(name: String,
     val b = Map.newBuilder[String, (Int, Long)]
     kvs.foreach { kv =>
       val t = kv.split(":")
-      b += (URLDecoder.decode(t(0), "UTF-8") -> (t(1).toInt, t(2).toLong))
+      b += ((URLDecoder.decode(t(0), "UTF-8"), (t(1).toInt, t(2).toLong)))
     }
     b.result()
   }

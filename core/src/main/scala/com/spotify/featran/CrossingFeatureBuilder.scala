@@ -21,7 +21,6 @@ import com.spotify.featran.transformers.Transformer
 
 import scala.collection.immutable.SortedMap
 import scala.collection.mutable
-import scala.language.higherKinds
 
 private object Crossings {
   type KEY = (String, String)
@@ -43,6 +42,15 @@ private case class Crossings(map: Crossings.MAP, keys: Set[String]) {
     val k = this.map.keySet.intersect(that.map.keySet)
     require(k.isEmpty, s"Duplicate crossing ${k.mkString(", ")}")
     Crossings(this.map ++ that.map, this.keys ++ that.keys)
+  }
+
+  def filter[T](predicate: String => Boolean): Crossings = {
+    val filteredKeys = keys.filter(predicate)
+    val filteredMap = map.filterKeys {
+      case (k1, k2) => filteredKeys.contains(k1) || filteredKeys.contains(k2)
+    }
+
+    Crossings(filteredMap, filteredKeys)
   }
   // scalastyle:on method.name
 }

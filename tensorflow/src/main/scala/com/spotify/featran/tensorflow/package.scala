@@ -29,15 +29,21 @@ case class NamedTFFeature(name: String, f: tf.Feature)
 
 package object tensorflow {
   case class TensorFlowFeatureBuilder(
-    @transient private val underlying: Features.Builder = tf.Features.newBuilder())
+    @transient private var underlying: Features.Builder = tf.Features.newBuilder())
       extends FeatureBuilder[tf.Example] {
-    override def init(dimension: Int): Unit = underlying.clear()
+    override def init(dimension: Int): Unit = {
+      if (underlying == null) {
+        underlying = tf.Features.newBuilder()
+      }
+      underlying.clear()
+    }
     override def add(name: String, value: Double): Unit = {
       val feature = tf.Feature
         .newBuilder()
         .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
         .build()
-      underlying.putFeature(name, feature)
+      val normalized = name.replaceAll("[^A-Za-z0-9_]", "_")
+      underlying.putFeature(normalized, feature)
     }
     override def skip(): Unit = Unit
     override def skip(n: Int): Unit = Unit

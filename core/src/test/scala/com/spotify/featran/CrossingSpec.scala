@@ -134,13 +134,13 @@ object CrossingSpec extends Properties("CrossingSpec") {
       .of[B]
       .required(t => flatten(t._1))(NHotEncoder("a"))
       .required(t => flatten(t._2))(NHotEncoder("b"))
-      .cross("a", "b")(_ * _)
+      .cross(("a", "b"))(_ * _)
       .extract(xs)
     val f2 = FeatureSpec
       .of[B]
       .required(t => flatten(t._1))(NHotEncoder("a"))
       .required(t => flatten(t._2))(NHotEncoder("b"))
-      .cross("a", "b")(_ + _)
+      .cross(("a", "b"))(_ + _)
       .extract(xs)
     Prop.all(
       f1.featureNames == Seq(sparseNames("a", "b", xs)),
@@ -155,12 +155,12 @@ object CrossingSpec extends Properties("CrossingSpec") {
       .of[B]
       .required(t => flatten(t._1))(NHotEncoder("a"))
       .required(t => flatten(t._2))(NHotEncoder("b"))
-      .cross("a", "b")(_ * _)
+      .cross(("a", "b"))(_ * _)
     val f2 = FeatureSpec
       .of[B]
       .required(t => flatten(t._1))(NHotEncoder("c"))
       .required(t => flatten(t._2))(NHotEncoder("d"))
-      .cross("c", "d")(_ + _)
+      .cross(("c", "d"))(_ + _)
     val f = MultiFeatureSpec(f1, f2).extract(xs)
     val expected = xs.map { x =>
       Seq(sparseValues("a", "b", x, _ * _), sparseValues("c", "d", x, _ + _))
