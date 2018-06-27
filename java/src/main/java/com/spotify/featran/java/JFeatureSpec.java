@@ -65,21 +65,19 @@ public class JFeatureSpec<T> {
    * Java wrapper for {@link FeatureSpec#required(Function1, Transformer)}.
    */
   public <A> JFeatureSpec<T> required(final SerializableFunction<T, A> f,
-                                      final Transformer<A, ?, ?> t,
-                                      final Class<A> typeParameterClass) {
+                                      final Transformer<A, ?, ?> t) {
     Function1<T, A> g = JavaOps.requiredFn(f);
-    return wrap(self.required(g, t, JavaOps.typeTag(typeParameterClass)));
+    return wrap(self.required(g, t, null));
   }
 
   /**
    * Java wrapper for {@link FeatureSpec#optional(Function1, Transformer)}.
    */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
-                                      final Transformer<A, ?, ?> t,
-                                      final Class<A> typeParameterClass) {
+                                      final Transformer<A, ?, ?> t) {
     Function1<T, Option<A>> g = JavaOps.optionalFn(f);
     Option<A> o = Option.empty();
-    return wrap(self.optional(g, o, t, JavaOps.typeTag(typeParameterClass)));
+    return wrap(self.optional(g, o, t, null));
   }
 
   /**
@@ -87,11 +85,10 @@ public class JFeatureSpec<T> {
    */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final A defaultValue,
-                                      final Transformer<A, ?, ?> t,
-                                      final Class<A> typeParameterClass) {
+                                      final Transformer<A, ?, ?> t) {
     Function1<T, Option<A>> g = JavaOps.optionalFn(f);
     Option<A> o = Option.apply(defaultValue);
-    return wrap(self.optional(g, o, t, JavaOps.typeTag(typeParameterClass)));
+    return wrap(self.optional(g, o, t, null));
   }
 
   /**

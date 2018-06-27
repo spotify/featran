@@ -47,12 +47,12 @@ abstract class TransformerProp(name: String) extends Properties(name) {
 
   // scalastyle:off method.length
   def test[T: TypeTag](t: Transformer[T, _, _],
-              input: List[T],
-              names: Seq[String],
-              expected: List[Seq[Double]],
-              missing: Seq[Double],
-              outOfBoundsElems: List[(T, Seq[Double])] = Nil,
-              rejected: List[Seq[Double]] = Nil): Prop = {
+                       input: List[T],
+                       names: Seq[String],
+                       expected: List[Seq[Double]],
+                       missing: Seq[Double],
+                       outOfBoundsElems: List[(T, Seq[Double])] = Nil,
+                       rejected: List[Seq[Double]] = Nil): Prop = {
     val fsRequired = FeatureSpec.of[T].required(identity)(t)
     val fsOptional = FeatureSpec.of[Option[T]].optional(identity)(t)
 
@@ -106,7 +106,8 @@ abstract class TransformerProp(name: String) extends Properties(name) {
   }
   // scalastyle:on method.length
 
-  def testException[T: TypeTag](t: Transformer[T, _, _], input: List[T])(p: Throwable => Boolean): Prop =
+  def testException[T: TypeTag](t: Transformer[T, _, _], input: List[T])(
+    p: Throwable => Boolean): Prop =
     try {
       FeatureSpec.of[T].required(identity)(t).extract(input).featureValues[Seq[Double]]
       false

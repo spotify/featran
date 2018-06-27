@@ -17,12 +17,8 @@
 
 package com.spotify.featran.tensorflow
 
-<<<<<<< HEAD
-import com.spotify.featran.{FeatureBuilder, FeatureSpec}
 import com.spotify.featran.transformers.Identity
-=======
-import com.spotify.featran.{FeatureBuilder, SerializableUtils}
->>>>>>> master
+import com.spotify.featran.{FeatureBuilder, FeatureSpec, SerializableUtils}
 import org.scalacheck._
 import org.tensorflow.example.{Example, Feature, Features, FloatList}
 
@@ -60,17 +56,13 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     actual == expected
   }
 
-<<<<<<< HEAD
-  private val id = Identity("id")
-  private val id2 = Identity("id2")
-
   property("converter") = Prop.forAll { xs: List[Record] =>
-    val f = FeatureSpec.of[Record].required(_.d)(id).convert(xs)
+    val f = FeatureSpec.of[Record].required(_.d)(Identity("id")).convert(xs)
     Prop.all(
       f.map(_.getFeatures.getFeatureMap.get("id").getFloatList.getValue(0)) == xs.map(_.d.toFloat)
     )
   }
-=======
+
   property("feature names") = Prop.forAll { key: String =>
     val fb = SerializableUtils.ensureSerializable(FeatureBuilder[Example])
     fb.init(1)
@@ -78,6 +70,4 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     val actual = fb.result.getFeatures.getFeatureMap.keySet().iterator().next()
     Prop.all(actual.length == key.length, actual.replaceAll("[^A-Za-z0-9_]", "_") == actual)
   }
-
->>>>>>> master
 }

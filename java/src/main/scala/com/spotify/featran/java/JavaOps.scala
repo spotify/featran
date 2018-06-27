@@ -43,7 +43,7 @@ private object JavaOps {
     val m = runtimeMirror(clazz.getClassLoader)
     val tpe = m.classSymbol(clazz).toType
     val typeCreator = new scala.reflect.api.TypeCreator {
-      def apply[U <: Universe with Singleton](m1: scala.reflect.api.Mirror[U]): U # Type =
+      def apply[U <: Universe with Singleton](m1: scala.reflect.api.Mirror[U]): U#Type =
         if (m1 != m) throw new RuntimeException("wrong mirror") else tpe.asInstanceOf[U#Type]
     }
     TypeTag[T](m, typeCreator)

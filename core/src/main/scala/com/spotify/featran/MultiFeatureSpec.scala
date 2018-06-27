@@ -46,14 +46,24 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
                           private[featran] val features: Array[Feature[T, _, _, _]],
                           private val crossings: Crossings) {
 
-  def convert[M[_], C](input: M[T])
-    (implicit fw: Converter[C], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
-    import CollectionType.ops._
-    input.map{row => fw.convert(row, features.toList)}
-  }
-
   private def multiFeatureSet: MultiFeatureSet[T] =
     new MultiFeatureSet[T](features, crossings, mapping)
+
+  /**
+   * Uses the functions provided in the Featran Spec to `map` the scala object into a new type
+   * given by C.  This function does not do the transformations internal to Featran but instead
+   * can be used as a mapper.
+   *
+   * For an example of this see the tensorflow subproject where mapping between Scala and TFExample
+   * can be done through this method.
+   */
+  def convert[M[_], C](
+    input: M[T])(implicit fw: Converter[C], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
+    import CollectionType.ops._
+    input.map { row =>
+      fw.convert(row, features.toList)
+    }
+  }
 
   /**
    * Extract features from a input collection.

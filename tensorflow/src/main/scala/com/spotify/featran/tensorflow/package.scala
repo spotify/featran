@@ -83,7 +83,7 @@ package object tensorflow {
           List(NamedTFFeature(name, f))
 
         case t if t <:< typeOf[Seq[String]] =>
-          v.asInstanceOf[Seq[String]].toList.map{category =>
+          v.asInstanceOf[Seq[String]].toList.map { category =>
             val f = Feature
               .newBuilder()
               .setBytesList(BytesList.newBuilder().addValue(ByteString.copyFromUtf8(category)))
@@ -117,7 +117,10 @@ package object tensorflow {
 
           val vfeature = Feature
             .newBuilder()
-            .setFloatList(FloatList.newBuilder().addAllValue(values.map(v => float2Float(v.value.toFloat)).asJava))
+            .setFloatList(
+              FloatList
+                .newBuilder()
+                .addAllValue(values.map(v => float2Float(v.value.toFloat)).asJava))
             .build()
 
           List(NamedTFFeature(name + "_key", kfeature), NamedTFFeature(name + "_key", vfeature))
@@ -127,11 +130,11 @@ package object tensorflow {
     }
   }
 
-  implicit val tfConverter = new Converter[tf.Example]{
+  implicit val tfConverter = new Converter[tf.Example] {
     def convert[T](row: T, feat: List[Feature[T, _, _, _]]): tf.Example = {
       val builder = Features.newBuilder()
-      feat.foreach{f =>
-        f.convert[List[NamedTFFeature]](row).foreach{opt =>
+      feat.foreach { f =>
+        f.convert[List[NamedTFFeature]](row).foreach { opt =>
           opt.foreach { nf =>
             builder.putFeature(nf.name, nf.f)
           }

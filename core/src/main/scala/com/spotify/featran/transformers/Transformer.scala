@@ -24,7 +24,7 @@ import scala.language.higherKinds
 
 case class NamedFn[T, A](name: String, fn: T => A)
 
-trait Converter[C]{
+trait Converter[C] {
   def convert[T](row: T, feat: List[Feature[T, _, _, _]]): C
 }
 
