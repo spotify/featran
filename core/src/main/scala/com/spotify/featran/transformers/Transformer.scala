@@ -85,6 +85,12 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
     case None    => fb.skip()
   }
 
+  def unsafeBuildFeatures(a: Option[Any], c: Option[Any], fb: FeatureBuilder[_]): Unit =
+    optBuildFeatures(a.asInstanceOf[Option[A]], c.asInstanceOf[Option[C]], fb)
+
+  def unsafeFeatureDimension(c: Option[Any]): Int =
+    optFeatureDimension(c.asInstanceOf[Option[C]])
+
   //================================================================================
   // Transformer parameter and aggregator persistence
   //================================================================================

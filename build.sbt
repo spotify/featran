@@ -32,6 +32,7 @@ val simulacrumVersion = "0.12.0"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
 val xgBoostVersion = "0.71-20180420-230cb9b7"
+val shapelessDatatypeVersion = "0.1.6"
 
 val CompileTime = config("compile-time").hide
 
@@ -297,6 +298,7 @@ lazy val tensorflow: Project = project
     description := "Feature Transformers - TensorFlow",
     libraryDependencies ++= Seq(
       "org.tensorflow" % "proto" % tensorflowVersion,
+      "me.lyh" %% "shapeless-datatype-tensorflow" % shapelessDatatypeVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )
@@ -383,7 +385,7 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
       "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
     ),
     autoCompilerPlugins := true,
-    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9"),
+    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9")
   )
 } else {
   Nil
