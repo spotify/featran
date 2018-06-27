@@ -12,7 +12,7 @@ object ExampleTransformer {
 
   def toFeature(name: String, ex: Example): Option[Feature] = {
     val fm = ex.getFeatures.getFeatureMap
-    if(fm.containsKey(name)){
+    if (fm.containsKey(name)) {
       Some(fm.get(name))
     } else {
       None
@@ -46,9 +46,9 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
   private def pkg(cls: String) =
     "com.spotify.featran.transformers." + cls
 
-  private val converters = settings.map{str =>
+  private val converters = settings.map { str =>
     val json = JsonSerializable[Seq[Settings]].decode(str).right.get
-    json.map{setting =>
+    json.map { setting =>
       val name = setting.name
       val aggr = setting.aggregators
       val params = setting.params
@@ -86,23 +86,25 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
     }
   }
 
-  val dimSize: M[Int] = converters.map{items =>
-     items.map { case (_, aggr, tr) =>
-       val ta = aggr.map(tr.decodeAggregator)
-       tr.unsafeFeatureDimension(ta)
-     }
-    .sum
+  val dimSize: M[Int] = converters.map { items =>
+    items.map {
+      case (_, aggr, tr) =>
+        val ta = aggr.map(tr.decodeAggregator)
+        tr.unsafeFeatureDimension(ta)
+    }.sum
   }
 
   def transform[F: FeatureBuilder: ClassTag](records: M[Example]): M[F] = {
     val fb = FeatureBuilder[F].newBuilder
-    records.cross(converters).cross(dimSize).map{case((record, convs), size) =>
-      fb.init(size)
-      convs.foreach{case(fn, aggr, conv) =>
-        val a = aggr.map(conv.decodeAggregator)
-        conv.unsafeBuildFeatures(fn(record), a, fb)
-      }
-      fb.result
+    records.cross(converters).cross(dimSize).map {
+      case ((record, convs), size) =>
+        fb.init(size)
+        convs.foreach {
+          case (fn, aggr, conv) =>
+            val a = aggr.map(conv.decodeAggregator)
+            conv.unsafeBuildFeatures(fn(record), a, fb)
+        }
+        fb.result
     }
   }
 }

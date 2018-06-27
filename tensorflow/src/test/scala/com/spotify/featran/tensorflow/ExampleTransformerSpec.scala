@@ -8,7 +8,7 @@ import shapeless.datatype.tensorflow._
 
 case class TFRecord(d: Float, optD: Option[Float])
 
-class ExampleTransformerSpec extends Properties("FeatureSpec")  {
+class ExampleTransformerSpec extends Properties("FeatureSpec") {
   import TensorFlowType._
 
   implicit val arbRecords: Arbitrary[List[TFRecord]] = Arbitrary {
@@ -19,7 +19,7 @@ class ExampleTransformerSpec extends Properties("FeatureSpec")  {
     val features = Features.newBuilder()
 
     features.putFeature("d", fromFloats(Seq(r.d)).build())
-    if(r.optD.isDefined){
+    if (r.optD.isDefined) {
       features.putFeature("optD", fromFloats(r.optD.toList).build())
     }
     Example
