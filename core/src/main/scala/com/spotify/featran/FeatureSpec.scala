@@ -18,7 +18,7 @@
 package com.spotify.featran
 
 import com.spotify.featran.transformers.{
-  ConvertFunction,
+  ConvertFns,
   Converter,
   Settings,
   Transformer => FTransformer
@@ -117,11 +117,12 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * For an example of this see the tensorflow subproject where mapping between Scala and TFExample
    * can be done through this method.
    */
-  def convert[M[_], C](
-    input: M[T])(implicit fw: Converter[C], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
+  def convert[M[_], C, D](
+    input: M[T])(implicit fw: Converter[C, D], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
     import CollectionType.ops._
+    val fns = ConvertFns(features.map(f => fw(f.transformer.name, f.typ, f.f)).toList)
     input.map { row =>
-      fw.convert(row, features.toList)
+      fw.convert(row, fns)
     }
   }
 
@@ -228,10 +229,13 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
 
 }
 
-private class Feature[T, A: TypeTag, B, C](val f: T => Option[A],
-                                           val default: Option[A],
-                                           val transformer: FTransformer[A, B, C])
+private class Feature[T, A, B, C](
+  val f: T => Option[A],
+  val default: Option[A],
+  val transformer: FTransformer[A, B, C])(implicit @transient t: TypeTag[A])
     extends Serializable {
+
+  def typ: Type = typeOf[A]
 
   def get(t: T): Option[A] = f(t).orElse(default)
 
@@ -268,11 +272,6 @@ private class Feature[T, A: TypeTag, B, C](val f: T => Option[A],
   // Option[C]
   def unsafeSettings(c: Option[Any]): Settings =
     transformer.settings(c.asInstanceOf[Option[C]])
-
-  def convert[X](row: T)(implicit cf: ConvertFunction[X]): Option[X] = {
-    val name = this.transformer.name
-    this.f(row).map(v => cf(name, v))
-  }
 }
 
 private class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _, _]],

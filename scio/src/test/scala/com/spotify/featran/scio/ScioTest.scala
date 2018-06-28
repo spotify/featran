@@ -21,13 +21,30 @@ import com.spotify.featran._
 import com.spotify.featran.transformers._
 import com.spotify.scio.testing._
 
-class ScioTest extends PipelineSpec {
+object DummyConverter {
+  import scala.reflect.runtime.universe._
+  implicit val tfConverter = new Converter[String, String] {
+    def apply[A, B](name: String, typ: Type, fn: A => Option[B]): A => String = { (v: A) =>
+      s"$name"
+    }
 
+    def convert[T](row: T, fns: ConvertFns[T, String]): String =
+      fns.fns
+        .map { f =>
+          f(row)
+        }
+        .mkString(",")
+  }
+}
+
+class ScioTest extends PipelineSpec {
+  import DummyConverter._
   import Fixtures._
 
   "Scio" should "work with FeatureSpec" in {
     runWithContext { sc =>
       val f = testSpec.extract(sc.parallelize(testData))
+      testSpec.convert(sc.parallelize(testData))
       f.featureNames should containSingleValue(expectedNames)
       f.featureValues[Seq[Double]] should containInAnyOrder(expectedValues)
     }
@@ -37,6 +54,7 @@ class ScioTest extends PipelineSpec {
     noException shouldBe thrownBy {
       runWithContext { sc =>
         val f = recordSpec.extract(sc.parallelize(records))
+        recordSpec.convert(sc.parallelize(records))
         f.featureNames
         f.featureValues[Seq[Double]]
       }

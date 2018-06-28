@@ -17,20 +17,16 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{Feature, FeatureBuilder, JsonSerializable}
+import com.spotify.featran.{FeatureBuilder, JsonSerializable}
 import com.twitter.algebird.{Aggregator, Semigroup}
 
 import scala.language.higherKinds
 
-case class NamedFn[T, A](name: String, fn: T => A)
-
-trait Converter[C] {
-  def convert[T](row: T, feat: List[Feature[T, _, _, _]]): C
-}
-
-abstract class ConvertFunction[+C] {
+case class ConvertFns[T, C](fns: List[(T => C)]) extends Serializable
+trait Converter[C, D] extends Serializable {
   import scala.reflect.runtime.universe._
-  def apply[A: TypeTag](name: String, a: A): C
+  def apply[T, A](name: String, typ: Type, fn: T => Option[A]): T => D
+  def convert[T](row: T, fns: ConvertFns[T, D]): C
 }
 
 // TODO: port more transformers from Spark

@@ -17,10 +17,10 @@
 
 package com.spotify.featran
 
-import com.spotify.featran.transformers.Converter
+import com.spotify.featran.transformers.{ConvertFns, Converter, Settings}
+
 import scala.language.{higherKinds, implicitConversions}
 import scala.reflect.ClassTag
-import com.spotify.featran.transformers.Settings
 import scala.collection.breakOut
 
 /**
@@ -57,11 +57,12 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    * For an example of this see the tensorflow subproject where mapping between Scala and TFExample
    * can be done through this method.
    */
-  def convert[M[_], C](
-    input: M[T])(implicit fw: Converter[C], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
+  def convert[M[_], C, D](
+    input: M[T])(implicit fw: Converter[C, D], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
     import CollectionType.ops._
+    val fns = ConvertFns(features.map(f => fw(f.transformer.name, f.typ, f.f)).toList)
     input.map { row =>
-      fw.convert(row, features.toList)
+      fw.convert(row, fns)
     }
   }
 

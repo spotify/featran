@@ -18,7 +18,7 @@
 package com.spotify.featran
 
 import com.google.protobuf.ByteString
-import com.spotify.featran.transformers.{ConvertFunction, Converter, WeightedLabel}
+import com.spotify.featran.transformers.{ConvertFns, Converter, WeightedLabel}
 import org.tensorflow.example._
 import org.tensorflow.{example => tf}
 
@@ -59,85 +59,120 @@ package object tensorflow {
   implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
 
   // scalastyle:off
-  implicit val converterFunction = new ConvertFunction[List[NamedTFFeature]] {
-    def apply[T: TypeTag](name: String, v: T): List[NamedTFFeature] = {
-      typeOf[T] match {
+  implicit val tfConverter = new Converter[tf.Example, List[NamedTFFeature]] {
+    def apply[T, A](name: String, typ: Type, fn: T => Option[A]): T => List[NamedTFFeature] = {
+      typ match {
         case t if t =:= typeOf[Double] =>
-          val f = Feature
-            .newBuilder()
-            .setFloatList(
-              FloatList
-                .newBuilder()
-                .addAllValue(Seq(float2Float(v.asInstanceOf[Double].toFloat)).asJava)
-            )
-            .build()
-          List(NamedTFFeature(name, f))
+          t: T =>
+            {
+              fn(t)
+                .map { v =>
+                  val f = Feature
+                    .newBuilder()
+                    .setFloatList(
+                      FloatList
+                        .newBuilder()
+                        .addAllValue(Seq(float2Float(v.asInstanceOf[Double].toFloat)).asJava)
+                    )
+                    .build()
+                  List(NamedTFFeature(name, f))
+                }
+                .getOrElse(Nil)
+            }
 
         case t if t =:= typeOf[String] =>
-          val str = v.asInstanceOf[String]
-          val f = Feature
-            .newBuilder()
-            .setBytesList(BytesList.newBuilder().addValue(ByteString.copyFromUtf8(str)))
-            .build()
+          t: T =>
+            {
+              fn(t)
+                .map { v =>
+                  val str = v.asInstanceOf[String]
+                  val f = Feature
+                    .newBuilder()
+                    .setBytesList(BytesList.newBuilder().addValue(ByteString.copyFromUtf8(str)))
+                    .build()
 
-          List(NamedTFFeature(name, f))
+                  List(NamedTFFeature(name, f))
+                }
+                .getOrElse(Nil)
+            }
 
         case t if t <:< typeOf[Seq[String]] =>
-          v.asInstanceOf[Seq[String]].toList.map { category =>
-            val f = Feature
-              .newBuilder()
-              .setBytesList(BytesList.newBuilder().addValue(ByteString.copyFromUtf8(category)))
-              .build()
+          t: T =>
+            {
+              fn(t)
+                .map { v =>
+                  val v = fn(t)
+                  v.asInstanceOf[Seq[String]].toList.map { category =>
+                    val f = Feature
+                      .newBuilder()
+                      .setBytesList(
+                        BytesList.newBuilder().addValue(ByteString.copyFromUtf8(category)))
+                      .build()
 
-            NamedTFFeature(name, f)
-          }
+                    NamedTFFeature(name, f)
+                  }
+                }
+                .getOrElse(Nil)
+            }
 
         case t if t <:< typeOf[Seq[Double]] =>
-          val values = v.asInstanceOf[Seq[Double]].map(v => float2Float(v.toFloat))
-          val f = Feature
-            .newBuilder()
-            .setFloatList(
-              FloatList
-                .newBuilder()
-                .addAllValue(values.asJava)
-            )
-            .build()
+          t: T =>
+            {
+              fn(t)
+                .map { v =>
+                  val values = v.asInstanceOf[Seq[Double]].map(v => float2Float(v.toFloat))
+                  val f = Feature
+                    .newBuilder()
+                    .setFloatList(
+                      FloatList
+                        .newBuilder()
+                        .addAllValue(values.asJava)
+                    )
+                    .build()
 
-          List(NamedTFFeature(name, f))
+                  List(NamedTFFeature(name, f))
+                }
+                .getOrElse(Nil)
+            }
 
         case t if t <:< typeOf[Seq[WeightedLabel]] =>
-          val values = v.asInstanceOf[Seq[WeightedLabel]]
+          t: T =>
+            {
+              fn(t)
+                .map { v =>
+                  val values = v.asInstanceOf[Seq[WeightedLabel]]
 
-          val strs = values.map(v => ByteString.copyFromUtf8(v.name))
+                  val strs = values.map(v => ByteString.copyFromUtf8(v.name))
 
-          val kfeature = Feature
-            .newBuilder()
-            .setBytesList(BytesList.newBuilder().addAllValue(strs.asJava))
-            .build()
+                  val kfeature = Feature
+                    .newBuilder()
+                    .setBytesList(BytesList.newBuilder().addAllValue(strs.asJava))
+                    .build()
 
-          val vfeature = Feature
-            .newBuilder()
-            .setFloatList(
-              FloatList
-                .newBuilder()
-                .addAllValue(values.map(v => float2Float(v.value.toFloat)).asJava))
-            .build()
+                  val vfeature = Feature
+                    .newBuilder()
+                    .setFloatList(
+                      FloatList
+                        .newBuilder()
+                        .addAllValue(values.map(v => float2Float(v.value.toFloat)).asJava))
+                    .build()
 
-          List(NamedTFFeature(name + "_key", kfeature), NamedTFFeature(name + "_key", vfeature))
-
-        case _ => Nil
+                  List(NamedTFFeature(name + "_key", kfeature),
+                       NamedTFFeature(name + "_key", vfeature))
+                }
+                .getOrElse(Nil)
+            }
+        case _ =>
+          v: T =>
+            Nil
       }
     }
-  }
 
-  implicit val tfConverter = new Converter[tf.Example] {
-    def convert[T](row: T, feat: List[Feature[T, _, _, _]]): tf.Example = {
+    def convert[T](row: T, fns: ConvertFns[T, List[NamedTFFeature]]): tf.Example = {
       val builder = Features.newBuilder()
-      feat.foreach { f =>
-        f.convert[List[NamedTFFeature]](row).foreach { opt =>
-          opt.foreach { nf =>
-            builder.putFeature(nf.name, nf.f)
-          }
+      fns.fns.foreach { f =>
+        f(row).foreach { nf =>
+          builder.putFeature(nf.name, nf.f)
         }
       }
       Example
