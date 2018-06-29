@@ -22,9 +22,9 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 
 private[transformers] class MDLPDiscretizer[T: ClassTag](
-                                                          data: Seq[(T, Double)],
-                                                          stoppingCriterion: Double = MDLPDiscretizer.DefaultStoppingCriterion,
-                                                          minBinPercentage: Double = MDLPDiscretizer.DefaultMinBinPercentage
+  data: Seq[(T, Double)],
+  stoppingCriterion: Double = MDLPDiscretizer.DefaultStoppingCriterion,
+  minBinPercentage: Double = MDLPDiscretizer.DefaultMinBinPercentage
 ) extends Serializable {
 
   private val labels = {
