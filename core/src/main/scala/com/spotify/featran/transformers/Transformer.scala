@@ -19,14 +19,16 @@ package com.spotify.featran.transformers
 
 import com.spotify.featran.{FeatureBuilder, JsonSerializable}
 import com.twitter.algebird.{Aggregator, Semigroup}
+import simulacrum.typeclass
 
 import scala.language.higherKinds
 
-case class ConvertFns[T, C](fns: List[(T => C)]) extends Serializable
-trait Converter[C, D] extends Serializable {
+case class ConvertFns[T, D](fns: List[(T => D)]) extends Serializable
+@typeclass trait Converter[C] extends Serializable {
+  type RT //Generic Type that is returned per feature
   import scala.reflect.runtime.universe._
-  def apply[T, A](name: String, typ: Type, fn: T => Option[A]): T => D
-  def convert[T](row: T, fns: ConvertFns[T, D]): C
+  def apply[T, A](name: String, typ: Type, fn: T => Option[A]): T => RT
+  def convert[T](row: T, fns: ConvertFns[T, RT]): C
 }
 
 // TODO: port more transformers from Spark

@@ -17,17 +17,17 @@
 
 package com.spotify.featran
 
-import com.google.protobuf.ByteString
-import com.spotify.featran.transformers.{ConvertFns, Converter, WeightedLabel}
+import com.spotify.featran.transformers.{ConvertFns, Converter, MDLRecord, WeightedLabel}
 import org.tensorflow.example._
 import org.tensorflow.{example => tf}
 
 import scala.reflect.runtime.universe._
-import scala.collection.JavaConverters._
 
 case class NamedTFFeature(name: String, f: tf.Feature)
 
 package object tensorflow {
+  import shapeless.datatype.tensorflow.TensorFlowType._
+
   case class TensorFlowFeatureBuilder(
     @transient private var underlying: Features.Builder = tf.Features.newBuilder())
       extends FeatureBuilder[tf.Example] {
@@ -59,7 +59,8 @@ package object tensorflow {
   implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
 
   // scalastyle:off
-  implicit val tfConverter = new Converter[tf.Example, List[NamedTFFeature]] {
+  implicit val tfConverter: Converter[tf.Example] = new Converter[tf.Example] {
+    type RT = List[NamedTFFeature]
     def apply[T, A](name: String, typ: Type, fn: T => Option[A]): T => List[NamedTFFeature] = {
       typ match {
         case t if t =:= typeOf[Double] =>
@@ -67,15 +68,7 @@ package object tensorflow {
             {
               fn(t)
                 .map { v =>
-                  val f = Feature
-                    .newBuilder()
-                    .setFloatList(
-                      FloatList
-                        .newBuilder()
-                        .addAllValue(Seq(float2Float(v.asInstanceOf[Double].toFloat)).asJava)
-                    )
-                    .build()
-                  List(NamedTFFeature(name, f))
+                  List(NamedTFFeature(name, fromDoubles(Seq(v.asInstanceOf[Double])).build()))
                 }
                 .getOrElse(Nil)
             }
@@ -85,13 +78,7 @@ package object tensorflow {
             {
               fn(t)
                 .map { v =>
-                  val str = v.asInstanceOf[String]
-                  val f = Feature
-                    .newBuilder()
-                    .setBytesList(BytesList.newBuilder().addValue(ByteString.copyFromUtf8(str)))
-                    .build()
-
-                  List(NamedTFFeature(name, f))
+                  List(NamedTFFeature(name, fromStrings(Seq(v.asInstanceOf[String])).build()))
                 }
                 .getOrElse(Nil)
             }
@@ -101,16 +88,7 @@ package object tensorflow {
             {
               fn(t)
                 .map { v =>
-                  val v = fn(t)
-                  v.asInstanceOf[Seq[String]].toList.map { category =>
-                    val f = Feature
-                      .newBuilder()
-                      .setBytesList(
-                        BytesList.newBuilder().addValue(ByteString.copyFromUtf8(category)))
-                      .build()
-
-                    NamedTFFeature(name, f)
-                  }
+                  List(NamedTFFeature(name, fromStrings(v.asInstanceOf[Seq[String]]).build()))
                 }
                 .getOrElse(Nil)
             }
@@ -120,17 +98,7 @@ package object tensorflow {
             {
               fn(t)
                 .map { v =>
-                  val values = v.asInstanceOf[Seq[Double]].map(v => float2Float(v.toFloat))
-                  val f = Feature
-                    .newBuilder()
-                    .setFloatList(
-                      FloatList
-                        .newBuilder()
-                        .addAllValue(values.asJava)
-                    )
-                    .build()
-
-                  List(NamedTFFeature(name, f))
+                  List(NamedTFFeature(name, fromDoubles(v.asInstanceOf[Seq[Double]]).build()))
                 }
                 .getOrElse(Nil)
             }
@@ -141,27 +109,29 @@ package object tensorflow {
               fn(t)
                 .map { v =>
                   val values = v.asInstanceOf[Seq[WeightedLabel]]
-
-                  val strs = values.map(v => ByteString.copyFromUtf8(v.name))
-
-                  val kfeature = Feature
-                    .newBuilder()
-                    .setBytesList(BytesList.newBuilder().addAllValue(strs.asJava))
-                    .build()
-
-                  val vfeature = Feature
-                    .newBuilder()
-                    .setFloatList(
-                      FloatList
-                        .newBuilder()
-                        .addAllValue(values.map(v => float2Float(v.value.toFloat)).asJava))
-                    .build()
-
-                  List(NamedTFFeature(name + "_key", kfeature),
-                       NamedTFFeature(name + "_key", vfeature))
+                  List(
+                    NamedTFFeature(name + "_key", fromStrings(values.map(_.name)).build()),
+                    NamedTFFeature(name + "_value", fromDoubles(values.map(_.value)).build())
+                  )
                 }
                 .getOrElse(Nil)
             }
+
+        case t if t weak_<:< typeOf[MDLRecord[String]] =>
+          t: T =>
+            {
+              fn(t)
+                .map { v =>
+                  val values = v.asInstanceOf[MDLRecord[Any]]
+                  List(
+                    NamedTFFeature(name + "_label",
+                                   fromStrings(Seq(values.label.toString)).build()),
+                    NamedTFFeature(name + "_value", fromDoubles(Seq(values.value)).build())
+                  )
+                }
+                .getOrElse(Nil)
+            }
+
         case _ =>
           v: T =>
             Nil

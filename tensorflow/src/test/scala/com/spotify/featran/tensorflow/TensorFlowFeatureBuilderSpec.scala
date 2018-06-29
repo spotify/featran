@@ -17,19 +17,49 @@
 
 package com.spotify.featran.tensorflow
 
-import com.spotify.featran.transformers.Identity
+import com.spotify.featran.transformers._
 import com.spotify.featran.{FeatureBuilder, FeatureSpec, SerializableUtils}
 import org.scalacheck._
 import org.tensorflow.example.{Example, Feature, Features, FloatList}
 
+import scala.collection.JavaConverters._
+
 object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder") {
+  import shapeless.datatype.tensorflow.TensorFlowType._
   case class Record(d: Double, optD: Option[Double])
+  case class TransformerTypes(
+    d: Double,
+    s: String,
+    ds: List[Double],
+    ss: List[String],
+    we: List[WeightedLabel],
+    mdl: MDLRecord[String]
+  )
 
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
   implicit val arbRecords: Arbitrary[List[Record]] = Arbitrary {
     Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(Record.tupled))
+  }
+
+  implicit val arbTypes: Arbitrary[List[TransformerTypes]] = Arbitrary {
+    Gen.listOfN(
+      100,
+      Arbitrary
+        .arbitrary[(Float, String)]
+        .map {
+          case (num, str) =>
+            TransformerTypes(
+              num.toDouble,
+              str,
+              List(num.toDouble),
+              List(str),
+              List(WeightedLabel(str, num.toDouble)),
+              MDLRecord(str, num.toDouble)
+            )
+        }
+    )
   }
 
   property("TensorFlow Example") = Prop.forAll(list[Double]) { xs =>
@@ -69,5 +99,31 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     fb.add(key, 0.0)
     val actual = fb.result.getFeatures.getFeatureMap.keySet().iterator().next()
     Prop.all(actual.length == key.length, actual.replaceAll("[^A-Za-z0-9_]", "_") == actual)
+  }
+
+  property("converter all types") = Prop.forAll { xs: List[TransformerTypes] =>
+    val f = FeatureSpec
+      .of[TransformerTypes]
+      .required(_.d)(Identity("d"))
+      .required(_.s)(OneHotEncoder("s"))
+      .required(_.ds)(VectorIdentity("ds"))
+      .required(_.ss)(NHotEncoder("ss"))
+      .required(_.we)(NHotWeightedEncoder("we"))
+      .required(_.mdl)(MDL("mdl"))
+      .convert(xs)
+
+    val results = f.map { ex =>
+      val fm = ex.getFeatures.getFeatureMap.asScala
+      TransformerTypes(
+        toDoubles(fm("d")).head,
+        toStrings(fm("s")).head,
+        toDoubles(fm("ds")).toList,
+        toStrings(fm("ss")).toList,
+        List(WeightedLabel(toStrings(fm("we_key")).head, toDoubles(fm("we_value")).head)),
+        MDLRecord(toStrings(fm("mdl_label")).head, toDoubles(fm("mdl_value")).head)
+      )
+    }
+
+    Prop.all(results == xs)
   }
 }

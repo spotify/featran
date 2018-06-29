@@ -23,7 +23,9 @@ import com.spotify.scio.testing._
 
 object DummyConverter {
   import scala.reflect.runtime.universe._
-  implicit val tfConverter = new Converter[String, String] {
+  implicit val tfConverter: Converter[String] = new Converter[String] {
+    type RT = String
+
     def apply[A, B](name: String, typ: Type, fn: A => Option[B]): A => String = { (v: A) =>
       s"$name"
     }
