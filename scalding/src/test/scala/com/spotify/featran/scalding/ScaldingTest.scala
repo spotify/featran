@@ -29,14 +29,14 @@ class ScaldingTest extends FlatSpec with Matchers {
     p.toIterableExecution.waitFor(Config.default, Local(true)).get
 
   "FeatureSpec" should "work with Scalding" in {
-    val f = testSpec.extract(TypedPipe.from(testData))
-    materialize(f.featureNames) shouldBe Iterable(expectedNames)
-    materialize(f.featureValues[Seq[Double]]) should contain theSameElementsAs expectedValues
+    val f = TestSpec.extract(TypedPipe.from(TestData))
+    materialize(f.featureNames) shouldBe Iterable(ExpectedNames)
+    materialize(f.featureValues[Seq[Double]]) should contain theSameElementsAs ExpectedValues
   }
 
   it should "work with MultiFeatureSpec" in {
     noException shouldBe thrownBy {
-      val f = recordSpec.extract(TypedPipe.from(records))
+      val f = RecordSpec.extract(TypedPipe.from(Records))
       materialize(f.featureNames)
       materialize(f.featureValues[Seq[Double]])
     }

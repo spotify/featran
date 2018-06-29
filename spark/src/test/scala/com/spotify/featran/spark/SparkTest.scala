@@ -27,11 +27,11 @@ class SparkTest extends FlatSpec with Matchers {
 
   "FeatureSpec" should "work with Spark" in {
     val sc = new SparkContext("local[4]", "test")
-    val f = testSpec.extract(sc.parallelize(testData))
-    f.featureNames.collect() shouldBe Array(expectedNames)
-    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
+    val f = TestSpec.extract(sc.parallelize(TestData))
+    f.featureNames.collect() shouldBe Array(ExpectedNames)
+    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs ExpectedValues
     f.featureValues[Map[String, Double]]
-      .collect() should contain theSameElementsAs expectedMapValues
+      .collect() should contain theSameElementsAs ExpectedMapValues
 
     sc.stop()
   }
@@ -39,7 +39,7 @@ class SparkTest extends FlatSpec with Matchers {
   it should "work with MultiFeatureSpec" in {
     noException shouldBe thrownBy {
       val sc = new SparkContext("local[4]", "test")
-      val f = recordSpec.extract(sc.parallelize(records))
+      val f = RecordSpec.extract(sc.parallelize(Records))
       f.featureNames.collect()
       f.featureValues[Seq[Double]].collect()
       sc.stop()

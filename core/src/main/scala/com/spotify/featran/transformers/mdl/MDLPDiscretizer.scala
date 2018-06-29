@@ -22,9 +22,9 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 
 private[transformers] class MDLPDiscretizer[T: ClassTag](
-  data: Seq[(T, Double)],
-  stoppingCriterion: Double = MDLPDiscretizer.DEFAULT_STOPPING_CRITERION,
-  minBinPercentage: Double = MDLPDiscretizer.DEFAULT_MIN_BIN_PERCENTAGE
+                                                          data: Seq[(T, Double)],
+                                                          stoppingCriterion: Double = MDLPDiscretizer.DefaultStoppingCriterion,
+                                                          minBinPercentage: Double = MDLPDiscretizer.DefaultMinBinPercentage
 ) extends Serializable {
 
   private val labels = {
@@ -53,7 +53,7 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
 
   private def midpoint(x1: Float, x2: Float): Float = (x1 + x2) / 2.0f
 
-  def discretize(maxBins: Int = MDLPDiscretizer.DEFAULT_MAX_BINS): Seq[Double] = {
+  def discretize(maxBins: Int = MDLPDiscretizer.DefaultMaxBins): Seq[Double] = {
     val featureValues = new java.util.TreeMap[Float, Array[Long]]()
     data.foreach {
       case (label, value) =>
@@ -98,7 +98,7 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
 }
 
 private[transformers] object MDLPDiscretizer {
-  val DEFAULT_STOPPING_CRITERION: Double = 0.0
-  val DEFAULT_MIN_BIN_PERCENTAGE: Double = 0.0
-  val DEFAULT_MAX_BINS: Int = 50
+  val DefaultStoppingCriterion: Double = 0.0
+  val DefaultMinBinPercentage: Double = 0.0
+  val DefaultMaxBins: Int = 50
 }

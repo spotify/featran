@@ -27,23 +27,23 @@ import scala.util.Try
 
 object Fixtures {
 
-  val testData = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
+  val TestData = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
 
-  val testSpec = FeatureSpec
+  val TestSpec = FeatureSpec
     .of[(String, Int)]
     .required(_._1)(OneHotEncoder("one_hot"))
     .required(_._2.toDouble)(MinMaxScaler("min_max"))
 
-  val expectedNames =
+  val ExpectedNames =
     Seq("one_hot_a", "one_hot_b", "one_hot_c", "one_hot_d", "one_hot_e", "min_max")
 
-  val expectedValues = Seq(Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
+  val ExpectedValues = Seq(Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
                            Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
                            Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
                            Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
                            Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
 
-  val expectedMapValues = Seq(
+  val ExpectedMapValues = Seq(
     Map("one_hot_a" -> 1.0, "min_max" -> 0.0),
     Map("one_hot_b" -> 1.0, "min_max" -> 0.25),
     Map("one_hot_c" -> 1.0, "min_max" -> 0.5),
@@ -59,7 +59,7 @@ object Fixtures {
                     s2: Seq[String],
                     s3: Seq[WeightedLabel])
 
-  val records = (1 to 100).map { x =>
+  val Records = (1 to 100).map { x =>
     val d = x.toDouble
     val s = "v" + d
     Record(d,
@@ -71,7 +71,7 @@ object Fixtures {
            Seq(WeightedLabel(s, 1.0)))
   }
 
-  private val recordSpec1 = FeatureSpec
+  private val RecordSpec1 = FeatureSpec
     .of[Record]
     .required(_.x)(Identity("x"))
     .optional(_.xo)(Identity("xo"))
@@ -79,7 +79,7 @@ object Fixtures {
     .optional(_.vo)(VectorIdentity("vo"))
 
   // cover all transformers here
-  private val recordSpec2 = FeatureSpec
+  private val RecordSpec2 = FeatureSpec
     .of[Record]
     .required(_.x)(Binarizer("bin"))
     .required(_.x)(Bucketizer("bucket", Array(0.0, 10.0, 100.0)))
@@ -106,7 +106,7 @@ object Fixtures {
     .required(_.v)(VectorIdentity("vec-id"))
     .required(_.x)(VonMisesEvaluator("von-mises", 1.0, 0.01, Array(0.0, 1.0, 2.0)))
 
-  val recordSpec = MultiFeatureSpec(recordSpec1, recordSpec2)
+  val RecordSpec = MultiFeatureSpec(RecordSpec1, RecordSpec2)
 
   {
     val pkg = "com.spotify.featran.transformers"
@@ -126,7 +126,7 @@ object Fixtures {
       .filter(c => !Modifier.isAbstract(c.getModifiers()))
       .toSet
 
-    val covered = recordSpec2.features.map(_.transformer.getClass).toSet
+    val covered = RecordSpec2.features.map(_.transformer.getClass).toSet
     val missing = transformers -- covered
     require(missing.isEmpty,
             "Not all transformers are covered in Fixtures, missing: " +

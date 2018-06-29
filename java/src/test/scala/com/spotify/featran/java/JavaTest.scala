@@ -43,20 +43,20 @@ class JavaTest extends FlatSpec with Matchers {
     SparseArray(l.labeledPoint.indices, l.labeledPoint.values, length).toDense.toSeq.map(_.toDouble)
 
   "JFeatureSpec" should "work" in {
-    val in = testData.asInstanceOf[Seq[(String, Integer)]]
+    val in = TestData.asInstanceOf[Seq[(String, Integer)]]
     val f = JavaTestUtil.spec().extract(in.asJava)
-    f.featureNames().asScala shouldBe expectedNames
-    f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues
-    f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
-    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
-    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
-    f.featureValuesFloatNamedSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
-    f.featureValuesDoubleNamedSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
-    f.featureValuesExample().asScala.map(e2v(expectedNames)) shouldBe expectedValues
+    f.featureNames().asScala shouldBe ExpectedNames
+    f.featureValuesFloat().asScala.map(_.toSeq) shouldBe ExpectedValues
+    f.featureValuesDouble().asScala.map(_.toSeq) shouldBe ExpectedValues
+    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues
+    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues
+    f.featureValuesFloatNamedSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues
+    f.featureValuesDoubleNamedSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues
+    f.featureValuesExample().asScala.map(e2v(ExpectedNames)) shouldBe ExpectedValues
     f.featureValuesLabeledPoint()
       .asScala
-      .map(_.values.toSeq.map(_.toDouble)) shouldBe expectedValues
-    f.featureValuesSparseLabeledPoint().asScala.map(l2v(expectedNames.size)) shouldBe expectedValues
+      .map(_.values.toSeq.map(_.toDouble)) shouldBe ExpectedValues
+    f.featureValuesSparseLabeledPoint().asScala.map(l2v(ExpectedNames.size)) shouldBe ExpectedValues
   }
 
   it should "work with Optional" in {
@@ -77,44 +77,44 @@ class JavaTest extends FlatSpec with Matchers {
   }
 
   it should "work with FeatureSpec" in {
-    val f = JFeatureSpec.wrap(testSpec).extract(testData.asJava)
-    f.featureNames().asScala shouldBe expectedNames
-    f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues
-    f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues
-    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
-    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
-    f.featureValuesFloatNamedSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
-    f.featureValuesDoubleNamedSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues
-    f.featureValuesExample().asScala.map(e2v(expectedNames)) shouldBe expectedValues
+    val f = JFeatureSpec.wrap(TestSpec).extract(TestData.asJava)
+    f.featureNames().asScala shouldBe ExpectedNames
+    f.featureValuesFloat().asScala.map(_.toSeq) shouldBe ExpectedValues
+    f.featureValuesDouble().asScala.map(_.toSeq) shouldBe ExpectedValues
+    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues
+    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues
+    f.featureValuesFloatNamedSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues
+    f.featureValuesDoubleNamedSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues
+    f.featureValuesExample().asScala.map(e2v(ExpectedNames)) shouldBe ExpectedValues
     f.featureValuesLabeledPoint()
       .asScala
-      .map(_.values.toSeq.map(_.toDouble)) shouldBe expectedValues
-    f.featureValuesSparseLabeledPoint().asScala.map(l2v(expectedNames.size)) shouldBe expectedValues
+      .map(_.values.toSeq.map(_.toDouble)) shouldBe ExpectedValues
+    f.featureValuesSparseLabeledPoint().asScala.map(l2v(ExpectedNames.size)) shouldBe ExpectedValues
   }
 
   it should "work with extractWithSettings" in {
-    val fs = JFeatureSpec.wrap(testSpec)
-    val settings = fs.extract(testData.asJava).featureSettings()
-    val n = testData.size / 2
-    val f = fs.extractWithSettings(testData.take(n).asJava, settings)
-    f.featureNames().asScala shouldBe expectedNames
-    f.featureValuesFloat().asScala.map(_.toSeq) shouldBe expectedValues.take(n)
-    f.featureValuesDouble().asScala.map(_.toSeq) shouldBe expectedValues.take(n)
-    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
-    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
-    f.featureValuesFloatNamedSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
-    f.featureValuesDoubleNamedSparse().asScala.map(_.toDense.toSeq) shouldBe expectedValues.take(n)
-    f.featureValuesExample().asScala.map(e2v(expectedNames)) shouldBe expectedValues.take(n)
+    val fs = JFeatureSpec.wrap(TestSpec)
+    val settings = fs.extract(TestData.asJava).featureSettings()
+    val n = TestData.size / 2
+    val f = fs.extractWithSettings(TestData.take(n).asJava, settings)
+    f.featureNames().asScala shouldBe ExpectedNames
+    f.featureValuesFloat().asScala.map(_.toSeq) shouldBe ExpectedValues.take(n)
+    f.featureValuesDouble().asScala.map(_.toSeq) shouldBe ExpectedValues.take(n)
+    f.featureValuesFloatSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues.take(n)
+    f.featureValuesDoubleSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues.take(n)
+    f.featureValuesFloatNamedSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues.take(n)
+    f.featureValuesDoubleNamedSparse().asScala.map(_.toDense.toSeq) shouldBe ExpectedValues.take(n)
+    f.featureValuesExample().asScala.map(e2v(ExpectedNames)) shouldBe ExpectedValues.take(n)
     f.featureValuesLabeledPoint()
       .asScala
-      .map(_.values.toSeq.map(_.toDouble)) shouldBe expectedValues.take(n)
-    f.featureValuesSparseLabeledPoint().asScala.map(l2v(expectedNames.size)) shouldBe expectedValues
+      .map(_.values.toSeq.map(_.toDouble)) shouldBe ExpectedValues.take(n)
+    f.featureValuesSparseLabeledPoint().asScala.map(l2v(ExpectedNames.size)) shouldBe ExpectedValues
       .take(n)
   }
 
   it should "work with extractWithSettings and RecordExtractor" in {
-    val fs = JFeatureSpec.wrap(testSpec)
-    val settings = fs.extract(testData.asJava).featureSettings()
+    val fs = JFeatureSpec.wrap(TestSpec)
+    val settings = fs.extract(TestData.asJava).featureSettings()
     val f1 = fs.extractWithSettingsFloat(settings)
     val f2 = fs.extractWithSettingsDouble(settings)
     val f3 = fs.extractWithSettingsFloatSparseArray(settings)
@@ -124,24 +124,24 @@ class JavaTest extends FlatSpec with Matchers {
     val f7 = fs.extractWithSettingsExample(settings)
     val f8 = fs.extractWithSettingsLabeledPoint(settings)
     val f9 = fs.extractWithSettingsSparseLabeledPoint(settings)
-    f1.featureNames().asScala shouldBe expectedNames
-    f2.featureNames().asScala shouldBe expectedNames
-    f3.featureNames().asScala shouldBe expectedNames
-    f4.featureNames().asScala shouldBe expectedNames
-    f5.featureNames().asScala shouldBe expectedNames
-    f6.featureNames().asScala shouldBe expectedNames
-    f7.featureNames().asScala shouldBe expectedNames
-    f8.featureNames().asScala shouldBe expectedNames
-    f9.featureNames().asScala shouldBe expectedNames
-    testData.map(f1.featureValue).map(_.toSeq) shouldBe expectedValues
-    testData.map(f2.featureValue).map(_.toSeq) shouldBe expectedValues
-    testData.map(f3.featureValue).map(_.toDense.toSeq) shouldBe expectedValues
-    testData.map(f4.featureValue).map(_.toDense.toSeq) shouldBe expectedValues
-    testData.map(f5.featureValue).map(_.toDense.toSeq) shouldBe expectedValues
-    testData.map(f6.featureValue).map(_.toDense.toSeq) shouldBe expectedValues
-    testData.map(f7.featureValue).map(e2v(expectedNames)) shouldBe expectedValues
-    testData.map(f8.featureValue).map(_.values.toSeq.map(_.toDouble)) shouldBe expectedValues
-    testData.map(f9.featureValue).map(l2v(expectedNames.size)) shouldBe expectedValues
+    f1.featureNames().asScala shouldBe ExpectedNames
+    f2.featureNames().asScala shouldBe ExpectedNames
+    f3.featureNames().asScala shouldBe ExpectedNames
+    f4.featureNames().asScala shouldBe ExpectedNames
+    f5.featureNames().asScala shouldBe ExpectedNames
+    f6.featureNames().asScala shouldBe ExpectedNames
+    f7.featureNames().asScala shouldBe ExpectedNames
+    f8.featureNames().asScala shouldBe ExpectedNames
+    f9.featureNames().asScala shouldBe ExpectedNames
+    TestData.map(f1.featureValue).map(_.toSeq) shouldBe ExpectedValues
+    TestData.map(f2.featureValue).map(_.toSeq) shouldBe ExpectedValues
+    TestData.map(f3.featureValue).map(_.toDense.toSeq) shouldBe ExpectedValues
+    TestData.map(f4.featureValue).map(_.toDense.toSeq) shouldBe ExpectedValues
+    TestData.map(f5.featureValue).map(_.toDense.toSeq) shouldBe ExpectedValues
+    TestData.map(f6.featureValue).map(_.toDense.toSeq) shouldBe ExpectedValues
+    TestData.map(f7.featureValue).map(e2v(ExpectedNames)) shouldBe ExpectedValues
+    TestData.map(f8.featureValue).map(_.values.toSeq.map(_.toDouble)) shouldBe ExpectedValues
+    TestData.map(f9.featureValue).map(l2v(ExpectedNames.size)) shouldBe ExpectedValues
   }
 
   it should "work with sparse arrays" in {

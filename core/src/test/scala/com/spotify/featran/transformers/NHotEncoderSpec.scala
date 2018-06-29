@@ -35,10 +35,10 @@ object NHotEncoderSpec extends TransformerProp("NHotEncoder") {
   }
 
   property("encodeMissingValue") = Prop.forAll { xs: List[List[String]] =>
-    import MissingValue.missingValueToken
-    val cats = xs.flatten.distinct.sorted :+ missingValueToken
+    import MissingValue.MissingValueToken
+    val cats = xs.flatten.distinct.sorted :+ MissingValueToken
     val names = cats.map("n_hot_" + _)
-    val missing = cats.map(c => if (c == missingValueToken) 1.0 else 0.0)
+    val missing = cats.map(c => if (c == MissingValueToken) 1.0 else 0.0)
     val expected = xs.map { s =>
       if (s.isEmpty) missing else cats.map(c => if (s.contains(c)) 1.0 else 0.0)
     }

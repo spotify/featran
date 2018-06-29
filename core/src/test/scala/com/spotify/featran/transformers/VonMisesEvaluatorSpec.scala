@@ -22,23 +22,23 @@ import org.scalacheck._
 
 object VonMisesEvaluatorSpec extends TransformerProp("VonMisesEvaluator") {
 
-  private val minPoint = 0.0
-  private val maxPoint = 1000.0
-  private val scale = 2 * math.Pi / maxPoint
+  private val MinPoint = 0.0
+  private val MaxPoint = 1000.0
+  private val Scale = 2 * math.Pi / MaxPoint
 
-  private val muGen = Gen.nonEmptyListOf(Gen.choose(minPoint, maxPoint))
-  private val pointGen =
-    Gen.choose(3, 10).flatMap(n => Gen.listOfN(n, Gen.choose(minPoint, maxPoint)))
-  private val kappaGen = Gen.choose(0.0, 100.0)
+  private val MuGen = Gen.nonEmptyListOf(Gen.choose(MinPoint, MaxPoint))
+  private val PointGen =
+    Gen.choose(3, 10).flatMap(n => Gen.listOfN(n, Gen.choose(MinPoint, MaxPoint)))
+  private val KappaGen = Gen.choose(0.0, 100.0)
 
-  property("default") = Prop.forAll(muGen, pointGen, kappaGen) { (xs, points, kappa) =>
+  property("default") = Prop.forAll(MuGen, PointGen, KappaGen) { (xs, points, kappa) =>
     val dim = points.size
     val names = (0 until dim).map("vm_" + _)
     val missing = (0 until dim).map(_ => 0.0)
     val expected = xs.map { mu =>
-      points.map(p => VonMises(mu * scale, kappa).pdf(scale * p))
+      points.map(p => VonMises(mu * Scale, kappa).pdf(Scale * p))
     }
-    test(VonMisesEvaluator("vm", kappa, scale, points.toArray), xs, names, expected, missing)
+    test(VonMisesEvaluator("vm", kappa, Scale, points.toArray), xs, names, expected, missing)
   }
 
 }
