@@ -24,6 +24,16 @@ import shapeless.datatype.tensorflow.TensorFlowType
 
 import scala.reflect.ClassTag
 
+/**
+ * ExampleTransformer takes a TFExample of non-transformed values output by Featran
+ * and applies a settings file to transform the Features into the required output object.
+ *
+ * The main benefit on this approach is that when using this class there does not have to
+ * be a JVM dependency on the original scala object or the original spec that were used to
+ * create the TFExample and the Settings file.
+ *
+ *
+ */
 object ExampleTransformer {
   import TensorFlowType._
 
@@ -39,12 +49,32 @@ object ExampleTransformer {
   def getDouble(name: String): Example => Option[Double] =
     (ex: Example) => toFeature(name, ex).flatMap(v => toDoubles(v).headOption)
 
-  def getMdlRecord(name: String): Example => Option[MDLRecord[Int]] =
-    (ex: Example) =>
-      toFeature(name, ex).flatMap(v => toDoubles(v).headOption).map(v => MDLRecord(1, v))
+  def getMdlRecord(name: String): Example => Option[MDLRecord[String]] =
+    (ex: Example) => {
+      for {
+        labelFeature <- toFeature(name + "_label", ex)
+        label <- toStrings(labelFeature).headOption
+        valueFeature <- toFeature(name + "_value", ex)
+        value <- toDoubles(valueFeature).headOption
+      } yield MDLRecord(label, value)
+    }
+
+  def getWeightedLabel(name: String): Example => Option[List[WeightedLabel]] =
+    (ex: Example) => {
+      val labels = for {
+        keyFeature <- toFeature(name + "_key", ex).toList
+        key <- toStrings(keyFeature)
+        valueFeature <- toFeature(name + "_value", ex).toList
+        value <- toDoubles(valueFeature)
+      } yield WeightedLabel(key, value)
+      if (labels.isEmpty) None else Some(labels)
+    }
 
   def getDoubles(name: String): Example => Option[Seq[Double]] =
     (ex: Example) => toFeature(name, ex).map(v => toDoubles(v))
+
+  def getDoubleArray(name: String): Example => Option[Array[Double]] =
+    (ex: Example) => toFeature(name, ex).map(v => toDoubles(v).toArray)
 
   def getString(name: String): Example => Option[String] =
     (ex: Example) => toFeature(name, ex).flatMap(v => toStrings(v).headOption)
@@ -64,20 +94,13 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
     "com.spotify.featran.transformers." + cls
 
   private val converters = settings.map { str =>
-    val json = JsonSerializable[Seq[Settings]].decode(str).right.get
-    json.map { setting =>
+    val jsonOpt = JsonSerializable[Seq[Settings]].decode(str)
+    assert(jsonOpt.isRight, "Unable to parse the settings files.")
+    jsonOpt.right.get.map { setting =>
       val name = setting.name
       val aggr = setting.aggregators
       val params = setting.params
       setting.cls match {
-        case c if c == pkg("Identity") =>
-          (getDouble(name), aggr, Identity(name))
-        case c if c == pkg("OneHotEncoder") =>
-          (getString(name), aggr, OneHotEncoder(name))
-        case c if c == pkg("NHotEncoder") =>
-          (getStrings(name), aggr, NHotEncoder(name))
-        case c if c == pkg("VectorIdentity") =>
-          (getDoubles(name), aggr, VectorIdentity[Seq](name))
         case c if c == pkg("Binarizer") =>
           (getDouble(name), aggr, Binarizer(name, params("threshold").toDouble))
         case c if c == pkg("Bucketizer") =>
@@ -86,18 +109,54 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
           (getDouble(name), aggr, Bucketizer(name, splits))
         case c if c == pkg("HashNHotEncoder") =>
           (getStrings(name), aggr, HashNHotEncoder(name))
+        case c if c == pkg("HashNHotWeightedEncoder") =>
+          (getWeightedLabel(name), aggr, HashNHotWeightedEncoder(name))
         case c if c == pkg("HashOneHotEncoder") =>
           (getString(name), aggr, HashOneHotEncoder(name))
         case c if c == pkg("HeavyHitters") =>
           (getString(name), aggr, HeavyHitters(name, params("heavyHittersCount").toInt))
+        case c if c == pkg("Identity") =>
+          (getDouble(name), aggr, Identity(name))
         case c if c == pkg("MaxAbsScaler") =>
           (getDouble(name), aggr, MaxAbsScaler(name))
         case c if c == pkg("MDL") =>
-          (getMdlRecord(name), aggr, MDL[Int](name))
+          (getMdlRecord(name), aggr, MDL[String](name))
         case c if c == pkg("MinMaxScaler") =>
           (getDouble(name), aggr, MinMaxScaler(name))
+        case c if c == pkg("NGrams") =>
+          (getStrings(name), aggr, NGrams(name))
+        case c if c == pkg("NHotEncoder") =>
+          (getStrings(name), aggr, NHotEncoder(name))
+        case c if c == pkg("NHotWeightedEncoder") =>
+          (getWeightedLabel(name), aggr, NHotWeightedEncoder(name))
         case c if c == pkg("Normalizer") =>
           (getDouble(name), aggr, Normalizer(name))
+        case c if c == pkg("OneHotEncoder") =>
+          (getString(name), aggr, OneHotEncoder(name))
+        case c if c == pkg("PolynomialExpansion") =>
+          val degree = params("degree").toInt
+          val expectedLength = params("expectedLength").toInt
+          (getDoubleArray(name), aggr, PolynomialExpansion(name, degree, expectedLength))
+        case c if c == pkg("PositionEncoder") =>
+          (getDouble(name), aggr, PositionEncoder(name))
+        case c if c == pkg("QuantileDiscretizer") =>
+          val numBuckets = params("numBuckets").toInt
+          val k = params("k").toInt
+          (getDouble(name), aggr, QuantileDiscretizer(name, numBuckets, k))
+        case c if c == pkg("StandardScaler") =>
+          (getDouble(name), aggr, StandardScaler(name))
+        case c if c == pkg("TopNOneHotEncoder") =>
+          val numBuckets = params("numBuckets").toInt
+          val n = params("n").toInt
+          val encode = params("encodeMissingValue").toBoolean
+          (getStrings(name), aggr, TopNOneHotEncoder(name, n, encodeMissingValue = encode))
+        case c if c == pkg("VectorIdentity") =>
+          (getDoubles(name), aggr, VectorIdentity[Seq](name))
+        case c if c == pkg("VonMisesEvaluator") =>
+          val k = params("kappa").toDouble
+          val s = params("scale").toDouble
+          val points = params("points").slice(1, str.length - 1).split(",").map(_.toDouble)
+          (getDouble(name), aggr, VonMisesEvaluator(name, k, s, points))
         case c => sys.error("Unknown Transformer " + c)
       }
     }
