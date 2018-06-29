@@ -29,9 +29,25 @@ import org.tensorflow.example.Example
 
 import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
+import com.spotify.featran.transformers._
+import scala.reflect.runtime.universe.TypeTag
+
+import scala.reflect.api.Universe
 
 // scalastyle:off number.of.methods
 private object JavaOps {
+
+  def typeTag[T](clazz: Class[T]): TypeTag[T] = {
+    import scala.reflect.runtime.universe._
+    val classTag = ClassTag[T](clazz)
+    val m = runtimeMirror(clazz.getClassLoader)
+    val tpe = m.classSymbol(clazz).toType
+    val typeCreator = new scala.reflect.api.TypeCreator {
+      def apply[U <: Universe with Singleton](m1: scala.reflect.api.Mirror[U]): U#Type =
+        if (m1 != m) throw new RuntimeException("wrong mirror") else tpe.asInstanceOf[U#Type]
+    }
+    TypeTag[T](m, typeCreator)
+  }
 
   def requiredFn[I, O](f: SerializableFunction[I, O]): I => O =
     (input: I) => f(input)

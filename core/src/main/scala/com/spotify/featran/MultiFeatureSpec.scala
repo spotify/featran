@@ -17,8 +17,10 @@
 
 package com.spotify.featran
 
-import com.spotify.featran.transformers.Settings
+import com.spotify.featran.transformers.{ConvertFns, Converter, Settings}
 
+import scala.language.{higherKinds, implicitConversions}
+import scala.reflect.ClassTag
 import scala.collection.breakOut
 
 /**
@@ -46,6 +48,23 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
 
   private def multiFeatureSet: MultiFeatureSet[T] =
     new MultiFeatureSet[T](features, crossings, mapping)
+
+  /**
+   * Uses the functions provided in the Featran Spec to `map` the scala object into a new type
+   * given by C.  This function does not do the transformations internal to Featran but instead
+   * can be used as a mapper.
+   *
+   * For an example of this see the tensorflow subproject where mapping between Scala and TFExample
+   * can be done through this method.
+   */
+  def convert[M[_], C](
+    input: M[T])(implicit fw: Converter[C], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
+    import CollectionType.ops._
+    val fns = ConvertFns(features.map(f => fw(f.transformer.name, f.typ, f.f)).toList)
+    input.map { row =>
+      fw.convert(row, fns)
+    }
+  }
 
   /**
    * Extract features from a input collection.

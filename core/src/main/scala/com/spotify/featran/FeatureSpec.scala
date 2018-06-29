@@ -17,8 +17,15 @@
 
 package com.spotify.featran
 
-import com.spotify.featran.transformers.{Settings, Transformer}
+import com.spotify.featran.transformers.{
+  ConvertFns,
+  Converter,
+  Settings,
+  Transformer => FTransformer
+}
 
+import scala.reflect.runtime.universe._
+import scala.language.{higherKinds, implicitConversions}
 import scala.collection.{breakOut, mutable}
 import scala.reflect.ClassTag
 
@@ -59,7 +66,7 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param t [[com.spotify.featran.transformers.Transformer Transformer]] for extracted feature `A`
    * @tparam A extracted feature type
    */
-  def required[A](f: T => A)(t: Transformer[A, _, _]): FeatureSpec[T] =
+  def required[A: TypeTag](f: T => A)(t: FTransformer[A, _, _]): FeatureSpec[T] =
     optional(t => Some(f(t)))(t)
 
   /**
@@ -69,8 +76,8 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param t [[com.spotify.featran.transformers.Transformer Transformer]] for extracted feature `A`
    * @tparam A extracted feature type
    */
-  def optional[A](f: T => Option[A], default: Option[A] = None)(
-    t: Transformer[A, _, _]): FeatureSpec[T] =
+  def optional[A: TypeTag](f: T => Option[A], default: Option[A] = None)(
+    t: FTransformer[A, _, _]): FeatureSpec[T] =
     new FeatureSpec[T](this.features :+ new Feature(f, default, t), this.crossings)
 
   /**
@@ -94,12 +101,29 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param f function to prepare input records for the other spec
    * @tparam S input record type of the other spec
    */
-  def compose[S](spec: FeatureSpec[S])(f: T => S): FeatureSpec[T] = {
+  def compose[S: TypeTag](spec: FeatureSpec[S])(f: T => S): FeatureSpec[T] = {
     val composedFeatures = spec.features.map { feature =>
-      val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
+      val t = feature.transformer.asInstanceOf[FTransformer[Any, _, _]]
       new Feature(f.andThen(feature.f), feature.default, t)
     }
     new FeatureSpec[T](this.features ++ composedFeatures, this.crossings ++ spec.crossings)
+  }
+
+  /**
+   * Uses the functions provided in the Featran Spec to `map` the scala object into a new type
+   * given by C.  This function does not do the transformations internal to Featran but instead
+   * can be used as a mapper.
+   *
+   * For an example of this see the tensorflow subproject where mapping between Scala and TFExample
+   * can be done through this method.
+   */
+  def convert[M[_], C](
+    input: M[T])(implicit fw: Converter[C], ct: ClassTag[C], dt: CollectionType[M]): M[C] = {
+    import CollectionType.ops._
+    val fns = ConvertFns(features.map(f => fw(f.transformer.name, f.typ, f.f)).toList)
+    input.map { row =>
+      fw.convert(row, fns)
+    }
   }
 
   /**
@@ -205,10 +229,13 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
 
 }
 
-private class Feature[T, A, B, C](val f: T => Option[A],
-                                  val default: Option[A],
-                                  val transformer: Transformer[A, B, C])
+private class Feature[T, A, B, C](
+  val f: T => Option[A],
+  val default: Option[A],
+  val transformer: FTransformer[A, B, C])(implicit @transient t: TypeTag[A])
     extends Serializable {
+
+  def typ: Type = typeOf[A]
 
   def get(t: T): Option[A] = f(t).orElse(default)
 
@@ -245,7 +272,6 @@ private class Feature[T, A, B, C](val f: T => Option[A],
   // Option[C]
   def unsafeSettings(c: Option[Any]): Settings =
     transformer.settings(c.asInstanceOf[Option[C]])
-
 }
 
 private class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _, _]],

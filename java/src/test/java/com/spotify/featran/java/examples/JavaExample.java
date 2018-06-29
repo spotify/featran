@@ -28,7 +28,7 @@ import java.util.*;
 public class JavaExample {
 
   private static class Record {
-    private final double d;
+    private final Double d;
     private final Optional<String> s;
 
     Record(double d, Optional<String> s) {

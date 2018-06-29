@@ -67,7 +67,7 @@ public class JFeatureSpec<T> {
   public <A> JFeatureSpec<T> required(final SerializableFunction<T, A> f,
                                       final Transformer<A, ?, ?> t) {
     Function1<T, A> g = JavaOps.requiredFn(f);
-    return wrap(self.required(g, t));
+    return wrap(self.required(g, t, null));
   }
 
   /**
@@ -77,7 +77,7 @@ public class JFeatureSpec<T> {
                                       final Transformer<A, ?, ?> t) {
     Function1<T, Option<A>> g = JavaOps.optionalFn(f);
     Option<A> o = Option.empty();
-    return wrap(self.optional(g, o, t));
+    return wrap(self.optional(g, o, t, null));
   }
 
   /**
@@ -88,7 +88,7 @@ public class JFeatureSpec<T> {
                                       final Transformer<A, ?, ?> t) {
     Function1<T, Option<A>> g = JavaOps.optionalFn(f);
     Option<A> o = Option.apply(defaultValue);
-    return wrap(self.optional(g, o, t));
+    return wrap(self.optional(g, o, t, null));
   }
 
   /**

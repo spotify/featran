@@ -32,6 +32,7 @@ val simulacrumVersion = "0.12.0"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
 val xgBoostVersion = "0.72-20180627-1214081f"
+val shapelessDatatypeVersion = "0.1.6"
 
 val CompileTime = config("compile-time").hide
 
@@ -297,6 +298,7 @@ lazy val tensorflow: Project = project
     description := "Feature Transformers - TensorFlow",
     libraryDependencies ++= Seq(
       "org.tensorflow" % "proto" % tensorflowVersion,
+      "me.lyh" %% "shapeless-datatype-tensorflow" % shapelessDatatypeVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )
