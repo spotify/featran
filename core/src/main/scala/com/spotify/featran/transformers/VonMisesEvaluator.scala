@@ -51,10 +51,10 @@ object VonMisesEvaluator {
   }
 }
 
-private class VonMisesEvaluator(name: String,
-                                val kappa: Double,
-                                val scale: Double,
-                                val points: Array[Double])
+private[featran] class VonMisesEvaluator(name: String,
+                                         val kappa: Double,
+                                         val scale: Double,
+                                         val points: Array[Double])
     extends Transformer[Double, Unit, Unit](name) {
 
   private val pMax = points.max

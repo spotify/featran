@@ -66,7 +66,9 @@ object HashNHotWeightedEncoder {
     new HashNHotWeightedEncoder(name, hashBucketSize, sizeScalingFactor)
 }
 
-private class HashNHotWeightedEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
+private[featran] class HashNHotWeightedEncoder(name: String,
+                                               hashBucketSize: Int,
+                                               sizeScalingFactor: Double)
     extends BaseHashHotEncoder[Seq[WeightedLabel]](name, hashBucketSize, sizeScalingFactor) {
 
   override def prepare(a: Seq[WeightedLabel]): HLL =

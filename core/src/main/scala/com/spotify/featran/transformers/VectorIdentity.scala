@@ -41,7 +41,7 @@ object VectorIdentity {
     new VectorIdentity(name, expectedLength)(ev)
 }
 
-private class VectorIdentity[M[_]](name: String, val expectedLength: Int)(
+private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: Int)(
   implicit ev: M[Double] => Seq[Double])
     extends Transformer[M[Double], Int, Int](name) {
   override val aggregator: Aggregator[M[Double], Int, Int] =

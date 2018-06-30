@@ -44,7 +44,7 @@ object MinMaxScaler {
   private type C = (Double, Double, Double)
 }
 
-private class MinMaxScaler(name: String, val min: Double, val max: Double)
+private[featran] class MinMaxScaler(name: String, val min: Double, val max: Double)
     extends OneDimensional[Double, (Min[Double], Max[Double]), MinMaxScaler.C](name) {
   require(max > min, s"max must be > min")
 

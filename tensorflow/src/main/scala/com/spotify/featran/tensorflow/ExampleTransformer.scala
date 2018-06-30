@@ -90,8 +90,7 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
   import CollectionType.ops._
   import ExampleTransformer._
 
-  private def pkg(cls: String) =
-    "com.spotify.featran.transformers." + cls
+  private def cName[T]: String = classOf[T].getCanonicalName
 
   private val converters = settings.map { str =>
     val jsonOpt = JsonSerializable[Seq[Settings]].decode(str)
@@ -101,58 +100,58 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
       val aggr = setting.aggregators
       val params = setting.params
       setting.cls match {
-        case c if c == pkg("Binarizer") =>
+        case c if c == cName[Binarizer] =>
           (getDouble(name), aggr, Binarizer(name, params("threshold").toDouble))
-        case c if c == pkg("Bucketizer") =>
+        case c if c == cName[Bucketizer] =>
           val str = params("splits")
           val splits = str.slice(1, str.length - 1).split(",").map(_.toDouble)
           (getDouble(name), aggr, Bucketizer(name, splits))
-        case c if c == pkg("HashNHotEncoder") =>
+        case c if c == cName[HashNHotEncoder] =>
           (getStrings(name), aggr, HashNHotEncoder(name))
-        case c if c == pkg("HashNHotWeightedEncoder") =>
+        case c if c == cName[HashNHotWeightedEncoder] =>
           (getWeightedLabel(name), aggr, HashNHotWeightedEncoder(name))
-        case c if c == pkg("HashOneHotEncoder") =>
+        case c if c == cName[HashOneHotEncoder] =>
           (getString(name), aggr, HashOneHotEncoder(name))
-        case c if c == pkg("HeavyHitters") =>
+        case c if c == cName[HeavyHitters] =>
           (getString(name), aggr, HeavyHitters(name, params("heavyHittersCount").toInt))
-        case c if c == pkg("Identity") =>
+        case c if c == cName[Identity] =>
           (getDouble(name), aggr, Identity(name))
-        case c if c == pkg("MaxAbsScaler") =>
+        case c if c == cName[MaxAbsScaler] =>
           (getDouble(name), aggr, MaxAbsScaler(name))
-        case c if c == pkg("MDL") =>
+        case c if c == cName[MDL[String]] =>
           (getMdlRecord(name), aggr, MDL[String](name))
-        case c if c == pkg("MinMaxScaler") =>
+        case c if c == cName[MinMaxScaler] =>
           (getDouble(name), aggr, MinMaxScaler(name))
-        case c if c == pkg("NGrams") =>
+        case c if c == cName[NGrams] =>
           (getStrings(name), aggr, NGrams(name))
-        case c if c == pkg("NHotEncoder") =>
+        case c if c == cName[NHotEncoder] =>
           (getStrings(name), aggr, NHotEncoder(name))
-        case c if c == pkg("NHotWeightedEncoder") =>
+        case c if c == cName[NHotWeightedEncoder] =>
           (getWeightedLabel(name), aggr, NHotWeightedEncoder(name))
-        case c if c == pkg("Normalizer") =>
+        case c if c == cName[Normalizer] =>
           (getDouble(name), aggr, Normalizer(name))
-        case c if c == pkg("OneHotEncoder") =>
+        case c if c == cName[OneHotEncoder] =>
           (getString(name), aggr, OneHotEncoder(name))
-        case c if c == pkg("PolynomialExpansion") =>
+        case c if c == cName[PolynomialExpansion] =>
           val degree = params("degree").toInt
           val expectedLength = params("expectedLength").toInt
           (getDoubleArray(name), aggr, PolynomialExpansion(name, degree, expectedLength))
-        case c if c == pkg("PositionEncoder") =>
+        case c if c == cName[PositionEncoder] =>
           (getDouble(name), aggr, PositionEncoder(name))
-        case c if c == pkg("QuantileDiscretizer") =>
+        case c if c == cName[QuantileDiscretizer] =>
           val numBuckets = params("numBuckets").toInt
           val k = params("k").toInt
           (getDouble(name), aggr, QuantileDiscretizer(name, numBuckets, k))
-        case c if c == pkg("StandardScaler") =>
+        case c if c == cName[StandardScaler] =>
           (getDouble(name), aggr, StandardScaler(name))
-        case c if c == pkg("TopNOneHotEncoder") =>
+        case c if c == cName[TopNOneHotEncoder] =>
           val numBuckets = params("numBuckets").toInt
           val n = params("n").toInt
           val encode = params("encodeMissingValue").toBoolean
           (getStrings(name), aggr, TopNOneHotEncoder(name, n, encodeMissingValue = encode))
-        case c if c == pkg("VectorIdentity") =>
+        case c if c == cName[VectorIdentity[Seq]] =>
           (getDoubles(name), aggr, VectorIdentity[Seq](name))
-        case c if c == pkg("VonMisesEvaluator") =>
+        case c if c == cName[VonMisesEvaluator] =>
           val k = params("kappa").toDouble
           val s = params("scale").toDouble
           val points = params("points").slice(1, str.length - 1).split(",").map(_.toDouble)

@@ -45,7 +45,7 @@ object OneHotEncoder {
     new OneHotEncoder(name, encodeMissingValue)
 }
 
-private class OneHotEncoder(name: String, encodeMissingValue: Boolean)
+private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[String](name, encodeMissingValue) {
   override def prepare(a: String): Set[String] = Set(a)
 

@@ -30,6 +30,6 @@ object Identity {
   def apply(name: String): Transformer[Double, Unit, Unit] = new Identity(name)
 }
 
-private class Identity(name: String) extends MapOne[Double](name) {
+private[featran] class Identity(name: String) extends MapOne[Double](name) {
   override def map(a: Double): Double = a
 }

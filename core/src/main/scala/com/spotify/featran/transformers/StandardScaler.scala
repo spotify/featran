@@ -40,7 +40,7 @@ object StandardScaler {
     new StandardScaler(name, withStd, withMean)
 }
 
-private class StandardScaler(name: String, val withStd: Boolean, val withMean: Boolean)
+private[featran] class StandardScaler(name: String, val withStd: Boolean, val withMean: Boolean)
     extends OneDimensional[Double, Moments, (Double, Double)](name) {
   override val aggregator: Aggregator[Double, Moments, (Double, Double)] =
     Aggregators.from[Double](Moments(_)).to(r => (r.mean, r.stddev))

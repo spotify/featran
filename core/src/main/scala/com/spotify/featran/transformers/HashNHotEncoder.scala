@@ -65,7 +65,7 @@ object HashNHotEncoder {
     new HashNHotEncoder(name, hashBucketSize, sizeScalingFactor)
 }
 
-private class HashNHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
+private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
     extends BaseHashHotEncoder[Seq[String]](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: Seq[String]): HLL =
     a.map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)

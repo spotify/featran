@@ -38,7 +38,8 @@ object MaxAbsScaler {
     new MaxAbsScaler(name)
 }
 
-private class MaxAbsScaler(name: String) extends OneDimensional[Double, Max[Double], Double](name) {
+private[featran] class MaxAbsScaler(name: String)
+    extends OneDimensional[Double, Max[Double], Double](name) {
   override val aggregator: Aggregator[Double, Max[Double], Double] =
     Aggregators.from[Double](x => Max(math.abs(x))).to(_.get)
   override def buildFeatures(a: Option[Double], c: Double, fb: FeatureBuilder[_]): Unit = a match {

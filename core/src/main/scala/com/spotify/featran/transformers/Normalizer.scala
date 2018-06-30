@@ -43,7 +43,7 @@ object Normalizer {
     new Normalizer(name, p, expectedLength)
 }
 
-private class Normalizer(name: String, val p: Double, val expectedLength: Int)
+private[featran] class Normalizer(name: String, val p: Double, val expectedLength: Int)
     extends Transformer[Array[Double], Int, Int](name) {
   require(p >= 1.0, "p must be >= 1.0")
   override val aggregator: Aggregator[Array[Double], Int, Int] =

@@ -53,7 +53,7 @@ object NGrams {
   }
 }
 
-private class NGrams(name: String, val low: Int, val high: Int, val sep: String)
+private[featran] class NGrams(name: String, val low: Int, val high: Int, val sep: String)
     extends NHotEncoder(name, false) {
   override def prepare(a: Seq[String]): Set[String] = ngrams(a).toSet
 

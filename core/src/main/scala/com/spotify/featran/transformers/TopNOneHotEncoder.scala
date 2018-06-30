@@ -60,12 +60,12 @@ object TopNOneHotEncoder {
     new TopNOneHotEncoder(name, n, eps, delta, seed, encodeMissingValue)
 }
 
-private class TopNOneHotEncoder(name: String,
-                                val n: Int,
-                                val eps: Double,
-                                val delta: Double,
-                                val seed: Int,
-                                val encodeMissingValue: Boolean)
+private[featran] class TopNOneHotEncoder(name: String,
+                                         val n: Int,
+                                         val eps: Double,
+                                         val delta: Double,
+                                         val seed: Int,
+                                         val encodeMissingValue: Boolean)
     extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
 
   import MissingValue.missingValueToken

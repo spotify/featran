@@ -66,7 +66,9 @@ object HashOneHotEncoder {
     new HashOneHotEncoder(name, hashBucketSize, sizeScalingFactor)
 }
 
-private class HashOneHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
+private[featran] class HashOneHotEncoder(name: String,
+                                         hashBucketSize: Int,
+                                         sizeScalingFactor: Double)
     extends BaseHashHotEncoder[String](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: String): HLL = hllMonoid.toHLL(a)
 

@@ -84,7 +84,7 @@ object PolynomialExpansion {
   }
 }
 
-private class PolynomialExpansion(name: String, val degree: Int, val expectedLength: Int)
+private[featran] class PolynomialExpansion(name: String, val degree: Int, val expectedLength: Int)
     extends Transformer[Array[Double], Int, Int](name) {
   require(degree >= 1, "degree must be >= 1")
   override val aggregator: Aggregator[Array[Double], Int, Int] =

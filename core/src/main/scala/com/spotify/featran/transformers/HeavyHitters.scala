@@ -56,11 +56,11 @@ object HeavyHitters {
     new HeavyHitters(name, heavyHittersCount, eps, delta, seed)
 }
 
-private class HeavyHitters(name: String,
-                           val heavyHittersCount: Int,
-                           val eps: Double,
-                           val delta: Double,
-                           val seed: Int)
+private[featran] class HeavyHitters(name: String,
+                                    val heavyHittersCount: Int,
+                                    val eps: Double,
+                                    val delta: Double,
+                                    val seed: Int)
     extends Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]](name) {
 
   @transient private lazy val sketchMapParams =

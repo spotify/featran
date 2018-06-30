@@ -74,12 +74,12 @@ object MDL {
   private type C = JTreeMap[Double, Int]
 }
 
-private class MDL[T: ClassTag](name: String,
-                               val sampleRate: Double,
-                               val stoppingCriterion: Double,
-                               val minBinPercentage: Double,
-                               val maxBins: Int,
-                               val seed: Int)
+private[featran] class MDL[T: ClassTag](name: String,
+                                        val sampleRate: Double,
+                                        val stoppingCriterion: Double,
+                                        val minBinPercentage: Double,
+                                        val maxBins: Int,
+                                        val seed: Int)
     extends Transformer[MDLRecord[T], MDL.B[T], MDL.C](name) {
   checkRange("sampleRate", sampleRate, 0.0, 1.0)
   require(stoppingCriterion >= 0, "stoppingCriterion must be > 0")

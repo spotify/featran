@@ -40,7 +40,7 @@ object PositionEncoder {
     new PositionEncoder(name)
 }
 
-private class PositionEncoder(name: String) extends BaseHotEncoder[String](name, false) {
+private[featran] class PositionEncoder(name: String) extends BaseHotEncoder[String](name, false) {
   override def prepare(a: String): Set[String] = Set(a)
   override def featureDimension(c: SortedMap[String, Int]): Int = 1
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = Seq(name)

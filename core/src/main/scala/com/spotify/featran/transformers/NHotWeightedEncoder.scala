@@ -50,7 +50,7 @@ object NHotWeightedEncoder {
     new NHotWeightedEncoder(name, encodeMissingValue)
 }
 
-private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
+private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[WeightedLabel]](name, encodeMissingValue) {
 
   import MissingValue.missingValueToken

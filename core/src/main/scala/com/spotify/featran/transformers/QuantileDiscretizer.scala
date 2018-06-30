@@ -54,7 +54,7 @@ object QuantileDiscretizer {
   private type C = (JTreeMap[Double, Int], Double, Double)
 }
 
-private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
+private[featran] class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
     extends Transformer[Double, QuantileDiscretizer.B, QuantileDiscretizer.C](name) {
   require(numBuckets >= 2, "numBuckets must be >= 2")
 

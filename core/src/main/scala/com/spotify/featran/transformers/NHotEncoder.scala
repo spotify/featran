@@ -41,7 +41,7 @@ object NHotEncoder {
     new NHotEncoder(name, encodeMissingValue)
 }
 
-private class NHotEncoder(name: String, encodeMissingValue: Boolean)
+private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
 
   import MissingValue.missingValueToken
