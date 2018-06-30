@@ -385,7 +385,7 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
       "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
     ),
     autoCompilerPlugins := true,
-    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9")
+    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9"),
   )
 } else {
   Nil
