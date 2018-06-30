@@ -85,9 +85,9 @@ private[featran] class HashOneHotEncoder(name: String,
   }
 }
 
-private abstract class BaseHashHotEncoder[A](name: String,
-                                             val hashBucketSize: Int,
-                                             val sizeScalingFactor: Double)
+private[featran] abstract class BaseHashHotEncoder[A](name: String,
+                                                      val hashBucketSize: Int,
+                                                      val sizeScalingFactor: Double)
     extends Transformer[A, HLL, Int](name) {
   require(hashBucketSize >= 0, "hashBucketSize must be >= 0")
   require(sizeScalingFactor >= 1.0, "hashBucketSize must be >= 1.0")

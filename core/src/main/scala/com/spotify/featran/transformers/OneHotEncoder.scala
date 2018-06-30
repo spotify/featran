@@ -73,7 +73,7 @@ private[featran] object MissingValue {
   val missingValueToken = "__missing__"
 }
 
-private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
+private[featran] abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
     extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
 
   import MissingValue.missingValueToken

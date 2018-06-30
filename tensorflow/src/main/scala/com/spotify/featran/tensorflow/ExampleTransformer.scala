@@ -90,7 +90,8 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
   import CollectionType.ops._
   import ExampleTransformer._
 
-  private def cName[T]: String = classOf[T].getCanonicalName
+  private def cName[T: ClassTag]: String =
+    implicitly[ClassTag[T]].runtimeClass.getCanonicalName
 
   private val converters = settings.map { str =>
     val jsonOpt = JsonSerializable[Seq[Settings]].decode(str)
