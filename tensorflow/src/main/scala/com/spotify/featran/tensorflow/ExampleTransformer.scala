@@ -130,7 +130,7 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
         case c if c == cName[NHotWeightedEncoder] =>
           (getWeightedLabel(name), aggr, NHotWeightedEncoder(name))
         case c if c == cName[Normalizer] =>
-          (getDouble(name), aggr, Normalizer(name))
+          (getDoubleArray(name), aggr, Normalizer(name))
         case c if c == cName[OneHotEncoder] =>
           (getString(name), aggr, OneHotEncoder(name))
         case c if c == cName[PolynomialExpansion] =>
@@ -138,7 +138,8 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
           val expectedLength = params("expectedLength").toInt
           (getDoubleArray(name), aggr, PolynomialExpansion(name, degree, expectedLength))
         case c if c == cName[PositionEncoder] =>
-          (getDouble(name), aggr, PositionEncoder(name))
+          (getString(name), aggr, PositionEncoder(name))
+          (getString(name), aggr, PositionEncoder(name))
         case c if c == cName[QuantileDiscretizer] =>
           val numBuckets = params("numBuckets").toInt
           val k = params("k").toInt
@@ -146,10 +147,9 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
         case c if c == cName[StandardScaler] =>
           (getDouble(name), aggr, StandardScaler(name))
         case c if c == cName[TopNOneHotEncoder] =>
-          val numBuckets = params("numBuckets").toInt
           val n = params("n").toInt
           val encode = params("encodeMissingValue").toBoolean
-          (getStrings(name), aggr, TopNOneHotEncoder(name, n, encodeMissingValue = encode))
+          (getString(name), aggr, TopNOneHotEncoder(name, n, encodeMissingValue = encode))
         case c if c == cName[VectorIdentity[Seq]] =>
           (getDoubles(name), aggr, VectorIdentity[Seq](name))
         case c if c == cName[VonMisesEvaluator] =>
