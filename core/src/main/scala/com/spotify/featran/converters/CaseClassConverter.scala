@@ -106,11 +106,11 @@ object CaseClassConverter {
             case c if c <:< typeOf[Seq[String]] =>
               s.required[Seq[String]](v => get(v, idx).asInstanceOf[Seq[String]])(NHotEncoder(name))
             case c if c <:< typeOf[MDLRecord[String]] =>
-              s.required[MDLRecord[String]]{v =>
+              s.required[MDLRecord[String]] { v =>
                 get(v, idx).asInstanceOf[MDLRecord[String]]
               }(MDL(name))
             case c if c <:< typeOf[Seq[WeightedLabel]] =>
-              s.required[Seq[WeightedLabel]]{v =>
+              s.required[Seq[WeightedLabel]] { v =>
                 get(v, idx).asInstanceOf[Seq[WeightedLabel]]
               }(NHotWeightedEncoder(name))
             case c =>
