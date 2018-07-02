@@ -22,7 +22,7 @@ import org.tensorflow.{example => tf}
 import _root_.java.util.regex.Pattern
 
 package object tensorflow {
-  private val featureNameNormalization = Pattern.compile("[^A-Za-z0-9_]")
+  private val FeatureNameNormalization = Pattern.compile("[^A-Za-z0-9_]")
 
   final case class TensorFlowFeatureBuilder(
     @transient private var underlying: Features.Builder = tf.Features.newBuilder())
@@ -38,7 +38,7 @@ package object tensorflow {
         .newBuilder()
         .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
         .build()
-      val normalized = featureNameNormalization.matcher(name).replaceAll("_")
+      val normalized = FeatureNameNormalization.matcher(name).replaceAll("_")
       underlying.putFeature(normalized, feature)
     }
     override def skip(): Unit = Unit

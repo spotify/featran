@@ -53,18 +53,18 @@ object NHotWeightedEncoder {
 private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[WeightedLabel]](name, encodeMissingValue) {
 
-  import MissingValue.missingValueToken
+  import MissingValue.MissingValueToken
 
   def addMissingValue(fb: FeatureBuilder[_],
                       unseen: MSet[String],
                       keys: Seq[String],
                       unseenWeight: Double): Unit = {
     if (keys.isEmpty) {
-      fb.add(name + '_' + missingValueToken, 1.0)
+      fb.add(name + '_' + MissingValueToken, 1.0)
     } else if (unseen.isEmpty) {
       fb.skip()
     } else {
-      fb.add(name + '_' + missingValueToken, unseenWeight)
+      fb.add(name + '_' + MissingValueToken, unseenWeight)
     }
   }
 
