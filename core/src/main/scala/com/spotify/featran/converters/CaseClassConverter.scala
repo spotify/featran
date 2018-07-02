@@ -18,7 +18,8 @@
 package com.spotify.featran.converters
 
 import com.spotify.featran.FeatureSpec
-import com.spotify.featran.transformers.{NHotEncoder, OneHotEncoder, VectorIdentity}
+import com.spotify.featran.transformers._
+
 import scala.reflect.runtime.{universe => ru}
 import scala.reflect.ClassTag
 
@@ -104,6 +105,14 @@ object CaseClassConverter {
               s.optional[String](v => get(v, idx).asInstanceOf[Option[String]])(OneHotEncoder(name))
             case c if c <:< typeOf[Seq[String]] =>
               s.required[Seq[String]](v => get(v, idx).asInstanceOf[Seq[String]])(NHotEncoder(name))
+            case c if c <:< typeOf[MDLRecord[String]] =>
+              s.required[MDLRecord[String]]{v =>
+                get(v, idx).asInstanceOf[MDLRecord[String]]
+              }(MDL(name))
+            case c if c <:< typeOf[Seq[WeightedLabel]] =>
+              s.required[Seq[WeightedLabel]]{v =>
+                get(v, idx).asInstanceOf[Seq[WeightedLabel]]
+              }(NHotWeightedEncoder(name))
             case c =>
               sys.error("Not matching Conversions for " + m.toString)
               s

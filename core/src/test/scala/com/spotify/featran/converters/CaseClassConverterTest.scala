@@ -17,6 +17,7 @@
 
 package com.spotify.featran.converters
 
+import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
 import org.scalatest.{FlatSpec, Matchers}
 
 case class TestData(
@@ -45,6 +46,13 @@ case class TestAllNatives(
   sl: List[Short] = List(1),
   ll: List[Long] = List(1L),
   dl: List[Double] = List(1.0)
+)
+
+case class TestObjects(
+  str: String = "a",
+  strs: List[String] = List("a"),
+  mdl: MDLRecord[String] = MDLRecord("a", 1.0),
+  we: List[WeightedLabel] = List(WeightedLabel("a", 1.0))
 )
 
 class CaseClassConverterTest extends FlatSpec with Matchers {
@@ -90,5 +98,13 @@ class CaseClassConverterTest extends FlatSpec with Matchers {
     val spec = CaseClassConverter.toSpec[TestAllNatives]
     val features = spec.extract(data).featureValues[Seq[Double]]
     assert(features === List(0.until(12).toList.map(_ => 1.0)))
+  }
+
+  it should "test all object types" in {
+    val data = List(TestObjects())
+
+    val spec = CaseClassConverter.toSpec[TestObjects]
+    val features = spec.extract(data).featureValues[Seq[Double]]
+    assert(features === List(0.until(4).toList.map(_ => 1.0)))
   }
 }
