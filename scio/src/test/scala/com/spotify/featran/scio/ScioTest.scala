@@ -27,16 +27,16 @@ class ScioTest extends PipelineSpec {
 
   "Scio" should "work with FeatureSpec" in {
     runWithContext { sc =>
-      val f = testSpec.extract(sc.parallelize(testData))
-      f.featureNames should containSingleValue(expectedNames)
-      f.featureValues[Seq[Double]] should containInAnyOrder(expectedValues)
+      val f = TestSpec.extract(sc.parallelize(TestData))
+      f.featureNames should containSingleValue(ExpectedNames)
+      f.featureValues[Seq[Double]] should containInAnyOrder(ExpectedValues)
     }
   }
 
   it should "work with MultiFeatureSpec" in {
     noException shouldBe thrownBy {
       runWithContext { sc =>
-        val f = recordSpec.extract(sc.parallelize(records))
+        val f = RecordSpec.extract(sc.parallelize(Records))
         f.featureNames
         f.featureValues[Seq[Double]]
       }
@@ -55,7 +55,7 @@ class ScioTest extends PipelineSpec {
         val f = FeatureSpec
           .of[(String, Int)]
           .required(e => foo.method(e._1))(Identity("foo"))
-          .extract(sc.parallelize(testData))
+          .extract(sc.parallelize(TestData))
 
         f.featureValues[Seq[Double]]
       }

@@ -70,20 +70,20 @@ private class OneHotEncoder(name: String, encodeMissingValue: Boolean)
 }
 
 private[featran] object MissingValue {
-  val missingValueToken = "__missing__"
+  val MissingValueToken = "__missing__"
 }
 
 private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
     extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
 
-  import MissingValue.missingValueToken
+  import MissingValue.MissingValueToken
 
   def prepare(a: A): Set[String]
 
   def addMissingItem(c: SortedMap[String, Int], fb: FeatureBuilder[_]): Unit = {
     fb.skip(c.size)
     if (encodeMissingValue) {
-      fb.add(name + '_' + missingValueToken, 1.0)
+      fb.add(name + '_' + MissingValueToken, 1.0)
     }
   }
 
@@ -105,7 +105,7 @@ private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boole
     if (encodeMissingValue) c.size + 1 else c.size
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
     val names = c.map(name + '_' + _._1)(scala.collection.breakOut)
-    if (encodeMissingValue) names :+ (name + '_' + missingValueToken) else names
+    if (encodeMissingValue) names :+ (name + '_' + MissingValueToken) else names
   }
 
   override def encodeAggregator(c: SortedMap[String, Int]): String =

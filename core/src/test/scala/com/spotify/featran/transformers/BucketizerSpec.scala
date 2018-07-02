@@ -21,10 +21,10 @@ import org.scalacheck._
 
 object BucketizerSpec extends TransformerProp("Bucketizer") {
 
-  private val splitsGen =
+  private val SplitsGen =
     Gen.choose(3, 10).flatMap(n => Gen.listOfN(n, Arbitrary.arbitrary[Double]))
 
-  property("default") = Prop.forAll(list[Double].arbitrary, splitsGen) { (xs, sp) =>
+  property("default") = Prop.forAll(list[Double].arbitrary, SplitsGen) { (xs, sp) =>
     val splits = sp.toArray.sorted
     test(xs, splits)
   }

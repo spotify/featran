@@ -31,7 +31,7 @@ val scioVersion = "0.5.5"
 val simulacrumVersion = "0.12.0"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
-val xgBoostVersion = "0.71-20180420-230cb9b7"
+val xgBoostVersion = "0.72-20180627-1214081f"
 
 val CompileTime = config("compile-time").hide
 
@@ -135,6 +135,7 @@ lazy val root: Project = project
 lazy val core: Project = project
   .in(file("core"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-core"))
   .settings(
     name := "core",
     moduleName := "featran-core",
@@ -156,6 +157,7 @@ lazy val core: Project = project
 lazy val java: Project = project
   .in(file("java"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-java"))
   .settings(
     name := "java",
     moduleName := "featran-java",
@@ -193,6 +195,7 @@ lazy val java: Project = project
 lazy val flink: Project = project
   .in(file("flink"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-flink"))
   .settings(
     name := "flink",
     moduleName := "featran-flink",
@@ -218,6 +221,7 @@ lazy val flink: Project = project
 lazy val scalding: Project = project
   .in(file("scalding"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-scalding"))
   .settings(
     name := "scalding",
     moduleName := "featran-scalding",
@@ -237,6 +241,7 @@ lazy val scalding: Project = project
 lazy val scio: Project = project
   .in(file("scio"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-scio"))
   .settings(
     name := "scio",
     moduleName := "featran-scio",
@@ -254,6 +259,7 @@ lazy val scio: Project = project
 lazy val spark: Project = project
   .in(file("spark"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-spark"))
   .settings(
     name := "spark",
     moduleName := "featran-spark",
@@ -278,6 +284,7 @@ lazy val spark: Project = project
 lazy val numpy: Project = project
   .in(file("numpy"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-numpy"))
   .settings(
     name := "numpy",
     moduleName := "featran-numpy",
@@ -291,6 +298,7 @@ lazy val numpy: Project = project
 lazy val tensorflow: Project = project
   .in(file("tensorflow"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-tensorflow"))
   .settings(
     name := "tensorflow",
     moduleName := "featran-tensorflow",
@@ -308,6 +316,7 @@ lazy val tensorflow: Project = project
 lazy val xgboost: Project = project
   .in(file("xgboost"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-xgboost"))
   .settings(
     name := "xgboost",
     moduleName := "featran-xgboost",
@@ -387,4 +396,55 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
   )
 } else {
   Nil
+}
+
+// based on the nice https://github.com/typelevel/cats/blob/master/build.sbt#L208
+def mimaSettings(moduleName: String) = {
+  import sbtrelease.Version
+
+  lazy val startVersion = Version("0.1.27")
+
+  // Safety Net for Exclusions
+  lazy val excludedVersions: Set[String] = Set()
+
+  // Safety Net for Inclusions
+  lazy val extraVersions: Set[String] = Set()
+
+  def semverBinCompatVersions(major: Int, minor: Int, patch: Int): Set[(Int, Int, Int)] =
+    startVersion match {
+      case Some(Version(startMajor, Seq(startMinor, startPatch), _)) =>
+        val majorVersions: List[Int] = List(major)
+        val minorVersions: List[Int] =
+          if (major >= 1) Range(startMinor, minor).inclusive.toList
+          else List(minor)
+        def patchVersions(currentMinVersion: Int): List[Int] =
+          if (minor == 0 && patch == 0) List.empty[Int]
+          else if (currentMinVersion != minor) List(0)
+          else Range(startPatch, patch - 1).inclusive.toList
+
+        val versions = for {
+          maj <- majorVersions
+          min <- minorVersions
+          pat <- patchVersions(min)
+        } yield (maj, min, pat)
+        versions.toSet
+      case _ =>
+        Set.empty[(Int, Int, Int)]
+    }
+
+  def mimaVersions(version: String): Set[String] = {
+    Version(version) match {
+      case Some(Version(major, Seq(minor, patch), _)) =>
+        semverBinCompatVersions(major.toInt, minor.toInt, patch.toInt)
+          .map { case (maj, min, pat) => s"${maj}.${min}.${pat}" }
+      case _ =>
+        Set.empty[String]
+    }
+  }
+
+  Seq(
+    mimaPreviousArtifacts := (mimaVersions(version.value) ++ extraVersions)
+      .diff(excludedVersions)
+      .map(v => "com.spotify" %% moduleName % v)
+  )
 }

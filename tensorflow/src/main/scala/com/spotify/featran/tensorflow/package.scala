@@ -19,10 +19,12 @@ package com.spotify.featran
 
 import org.tensorflow.example.{Example, Features}
 import org.tensorflow.{example => tf}
+import _root_.java.util.regex.Pattern
 
 package object tensorflow {
+  private val FeatureNameNormalization = Pattern.compile("[^A-Za-z0-9_]")
 
-  case class TensorFlowFeatureBuilder(
+  final case class TensorFlowFeatureBuilder(
     @transient private var underlying: Features.Builder = tf.Features.newBuilder())
       extends FeatureBuilder[tf.Example] {
     override def init(dimension: Int): Unit = {
@@ -36,7 +38,7 @@ package object tensorflow {
         .newBuilder()
         .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
         .build()
-      val normalized = name.replaceAll("[^A-Za-z0-9_]", "_")
+      val normalized = FeatureNameNormalization.matcher(name).replaceAll("_")
       underlying.putFeature(normalized, feature)
     }
     override def skip(): Unit = Unit

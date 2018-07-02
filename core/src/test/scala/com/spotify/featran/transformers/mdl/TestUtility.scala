@@ -35,7 +35,7 @@ object TestUtility {
   implicit val doubleEquality: Equality[Double] =
     TolerantNumerics.tolerantDoubleEquality(0.01)
 
-  lazy val cars: List[CarRecord] =
+  lazy val Cars: List[CarRecord] =
     Source.fromInputStream(this.getClass.getResourceAsStream("/cars.data")).getLines.toList.map {
       line =>
         val x = line.split(",").map(elem => elem.trim)

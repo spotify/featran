@@ -27,15 +27,15 @@ class FlinkTest extends FlatSpec with Matchers {
 
   "Flink" should "work with FeatureSpec" in {
     val env = ExecutionEnvironment.getExecutionEnvironment
-    val f = testSpec.extract(env.fromCollection(testData))
-    f.featureNames.collect() shouldBe Seq(expectedNames)
-    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs expectedValues
+    val f = TestSpec.extract(env.fromCollection(TestData))
+    f.featureNames.collect() shouldBe Seq(ExpectedNames)
+    f.featureValues[Seq[Double]].collect() should contain theSameElementsAs ExpectedValues
   }
 
   it should "work with MultiFeatureSpec" in {
     noException shouldBe thrownBy {
       val env = ExecutionEnvironment.getExecutionEnvironment
-      val f = recordSpec.extract(env.fromCollection(records))
+      val f = RecordSpec.extract(env.fromCollection(Records))
       f.featureNames.collect()
       f.featureValues[Seq[Double]].collect()
     }
