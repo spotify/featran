@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.util.{TreeMap => JTreeMap}
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FlatReader}
 import com.spotify.featran.transformers.MinMaxScaler.C
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer._

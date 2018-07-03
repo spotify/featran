@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird.{Aggregator, SketchMap, SketchMapParams}
 
 import scala.collection.SortedMap

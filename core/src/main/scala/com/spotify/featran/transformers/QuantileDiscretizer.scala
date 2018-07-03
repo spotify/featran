@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.util.{TreeMap => JTreeMap}
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird._
 
 import scala.collection.JavaConverters._

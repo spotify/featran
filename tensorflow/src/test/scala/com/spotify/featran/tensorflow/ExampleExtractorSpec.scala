@@ -17,17 +17,17 @@
 
 package com.spotify.featran.tensorflow
 
-import com.spotify.featran.FeatureSpec
 import com.spotify.featran.transformers._
+import com.spotify.featran.{FeatureSpec, FlatExtractor}
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
-import org.tensorflow.example.{Example, Feature, Features}
+import org.tensorflow.example.{Example, Features}
 import shapeless.datatype.tensorflow._
 
 case class TFRecord(d: Float, optD: Option[Float])
 
 case class TFStr(d: String)
 
-class ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
+object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
   import TensorFlowType._
 
   implicit val arbRecords: Arbitrary[List[TFRecord]] = Arbitrary {
@@ -67,7 +67,7 @@ class ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     val asExamples = recs.map { r =>
       ex(r)
     }
-    val exTransformer = ExampleExtractor(f.featureSettings)
+    val exTransformer = FlatExtractor(f.featureSettings)
 
     val featranValues = f.featureValues[Seq[Double]]
     val exValues = exTransformer.run[Seq[Double]](asExamples)

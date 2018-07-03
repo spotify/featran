@@ -18,7 +18,7 @@
 package com.spotify.featran.transformers
 
 import breeze.stats.distributions.VonMises
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FlatReader}
 import com.twitter.algebird.Aggregator
 
 /**

@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FlatReader}
 import com.twitter.algebird._
 
 import scala.util.Random

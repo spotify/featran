@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird.Aggregator
 
 /**

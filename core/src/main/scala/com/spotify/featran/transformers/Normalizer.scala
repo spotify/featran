@@ -18,7 +18,7 @@
 package com.spotify.featran.transformers
 
 import breeze.linalg._
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird.Aggregator
 
 /**

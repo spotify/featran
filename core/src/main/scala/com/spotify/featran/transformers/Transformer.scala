@@ -17,25 +17,8 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, JsonSerializable}
+import com.spotify.featran.{FeatureBuilder, FlatReader, JsonSerializable}
 import com.twitter.algebird.{Aggregator, Semigroup}
-import simulacrum.typeclass
-
-@typeclass trait FlatReader[T] extends Serializable {
-  def getDouble(name: String): T => Option[Double]
-
-  def getMdlRecord(name: String): T => Option[MDLRecord[String]]
-
-  def getWeightedLabel(name: String): T => Option[List[WeightedLabel]]
-
-  def getDoubles(name: String): T => Option[Seq[Double]]
-
-  def getDoubleArray(name: String): T => Option[Array[Double]]
-
-  def getString(name: String): T => Option[String]
-
-  def getStrings(name: String): T => Option[Seq[String]]
-}
 
 trait SettingsBuilder {
   def fromSetting(setting: Settings): Transformer[_, _, _]

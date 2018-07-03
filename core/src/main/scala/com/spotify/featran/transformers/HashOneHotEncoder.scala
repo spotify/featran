@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FlatReader}
 import com.twitter.algebird._
 
 import scala.math.ceil

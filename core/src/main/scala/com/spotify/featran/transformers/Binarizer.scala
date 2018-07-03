@@ -17,6 +17,8 @@
 
 package com.spotify.featran.transformers
 
+import com.spotify.featran.FlatReader
+
 /**
  * Transform numerical features to binary features.
  *
