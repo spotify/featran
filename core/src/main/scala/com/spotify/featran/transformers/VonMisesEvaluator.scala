@@ -18,7 +18,7 @@
 package com.spotify.featran.transformers
 
 import breeze.stats.distributions.VonMises
-import com.spotify.featran.{FeatureBuilder, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
 
 /**
@@ -95,4 +95,6 @@ private[featran] class VonMisesEvaluator(name: String,
         "points" -> points.mkString("[", ",", "]"))
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+    fw.writeDouble(name)
 }

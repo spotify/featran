@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.util.{TreeMap => JTreeMap}
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird._
 
 import scala.collection.JavaConverters._
@@ -120,4 +120,6 @@ private[featran] class QuantileDiscretizer(name: String, val numBuckets: Int, va
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+    fw.writeDouble(name)
 }

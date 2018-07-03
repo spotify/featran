@@ -18,7 +18,7 @@
 package com.spotify.featran.transformers
 
 import breeze.linalg._
-import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
 
 /**
@@ -78,4 +78,6 @@ private[featran] class Normalizer(name: String, val p: Double, val expectedLengt
     Map("p" -> p.toString, "expectedLength" -> expectedLength.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubleArray(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Array[Double]] => fw.IF =
+    fw.writeDoubleArray(name)
 }

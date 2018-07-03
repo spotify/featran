@@ -24,6 +24,8 @@ import _root_.java.util.regex.Pattern
 import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
 import shapeless.datatype.tensorflow.TensorFlowType
 
+case class NamedTFFeature(name: String, f: tf.Feature)
+
 package object tensorflow {
   private val FeatureNameNormalization = Pattern.compile("[^A-Za-z0-9_]")
 
@@ -99,6 +101,76 @@ package object tensorflow {
 
     def readStrings(name: String): Example => Option[Seq[String]] =
       (ex: Example) => toFeature(name, ex).map(v => toStrings(v))
+  }
+
+  implicit val exampleFlatWriter: FlatWriter[Example] = new FlatWriter[tf.Example] {
+    import TensorFlowType._
+    type IF = List[NamedTFFeature]
+
+    override def writeDouble(name: String): Option[Double] => List[NamedTFFeature] =
+      (v: Option[Double]) => v.toList.map(r => NamedTFFeature(name, fromDoubles(Seq(r)).build()))
+
+    override def writeMdlRecord(name: String): Option[MDLRecord[String]] => List[NamedTFFeature] =
+      (v: Option[MDLRecord[String]]) => {
+        v.toList.flatMap { values =>
+          List(
+            NamedTFFeature(name + "_label", fromStrings(Seq(values.label.toString)).build()),
+            NamedTFFeature(name + "_value", fromDoubles(Seq(values.value)).build())
+          )
+        }
+      }
+
+    override def writeWeightedLabel(n: String): Option[Seq[WeightedLabel]] => List[NamedTFFeature] =
+      (v: Option[Seq[WeightedLabel]]) => {
+        v.toList.flatMap { values =>
+          List(
+            NamedTFFeature(n + "_key", fromStrings(values.map(_.name)).build()),
+            NamedTFFeature(n + "_value", fromDoubles(values.map(_.value)).build())
+          )
+        }
+      }
+
+    override def writeDoubles(name: String): Option[Seq[Double]] => List[NamedTFFeature] =
+      (v: Option[Seq[Double]]) => {
+        v.toList.flatMap { values =>
+          List(NamedTFFeature(name, fromDoubles(values).build()))
+        }
+      }
+
+    override def writeDoubleArray(name: String): Option[Array[Double]] => List[NamedTFFeature] =
+      (v: Option[Array[Double]]) => {
+        v.toList.flatMap { values =>
+          List(NamedTFFeature(name, fromDoubles(values).build()))
+        }
+      }
+
+    override def writeString(name: String): Option[String] => List[NamedTFFeature] =
+      (v: Option[String]) => {
+        v.toList.flatMap { values =>
+          List(NamedTFFeature(name, fromStrings(Seq(values)).build()))
+        }
+      }
+
+    override def writeStrings(name: String): Option[Seq[String]] => List[NamedTFFeature] =
+      (v: Option[Seq[String]]) => {
+        v.toList.flatMap { values =>
+          List(NamedTFFeature(name, fromStrings(values).build()))
+        }
+      }
+
+    override def writer: Seq[List[NamedTFFeature]] => Example =
+      (fns: Seq[List[NamedTFFeature]]) => {
+        val builder = Features.newBuilder()
+        fns.foreach { f =>
+          f.foreach { nf =>
+            builder.putFeature(nf.name, nf.f)
+          }
+        }
+        Example
+          .newBuilder()
+          .setFeatures(builder.build())
+          .build()
+      }
   }
 
   /**

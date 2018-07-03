@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
 
 /**
@@ -74,4 +74,6 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
     Map("expectedLength" -> expectedLength.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubles(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[M[Double]] => fw.IF =
+    (v: Option[M[Double]]) => fw.writeDoubles(name)(v.map(_.asInstanceOf[Seq[Double]]))
 }

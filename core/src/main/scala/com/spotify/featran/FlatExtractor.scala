@@ -43,11 +43,6 @@ import scala.reflect.ClassTag
   def readStrings(name: String): T => Option[Seq[String]]
 }
 
-object FlatExtractor {
-  def apply[M[_]: CollectionType, T: ClassTag: FlatReader](setCol: M[String]): FlatExtractor[M, T] =
-    new FlatExtractor[M, T](setCol)
-}
-
 /**
  * Sometimes it is useful to store the features in an intermediate state in normally
  * a flat version like Examples or maybe JSON.  This makes it easier to interface with
@@ -55,12 +50,14 @@ object FlatExtractor {
  *
  * This function allows the reading of data from these flat versions by name with a given
  * settings file to extract the final output.
- *
- * @param settings Settings file used to read and transform the data
- * @tparam M Collection Type
- * @tparam T The intermediate storage format for each feature.
  */
-class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](settings: M[String])
+object FlatExtractor {
+  def apply[M[_]: CollectionType, T: ClassTag: FlatReader](setCol: M[String]): FlatExtractor[M, T] =
+    new FlatExtractor[M, T](setCol)
+}
+
+private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](
+  settings: M[String])
     extends Serializable {
 
   import CollectionType.ops._

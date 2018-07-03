@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
 
 /**
@@ -120,6 +120,8 @@ private[featran] class PolynomialExpansion(name: String, val degree: Int, val ex
     Map("degree" -> degree.toString, "expectedLength" -> expectedLength.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubleArray(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Array[Double]] => fw.IF =
+    fw.writeDoubleArray(name)
 }
 
 // Ported from commons-math3

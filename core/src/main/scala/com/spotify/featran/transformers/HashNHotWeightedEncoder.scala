@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.HLL
 
 import scala.collection.JavaConverters._
@@ -105,4 +105,6 @@ private[featran] class HashNHotWeightedEncoder(name: String,
   }
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readWeightedLabel(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Seq[WeightedLabel]] => fw.IF =
+    fw.writeWeightedLabel(name)
 }
