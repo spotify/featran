@@ -56,7 +56,8 @@ object FlatExtractor {
     new FlatExtractor[M, T](setCol)
 }
 
-private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](settings: M[String])
+private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](
+  settings: M[String])
     extends Serializable {
 
   import CollectionType.ops._

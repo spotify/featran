@@ -108,12 +108,11 @@ package object tensorflow {
     type IF = List[NamedTFFeature]
 
     override def writeDouble(name: String): Option[Double] => List[NamedTFFeature] =
-      (v: Option[Double]) =>
-        v.toList.map(r => NamedTFFeature(name, fromDoubles(Seq(r)).build()))
+      (v: Option[Double]) => v.toList.map(r => NamedTFFeature(name, fromDoubles(Seq(r)).build()))
 
     override def writeMdlRecord(name: String): Option[MDLRecord[String]] => List[NamedTFFeature] =
       (v: Option[MDLRecord[String]]) => {
-        v.toList.flatMap{values =>
+        v.toList.flatMap { values =>
           List(
             NamedTFFeature(name + "_label", fromStrings(Seq(values.label.toString)).build()),
             NamedTFFeature(name + "_value", fromDoubles(Seq(values.value)).build())
@@ -132,11 +131,11 @@ package object tensorflow {
       }
 
     override def writeDoubles(name: String): Option[Seq[Double]] => List[NamedTFFeature] =
-        (v: Option[Seq[Double]]) => {
-          v.toList.flatMap { values =>
-            List(NamedTFFeature(name, fromDoubles(values).build()))
-          }
+      (v: Option[Seq[Double]]) => {
+        v.toList.flatMap { values =>
+          List(NamedTFFeature(name, fromDoubles(values).build()))
         }
+      }
 
     override def writeDoubleArray(name: String): Option[Array[Double]] => List[NamedTFFeature] =
       (v: Option[Array[Double]]) => {
@@ -162,7 +161,7 @@ package object tensorflow {
     override def writer: Seq[List[NamedTFFeature]] => Example =
       (fns: Seq[List[NamedTFFeature]]) => {
         val builder = Features.newBuilder()
-        fns.foreach{f =>
+        fns.foreach { f =>
           f.foreach { nf =>
             builder.putFeature(nf.name, nf.f)
           }
