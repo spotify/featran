@@ -17,7 +17,7 @@
 
 package com.spotify.featran
 
-import com.spotify.featran.converters.{CaseClassConverter, DefaultTransform, IdentityDefault}
+import com.spotify.featran.converters.{CaseClassConverter, DefaultTransform}
 import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.collection.{breakOut, mutable}
@@ -38,8 +38,7 @@ object FeatureSpec {
    * The implicit parameter can be used to change the default of the Transformer used for
    * continuous values.  When another isn't suppilied Identity will be used.
    */
-  def from[T <: Product: ClassTag: TypeTag](
-    implicit dt: DefaultTransform[Double] = IdentityDefault): FeatureSpec[T] =
+  def from[T <: Product: ClassTag: TypeTag](implicit dt: DefaultTransform[Double]): FeatureSpec[T] =
     CaseClassConverter.toSpec[T]
 
   /**

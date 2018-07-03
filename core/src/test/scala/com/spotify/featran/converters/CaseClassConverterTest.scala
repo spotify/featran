@@ -56,7 +56,6 @@ case class TestObjects(
 )
 
 class CaseClassConverterTest extends FlatSpec with Matchers {
-  implicit val df = IdentityDefault
   it should "convert a case class to a spec" in {
     val data = List(
       TestData(1, "a", 1.0, 1L, List("c"), b = true),

@@ -25,7 +25,7 @@ import scala.reflect.ClassTag
 
 object CaseClassConverter {
   import ru._
-  private def getProperties[T: TypeTag]: Array[MethodSymbol] = {
+  private def properties[T: TypeTag]: Array[MethodSymbol] = {
     val tpe = ru.typeTag[T].tpe
     tpe.decls.collect {
       case m: MethodSymbol if m.isCaseAccessor => m
@@ -34,7 +34,7 @@ object CaseClassConverter {
 
   // Use index here to work around serialization of the MethodSymbols
   def get[T: TypeTag: ClassTag](a: T, idx: Int): Any = {
-    lazy val methods = getProperties[T]
+    lazy val methods = properties[T]
     val rm = scala.reflect.runtime.currentMirror
     val instanceMirror = rm.reflect(a)
     instanceMirror.reflectMethod(methods(idx)).apply()
@@ -45,7 +45,7 @@ object CaseClassConverter {
   def toSpec[T <: Product](implicit tt: TypeTag[T],
                            ct: ClassTag[T],
                            d: DefaultTransform[Double]): FeatureSpec[T] =
-    getProperties[T].zipWithIndex
+    properties[T].zipWithIndex
       .foldLeft(FeatureSpec.of[T]) {
         case (s, (m, idx)) =>
           @transient val method = m
