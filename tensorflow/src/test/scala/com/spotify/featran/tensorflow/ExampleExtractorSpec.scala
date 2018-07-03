@@ -27,7 +27,7 @@ case class TFRecord(d: Float, optD: Option[Float])
 
 case class TFStr(d: String)
 
-class ExampleTransformerSpec extends Properties("FeatureSpec") {
+class ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
   import TensorFlowType._
 
   implicit val arbRecords: Arbitrary[List[TFRecord]] = Arbitrary {
@@ -67,10 +67,10 @@ class ExampleTransformerSpec extends Properties("FeatureSpec") {
     val asExamples = recs.map { r =>
       ex(r)
     }
-    val exTransformer = ExampleTransformer(f.featureSettings)
+    val exTransformer = ExampleExtractor(f.featureSettings)
 
     val featranValues = f.featureValues[Seq[Double]]
-    val exValues = exTransformer.transform[Seq[Double]](asExamples)
+    val exValues = exTransformer.run[Seq[Double]](asExamples)
 
     Prop.all(featranValues == exValues)
   }

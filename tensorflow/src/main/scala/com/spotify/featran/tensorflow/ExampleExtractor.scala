@@ -34,7 +34,7 @@ import scala.reflect.ClassTag
  *
  *
  */
-object ExampleTransformer {
+object ExampleExtractor {
   import TensorFlowType._
 
   implicit val exampleFlatReader: FlatReader[Example] = new FlatReader[Example] {
@@ -84,13 +84,13 @@ object ExampleTransformer {
       (ex: Example) => toFeature(name, ex).map(v => toStrings(v))
   }
 
-  def apply[M[_]: CollectionType](settings: M[String]): ExampleTransformer[M] =
-    new ExampleTransformer[M](settings)
+  def apply[M[_]: CollectionType](settings: M[String]): ExampleExtractor[M] =
+    new ExampleExtractor[M](settings)
 }
 
-class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Serializable {
+class ExampleExtractor[M[_]: CollectionType](settings: M[String]) extends Serializable {
   import CollectionType.ops._
-  import ExampleTransformer._
+  import ExampleExtractor._
   import scala.reflect.runtime.universe
 
   private def cName[T: ClassTag]: String =
@@ -120,7 +120,7 @@ class ExampleTransformer[M[_]: CollectionType](settings: M[String]) extends Seri
     }.sum
   }
 
-  def transform[F: FeatureBuilder: ClassTag](records: M[Example]): M[F] = {
+  def run[F: FeatureBuilder: ClassTag](records: M[Example]): M[F] = {
     val fb = FeatureBuilder[F].newBuilder
     records.cross(converters).cross(dimSize).map {
       case ((record, convs), size) =>
