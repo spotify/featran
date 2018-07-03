@@ -15,16 +15,14 @@
  * under the License.
  */
 
-package com.spotify.featran
+package com.spotify.featran.converters
 
 import com.spotify.featran.transformers.{Identity, Transformer}
+import simulacrum.typeclass
 
-package object converters {
-  implicit class RichBoolean(val self: Boolean) extends AnyVal {
-    def asDouble: Double = if (self) 1.0 else 0.0
-  }
-
-  implicit val identityDefault: DefaultTransform[Double] = new DefaultTransform[Double] {
-    def apply(featureName: String): Transformer[Double, _, _] = Identity(featureName)
-  }
+/**
+ * Default Type Class used by the from generator for Case Class Conversions
+ */
+@typeclass trait DefaultTransform[T] {
+  def apply(featureName: String): Transformer[T, _, _]
 }
