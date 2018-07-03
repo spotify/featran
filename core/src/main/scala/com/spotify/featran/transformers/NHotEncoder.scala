@@ -54,14 +54,14 @@ object NHotEncoder extends SettingsBuilder {
 private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
 
-  import MissingValue.missingValueToken
+  import MissingValue.MissingValueToken
 
   def addMissingValue(fb: FeatureBuilder[_], unseen: MSet[String], keys: Seq[String]): Unit = {
     if (unseen.isEmpty
         && keys.nonEmpty) {
       fb.skip()
     } else {
-      fb.add(name + '_' + missingValueToken, 1.0)
+      fb.add(name + '_' + MissingValueToken, 1.0)
     }
   }
 

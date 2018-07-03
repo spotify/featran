@@ -83,7 +83,7 @@ private[featran] class TopNOneHotEncoder(name: String,
                                          val encodeMissingValue: Boolean)
     extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
 
-  import MissingValue.missingValueToken
+  import MissingValue.MissingValueToken
 
   @transient private lazy val sketchMapParams =
     SketchMapParams[String](seed, eps, delta, n)(_.getBytes)
@@ -107,13 +107,13 @@ private[featran] class TopNOneHotEncoder(name: String,
 
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
     val names = c.map(name + '_' + _._1)(scala.collection.breakOut)
-    if (encodeMissingValue) names :+ (name + '_' + missingValueToken) else names
+    if (encodeMissingValue) names :+ (name + '_' + MissingValueToken) else names
   }
 
   def addNonTopItem(c: SortedMap[String, Int], fb: FeatureBuilder[_]): Unit = {
     fb.skip(c.size)
     if (encodeMissingValue) {
-      fb.add(name + '_' + missingValueToken, 1.0)
+      fb.add(name + '_' + MissingValueToken, 1.0)
     }
   }
 

@@ -1,10 +1,13 @@
 language: scala
+
+jdk: oraclejdk8
+
 matrix:
-  include:
-    - scala: 2.11.12
-      jdk: oraclejdk8
-    - scala: 2.12.6
-      jdk: oraclejdk8
+  fast_finish: true
+
+env:
+  - SBT_CMD="scalafmtSbtCheck scalafmtCheck test:scalafmtCheck scalastyle test:scalastyle"
+  - SBT_CMD="coverage +test coverageReport coverageAggregate"
 
 cache:
   directories:
@@ -12,14 +15,7 @@ cache:
     - $HOME/.ivy2/cache
 
 script:
-  - |
-    sbt ++$TRAVIS_SCALA_VERSION \
-        clean \
-        scalafmtSbtCheck scalafmtCheck test:scalafmtCheck \
-        scalastyle test:scalastyle \
-        coverage \
-        test \
-        coverageReport coverageAggregate
+  - sbt $SBT_CMD
 
   # Tricks to avoid unnecessary cache updates
   - find $HOME/.sbt -name "*.lock" -delete

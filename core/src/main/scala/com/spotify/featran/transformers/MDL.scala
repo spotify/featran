@@ -64,9 +64,9 @@ object MDL extends SettingsBuilder {
    */
   def apply[T: ClassTag](name: String,
                          sampleRate: Double = 1.0,
-                         stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
-                         minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE,
-                         maxBins: Int = DEFAULT_MAX_BINS,
+                         stoppingCriterion: Double = DefaultStoppingCriterion,
+                         minBinPercentage: Double = DefaultMinBinPercentage,
+                         maxBins: Int = DefaultMaxBins,
                          seed: Int = Random.nextInt()): Transformer[MDLRecord[T], B[T], C] =
     new MDL(name, sampleRate, stoppingCriterion, minBinPercentage, maxBins, seed)
 

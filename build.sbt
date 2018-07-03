@@ -40,8 +40,6 @@ val commonSettings = Seq(
   organization := "com.spotify",
   name := "featran",
   description := "Feature Transformers",
-  scalaVersion := "2.11.12",
-  crossScalaVersions := Seq("2.11.12", "2.12.6"),
   scalacOptions ++= commonScalacOptions,
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
@@ -111,6 +109,7 @@ lazy val root: Project = project
   .settings(commonSettings)
   .settings(noPublishSettings)
   .settings(
+    scalaVersion := "2.11.12",
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
     gitRemoteRepo := "git@github.com:spotify/featran.git",
@@ -137,10 +136,13 @@ lazy val root: Project = project
 lazy val core: Project = project
   .in(file("core"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-core"))
   .settings(
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.6"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "algebird-core" % algebirdVersion,
       "org.scalanlp" %% "breeze" % breezeVersion,
@@ -158,32 +160,18 @@ lazy val core: Project = project
 lazy val java: Project = project
   .in(file("java"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-java"))
   .settings(
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    skip in Compile := scalaBinaryVersion.value == "2.12",
-    skip in Test := scalaBinaryVersion.value == "2.12",
-    skip in publish := scalaBinaryVersion.value == "2.12",
-    libraryDependencies ++= {
-      if (scalaBinaryVersion.value == "2.12") Nil
-      else
-        Seq(
-          "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
-          "org.scalatest" %% "scalatest" % scalatestVersion % "test",
-          "me.lyh" % "xgboost4j" % xgBoostVersion % "provided"
-        )
-    },
-    // workaround for `dependsOn(core % "test->test")` pulling in scalacheck & scalatest dependencies
-    projectDependencies := {
-      if (scalaBinaryVersion.value == "2.12") Nil
-      else
-        Seq(
-          (projectID in core).value,
-          (projectID in tensorflow).value,
-          (projectID in xgboost).value
-        )
-    }
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12"),
+    libraryDependencies ++= Seq(
+      "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
+      "org.scalatest" %% "scalatest" % scalatestVersion % "test",
+      "me.lyh" % "xgboost4j" % xgBoostVersion % "provided"
+    )
   )
   .dependsOn(
     core,
@@ -195,22 +183,18 @@ lazy val java: Project = project
 lazy val flink: Project = project
   .in(file("flink"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-flink"))
   .settings(
     name := "flink",
     moduleName := "featran-flink",
     description := "Feature Transformers - Flink",
-    skip in Compile := scalaBinaryVersion.value == "2.12",
-    skip in Test := scalaBinaryVersion.value == "2.12",
-    skip in publish := scalaBinaryVersion.value == "2.12",
-    libraryDependencies ++= {
-      if (scalaBinaryVersion.value == "2.12") Nil
-      else
-        Seq(
-          "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
-          "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
-          "org.scalatest" %% "scalatest" % scalatestVersion % "test"
-        )
-    }
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12"),
+    libraryDependencies ++= Seq(
+      "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
+      "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
+      "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+    )
   )
   .dependsOn(
     core,
@@ -220,11 +204,14 @@ lazy val flink: Project = project
 lazy val scalding: Project = project
   .in(file("scalding"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-scalding"))
   .settings(
     name := "scalding",
     moduleName := "featran-scalding",
     description := "Feature Transformers - Scalding",
     resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.6"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "scalding-core" % scaldingVersion % "provided",
       "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
@@ -239,10 +226,13 @@ lazy val scalding: Project = project
 lazy val scio: Project = project
   .in(file("scio"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-scio"))
   .settings(
     name := "scio",
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.6"),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -256,21 +246,17 @@ lazy val scio: Project = project
 lazy val spark: Project = project
   .in(file("spark"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-spark"))
   .settings(
     name := "spark",
     moduleName := "featran-spark",
     description := "Feature Transformers - Spark",
-    skip in Compile := scalaBinaryVersion.value == "2.12",
-    skip in Test := scalaBinaryVersion.value == "2.12",
-    skip in publish := scalaBinaryVersion.value == "2.12",
-    libraryDependencies ++= {
-      if (scalaBinaryVersion.value == "2.12") Nil
-      else
-        Seq(
-          "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
-          "org.scalatest" %% "scalatest" % scalatestVersion % "test"
-        )
-    }
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12"),
+    libraryDependencies ++= Seq(
+      "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
+      "org.scalatest" %% "scalatest" % scalatestVersion % "test"
+    )
   )
   .dependsOn(
     core,
@@ -280,10 +266,13 @@ lazy val spark: Project = project
 lazy val numpy: Project = project
   .in(file("numpy"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-numpy"))
   .settings(
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.6"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -293,10 +282,13 @@ lazy val numpy: Project = project
 lazy val tensorflow: Project = project
   .in(file("tensorflow"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-tensorflow"))
   .settings(
     name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.6"),
     libraryDependencies ++= Seq(
       "org.tensorflow" % "proto" % tensorflowVersion,
       "me.lyh" %% "shapeless-datatype-tensorflow" % shapelessDatatypeVersion,
@@ -311,21 +303,17 @@ lazy val tensorflow: Project = project
 lazy val xgboost: Project = project
   .in(file("xgboost"))
   .settings(commonSettings)
+  .settings(mimaSettings("featran-xgboost"))
   .settings(
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    skip in Compile := scalaBinaryVersion.value == "2.12",
-    skip in Test := scalaBinaryVersion.value == "2.12",
-    skip in publish := scalaBinaryVersion.value == "2.12",
-    libraryDependencies ++= {
-      if (scalaBinaryVersion.value == "2.12") Nil
-      else
-        Seq(
-          "me.lyh" % "xgboost4j" % xgBoostVersion % "provided",
-          "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
-        )
-    }
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12"),
+    libraryDependencies ++= Seq(
+      "me.lyh" % "xgboost4j" % xgBoostVersion % "provided",
+      "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
+    )
   )
   .dependsOn(
     core,
@@ -338,6 +326,8 @@ lazy val examples: Project = project
   .settings(noPublishSettings)
   .settings(soccoSettings)
   .settings(
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.6"),
     name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
@@ -353,6 +343,8 @@ lazy val featranJmh: Project = project
   .settings(commonSettings)
   .settings(noPublishSettings)
   .settings(
+    scalaVersion := "2.11.12",
+    crossScalaVersions := Seq("2.11.12", "2.12.6"),
     name := "jmh",
     description := "Featran JMH Microbenchmarks",
     sourceDirectory in Jmh := (sourceDirectory in Test).value,
@@ -390,4 +382,55 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
   )
 } else {
   Nil
+}
+
+// based on the nice https://github.com/typelevel/cats/blob/master/build.sbt#L208
+def mimaSettings(moduleName: String) = {
+  import sbtrelease.Version
+
+  lazy val startVersion = Version("0.1.27")
+
+  // Safety Net for Exclusions
+  lazy val excludedVersions: Set[String] = Set()
+
+  // Safety Net for Inclusions
+  lazy val extraVersions: Set[String] = Set()
+
+  def semverBinCompatVersions(major: Int, minor: Int, patch: Int): Set[(Int, Int, Int)] =
+    startVersion match {
+      case Some(Version(startMajor, Seq(startMinor, startPatch), _)) =>
+        val majorVersions: List[Int] = List(major)
+        val minorVersions: List[Int] =
+          if (major >= 1) Range(startMinor, minor).inclusive.toList
+          else List(minor)
+        def patchVersions(currentMinVersion: Int): List[Int] =
+          if (minor == 0 && patch == 0) List.empty[Int]
+          else if (currentMinVersion != minor) List(0)
+          else Range(startPatch, patch - 1).inclusive.toList
+
+        val versions = for {
+          maj <- majorVersions
+          min <- minorVersions
+          pat <- patchVersions(min)
+        } yield (maj, min, pat)
+        versions.toSet
+      case _ =>
+        Set.empty[(Int, Int, Int)]
+    }
+
+  def mimaVersions(version: String): Set[String] = {
+    Version(version) match {
+      case Some(Version(major, Seq(minor, patch), _)) =>
+        semverBinCompatVersions(major.toInt, minor.toInt, patch.toInt)
+          .map { case (maj, min, pat) => s"${maj}.${min}.${pat}" }
+      case _ =>
+        Set.empty[String]
+    }
+  }
+
+  Seq(
+    mimaPreviousArtifacts := (mimaVersions(version.value) ++ extraVersions)
+      .diff(excludedVersions)
+      .map(v => "com.spotify" %% moduleName % v)
+  )
 }

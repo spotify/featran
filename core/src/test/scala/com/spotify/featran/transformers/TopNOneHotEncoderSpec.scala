@@ -27,16 +27,16 @@ object TopNOneHotEncoderSpec extends TransformerProp("TopNOneHotEncoder") {
     val frequent = Gen.listOfN(5, Gen.alphaStr).flatMap(xs => Gen.oneOf(xs))
     Gen.frequency((1, infrequent), (50, frequent))
   }
-  private val seed = 1
+  private val Seed = 1
 
-  import MissingValue.missingValueToken
+  import MissingValue.MissingValueToken
 
   def getExpectedOutputVector(s: String,
                               cats: List[String],
                               encodeMissingValue: Boolean): Seq[Double] = {
     val v = cats.map(c => if (s == c) 1.0 else 0.0)
     if (encodeMissingValue && v.sum == 0.0) {
-      cats.map(c => if (c == missingValueToken) 1.0 else 0.0)
+      cats.map(c => if (c == MissingValueToken) 1.0 else 0.0)
     } else {
       v
     }
@@ -47,17 +47,17 @@ object TopNOneHotEncoderSpec extends TransformerProp("TopNOneHotEncoder") {
     val (n, eps, delta) = (encoder.n, encoder.eps, encoder.delta)
     val encodeMissingValue = encoder.encodeMissingValue
 
-    val params = SketchMapParams[String](seed, eps, delta, n)(_.getBytes)
+    val params = SketchMapParams[String](Seed, eps, delta, n)(_.getBytes)
     val aggregator = SketchMap.aggregator[String, Long](params)
     val sm =
       xs.map(x => aggregator.prepare((x, 1L))).reduce(aggregator.monoid.plus)
     val keys = sm.heavyHitterKeys.sorted
-    val cats = if (encodeMissingValue) keys :+ missingValueToken else keys
+    val cats = if (encodeMissingValue) keys :+ MissingValueToken else keys
     val names = cats.map("tn1h_" + _)
     val expected =
       xs.map(s => getExpectedOutputVector(s, cats, encodeMissingValue))
     val missing = if (encodeMissingValue) {
-      cats.map(c => if (c == missingValueToken) 1.0 else 0.0)
+      cats.map(c => if (c == MissingValueToken) 1.0 else 0.0)
     } else {
       cats.map(_ => 0.0)
     }
