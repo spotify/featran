@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.{Aggregator, Max, Min}
 
 import scala.collection.SortedMap
@@ -89,4 +89,6 @@ private[featran] class MinMaxScaler(name: String, val min: Double, val max: Doub
     Map("min" -> min.toString, "max" -> max.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+    fw.writeDouble(name)
 }

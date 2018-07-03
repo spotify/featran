@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird._
 
 import scala.math.ceil
@@ -95,6 +95,8 @@ private[featran] class HashOneHotEncoder(name: String,
   }
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[String] => fw.IF =
+    fw.writeString(name)
 }
 
 private[featran] abstract class BaseHashHotEncoder[A](name: String,

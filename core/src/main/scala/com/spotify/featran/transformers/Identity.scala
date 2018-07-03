@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FlatReader
+import com.spotify.featran.{FlatReader, FlatWriter}
 
 /**
  * Transform features by passing them through.
@@ -42,4 +42,6 @@ object Identity extends SettingsBuilder {
 private[featran] class Identity(name: String) extends MapOne[Double](name) {
   override def map(a: Double): Double = a
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+    fw.writeDouble(name)
 }

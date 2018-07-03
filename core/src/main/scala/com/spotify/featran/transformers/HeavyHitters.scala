@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.{FeatureBuilder, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird._
 
 import scala.util.Random
@@ -129,5 +129,6 @@ private[featran] class HeavyHitters(name: String,
         "heavyHittersCount" -> heavyHittersCount.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
-
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[String] => fw.IF =
+    fw.writeString(name)
 }

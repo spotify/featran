@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 
 import scala.collection.SortedMap
 import scala.collection.mutable.{Map => MMap, Set => MSet}
@@ -115,4 +115,6 @@ private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boo
   }
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readWeightedLabel(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Seq[WeightedLabel]] => fw.IF =
+    fw.writeWeightedLabel(name)
 }

@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FlatReader
+import com.spotify.featran.{FlatReader, FlatWriter}
 
 /**
  * Transform numerical features to binary features.
@@ -52,4 +52,6 @@ private[featran] class Binarizer(name: String, val threshold: Double) extends Ma
     Map("threshold" -> threshold.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+    fw.writeDouble(name)
 }

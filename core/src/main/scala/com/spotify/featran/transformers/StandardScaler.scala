@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.{Aggregator, Moments}
 
 /**
@@ -76,4 +76,6 @@ private[featran] class StandardScaler(name: String, val withStd: Boolean, val wi
     Map("withStd" -> withStd.toString, "withMean" -> withMean.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+    fw.writeDouble(name)
 }

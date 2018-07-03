@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.{Aggregator, SketchMap, SketchMapParams}
 
 import scala.collection.SortedMap
@@ -154,4 +154,6 @@ private[featran] class TopNOneHotEncoder(name: String,
         "encodeMissingValue" -> encodeMissingValue.toString)
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[String] => fw.IF =
+    fw.writeString(name)
 }

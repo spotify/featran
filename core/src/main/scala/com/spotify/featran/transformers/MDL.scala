@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.util.{TreeMap => JTreeMap}
 
-import com.spotify.featran.{FeatureBuilder, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.spotify.featran.transformers.MinMaxScaler.C
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer._
@@ -168,5 +168,8 @@ private[featran] class MDL[T: ClassTag](name: String,
       "seed" -> seed.toString
     )
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+  def flatRead[A: FlatReader]: A => Option[Any] = FlatReader[A].readMdlRecord(name)
+  def flatWriter[A](implicit fw: FlatWriter[A]): Option[MDLRecord[T]] => fw.IF =
+    (v: Option[MDLRecord[T]]) =>
+      fw.writeMdlRecord(name)(v.map(r => MDLRecord(r.label.toString, r.value)))
 }

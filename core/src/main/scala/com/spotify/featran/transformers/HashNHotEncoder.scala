@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FlatReader}
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.HLL
 
 import scala.collection.SortedSet
@@ -97,4 +97,6 @@ private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeSc
   }
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readStrings(name)
+  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Seq[String]] => fw.IF =
+    fw.writeStrings(name)
 }
