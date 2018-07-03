@@ -70,7 +70,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     val exTransformer = FlatExtractor(f.featureSettings)
 
     val featranValues = f.featureValues[Seq[Double]]
-    val exValues = exTransformer.run[Seq[Double]](asExamples)
+    val exValues = exTransformer.extract[Seq[Double]](asExamples)
 
     Prop.all(featranValues == exValues)
   }

@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 /**
  * TypeClass that is used to read data from flat files.  The requirement is that each
  * feature comes from the same type and can be looked up by name.
- * @tparam T
+ * @tparam T The intermediate storage format for each feature.
  */
 @typeclass trait FlatReader[T] extends Serializable {
   def getDouble(name: String): T => Option[Double]
@@ -76,7 +76,7 @@ class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](settings: M[S
     }.sum
   }
 
-  def run[F: FeatureBuilder: ClassTag](records: M[T]): M[F] = {
+  def extract[F: FeatureBuilder: ClassTag](records: M[T]): M[F] = {
     val fb = FeatureBuilder[F].newBuilder
     records.cross(converters).cross(dimSize).map {
       case ((record, convs), size) =>
