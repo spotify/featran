@@ -40,7 +40,7 @@ case class WeightedLabel(name: String, value: Double)
  * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
-object NHotWeightedEncoder {
+object NHotWeightedEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[NHotWeightedEncoder]] instance.
@@ -48,6 +48,16 @@ object NHotWeightedEncoder {
   def apply(name: String, encodeMissingValue: Boolean = false)
     : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
     new NHotWeightedEncoder(name, encodeMissingValue)
+
+  /**
+   * Create a new [[NHotWeightedEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings)
+    : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] = {
+    val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
+    NHotWeightedEncoder(setting.name, encodeMissingValue)
+  }
 }
 
 private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
@@ -104,4 +114,5 @@ private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boo
     case None => addMissingItem(c, fb)
   }
 
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getWeightedLabel(name)
 }

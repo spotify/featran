@@ -36,7 +36,7 @@ import scala.util.Random
  *
  * Missing values are transformed to [0.0, 0.0].
  */
-object HeavyHitters {
+object HeavyHitters extends SettingsBuilder {
 
   /**
    * Create a new [[HeavyHitters]] instance.
@@ -54,6 +54,19 @@ object HeavyHitters {
             seed: Int = Random.nextInt)
     : Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
     new HeavyHitters(name, heavyHittersCount, eps, delta, seed)
+
+  /**
+   * Create a new [[HeavyHitters]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings)
+    : Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] = {
+    val seed = setting.params("seed").toInt
+    val eps = setting.params("eps").toDouble
+    val delta = setting.params("delta").toDouble
+    val heavyHittersCount = setting.params("heavyHittersCount").toInt
+    HeavyHitters(setting.name, heavyHittersCount, eps, delta, seed)
+  }
 }
 
 private[featran] class HeavyHitters(name: String,
@@ -114,5 +127,7 @@ private[featran] class HeavyHitters(name: String,
         "eps" -> eps.toString,
         "delta" -> delta.toString,
         "heavyHittersCount" -> heavyHittersCount.toString)
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
 
 }

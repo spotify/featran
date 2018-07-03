@@ -22,14 +22,22 @@ package com.spotify.featran.transformers
  *
  * Missing values are transformed to 0.0.
  */
-object Identity {
+object Identity extends SettingsBuilder {
 
   /**
    * Create a new [[Identity]] instance.
    */
   def apply(name: String): Transformer[Double, Unit, Unit] = new Identity(name)
+
+  /**
+   * Create a new [[Identity]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[Double, Unit, Unit] =
+    Identity(setting.name)
 }
 
 private[featran] class Identity(name: String) extends MapOne[Double](name) {
   override def map(a: Double): Double = a
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }

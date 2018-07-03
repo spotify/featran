@@ -53,7 +53,7 @@ import scala.util.hashing.MurmurHash3
  *              4096      0.0071%
  * }}}
  */
-object HashOneHotEncoder {
+object HashOneHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[HashOneHotEncoder]] instance.
@@ -64,6 +64,16 @@ object HashOneHotEncoder {
             hashBucketSize: Int = 0,
             sizeScalingFactor: Double = 8.0): Transformer[String, HLL, Int] =
     new HashOneHotEncoder(name, hashBucketSize, sizeScalingFactor)
+
+  /**
+   * Create a new [[HashOneHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[String, HLL, Int] = {
+    val hashBucketSize = setting.params("hashBucketSize").toInt
+    val sizeScalingFactor = setting.params("sizeScalingFactor").toDouble
+    HashOneHotEncoder(setting.name, hashBucketSize, sizeScalingFactor)
+  }
 }
 
 private[featran] class HashOneHotEncoder(name: String,
@@ -83,6 +93,8 @@ private[featran] class HashOneHotEncoder(name: String,
         fb.skip(c)
     }
   }
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
 }
 
 private[featran] abstract class BaseHashHotEncoder[A](name: String,

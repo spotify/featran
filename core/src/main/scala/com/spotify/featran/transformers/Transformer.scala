@@ -19,6 +19,27 @@ package com.spotify.featran.transformers
 
 import com.spotify.featran.{FeatureBuilder, JsonSerializable}
 import com.twitter.algebird.{Aggregator, Semigroup}
+import simulacrum.typeclass
+
+@typeclass trait FlatReader[T] extends Serializable {
+  def getDouble(name: String): T => Option[Double]
+
+  def getMdlRecord(name: String): T => Option[MDLRecord[String]]
+
+  def getWeightedLabel(name: String): T => Option[List[WeightedLabel]]
+
+  def getDoubles(name: String): T => Option[Seq[Double]]
+
+  def getDoubleArray(name: String): T => Option[Array[Double]]
+
+  def getString(name: String): T => Option[String]
+
+  def getStrings(name: String): T => Option[Seq[String]]
+}
+
+trait SettingsBuilder {
+  def fromSetting(setting: Settings): Transformer[_, _, _]
+}
 
 // TODO: port more transformers from Spark
 // https://spark.apache.org/docs/2.1.0/ml-features.html
@@ -90,6 +111,8 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
 
   def unsafeFeatureDimension(c: Option[Any]): Int =
     optFeatureDimension(c.asInstanceOf[Option[C]])
+
+  def flatRead[T : FlatReader]: T => Option[Any]
 
   //================================================================================
   // Transformer parameter and aggregator persistence

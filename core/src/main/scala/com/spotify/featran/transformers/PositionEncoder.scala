@@ -31,13 +31,21 @@ import scala.collection.SortedMap
  * When using aggregated feature summary from a previous session, unseen labels are ignored and
  * [[FeatureRejection.Unseen]] rejections are reported.
  */
-object PositionEncoder {
+object PositionEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[PositionEncoder]] instance.
    */
   def apply(name: String): Transformer[String, Set[String], SortedMap[String, Int]] =
     new PositionEncoder(name)
+
+  /**
+   * Create a new [[PositionEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] = {
+    PositionEncoder(setting.name)
+  }
 }
 
 private[featran] class PositionEncoder(name: String) extends BaseHotEncoder[String](name, false) {
@@ -60,4 +68,6 @@ private[featran] class PositionEncoder(name: String) extends BaseHotEncoder[Stri
         fb.reject(this, FeatureRejection.Collision)
     }
   }
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
 }

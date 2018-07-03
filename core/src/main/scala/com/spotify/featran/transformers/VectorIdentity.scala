@@ -30,7 +30,7 @@ import com.twitter.algebird.Aggregator
  * When using aggregated feature summary from a previous session, vectors of different dimensions
  * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
-object VectorIdentity {
+object VectorIdentity extends SettingsBuilder {
 
   /**
    * Create a new [[VectorIdentity]] instance.
@@ -39,6 +39,15 @@ object VectorIdentity {
   def apply[M[_]](name: String, expectedLength: Int = 0)(
     implicit ev: M[Double] => Seq[Double]): Transformer[M[Double], Int, Int] =
     new VectorIdentity(name, expectedLength)(ev)
+
+  /**
+   * Create a new [[VectorIdentity]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[Seq[Double], Int, Int] = {
+    val el = setting.params("expectedLength").toInt
+    VectorIdentity[Seq](setting.name, el)
+  }
 }
 
 private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: Int)(
@@ -63,4 +72,6 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
   override def decodeAggregator(s: String): Int = s.toInt
   override def params: Map[String, String] =
     Map("expectedLength" -> expectedLength.toString)
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDoubles(name)
 }

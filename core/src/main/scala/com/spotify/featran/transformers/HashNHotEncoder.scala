@@ -52,7 +52,7 @@ import scala.collection.SortedSet
  *              4096      0.0071%
  * }}}
  */
-object HashNHotEncoder {
+object HashNHotEncoder extends SettingsBuilder  {
 
   /**
    * Create a new [[HashNHotEncoder]] instance.
@@ -63,6 +63,16 @@ object HashNHotEncoder {
             hashBucketSize: Int = 0,
             sizeScalingFactor: Double = 8.0): Transformer[Seq[String], HLL, Int] =
     new HashNHotEncoder(name, hashBucketSize, sizeScalingFactor)
+
+  /**
+   * Create a new [[HashNHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[Seq[String], HLL, Int] = {
+    val hashBucketSize = setting.params("hashBucketSize").toInt
+    val sizeScalingFactor = setting.params("sizeScalingFactor").toDouble
+    HashNHotEncoder(setting.name, hashBucketSize, sizeScalingFactor)
+  }
 }
 
 private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
@@ -85,4 +95,6 @@ private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeSc
       case None => fb.skip(c)
     }
   }
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getStrings(name)
 }

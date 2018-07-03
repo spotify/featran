@@ -37,7 +37,7 @@ import scala.collection.JavaConverters._
  * `[min, max]` are binned into the first or last bucket and [[FeatureRejection.OutOfBound]]
  * rejections are reported.
  */
-object QuantileDiscretizer {
+object QuantileDiscretizer extends SettingsBuilder {
 
   /**
    * Create a new [[QuantileDiscretizer]] instance.
@@ -49,6 +49,16 @@ object QuantileDiscretizer {
             numBuckets: Int = 2,
             k: Int = QTreeAggregator.DefaultK): Transformer[Double, B, C] =
     new QuantileDiscretizer(name, numBuckets, k)
+
+  /**
+   * Create a new [[QuantileDiscretizer]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[Double, B, C] = {
+    val numBuckets = setting.params("numBuckets").toInt
+    val k = setting.params("k").toInt
+    QuantileDiscretizer(setting.name, numBuckets, k)
+  }
 
   private type B = (QTree[Double], Min[Double], Max[Double])
   private type C = (JTreeMap[Double, Int], Double, Double)
@@ -108,4 +118,6 @@ private[featran] class QuantileDiscretizer(name: String, val numBuckets: Int, va
   }
   override def params: Map[String, String] =
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }

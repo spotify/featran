@@ -33,7 +33,7 @@ import scala.collection.{mutable, SortedMap}
  *
  * As with [[NHotEncoder]], missing values are transformed to [0.0, 0.0, ...].
  */
-object NGrams {
+object NGrams extends SettingsBuilder {
 
   /**
    * Create a new [[NGrams]] instance.
@@ -50,6 +50,15 @@ object NGrams {
     require(low > 0, "low must be > 0")
     require(high >= low || high == -1, "high must >= low or -1")
     new NGrams(name, low, high, sep)
+  }
+
+  /**
+   * Create a new [[NGrams]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings)
+    : Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
+    NGrams(setting.name)
   }
 }
 

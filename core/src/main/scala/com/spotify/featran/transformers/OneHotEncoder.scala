@@ -34,7 +34,7 @@ import scala.collection.SortedMap
  * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
-object OneHotEncoder {
+object OneHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[OneHotEncoder]] instance.
@@ -43,6 +43,15 @@ object OneHotEncoder {
     name: String,
     encodeMissingValue: Boolean = false): Transformer[String, Set[String], SortedMap[String, Int]] =
     new OneHotEncoder(name, encodeMissingValue)
+
+  /**
+   * Create a new [[OneHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] = {
+    val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
+    OneHotEncoder(setting.name, encodeMissingValue)
+  }
 }
 
 private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
@@ -67,6 +76,8 @@ private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
       case None => addMissingItem(c, fb)
     }
   }
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
 }
 
 private[featran] object MissingValue {
@@ -123,5 +134,4 @@ private[featran] abstract class BaseHotEncoder[A](name: String, encodeMissingVal
 
   override def params: Map[String, String] =
     Map("encodeMissingValue" -> encodeMissingValue.toString)
-
 }

@@ -53,7 +53,7 @@ import scala.collection.JavaConverters._
  *              4096      0.0071%
  * }}}
  */
-object HashNHotWeightedEncoder {
+object HashNHotWeightedEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[HashNHotWeightedEncoder]] instance.
@@ -64,6 +64,16 @@ object HashNHotWeightedEncoder {
             hashBucketSize: Int = 0,
             sizeScalingFactor: Double = 8.0): Transformer[Seq[WeightedLabel], HLL, Int] =
     new HashNHotWeightedEncoder(name, hashBucketSize, sizeScalingFactor)
+
+  /**
+   * Create a new [[HashOneHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[Seq[WeightedLabel], HLL, Int] = {
+    val hashBucketSize = setting.params("hashBucketSize").toInt
+    val sizeScalingFactor = setting.params("sizeScalingFactor").toDouble
+    HashNHotWeightedEncoder(setting.name, hashBucketSize, sizeScalingFactor)
+  }
 }
 
 private[featran] class HashNHotWeightedEncoder(name: String,
@@ -93,4 +103,6 @@ private[featran] class HashNHotWeightedEncoder(name: String,
       case None => fb.skip(c)
     }
   }
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getWeightedLabel(name)
 }

@@ -20,6 +20,7 @@ package com.spotify.featran.transformers
 import java.util.{TreeMap => JTreeMap}
 
 import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.transformers.MinMaxScaler.C
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer._
 import com.twitter.algebird._
@@ -50,7 +51,7 @@ case class MDLRecord[T](label: T, value: Double)
  *
  * - https://github.com/sramirez/spark-MDLP-discretization
  */
-object MDL {
+object MDL extends SettingsBuilder {
 
   /**
    * Create an MDL Instance.
@@ -68,6 +69,19 @@ object MDL {
                          maxBins: Int = DEFAULT_MAX_BINS,
                          seed: Int = Random.nextInt()): Transformer[MDLRecord[T], B[T], C] =
     new MDL(name, sampleRate, stoppingCriterion, minBinPercentage, maxBins, seed)
+
+  /**
+   * Create a new [[MDL]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSetting(setting: Settings): Transformer[MDLRecord[String], B[String], C] = {
+    val sampleRate = setting.params("sampleRate").toDouble
+    val stoppingCriterion = setting.params("stoppingCriterion").toDouble
+    val minBinPercentage = setting.params("minBinPercentage").toDouble
+    val maxBins = setting.params("maxBins").toInt
+    val seed = setting.params("seed").toInt
+    MDL[String](setting.name, sampleRate, stoppingCriterion, minBinPercentage, maxBins, seed)
+  }
 
   // Use WrappedArray to workaround Beam immutability enforcement
   private type B[T] = mutable.WrappedArray[MDLRecord[T]]
@@ -153,4 +167,6 @@ private[featran] class MDL[T: ClassTag](name: String,
       "maxBins" -> maxBins.toString,
       "seed" -> seed.toString
     )
+
+  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }
