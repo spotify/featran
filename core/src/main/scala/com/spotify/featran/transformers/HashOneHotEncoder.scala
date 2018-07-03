@@ -69,7 +69,7 @@ object HashOneHotEncoder extends SettingsBuilder {
    * Create a new [[HashOneHotEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[String, HLL, Int] = {
+  def fromSettings(setting: Settings): Transformer[String, HLL, Int] = {
     val hashBucketSize = setting.params("hashBucketSize").toInt
     val sizeScalingFactor = setting.params("sizeScalingFactor").toDouble
     HashOneHotEncoder(setting.name, hashBucketSize, sizeScalingFactor)
@@ -94,7 +94,7 @@ private[featran] class HashOneHotEncoder(name: String,
     }
   }
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 }
 
 private[featran] abstract class BaseHashHotEncoder[A](name: String,

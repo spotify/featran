@@ -68,7 +68,7 @@ object HashNHotEncoder extends SettingsBuilder {
    * Create a new [[HashNHotEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Seq[String], HLL, Int] = {
+  def fromSettings(setting: Settings): Transformer[Seq[String], HLL, Int] = {
     val hashBucketSize = setting.params("hashBucketSize").toInt
     val sizeScalingFactor = setting.params("sizeScalingFactor").toDouble
     HashNHotEncoder(setting.name, hashBucketSize, sizeScalingFactor)
@@ -96,5 +96,5 @@ private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeSc
     }
   }
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getStrings(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readStrings(name)
 }

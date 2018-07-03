@@ -21,7 +21,7 @@ import com.spotify.featran.{FeatureBuilder, FlatReader, JsonSerializable}
 import com.twitter.algebird.{Aggregator, Semigroup}
 
 trait SettingsBuilder {
-  def fromSetting(setting: Settings): Transformer[_, _, _]
+  def fromSettings(settings: Settings): Transformer[_, _, _]
 }
 
 // TODO: port more transformers from Spark

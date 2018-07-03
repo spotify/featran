@@ -44,7 +44,7 @@ object NHotEncoder extends SettingsBuilder {
    * Create a new [[NHotEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(
+  def fromSettings(
     setting: Settings): Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
     val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
     NHotEncoder(setting.name, encodeMissingValue)
@@ -95,5 +95,5 @@ private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
     case None => addMissingItem(c, fb)
   }
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getStrings(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readStrings(name)
 }

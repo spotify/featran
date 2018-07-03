@@ -69,7 +69,7 @@ object HashNHotWeightedEncoder extends SettingsBuilder {
    * Create a new [[HashOneHotEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Seq[WeightedLabel], HLL, Int] = {
+  def fromSettings(setting: Settings): Transformer[Seq[WeightedLabel], HLL, Int] = {
     val hashBucketSize = setting.params("hashBucketSize").toInt
     val sizeScalingFactor = setting.params("sizeScalingFactor").toDouble
     HashNHotWeightedEncoder(setting.name, hashBucketSize, sizeScalingFactor)
@@ -104,5 +104,5 @@ private[featran] class HashNHotWeightedEncoder(name: String,
     }
   }
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getWeightedLabel(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readWeightedLabel(name)
 }

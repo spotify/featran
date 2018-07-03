@@ -41,7 +41,7 @@ object MaxAbsScaler extends SettingsBuilder {
    * Create a new [[MaxAbsScaler]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, Max[Double], Double] =
+  def fromSettings(setting: Settings): Transformer[Double, Max[Double], Double] =
     MaxAbsScaler(setting.name)
 }
 
@@ -61,5 +61,5 @@ private[featran] class MaxAbsScaler(name: String)
   }
   override def encodeAggregator(c: Double): String = c.toString
   override def decodeAggregator(s: String): Double = s.toDouble
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

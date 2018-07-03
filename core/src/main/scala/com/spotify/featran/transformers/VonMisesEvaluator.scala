@@ -48,7 +48,7 @@ object VonMisesEvaluator extends SettingsBuilder {
    * Create a new [[VonMisesEvaluator]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, Unit, Unit] = {
+  def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] = {
     val params = setting.params
     val k = params("kappa").toDouble
     val s = params("scale").toDouble
@@ -94,5 +94,5 @@ private[featran] class VonMisesEvaluator(name: String,
         "scale" -> scale.toString,
         "points" -> points.mkString("[", ",", "]"))
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

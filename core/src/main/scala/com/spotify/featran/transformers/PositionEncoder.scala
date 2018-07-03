@@ -43,7 +43,7 @@ object PositionEncoder extends SettingsBuilder {
    * Create a new [[PositionEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] =
+  def fromSettings(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] =
     PositionEncoder(setting.name)
 }
 
@@ -68,5 +68,5 @@ private[featran] class PositionEncoder(name: String) extends BaseHotEncoder[Stri
     }
   }
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 }

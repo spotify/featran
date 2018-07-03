@@ -43,7 +43,7 @@ object StandardScaler extends SettingsBuilder {
    * Create a new [[StandardScaler]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, Moments, (Double, Double)] = {
+  def fromSettings(setting: Settings): Transformer[Double, Moments, (Double, Double)] = {
     val withStd = setting.params("withStd").toBoolean
     val withMean = setting.params("withMean").toBoolean
     StandardScaler(setting.name, withStd, withMean)
@@ -75,5 +75,5 @@ private[featran] class StandardScaler(name: String, val withStd: Boolean, val wi
   override def params: Map[String, String] =
     Map("withStd" -> withStd.toString, "withMean" -> withMean.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

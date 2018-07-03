@@ -44,7 +44,7 @@ object VectorIdentity extends SettingsBuilder {
    * Create a new [[VectorIdentity]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Seq[Double], Int, Int] = {
+  def fromSettings(setting: Settings): Transformer[Seq[Double], Int, Int] = {
     val el = setting.params("expectedLength").toInt
     VectorIdentity[Seq](setting.name, el)
   }
@@ -73,5 +73,5 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
   override def params: Map[String, String] =
     Map("expectedLength" -> expectedLength.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDoubles(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubles(name)
 }

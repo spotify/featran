@@ -1,3 +1,20 @@
+/*
+ * Copyright 2018 Spotify AB.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package com.spotify.featran
 
 import com.spotify.featran.transformers.{MDLRecord, Settings, SettingsBuilder, WeightedLabel}
@@ -11,19 +28,19 @@ import scala.reflect.ClassTag
  * @tparam T The intermediate storage format for each feature.
  */
 @typeclass trait FlatReader[T] extends Serializable {
-  def getDouble(name: String): T => Option[Double]
+  def readDouble(name: String): T => Option[Double]
 
-  def getMdlRecord(name: String): T => Option[MDLRecord[String]]
+  def readMdlRecord(name: String): T => Option[MDLRecord[String]]
 
-  def getWeightedLabel(name: String): T => Option[List[WeightedLabel]]
+  def readWeightedLabel(name: String): T => Option[List[WeightedLabel]]
 
-  def getDoubles(name: String): T => Option[Seq[Double]]
+  def readDoubles(name: String): T => Option[Seq[Double]]
 
-  def getDoubleArray(name: String): T => Option[Array[Double]]
+  def readDoubleArray(name: String): T => Option[Array[Double]]
 
-  def getString(name: String): T => Option[String]
+  def readString(name: String): T => Option[String]
 
-  def getStrings(name: String): T => Option[Seq[String]]
+  def readStrings(name: String): T => Option[Seq[String]]
 }
 
 object FlatExtractor {
@@ -49,9 +66,6 @@ class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](settings: M[S
   import CollectionType.ops._
   import scala.reflect.runtime.universe
 
-  private def cName[T: ClassTag]: String =
-    implicitly[ClassTag[T]].runtimeClass.getCanonicalName
-
   @transient private val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
 
   private val converters = settings.map { str =>
@@ -62,7 +76,7 @@ class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](settings: M[S
         .reflectModule(runtimeMirror.staticModule(setting.cls))
         .instance
         .asInstanceOf[SettingsBuilder]
-        .fromSetting(setting)
+        .fromSettings(setting)
 
       (transformer.flatRead[T], setting.aggregators, transformer)
     }

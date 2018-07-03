@@ -40,7 +40,7 @@ object Binarizer extends SettingsBuilder {
    * Create a new [[Binarizer]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, Unit, Unit] = {
+  def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] = {
     val threshold = setting.params("threshold").toDouble
     Binarizer(setting.name, threshold)
   }
@@ -51,5 +51,5 @@ private[featran] class Binarizer(name: String, val threshold: Double) extends Ma
   override def params: Map[String, String] =
     Map("threshold" -> threshold.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

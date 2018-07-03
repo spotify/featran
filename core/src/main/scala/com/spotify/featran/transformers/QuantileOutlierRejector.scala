@@ -58,7 +58,7 @@ object QuantileOutlierRejector extends SettingsBuilder {
    * Create a new [[QuantileOutlierRejector]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, B, C] =
+  def fromSettings(setting: Settings): Transformer[Double, B, C] =
     QuantileOutlierRejector(setting.name)
 }
 
@@ -139,5 +139,5 @@ private abstract class BaseQuantileRejector(name: String, val numBuckets: Int, v
   override def params: Map[String, String] =
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

@@ -47,7 +47,7 @@ object MinMaxScaler extends SettingsBuilder {
    * Create a new [[MinMaxScaler]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, (Min[Double], Max[Double]), C] = {
+  def fromSettings(setting: Settings): Transformer[Double, (Min[Double], Max[Double]), C] = {
     val min = setting.params("min").toDouble
     val max = setting.params("max").toDouble
     MinMaxScaler(setting.name, min, max)
@@ -88,5 +88,5 @@ private[featran] class MinMaxScaler(name: String, val min: Double, val max: Doub
   override def params: Map[String, String] =
     Map("min" -> min.toString, "max" -> max.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

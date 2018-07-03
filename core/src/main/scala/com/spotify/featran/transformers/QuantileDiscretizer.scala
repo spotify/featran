@@ -54,7 +54,7 @@ object QuantileDiscretizer extends SettingsBuilder {
    * Create a new [[QuantileDiscretizer]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, B, C] = {
+  def fromSettings(setting: Settings): Transformer[Double, B, C] = {
     val numBuckets = setting.params("numBuckets").toInt
     val k = setting.params("k").toInt
     QuantileDiscretizer(setting.name, numBuckets, k)
@@ -119,5 +119,5 @@ private[featran] class QuantileDiscretizer(name: String, val numBuckets: Int, va
   override def params: Map[String, String] =
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

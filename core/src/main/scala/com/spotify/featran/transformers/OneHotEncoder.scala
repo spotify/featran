@@ -48,7 +48,7 @@ object OneHotEncoder extends SettingsBuilder {
    * Create a new [[OneHotEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] = {
+  def fromSettings(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] = {
     val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
     OneHotEncoder(setting.name, encodeMissingValue)
   }
@@ -77,7 +77,7 @@ private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
     }
   }
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 }
 
 private[featran] object MissingValue {

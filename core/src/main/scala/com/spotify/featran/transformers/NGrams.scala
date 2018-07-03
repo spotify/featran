@@ -56,7 +56,7 @@ object NGrams extends SettingsBuilder {
    * Create a new [[NGrams]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(
+  def fromSettings(
     setting: Settings): Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     NGrams(setting.name)
 }

@@ -54,7 +54,7 @@ object Bucketizer extends SettingsBuilder {
    * Create a new [[Bucketizer]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, Unit, Unit] = {
+  def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] = {
     val params = setting.params
     val str = params("splits")
     val splits = str.slice(1, str.length - 1).split(",").map(_.toDouble)
@@ -101,5 +101,5 @@ private[featran] class Bucketizer(name: String, val splits: Array[Double])
   override def params: Map[String, String] =
     Map("splits" -> splits.mkString("[", ",", "]"))
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

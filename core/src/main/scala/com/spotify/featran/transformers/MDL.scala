@@ -74,7 +74,7 @@ object MDL extends SettingsBuilder {
    * Create a new [[MDL]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[MDLRecord[String], B[String], C] = {
+  def fromSettings(setting: Settings): Transformer[MDLRecord[String], B[String], C] = {
     val sampleRate = setting.params("sampleRate").toDouble
     val stoppingCriterion = setting.params("stoppingCriterion").toDouble
     val minBinPercentage = setting.params("minBinPercentage").toDouble
@@ -168,5 +168,5 @@ private[featran] class MDL[T: ClassTag](name: String,
       "seed" -> seed.toString
     )
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

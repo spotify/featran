@@ -63,7 +63,7 @@ object TopNOneHotEncoder extends SettingsBuilder {
    * Create a new [[TopNOneHotEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(
+  def fromSettings(
     setting: Settings): Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] = {
     val n = setting.params("n").toInt
     val eps = setting.params("eps").toDouble
@@ -153,5 +153,5 @@ private[featran] class TopNOneHotEncoder(name: String,
         "seed" -> seed.toString,
         "encodeMissingValue" -> encodeMissingValue.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 }

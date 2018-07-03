@@ -64,10 +64,10 @@ package object tensorflow {
       }
     }
 
-    def getDouble(name: String): Example => Option[Double] =
+    def readDouble(name: String): Example => Option[Double] =
       (ex: Example) => toFeature(name, ex).flatMap(v => toDoubles(v).headOption)
 
-    def getMdlRecord(name: String): Example => Option[MDLRecord[String]] =
+    def readMdlRecord(name: String): Example => Option[MDLRecord[String]] =
       (ex: Example) => {
         for {
           labelFeature <- toFeature(name + "_label", ex)
@@ -77,7 +77,7 @@ package object tensorflow {
         } yield MDLRecord(label, value)
       }
 
-    def getWeightedLabel(name: String): Example => Option[List[WeightedLabel]] =
+    def readWeightedLabel(name: String): Example => Option[List[WeightedLabel]] =
       (ex: Example) => {
         val labels = for {
           keyFeature <- toFeature(name + "_key", ex).toList
@@ -88,16 +88,16 @@ package object tensorflow {
         if (labels.isEmpty) None else Some(labels)
       }
 
-    def getDoubles(name: String): Example => Option[Seq[Double]] =
+    def readDoubles(name: String): Example => Option[Seq[Double]] =
       (ex: Example) => toFeature(name, ex).map(v => toDoubles(v))
 
-    def getDoubleArray(name: String): Example => Option[Array[Double]] =
+    def readDoubleArray(name: String): Example => Option[Array[Double]] =
       (ex: Example) => toFeature(name, ex).map(v => toDoubles(v).toArray)
 
-    def getString(name: String): Example => Option[String] =
+    def readString(name: String): Example => Option[String] =
       (ex: Example) => toFeature(name, ex).flatMap(v => toStrings(v).headOption)
 
-    def getStrings(name: String): Example => Option[Seq[String]] =
+    def readStrings(name: String): Example => Option[Seq[String]] =
       (ex: Example) => toFeature(name, ex).map(v => toStrings(v))
   }
 

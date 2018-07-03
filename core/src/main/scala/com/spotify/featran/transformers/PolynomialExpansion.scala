@@ -45,7 +45,7 @@ object PolynomialExpansion extends SettingsBuilder {
    * Create a new [[PolynomialExpansion]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Array[Double], Int, Int] = {
+  def fromSettings(setting: Settings): Transformer[Array[Double], Int, Int] = {
     val degree = setting.params("degree").toInt
     val expectedLength = setting.params("expectedLength").toInt
     PolynomialExpansion(setting.name, degree, expectedLength)
@@ -119,7 +119,7 @@ private[featran] class PolynomialExpansion(name: String, val degree: Int, val ex
   override def params: Map[String, String] =
     Map("degree" -> degree.toString, "expectedLength" -> expectedLength.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDoubleArray(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubleArray(name)
 }
 
 // Ported from commons-math3

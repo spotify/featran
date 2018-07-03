@@ -46,7 +46,7 @@ object Normalizer extends SettingsBuilder {
    * Create a new [[OneHotEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Array[Double], Int, Int] = {
+  def fromSettings(setting: Settings): Transformer[Array[Double], Int, Int] = {
     val p = setting.params("p").toDouble
     val expectedLength = setting.params("expectedLength").toInt
     Normalizer(setting.name, p, expectedLength)
@@ -77,5 +77,5 @@ private[featran] class Normalizer(name: String, val p: Double, val expectedLengt
   override def params: Map[String, String] =
     Map("p" -> p.toString, "expectedLength" -> expectedLength.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDoubleArray(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubleArray(name)
 }
