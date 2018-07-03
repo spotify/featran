@@ -18,7 +18,7 @@
 package com.spotify.featran.transformers
 
 import breeze.stats.distributions.VonMises
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FlatReader}
 import com.twitter.algebird.Aggregator
 
 /**
@@ -30,7 +30,7 @@ import com.twitter.algebird.Aggregator
  *
  * and is only valid for x, mu in the interval [0, 2*pi/scale].
  */
-object VonMisesEvaluator {
+object VonMisesEvaluator extends SettingsBuilder {
 
   /**
    * Create a new [[VonMisesEvaluator]] instance.
@@ -44,6 +44,19 @@ object VonMisesEvaluator {
             points: Array[Double]): Transformer[Double, Unit, Unit] =
     new VonMisesEvaluator(name, kappa, scale, points)
 
+  /**
+   * Create a new [[VonMisesEvaluator]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] = {
+    val params = setting.params
+    val k = params("kappa").toDouble
+    val s = params("scale").toDouble
+    val str = params("point")
+    val points = str.slice(1, str.length - 1).split(",").map(_.toDouble)
+    VonMisesEvaluator(setting.name, k, s, points)
+  }
+
   def getProbability(x: Double, mu: Double, kappa: Double, scale: Double): Double = {
     val muScaled = mu * scale
     val vm = VonMises(muScaled, kappa)
@@ -51,10 +64,10 @@ object VonMisesEvaluator {
   }
 }
 
-private class VonMisesEvaluator(name: String,
-                                val kappa: Double,
-                                val scale: Double,
-                                val points: Array[Double])
+private[featran] class VonMisesEvaluator(name: String,
+                                         val kappa: Double,
+                                         val scale: Double,
+                                         val points: Array[Double])
     extends Transformer[Double, Unit, Unit](name) {
 
   private val pMax = points.max
@@ -81,4 +94,5 @@ private class VonMisesEvaluator(name: String,
         "scale" -> scale.toString,
         "points" -> points.mkString("[", ",", "]"))
 
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

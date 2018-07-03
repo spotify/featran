@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.util.{TreeMap => JTreeMap}
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird._
 
 import scala.collection.JavaConverters._
@@ -37,7 +37,7 @@ import scala.collection.JavaConverters._
  * `[min, max]` are binned into the first or last bucket and [[FeatureRejection.OutOfBound]]
  * rejections are reported.
  */
-object QuantileDiscretizer {
+object QuantileDiscretizer extends SettingsBuilder {
 
   /**
    * Create a new [[QuantileDiscretizer]] instance.
@@ -50,11 +50,21 @@ object QuantileDiscretizer {
             k: Int = QTreeAggregator.DefaultK): Transformer[Double, B, C] =
     new QuantileDiscretizer(name, numBuckets, k)
 
+  /**
+   * Create a new [[QuantileDiscretizer]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[Double, B, C] = {
+    val numBuckets = setting.params("numBuckets").toInt
+    val k = setting.params("k").toInt
+    QuantileDiscretizer(setting.name, numBuckets, k)
+  }
+
   private type B = (QTree[Double], Min[Double], Max[Double])
   private type C = (JTreeMap[Double, Int], Double, Double)
 }
 
-private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
+private[featran] class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
     extends Transformer[Double, QuantileDiscretizer.B, QuantileDiscretizer.C](name) {
   require(numBuckets >= 2, "numBuckets must be >= 2")
 
@@ -108,4 +118,6 @@ private class QuantileDiscretizer(name: String, val numBuckets: Int, val k: Int)
   }
   override def params: Map[String, String] =
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
+
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

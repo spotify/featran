@@ -37,7 +37,8 @@ import com.twitter.algebird.QTreeAggregator
  * When using aggregated feature summary from a previous session, values outside of previously
  * seen `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
  */
-object IQROutlierRejector {
+object IQROutlierRejector extends SettingsBuilder {
+  import BaseQuantileRejector._
   private val DefaultFactor = 1.5
 
   /**
@@ -55,6 +56,12 @@ object IQROutlierRejector {
     : Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
     new IQROutlierRejector(name, rejectLower, rejectUpper, k, factor)
 
+  /**
+   * Create a new [[IQROutlierRejector]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[Double, B, C] =
+    IQROutlierRejector(setting.name)
 }
 
 private class IQROutlierRejector(name: String,
@@ -73,5 +80,4 @@ private class IQROutlierRejector(name: String,
 
   override def params: Map[String, String] =
     super.params ++ Map("factor" -> factor.toString)
-
 }

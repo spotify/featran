@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird.{Aggregator, Max}
 
 /**
@@ -29,16 +29,24 @@ import com.twitter.algebird.{Aggregator, Max}
  * When using aggregated feature summary from a previous session, out of bound values are
  * truncated to -1.0 or 1.0 and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
-object MaxAbsScaler {
+object MaxAbsScaler extends SettingsBuilder {
 
   /**
    * Create a new [[MaxAbsScaler]] instance.
    */
   def apply(name: String): Transformer[Double, Max[Double], Double] =
     new MaxAbsScaler(name)
+
+  /**
+   * Create a new [[MaxAbsScaler]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[Double, Max[Double], Double] =
+    MaxAbsScaler(setting.name)
 }
 
-private class MaxAbsScaler(name: String) extends OneDimensional[Double, Max[Double], Double](name) {
+private[featran] class MaxAbsScaler(name: String)
+    extends OneDimensional[Double, Max[Double], Double](name) {
   override val aggregator: Aggregator[Double, Max[Double], Double] =
     Aggregators.from[Double](x => Max(math.abs(x))).to(_.get)
   override def buildFeatures(a: Option[Double], c: Double, fb: FeatureBuilder[_]): Unit = a match {
@@ -53,4 +61,5 @@ private class MaxAbsScaler(name: String) extends OneDimensional[Double, Max[Doub
   }
   override def encodeAggregator(c: Double): String = c.toString
   override def decodeAggregator(s: String): Double = s.toDouble
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

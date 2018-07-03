@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird._
 
 /**
@@ -34,7 +34,8 @@ import com.twitter.algebird._
  * When using aggregated feature summary from a previous session, values outside of previously
  * seen `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
  */
-object QuantileOutlierRejector {
+object QuantileOutlierRejector extends SettingsBuilder {
+  import BaseQuantileRejector._
 
   /**
    * Create a new [[QuantileOutlierRejector]] instance.
@@ -52,6 +53,13 @@ object QuantileOutlierRejector {
             k: Int = QTreeAggregator.DefaultK)
     : Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
     new QuantileOutlierRejector(name, rejectLower, rejectUpper, numBuckets, k)
+
+  /**
+   * Create a new [[QuantileOutlierRejector]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[Double, B, C] =
+    QuantileOutlierRejector(setting.name)
 }
 
 private class QuantileOutlierRejector(name: String,
@@ -131,4 +139,5 @@ private abstract class BaseQuantileRejector(name: String, val numBuckets: Int, v
   override def params: Map[String, String] =
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
 
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

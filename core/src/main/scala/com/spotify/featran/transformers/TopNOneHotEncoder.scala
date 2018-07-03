@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird.{Aggregator, SketchMap, SketchMapParams}
 
 import scala.collection.SortedMap
@@ -36,7 +36,7 @@ import scala.util.Random
  *
  * Missing values are either transformed to zero vectors or encoded as `__unknown__`.
  */
-object TopNOneHotEncoder {
+object TopNOneHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[TopNOneHotEncoder]] instance.
@@ -58,14 +58,29 @@ object TopNOneHotEncoder {
             encodeMissingValue: Boolean = false)
     : Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
     new TopNOneHotEncoder(name, n, eps, delta, seed, encodeMissingValue)
+
+  /**
+   * Create a new [[TopNOneHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(
+    setting: Settings): Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] = {
+    val n = setting.params("n").toInt
+    val eps = setting.params("eps").toDouble
+    val delta = setting.params("delta").toDouble
+    val seed = setting.params("seed").toInt
+    val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
+
+    TopNOneHotEncoder(setting.name, n, eps, delta, seed, encodeMissingValue)
+  }
 }
 
-private class TopNOneHotEncoder(name: String,
-                                val n: Int,
-                                val eps: Double,
-                                val delta: Double,
-                                val seed: Int,
-                                val encodeMissingValue: Boolean)
+private[featran] class TopNOneHotEncoder(name: String,
+                                         val n: Int,
+                                         val eps: Double,
+                                         val delta: Double,
+                                         val seed: Int,
+                                         val encodeMissingValue: Boolean)
     extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
 
   import MissingValue.MissingValueToken
@@ -138,4 +153,5 @@ private class TopNOneHotEncoder(name: String,
         "seed" -> seed.toString,
         "encodeMissingValue" -> encodeMissingValue.toString)
 
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 }

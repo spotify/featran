@@ -21,6 +21,9 @@ import org.tensorflow.example.{Example, Features}
 import org.tensorflow.{example => tf}
 import _root_.java.util.regex.Pattern
 
+import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
+import shapeless.datatype.tensorflow.TensorFlowType
+
 package object tensorflow {
   private val FeatureNameNormalization = Pattern.compile("[^A-Za-z0-9_]")
 
@@ -47,6 +50,55 @@ package object tensorflow {
       tf.Example.newBuilder().setFeatures(underlying).build()
 
     override def newBuilder: FeatureBuilder[Example] = TensorFlowFeatureBuilder()
+  }
+
+  implicit val exampleFlatReader: FlatReader[Example] = new FlatReader[tf.Example] {
+    import TensorFlowType._
+
+    def toFeature(name: String, ex: Example): Option[tf.Feature] = {
+      val fm = ex.getFeatures.getFeatureMap
+      if (fm.containsKey(name)) {
+        Some(fm.get(name))
+      } else {
+        None
+      }
+    }
+
+    def readDouble(name: String): Example => Option[Double] =
+      (ex: Example) => toFeature(name, ex).flatMap(v => toDoubles(v).headOption)
+
+    def readMdlRecord(name: String): Example => Option[MDLRecord[String]] =
+      (ex: Example) => {
+        for {
+          labelFeature <- toFeature(name + "_label", ex)
+          label <- toStrings(labelFeature).headOption
+          valueFeature <- toFeature(name + "_value", ex)
+          value <- toDoubles(valueFeature).headOption
+        } yield MDLRecord(label, value)
+      }
+
+    def readWeightedLabel(name: String): Example => Option[List[WeightedLabel]] =
+      (ex: Example) => {
+        val labels = for {
+          keyFeature <- toFeature(name + "_key", ex).toList
+          key <- toStrings(keyFeature)
+          valueFeature <- toFeature(name + "_value", ex).toList
+          value <- toDoubles(valueFeature)
+        } yield WeightedLabel(key, value)
+        if (labels.isEmpty) None else Some(labels)
+      }
+
+    def readDoubles(name: String): Example => Option[Seq[Double]] =
+      (ex: Example) => toFeature(name, ex).map(v => toDoubles(v))
+
+    def readDoubleArray(name: String): Example => Option[Array[Double]] =
+      (ex: Example) => toFeature(name, ex).map(v => toDoubles(v).toArray)
+
+    def readString(name: String): Example => Option[String] =
+      (ex: Example) => toFeature(name, ex).flatMap(v => toStrings(v).headOption)
+
+    def readStrings(name: String): Example => Option[Seq[String]] =
+      (ex: Example) => toFeature(name, ex).map(v => toStrings(v))
   }
 
   /**

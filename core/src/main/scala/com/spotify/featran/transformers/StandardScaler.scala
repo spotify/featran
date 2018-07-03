@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FlatReader}
 import com.twitter.algebird.{Aggregator, Moments}
 
 /**
@@ -27,7 +27,7 @@ import com.twitter.algebird.{Aggregator, Moments}
  *
  * Missing values are transformed to 0.0 if `withMean` is true or population mean otherwise.
  */
-object StandardScaler {
+object StandardScaler extends SettingsBuilder {
 
   /**
    * Create a new [[StandardScaler]] instance.
@@ -38,9 +38,19 @@ object StandardScaler {
             withStd: Boolean = true,
             withMean: Boolean = false): Transformer[Double, Moments, (Double, Double)] =
     new StandardScaler(name, withStd, withMean)
+
+  /**
+   * Create a new [[StandardScaler]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[Double, Moments, (Double, Double)] = {
+    val withStd = setting.params("withStd").toBoolean
+    val withMean = setting.params("withMean").toBoolean
+    StandardScaler(setting.name, withStd, withMean)
+  }
 }
 
-private class StandardScaler(name: String, val withStd: Boolean, val withMean: Boolean)
+private[featran] class StandardScaler(name: String, val withStd: Boolean, val withMean: Boolean)
     extends OneDimensional[Double, Moments, (Double, Double)](name) {
   override val aggregator: Aggregator[Double, Moments, (Double, Double)] =
     Aggregators.from[Double](Moments(_)).to(r => (r.mean, r.stddev))
@@ -64,4 +74,6 @@ private class StandardScaler(name: String, val withStd: Boolean, val withMean: B
   }
   override def params: Map[String, String] =
     Map("withStd" -> withStd.toString, "withMean" -> withMean.toString)
+
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }
