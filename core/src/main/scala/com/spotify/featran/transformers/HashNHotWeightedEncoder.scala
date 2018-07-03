@@ -104,5 +104,5 @@ private[featran] class HashNHotWeightedEncoder(name: String,
     }
   }
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getWeightedLabel(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getWeightedLabel(name)
 }

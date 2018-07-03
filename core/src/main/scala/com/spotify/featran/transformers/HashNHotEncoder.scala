@@ -52,7 +52,7 @@ import scala.collection.SortedSet
  *              4096      0.0071%
  * }}}
  */
-object HashNHotEncoder extends SettingsBuilder  {
+object HashNHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[HashNHotEncoder]] instance.
@@ -96,5 +96,5 @@ private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeSc
     }
   }
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getStrings(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getStrings(name)
 }

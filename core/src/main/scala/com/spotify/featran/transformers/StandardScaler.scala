@@ -27,7 +27,7 @@ import com.twitter.algebird.{Aggregator, Moments}
  *
  * Missing values are transformed to 0.0 if `withMean` is true or population mean otherwise.
  */
-object StandardScaler  extends SettingsBuilder {
+object StandardScaler extends SettingsBuilder {
 
   /**
    * Create a new [[StandardScaler]] instance.
@@ -75,5 +75,5 @@ private[featran] class StandardScaler(name: String, val withStd: Boolean, val wi
   override def params: Map[String, String] =
     Map("withStd" -> withStd.toString, "withMean" -> withMean.toString)
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }

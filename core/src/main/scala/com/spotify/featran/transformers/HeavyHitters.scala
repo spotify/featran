@@ -59,8 +59,8 @@ object HeavyHitters extends SettingsBuilder {
    * Create a new [[HeavyHitters]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings)
-    : Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] = {
+  def fromSetting(
+    setting: Settings): Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] = {
     val seed = setting.params("seed").toInt
     val eps = setting.params("eps").toDouble
     val delta = setting.params("delta").toDouble
@@ -128,6 +128,6 @@ private[featran] class HeavyHitters(name: String,
         "delta" -> delta.toString,
         "heavyHittersCount" -> heavyHittersCount.toString)
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
 
 }

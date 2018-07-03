@@ -94,5 +94,5 @@ private[featran] class VonMisesEvaluator(name: String,
         "scale" -> scale.toString,
         "points" -> points.mkString("[", ",", "]"))
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }

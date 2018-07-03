@@ -77,7 +77,7 @@ private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
     }
   }
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
 }
 
 private[featran] object MissingValue {

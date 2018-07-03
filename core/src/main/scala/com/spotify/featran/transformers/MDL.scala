@@ -168,5 +168,5 @@ private[featran] class MDL[T: ClassTag](name: String,
       "seed" -> seed.toString
     )
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }

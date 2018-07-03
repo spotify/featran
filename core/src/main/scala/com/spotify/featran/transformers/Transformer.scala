@@ -112,7 +112,7 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   def unsafeFeatureDimension(c: Option[Any]): Int =
     optFeatureDimension(c.asInstanceOf[Option[C]])
 
-  def flatRead[T : FlatReader]: T => Option[Any]
+  def flatRead[T: FlatReader]: T => Option[Any]
 
   //================================================================================
   // Transformer parameter and aggregator persistence

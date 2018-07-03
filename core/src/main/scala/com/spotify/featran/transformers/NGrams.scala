@@ -56,10 +56,9 @@ object NGrams extends SettingsBuilder {
    * Create a new [[NGrams]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings)
-    : Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
+  def fromSetting(
+    setting: Settings): Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     NGrams(setting.name)
-  }
 }
 
 private[featran] class NGrams(name: String, val low: Int, val high: Int, val sep: String)

@@ -73,5 +73,5 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
   override def params: Map[String, String] =
     Map("expectedLength" -> expectedLength.toString)
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDoubles(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDoubles(name)
 }

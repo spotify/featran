@@ -37,7 +37,7 @@ import scala.reflect.ClassTag
 object ExampleTransformer {
   import TensorFlowType._
 
-  implicit val exampleFlatReader: FlatReader[Example] = new FlatReader[Example]{
+  implicit val exampleFlatReader: FlatReader[Example] = new FlatReader[Example] {
     def toFeature(name: String, ex: Example): Option[Feature] = {
       val fm = ex.getFeatures.getFeatureMap
       if (fm.containsKey(name)) {

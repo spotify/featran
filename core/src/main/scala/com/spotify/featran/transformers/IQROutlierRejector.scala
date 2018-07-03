@@ -60,9 +60,8 @@ object IQROutlierRejector extends SettingsBuilder {
    * Create a new [[IQROutlierRejector]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings): Transformer[Double, B, C] = {
+  def fromSetting(setting: Settings): Transformer[Double, B, C] =
     IQROutlierRejector(setting.name)
-  }
 }
 
 private class IQROutlierRejector(name: String,

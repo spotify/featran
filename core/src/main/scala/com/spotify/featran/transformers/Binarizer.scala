@@ -49,5 +49,5 @@ private[featran] class Binarizer(name: String, val threshold: Double) extends Ma
   override def params: Map[String, String] =
     Map("threshold" -> threshold.toString)
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }

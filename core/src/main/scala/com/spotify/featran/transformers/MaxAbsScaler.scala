@@ -61,5 +61,5 @@ private[featran] class MaxAbsScaler(name: String)
   }
   override def encodeAggregator(c: Double): String = c.toString
   override def decodeAggregator(s: String): Double = s.toDouble
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }

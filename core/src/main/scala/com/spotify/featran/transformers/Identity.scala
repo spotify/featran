@@ -39,5 +39,5 @@ object Identity extends SettingsBuilder {
 
 private[featran] class Identity(name: String) extends MapOne[Double](name) {
   override def map(a: Double): Double = a
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDouble(name)
 }

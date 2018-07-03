@@ -77,5 +77,5 @@ private[featran] class Normalizer(name: String, val p: Double, val expectedLengt
   override def params: Map[String, String] =
     Map("p" -> p.toString, "expectedLength" -> expectedLength.toString)
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDoubleArray(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDoubleArray(name)
 }

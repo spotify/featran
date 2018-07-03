@@ -53,8 +53,8 @@ object NHotWeightedEncoder extends SettingsBuilder {
    * Create a new [[NHotWeightedEncoder]] from a settings object
    * @param setting Settings object
    */
-  def fromSetting(setting: Settings)
-    : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] = {
+  def fromSetting(
+    setting: Settings): Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] = {
     val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
     NHotWeightedEncoder(setting.name, encodeMissingValue)
   }
@@ -114,5 +114,5 @@ private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boo
     case None => addMissingItem(c, fb)
   }
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getWeightedLabel(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getWeightedLabel(name)
 }

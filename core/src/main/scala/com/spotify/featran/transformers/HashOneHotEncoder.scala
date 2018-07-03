@@ -94,7 +94,7 @@ private[featran] class HashOneHotEncoder(name: String,
     }
   }
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getString(name)
 }
 
 private[featran] abstract class BaseHashHotEncoder[A](name: String,

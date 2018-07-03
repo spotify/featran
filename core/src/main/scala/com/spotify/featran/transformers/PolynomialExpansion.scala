@@ -119,7 +119,7 @@ private[featran] class PolynomialExpansion(name: String, val degree: Int, val ex
   override def params: Map[String, String] =
     Map("degree" -> degree.toString, "expectedLength" -> expectedLength.toString)
 
-  def flatRead[T : FlatReader]: T => Option[Any] = FlatReader[T].getDoubleArray(name)
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].getDoubleArray(name)
 }
 
 // Ported from commons-math3
