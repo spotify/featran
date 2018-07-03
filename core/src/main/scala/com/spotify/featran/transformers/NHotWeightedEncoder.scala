@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 
 import scala.collection.SortedMap
 import scala.collection.mutable.{Map => MMap, Set => MSet}
@@ -40,7 +40,7 @@ case class WeightedLabel(name: String, value: Double)
  * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
-object NHotWeightedEncoder {
+object NHotWeightedEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[NHotWeightedEncoder]] instance.
@@ -48,9 +48,19 @@ object NHotWeightedEncoder {
   def apply(name: String, encodeMissingValue: Boolean = false)
     : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
     new NHotWeightedEncoder(name, encodeMissingValue)
+
+  /**
+   * Create a new [[NHotWeightedEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(
+    setting: Settings): Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] = {
+    val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
+    NHotWeightedEncoder(setting.name, encodeMissingValue)
+  }
 }
 
-private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
+private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[WeightedLabel]](name, encodeMissingValue) {
 
   import MissingValue.MissingValueToken
@@ -104,4 +114,5 @@ private class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
     case None => addMissingItem(c, fb)
   }
 
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readWeightedLabel(name)
 }

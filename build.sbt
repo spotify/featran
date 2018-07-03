@@ -32,6 +32,7 @@ val simulacrumVersion = "0.12.0"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
 val xgBoostVersion = "0.72-20180627-1214081f"
+val shapelessDatatypeVersion = "0.1.9"
 
 val CompileTime = config("compile-time").hide
 
@@ -43,6 +44,7 @@ val commonSettings = Seq(
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
+  testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
     "com.github.mpilquist" %% "simulacrum" % simulacrumVersion % CompileTime,
     compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
@@ -289,6 +291,7 @@ lazy val tensorflow: Project = project
     crossScalaVersions := Seq("2.11.12", "2.12.6"),
     libraryDependencies ++= Seq(
       "org.tensorflow" % "proto" % tensorflowVersion,
+      "me.lyh" %% "shapeless-datatype-tensorflow" % shapelessDatatypeVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )

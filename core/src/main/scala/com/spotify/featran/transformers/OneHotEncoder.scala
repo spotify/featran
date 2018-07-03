@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird.Aggregator
 
 import scala.collection.SortedMap
@@ -34,7 +34,7 @@ import scala.collection.SortedMap
  * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
-object OneHotEncoder {
+object OneHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[OneHotEncoder]] instance.
@@ -43,9 +43,18 @@ object OneHotEncoder {
     name: String,
     encodeMissingValue: Boolean = false): Transformer[String, Set[String], SortedMap[String, Int]] =
     new OneHotEncoder(name, encodeMissingValue)
+
+  /**
+   * Create a new [[OneHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] = {
+    val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
+    OneHotEncoder(setting.name, encodeMissingValue)
+  }
 }
 
-private class OneHotEncoder(name: String, encodeMissingValue: Boolean)
+private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[String](name, encodeMissingValue) {
   override def prepare(a: String): Set[String] = Set(a)
 
@@ -67,13 +76,15 @@ private class OneHotEncoder(name: String, encodeMissingValue: Boolean)
       case None => addMissingItem(c, fb)
     }
   }
+
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 }
 
 private[featran] object MissingValue {
   val MissingValueToken = "__missing__"
 }
 
-private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
+private[featran] abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
     extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
 
   import MissingValue.MissingValueToken
@@ -123,5 +134,4 @@ private abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boole
 
   override def params: Map[String, String] =
     Map("encodeMissingValue" -> encodeMissingValue.toString)
-
 }

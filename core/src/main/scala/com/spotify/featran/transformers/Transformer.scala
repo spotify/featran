@@ -17,8 +17,12 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, JsonSerializable}
+import com.spotify.featran.{FeatureBuilder, FlatReader, JsonSerializable}
 import com.twitter.algebird.{Aggregator, Semigroup}
+
+trait SettingsBuilder {
+  def fromSettings(settings: Settings): Transformer[_, _, _]
+}
 
 // TODO: port more transformers from Spark
 // https://spark.apache.org/docs/2.1.0/ml-features.html
@@ -85,6 +89,14 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
     case None    => fb.skip()
   }
 
+  def unsafeBuildFeatures(a: Option[Any], c: Option[Any], fb: FeatureBuilder[_]): Unit =
+    optBuildFeatures(a.asInstanceOf[Option[A]], c.asInstanceOf[Option[C]], fb)
+
+  def unsafeFeatureDimension(c: Option[Any]): Int =
+    optFeatureDimension(c.asInstanceOf[Option[C]])
+
+  def flatRead[T: FlatReader]: T => Option[Any]
+
   //================================================================================
   // Transformer parameter and aggregator persistence
   //================================================================================
@@ -138,12 +150,14 @@ object Settings {
     }
 }
 
-private abstract class OneDimensional[A, B, C](name: String) extends Transformer[A, B, C](name) {
+private[featran] abstract class OneDimensional[A, B, C](name: String)
+    extends Transformer[A, B, C](name) {
   override def featureDimension(c: C): Int = 1
   override def featureNames(c: C): Seq[String] = Seq(name)
 }
 
-private abstract class MapOne[A](name: String) extends OneDimensional[A, Unit, Unit](name) {
+private[featran] abstract class MapOne[A](name: String)
+    extends OneDimensional[A, Unit, Unit](name) {
   override val aggregator: Aggregator[A, Unit, Unit] = Aggregators.unit[A]
   override def buildFeatures(a: Option[A], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) => fb.add(name, map(x))

@@ -63,8 +63,11 @@ object CollectionType {
 
       override def cross[A, B: ClassTag](ma: M[A])(mb: M[B]): M[(A, B)] = {
         val builder = cbf().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
-        val b = mb.asInstanceOf[Seq[B]].head
-        ma.asInstanceOf[Seq[A]].foreach(a => builder += ((a, b)))
+        val seq = mb.asInstanceOf[Seq[B]]
+        if (seq.nonEmpty) {
+          val b = mb.asInstanceOf[Seq[B]].head
+          ma.asInstanceOf[Seq[A]].foreach(a => builder += ((a, b)))
+        }
         builder.result()
       }
     }

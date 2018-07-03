@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 
 import scala.collection.SortedMap
 
@@ -31,16 +31,23 @@ import scala.collection.SortedMap
  * When using aggregated feature summary from a previous session, unseen labels are ignored and
  * [[FeatureRejection.Unseen]] rejections are reported.
  */
-object PositionEncoder {
+object PositionEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[PositionEncoder]] instance.
    */
   def apply(name: String): Transformer[String, Set[String], SortedMap[String, Int]] =
     new PositionEncoder(name)
+
+  /**
+   * Create a new [[PositionEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] =
+    PositionEncoder(setting.name)
 }
 
-private class PositionEncoder(name: String) extends BaseHotEncoder[String](name, false) {
+private[featran] class PositionEncoder(name: String) extends BaseHotEncoder[String](name, false) {
   override def prepare(a: String): Set[String] = Set(a)
   override def featureDimension(c: SortedMap[String, Int]): Int = 1
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = Seq(name)
@@ -60,4 +67,6 @@ private class PositionEncoder(name: String) extends BaseHotEncoder[String](name,
         fb.reject(this, FeatureRejection.Collision)
     }
   }
+
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 }

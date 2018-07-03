@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FlatReader}
 import com.twitter.algebird._
 
 import scala.math.ceil
@@ -53,7 +53,7 @@ import scala.util.hashing.MurmurHash3
  *              4096      0.0071%
  * }}}
  */
-object HashOneHotEncoder {
+object HashOneHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[HashOneHotEncoder]] instance.
@@ -64,9 +64,21 @@ object HashOneHotEncoder {
             hashBucketSize: Int = 0,
             sizeScalingFactor: Double = 8.0): Transformer[String, HLL, Int] =
     new HashOneHotEncoder(name, hashBucketSize, sizeScalingFactor)
+
+  /**
+   * Create a new [[HashOneHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[String, HLL, Int] = {
+    val hashBucketSize = setting.params("hashBucketSize").toInt
+    val sizeScalingFactor = setting.params("sizeScalingFactor").toDouble
+    HashOneHotEncoder(setting.name, hashBucketSize, sizeScalingFactor)
+  }
 }
 
-private class HashOneHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
+private[featran] class HashOneHotEncoder(name: String,
+                                         hashBucketSize: Int,
+                                         sizeScalingFactor: Double)
     extends BaseHashHotEncoder[String](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: String): HLL = hllMonoid.toHLL(a)
 
@@ -81,11 +93,13 @@ private class HashOneHotEncoder(name: String, hashBucketSize: Int, sizeScalingFa
         fb.skip(c)
     }
   }
+
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 }
 
-private abstract class BaseHashHotEncoder[A](name: String,
-                                             val hashBucketSize: Int,
-                                             val sizeScalingFactor: Double)
+private[featran] abstract class BaseHashHotEncoder[A](name: String,
+                                                      val hashBucketSize: Int,
+                                                      val sizeScalingFactor: Double)
     extends Transformer[A, HLL, Int](name) {
   require(hashBucketSize >= 0, "hashBucketSize must be >= 0")
   require(sizeScalingFactor >= 1.0, "hashBucketSize must be >= 1.0")

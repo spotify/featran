@@ -18,7 +18,7 @@
 package com.spotify.featran.transformers
 
 import breeze.linalg._
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird.Aggregator
 
 /**
@@ -30,7 +30,7 @@ import com.twitter.algebird.Aggregator
  * When using aggregated feature summary from a previous session, vectors of different dimensions
  * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
-object Normalizer {
+object Normalizer extends SettingsBuilder {
 
   /**
    * Create a new [[Normalizer]] instance.
@@ -41,9 +41,19 @@ object Normalizer {
             p: Double = 2.0,
             expectedLength: Int = 0): Transformer[Array[Double], Int, Int] =
     new Normalizer(name, p, expectedLength)
+
+  /**
+   * Create a new [[OneHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[Array[Double], Int, Int] = {
+    val p = setting.params("p").toDouble
+    val expectedLength = setting.params("expectedLength").toInt
+    Normalizer(setting.name, p, expectedLength)
+  }
 }
 
-private class Normalizer(name: String, val p: Double, val expectedLength: Int)
+private[featran] class Normalizer(name: String, val p: Double, val expectedLength: Int)
     extends Transformer[Array[Double], Int, Int](name) {
   require(p >= 1.0, "p must be >= 1.0")
   override val aggregator: Aggregator[Array[Double], Int, Int] =
@@ -67,4 +77,5 @@ private class Normalizer(name: String, val p: Double, val expectedLength: Int)
   override def params: Map[String, String] =
     Map("p" -> p.toString, "expectedLength" -> expectedLength.toString)
 
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubleArray(name)
 }

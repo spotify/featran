@@ -17,8 +17,10 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 import com.twitter.algebird.{Aggregator, Max, Min}
+
+import scala.collection.SortedMap
 
 /**
  * Transform features by rescaling each feature to a specific range [`min`, `max`] (default
@@ -29,7 +31,7 @@ import com.twitter.algebird.{Aggregator, Max, Min}
  * When using aggregated feature summary from a previous session, out of bound values are
  * truncated to `min` or `max` and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
-object MinMaxScaler {
+object MinMaxScaler extends SettingsBuilder {
 
   /**
    * Create a new [[MinMaxScaler]] instance.
@@ -41,10 +43,20 @@ object MinMaxScaler {
             max: Double = 1.0): Transformer[Double, (Min[Double], Max[Double]), C] =
     new MinMaxScaler(name, min, max)
 
+  /**
+   * Create a new [[MinMaxScaler]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(setting: Settings): Transformer[Double, (Min[Double], Max[Double]), C] = {
+    val min = setting.params("min").toDouble
+    val max = setting.params("max").toDouble
+    MinMaxScaler(setting.name, min, max)
+  }
+
   private type C = (Double, Double, Double)
 }
 
-private class MinMaxScaler(name: String, val min: Double, val max: Double)
+private[featran] class MinMaxScaler(name: String, val min: Double, val max: Double)
     extends OneDimensional[Double, (Min[Double], Max[Double]), MinMaxScaler.C](name) {
   require(max > min, s"max must be > min")
 
@@ -75,4 +87,6 @@ private class MinMaxScaler(name: String, val min: Double, val max: Double)
   }
   override def params: Map[String, String] =
     Map("min" -> min.toString, "max" -> max.toString)
+
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 }

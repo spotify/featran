@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FeatureRejection}
+import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader}
 
 import scala.collection.SortedMap
 import scala.collection.mutable.{Set => MSet}
@@ -31,7 +31,7 @@ import scala.collection.mutable.{Set => MSet}
  * transformed to zero vectors or encoded as `__unknown__` (if `encodeMissingValue` is true) and
  * [FeatureRejection.Unseen]] rejections are reported.
  */
-object NHotEncoder {
+object NHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[NHotEncoder]] instance.
@@ -39,9 +39,19 @@ object NHotEncoder {
   def apply(name: String, encodeMissingValue: Boolean = false)
     : Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     new NHotEncoder(name, encodeMissingValue)
+
+  /**
+   * Create a new [[NHotEncoder]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(
+    setting: Settings): Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
+    val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
+    NHotEncoder(setting.name, encodeMissingValue)
+  }
 }
 
-private class NHotEncoder(name: String, encodeMissingValue: Boolean)
+private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
 
   import MissingValue.MissingValueToken
@@ -85,4 +95,5 @@ private class NHotEncoder(name: String, encodeMissingValue: Boolean)
     case None => addMissingItem(c, fb)
   }
 
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readStrings(name)
 }

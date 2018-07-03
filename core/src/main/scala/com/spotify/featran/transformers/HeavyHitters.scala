@@ -19,7 +19,7 @@ package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
 
-import com.spotify.featran.FeatureBuilder
+import com.spotify.featran.{FeatureBuilder, FlatReader}
 import com.twitter.algebird._
 
 import scala.util.Random
@@ -36,7 +36,7 @@ import scala.util.Random
  *
  * Missing values are transformed to [0.0, 0.0].
  */
-object HeavyHitters {
+object HeavyHitters extends SettingsBuilder {
 
   /**
    * Create a new [[HeavyHitters]] instance.
@@ -54,13 +54,26 @@ object HeavyHitters {
             seed: Int = Random.nextInt)
     : Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
     new HeavyHitters(name, heavyHittersCount, eps, delta, seed)
+
+  /**
+   * Create a new [[HeavyHitters]] from a settings object
+   * @param setting Settings object
+   */
+  def fromSettings(
+    setting: Settings): Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] = {
+    val seed = setting.params("seed").toInt
+    val eps = setting.params("eps").toDouble
+    val delta = setting.params("delta").toDouble
+    val heavyHittersCount = setting.params("heavyHittersCount").toInt
+    HeavyHitters(setting.name, heavyHittersCount, eps, delta, seed)
+  }
 }
 
-private class HeavyHitters(name: String,
-                           val heavyHittersCount: Int,
-                           val eps: Double,
-                           val delta: Double,
-                           val seed: Int)
+private[featran] class HeavyHitters(name: String,
+                                    val heavyHittersCount: Int,
+                                    val eps: Double,
+                                    val delta: Double,
+                                    val seed: Int)
     extends Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]](name) {
 
   @transient private lazy val sketchMapParams =
@@ -114,5 +127,7 @@ private class HeavyHitters(name: String,
         "eps" -> eps.toString,
         "delta" -> delta.toString,
         "heavyHittersCount" -> heavyHittersCount.toString)
+
+  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 
 }
