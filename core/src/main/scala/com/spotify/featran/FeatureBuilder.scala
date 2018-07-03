@@ -52,6 +52,7 @@ object FeatureRejection {
    */
   def reject(transformer: Transformer[_, _, _], reason: FeatureRejection): Unit = {
     val name = transformer.name
+    require(!_rejections.contains(name), s"Transformer $name already rejected")
     _rejections(name) = reason
   }
 

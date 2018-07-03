@@ -131,8 +131,7 @@ class ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
       OneHotEncoder("d"),
       HashOneHotEncoder("d"),
       PositionEncoder("d"),
-      HeavyHitters("d", 2),
-      TopNOneHotEncoder("d", 2)
+      HeavyHitters("d", 2)
     )
 
     val props = transformers.map(t => str(xs, t))
