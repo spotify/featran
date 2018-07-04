@@ -49,6 +49,7 @@ import scala.reflect.ClassTag
  * other systems.
  */
 object FlatExtractor {
+
   /**
    * This function allows the reading of data from these flat versions by name with a given
    * settings file to extract the final output.
@@ -71,7 +72,7 @@ object FlatExtractor {
    * @return FeatureSpec for the intermediate format
    */
   def flatSpec[T: ClassTag: FlatReader, X: ClassTag](spec: FeatureSpec[X]): FeatureSpec[T] = {
-    val features = spec.features.map{feature =>
+    val features = spec.features.map { feature =>
       val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
       new Feature(feature.transformer.flatRead, feature.default, t)
         .asInstanceOf[Feature[T, _, _, _]]
@@ -88,9 +89,9 @@ object FlatExtractor {
    * @tparam X The Input Scala Object
    * @return FeatureSpec for the intermediate format
    */
-  def multiFlatSpec[T: ClassTag: FlatReader, X: ClassTag](spec: MultiFeatureSpec[X])
-    : MultiFeatureSpec[T] = {
-    val features = spec.features.map{feature =>
+  def multiFlatSpec[T: ClassTag: FlatReader, X: ClassTag](
+    spec: MultiFeatureSpec[X]): MultiFeatureSpec[T] = {
+    val features = spec.features.map { feature =>
       val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
       new Feature(feature.transformer.flatRead, feature.default, t)
         .asInstanceOf[Feature[T, _, _, _]]
