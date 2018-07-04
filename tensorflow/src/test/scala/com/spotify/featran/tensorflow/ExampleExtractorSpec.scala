@@ -23,6 +23,8 @@ import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
 import org.tensorflow.example.{Example, Features}
 import shapeless.datatype.tensorflow._
 
+import scala.reflect.ClassTag
+
 case class TFRecord(d: Float, optD: Option[Float])
 
 case class TFStr(d: String)
@@ -55,24 +57,33 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     toExample(features.build())
   }
 
-  private def convertTest[T, A](
+  private def convertTest[T: ClassTag, A](
     fn: T => A,
     ex: T => Example
   )(recs: List[T], t: Transformer[A, _, _]) = {
-    val f = FeatureSpec
+    val spec = FeatureSpec
       .of[T]
       .required(r => fn(r))(t)
-      .extract(recs)
 
-    val asExamples = recs.map { r =>
-      ex(r)
-    }
-    val exTransformer = FlatExtractor(f.featureSettings)
+    val f = spec.extract(recs)
+    val asExamples = recs.map(r => ex(r))
 
+    val flatSpec = FlatExtractor.flatSpec[Example, T](spec)
+    val flatEx = flatSpec.extract(asExamples)
+
+    val normalSettings = f.featureSettings
+    val flatSettings = flatEx.featureSettings
+
+    val exTransformer = FlatExtractor[List, Example](normalSettings)
     val featranValues = f.featureValues[Seq[Double]]
-    val exValues = exTransformer.extract[Seq[Double]](asExamples)
+    val flatValues = flatEx.featureValues[Seq[Double]]
+    val exValues = exTransformer.featureValues[Seq[Double]](asExamples)
 
-    Prop.all(featranValues == exValues)
+    val propSetting = Prop.all(featranValues == exValues)
+    val propFlatSpec = Prop.all(flatValues == exValues)
+    val propSettingFile = Prop.all(normalSettings == flatSettings)
+
+    Prop.all(propSetting, propFlatSpec, propSettingFile)
   }
 
   def exDouble(r: TFRecord): Example = {
@@ -110,15 +121,25 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     convertTest(fn, exDouble) _
   }
 
+  private def vectorSeq = {
+    val fn = (r: TFRecord) => List(r.d.toDouble)
+    convertTest(fn, exDouble) _
+  }
+
   property("vector") = Prop.forAll { xs: List[TFRecord] =>
+    val transformersSeq: List[Transformer[Seq[Double], _, _]] = List(
+      VectorIdentity[Seq]("d")
+    )
+
     val transformers: List[Transformer[Array[Double], _, _]] = List(
-      VectorIdentity[Array]("d"),
       Normalizer("d"),
       PolynomialExpansion("d")
     )
 
+    val seqProps = transformersSeq.map(t => vectorSeq(xs, t))
     val props = transformers.map(t => vector(xs, t))
-    Prop.all(props: _*)
+
+    Prop.all((props ++ seqProps): _*)
   }
 
   private def str = {
