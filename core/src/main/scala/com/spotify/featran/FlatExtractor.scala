@@ -17,7 +17,7 @@
 
 package com.spotify.featran
 
-import com.spotify.featran.transformers.{MDLRecord, Settings, SettingsBuilder, WeightedLabel}
+import com.spotify.featran.transformers._
 import simulacrum.typeclass
 
 import scala.reflect.ClassTag
@@ -47,13 +47,56 @@ import scala.reflect.ClassTag
  * Sometimes it is useful to store the features in an intermediate state in normally
  * a flat version like Examples or maybe JSON.  This makes it easier to interface with
  * other systems.
- *
- * This function allows the reading of data from these flat versions by name with a given
- * settings file to extract the final output.
  */
 object FlatExtractor {
+  /**
+   * This function allows the reading of data from these flat versions by name with a given
+   * settings file to extract the final output.
+   *
+   * @param setCol Setting information
+   * @tparam M Collection Type
+   * @tparam T The intermediate format where the data is stored
+   * @return Class for converting to Features
+   */
   def apply[M[_]: CollectionType, T: ClassTag: FlatReader](setCol: M[String]): FlatExtractor[M, T] =
     new FlatExtractor[M, T](setCol)
+
+  /**
+   * Another useful operation is to use the Spec and Information we have to map from
+   * the Scala Object to read the data directly from the intermediate format for parsing
+   *
+   * @param spec Current FeatureSpec
+   * @tparam T The intermediate format where the data is stored
+   * @tparam X The Input Scala Object
+   * @return FeatureSpec for the intermediate format
+   */
+  def flatSpec[T: ClassTag: FlatReader, X: ClassTag](spec: FeatureSpec[X]): FeatureSpec[T] = {
+    val features = spec.features.map{feature =>
+      val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
+      new Feature(feature.transformer.flatRead, feature.default, t)
+        .asInstanceOf[Feature[T, _, _, _]]
+    }
+    new FeatureSpec[T](features, spec.crossings)
+  }
+
+  /**
+   * Another useful operation is to use the Spec and Information we have to map from
+   * the Scala Object to read the data directly from the intermediate format for parsing
+   *
+   * @param spec Current FeatureSpec
+   * @tparam T The intermediate format where the data is stored
+   * @tparam X The Input Scala Object
+   * @return FeatureSpec for the intermediate format
+   */
+  def multiFlatSpec[T: ClassTag: FlatReader, X: ClassTag](spec: MultiFeatureSpec[X])
+    : MultiFeatureSpec[T] = {
+    val features = spec.features.map{feature =>
+      val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
+      new Feature(feature.transformer.flatRead, feature.default, t)
+        .asInstanceOf[Feature[T, _, _, _]]
+    }
+    new MultiFeatureSpec[T](spec.mapping, features, spec.crossings)
+  }
 }
 
 private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](
@@ -87,7 +130,7 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
     }.sum
   }
 
-  def extract[F: FeatureBuilder: ClassTag](records: M[T]): M[F] = {
+  def featureValues[F: FeatureBuilder: ClassTag](records: M[T]): M[F] = {
     val fb = FeatureBuilder[F].newBuilder
     records.cross(converters).cross(dimSize).map {
       case ((record, convs), size) =>

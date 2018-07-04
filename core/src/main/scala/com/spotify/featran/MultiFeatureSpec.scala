@@ -42,7 +42,7 @@ object MultiFeatureSpec {
  */
 class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
                           private[featran] val features: Array[Feature[T, _, _, _]],
-                          private val crossings: Crossings) {
+                          private[featran] val crossings: Crossings) {
 
   private def multiFeatureSet: MultiFeatureSet[T] =
     new MultiFeatureSet[T](features, crossings, mapping)
