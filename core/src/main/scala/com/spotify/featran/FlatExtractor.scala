@@ -54,13 +54,13 @@ object FlatExtractor {
    * This function allows the reading of data from these flat versions by name with a given
    * settings file to extract the final output.
    *
-   * @param setCol Setting information
+   * @param settings Setting information
    * @tparam M Collection Type
    * @tparam T The intermediate format where the data is stored
    * @return Class for converting to Features
    */
-  def apply[M[_]: CollectionType, T: ClassTag: FlatReader](setCol: M[String]): FlatExtractor[M, T] =
-    new FlatExtractor[M, T](setCol)
+  def apply[M[_]: CollectionType, T: ClassTag: FlatReader](
+    settings: M[String]): FlatExtractor[M, T] = new FlatExtractor[M, T](settings)
 
   /**
    * Another useful operation is to use the Spec and Information we have to map from
