@@ -16,6 +16,7 @@
  */
 
 import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
+import sbt.Def
 
 val algebirdVersion = "0.13.4"
 val breezeVersion = "1.0-RC2"
@@ -378,47 +379,49 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
       "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
     ),
     autoCompilerPlugins := true,
-    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9"),
+    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9")
   )
 } else {
   Nil
 }
 
 // based on the nice https://github.com/typelevel/cats/blob/master/build.sbt#L208
-def mimaSettings(moduleName: String) = {
+def mimaSettings(moduleName: String): Seq[Def.Setting[Set[sbt.ModuleID]]] = {
   import sbtrelease.Version
-
-  lazy val startVersion = Version("0.1.27")
-
   // Safety Net for Exclusions
   lazy val excludedVersions: Set[String] = Set()
-
   // Safety Net for Inclusions
   lazy val extraVersions: Set[String] = Set()
 
-  def semverBinCompatVersions(major: Int, minor: Int, patch: Int): Set[(Int, Int, Int)] =
-    startVersion match {
-      case Some(Version(startMajor, Seq(startMinor, startPatch), _)) =>
-        val majorVersions: List[Int] = List(major)
-        val minorVersions: List[Int] =
-          if (major >= 1) Range(startMinor, minor).inclusive.toList
-          else List(minor)
-        def patchVersions(currentMinVersion: Int): List[Int] =
-          if (minor == 0 && patch == 0) List.empty[Int]
-          else if (currentMinVersion != minor) List(0)
-          else Range(startPatch, patch - 1).inclusive.toList
+  def semverBinCompatVersions(major: Int, minor: Int, patch: Int): Set[(Int, Int, Int)] = {
+    val majorVersions: List[Int] = List(major)
+    val minorVersions: List[Int] =
+      if (major >= 1) {
+        Range(0, minor).inclusive.toList
+      } else {
+        List(minor)
+      }
 
-        val versions = for {
-          maj <- majorVersions
-          min <- minorVersions
-          pat <- patchVersions(min)
-        } yield (maj, min, pat)
-        versions.toSet
-      case _ =>
-        Set.empty[(Int, Int, Int)]
-    }
+    def patchVersions(currentMinVersion: Int): List[Int] =
+      if (minor == 0 && patch == 0) {
+        List.empty[Int]
+      } else {
+        if (currentMinVersion != minor) {
+          List(0)
+        } else {
+          Range(0, patch - 1).inclusive.toList
+        }
+      }
 
-  def mimaVersions(version: String): Set[String] = {
+    val versions = for {
+      maj <- majorVersions
+      min <- minorVersions
+      pat <- patchVersions(min)
+    } yield (maj, min, pat)
+    versions.toSet
+  }
+
+  def mimaVersions(version: String): Set[String] =
     Version(version) match {
       case Some(Version(major, Seq(minor, patch), _)) =>
         semverBinCompatVersions(major.toInt, minor.toInt, patch.toInt)
@@ -426,11 +429,9 @@ def mimaSettings(moduleName: String) = {
       case _ =>
         Set.empty[String]
     }
-  }
 
   Seq(
     mimaPreviousArtifacts := (mimaVersions(version.value) ++ extraVersions)
       .diff(excludedVersions)
-      .map(v => "com.spotify" %% moduleName % v)
-  )
+      .map(v => "com.spotify" %% moduleName % v))
 }

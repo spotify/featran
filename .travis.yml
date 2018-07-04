@@ -4,10 +4,13 @@ jdk: oraclejdk8
 
 matrix:
   fast_finish: true
+  allow_failures:
+  - env: SBT_CMD="mimaReportBinaryIssues"
 
 env:
   - SBT_CMD="scalafmtSbtCheck scalafmtCheck test:scalafmtCheck scalastyle test:scalastyle"
   - SBT_CMD="coverage +test coverageReport coverageAggregate"
+  - SBT_CMD="mimaReportBinaryIssues"
 
 cache:
   directories:
