@@ -63,7 +63,7 @@ private[featran] class FlatConverter[T: ClassTag, A: ClassTag: FlatWriter](spec:
     val writer = FlatWriter[A].writer
     val fns = spec.features.map { feature => (t: T) =>
       feature.transformer.unsafeFlatWriter.apply(feature.f(t))
-    }.toList
+    }
     col.map { record =>
       val cols = fns.map(f => f(record))
       writer.apply(cols)

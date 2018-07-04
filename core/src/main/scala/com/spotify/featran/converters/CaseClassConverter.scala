@@ -115,7 +115,6 @@ object CaseClassConverter {
               }(NHotWeightedEncoder(name))
             case c =>
               sys.error("Not matching Conversions for " + m.toString)
-              s
           }
       }
   // scalastyle:off cyclomatic.complexity
