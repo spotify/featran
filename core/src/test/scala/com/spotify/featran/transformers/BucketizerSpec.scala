@@ -25,12 +25,7 @@ object BucketizerSpec extends TransformerProp("Bucketizer") {
     Gen.choose(3, 10).flatMap(n => Gen.listOfN(n, Arbitrary.arbitrary[Double]))
 
   property("default") = Prop.forAll(list[Double].arbitrary, SplitsGen) { (xs, sp) =>
-    val uniq = sp.distinct
-    if (uniq.size < 3) {
-      Prop.passed
-    } else {
-      test(xs, uniq.toArray.sorted)
-    }
+    test(xs, sp.toArray.sorted)
   }
 
   // last bucket should be inclusive

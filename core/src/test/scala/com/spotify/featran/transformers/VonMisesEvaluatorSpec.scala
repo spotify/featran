@@ -33,16 +33,12 @@ object VonMisesEvaluatorSpec extends TransformerProp("VonMisesEvaluator") {
 
   property("default") = Prop.forAll(MuGen, PointGen, KappaGen) { (xs, points, kappa) =>
     val dim = points.size
-    if (dim > 0) {
-      val names = (0 until dim).map("vm_" + _)
-      val missing = (0 until dim).map(_ => 0.0)
-      val expected = xs.map { mu =>
-        points.map(p => VonMises(mu * Scale, kappa).pdf(Scale * p))
-      }
-      test(VonMisesEvaluator("vm", kappa, Scale, points.toArray), xs, names, expected, missing)
-    } else {
-      Prop.passed
+    val names = (0 until dim).map("vm_" + _)
+    val missing = (0 until dim).map(_ => 0.0)
+    val expected = xs.map { mu =>
+      points.map(p => VonMises(mu * Scale, kappa).pdf(Scale * p))
     }
+    test(VonMisesEvaluator("vm", kappa, Scale, points.toArray), xs, names, expected, missing)
   }
 
 }
