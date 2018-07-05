@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import breeze.linalg.SparseVector
 
 import scala.collection.Set
-import com.spotify.featran.{FeatureSpec, FlatConverter, FlatExtractor}
+import com.spotify.featran.{FeatureSpec, FlatConverter, FlatExtractor, MultiFeatureSpec}
 import org.scalacheck.Prop.BooleanOperators
 import org.scalacheck._
 
@@ -105,8 +105,11 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f4 settings" |: settings == f4.featureSettings
     )
 
+    val multiSpec = MultiFeatureSpec(fsRequired)
+
     val flatRequired = FlatExtractor.flatSpec[String, T](fsRequired)
     val flatOptional = FlatExtractor.flatSpec[String, Option[T]](fsOptional)
+    val flatMulti = FlatExtractor.multiFlatSpec[String, T](multiSpec)
 
     val converterRequired = FlatConverter[T, String](fsRequired)
     val converterOptional = FlatConverter[Option[T], String](fsOptional)
@@ -117,20 +120,19 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     val flatEx = flatRequired.extract(examplesReq)
     val flatExOpt = flatRequired.extract(examplesOpt)
 
+    val flatMultiSettings = flatMulti.extract(examplesReq).featureSettings
+    val multiSettings = multiSpec.extract(input).featureSettings
+
     val flatFeatures = FlatExtractor[List, String](flatEx.featureSettings)
       .featureValues[Seq[Double]](examplesReq)
 
     val flatFeaturesOpt = FlatExtractor[List, String](flatExOpt.featureSettings)
       .featureValues[Seq[Double]](examplesOpt)
 
-//    println("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-//    println(expected.map(_.mkString(":")).mkString(","))
-//    println(flatFeatures.map(_.mkString(":")).mkString(","))
-//    println("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
     val propConverters = Prop.all(
       "f1 values flat" |: safeCompare(flatFeatures, expected),
-      "f1 values flat opt" |: safeCompare(flatFeaturesOpt, expected :+ missing)
+      "f1 values flat opt" |: safeCompare(flatFeaturesOpt, expected :+ missing),
+      "Flat Settings Match" |: flatMultiSettings == multiSettings
     )
 
     Prop.all(propStandard, propConverters)
