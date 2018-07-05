@@ -118,7 +118,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     val examplesOpt = converterOptional.convert(input.map(Some(_)) :+ None)
 
     val flatEx = flatRequired.extract(examplesReq)
-    val flatExOpt = flatRequired.extract(examplesOpt)
+    val flatExOpt = flatOptional.extract(examplesOpt)
 
     val flatMultiSettings = flatMulti.extract(examplesReq).featureSettings
     val multiSettings = multiSpec.extract(input).featureSettings
