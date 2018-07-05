@@ -52,7 +52,7 @@ object VonMisesEvaluator extends SettingsBuilder {
     val params = setting.params
     val k = params("kappa").toDouble
     val s = params("scale").toDouble
-    val str = params("point")
+    val str = params("points")
     val points = str.slice(1, str.length - 1).split(",").map(_.toDouble)
     VonMisesEvaluator(setting.name, k, s, points)
   }

@@ -57,7 +57,7 @@ object Bucketizer extends SettingsBuilder {
   def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] = {
     val params = setting.params
     val str = params("splits")
-    val splits = str.slice(1, str.length - 1).split(",").map(_.toDouble)
+    val splits = str.slice(1, str.length - 1).split(",").map(_.toDouble).sorted
     Bucketizer(setting.name, splits)
   }
 }

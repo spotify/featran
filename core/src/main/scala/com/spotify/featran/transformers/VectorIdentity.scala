@@ -75,5 +75,5 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
 
   def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubles(name)
   def flatWriter[T](implicit fw: FlatWriter[T]): Option[M[Double]] => fw.IF =
-    (v: Option[M[Double]]) => fw.writeDoubles(name)(v.map(_.asInstanceOf[Seq[Double]]))
+    (v: Option[M[Double]]) => fw.writeDoubles(name)(v.map(_.toSeq))
 }

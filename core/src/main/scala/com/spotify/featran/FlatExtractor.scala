@@ -131,7 +131,11 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
     }.sum
   }
 
-  def featureValues[F: FeatureBuilder: ClassTag](records: M[T]): M[F] = {
+  def featureValues[F: FeatureBuilder: ClassTag](records: M[T]): M[F] =
+    featureResults(records).map(_._1)
+
+  def featureResults[F: FeatureBuilder: ClassTag](
+    records: M[T]): M[(F, Map[String, FeatureRejection])] = {
     val fb = FeatureBuilder[F].newBuilder
     records.cross(converters).cross(dimSize).map {
       case ((record, convs), size) =>
@@ -141,7 +145,7 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
             val a = aggr.map(conv.decodeAggregator)
             conv.unsafeBuildFeatures(fn(record), a, fb)
         }
-        fb.result
+        (fb.result, fb.rejections)
     }
   }
 }

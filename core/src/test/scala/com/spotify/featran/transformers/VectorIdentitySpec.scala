@@ -21,19 +21,19 @@ import org.scalacheck.Prop
 
 object VectorIdentitySpec extends TransformerProp("VectorIdentity") {
 
-  property("default") = Prop.forAll { xs: List[Array[Double]] =>
+  property("default") = Prop.forAll { xs: List[List[Double]] =>
     val dim = xs.head.length
     val names = (0 until dim).map("id_" + _)
     val expected = xs.map(_.toSeq)
     val missing = (0 until dim).map(_ => 0.0)
     val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
-    test[Array[Double]](VectorIdentity("id"), xs, names, expected, missing, oob)
+    test[List[Double]](VectorIdentity("id"), xs, names, expected, missing, oob)
   }
 
-  property("length") = Prop.forAll { xs: List[Array[Double]] =>
+  property("length") = Prop.forAll { xs: List[List[Double]] =>
     val msg = "requirement failed: Invalid input length, " +
       s"expected: ${xs.head.length + 1}, actual: ${xs.head.length}"
-    testException[Array[Double]](VectorIdentity("id", xs.head.length + 1), xs) { e =>
+    testException[List[Double]](VectorIdentity("id", xs.head.length + 1), xs) { e =>
       e.isInstanceOf[IllegalArgumentException] && e.getMessage == msg
     }
   }
