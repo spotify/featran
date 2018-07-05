@@ -20,11 +20,14 @@ package com.spotify.featran.transformers
 import breeze.linalg.SparseVector
 
 import scala.collection.Set
-import com.spotify.featran.FeatureSpec
+import com.spotify.featran.{FeatureSpec, FlatConverter, FlatExtractor}
 import org.scalacheck.Prop.BooleanOperators
 import org.scalacheck._
 
+import scala.reflect.ClassTag
+
 abstract class TransformerProp(name: String) extends Properties(name) {
+  import com.spotify.featran.json._
 
   implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] =
     Arbitrary {
@@ -44,13 +47,13 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     xs.map(_.map(d2e)) == ys.map(_.map(d2e))
 
   // scalastyle:off method.length
-  def test[T](t: Transformer[T, _, _],
-              input: List[T],
-              names: Seq[String],
-              expected: List[Seq[Double]],
-              missing: Seq[Double],
-              outOfBoundsElems: List[(T, Seq[Double])] = Nil,
-              rejected: List[Seq[Double]] = Nil): Prop = {
+  def test[T: ClassTag](t: Transformer[T, _, _],
+                        input: List[T],
+                        names: Seq[String],
+                        expected: List[Seq[Double]],
+                        missing: Seq[Double],
+                        outOfBoundsElems: List[(T, Seq[Double])] = Nil,
+                        rejected: List[Seq[Double]] = Nil): Prop = {
     val fsRequired = FeatureSpec.of[T].required(identity)(t)
     val fsOptional = FeatureSpec.of[Option[T]].optional(identity)(t)
 
@@ -74,7 +77,7 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     val f4results = f4.featureResults[Seq[Double]]
     val c = f1.featureValues[Seq[Double]]
 
-    Prop.all(
+    val propStandard = Prop.all(
       "f1 names" |: f1.featureNames == List(names),
       "f2 names" |: f2.featureNames == List(names),
       "f3 names" |: f3.featureNames == List(names),
@@ -101,6 +104,36 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f3 settings" |: settings == f3.featureSettings,
       "f4 settings" |: settings == f4.featureSettings
     )
+
+    val flatRequired = FlatExtractor.flatSpec[String, T](fsRequired)
+    val flatOptional = FlatExtractor.flatSpec[String, Option[T]](fsOptional)
+
+    val converterRequired = FlatConverter[T, String](fsRequired)
+    val converterOptional = FlatConverter[Option[T], String](fsOptional)
+
+    val examplesReq = converterRequired.convert(input)
+    val examplesOpt = converterOptional.convert(input.map(Some(_)) :+ None)
+
+    val flatEx = flatRequired.extract(examplesReq)
+    val flatExOpt = flatRequired.extract(examplesOpt)
+
+    val flatFeatures = FlatExtractor[List, String](flatEx.featureSettings)
+      .featureValues[Seq[Double]](examplesReq)
+
+    val flatFeaturesOpt = FlatExtractor[List, String](flatExOpt.featureSettings)
+      .featureValues[Seq[Double]](examplesOpt)
+
+//    println("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+//    println(expected.map(_.mkString(":")).mkString(","))
+//    println(flatFeatures.map(_.mkString(":")).mkString(","))
+//    println("++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+
+    val propConverters = Prop.all(
+      "f1 values flat" |: safeCompare(flatFeatures, expected),
+      "f1 values flat opt" |: safeCompare(flatFeaturesOpt, expected :+ missing)
+    )
+
+    Prop.all(propStandard, propConverters)
   }
   // scalastyle:on method.length
 
