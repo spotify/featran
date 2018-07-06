@@ -20,8 +20,6 @@ package com.spotify.featran
 import io.circe.{Error, Json}
 import simulacrum.typeclass
 
-import scala.language.implicitConversions
-
 /**
  * Type class for json serialization.
  */
