@@ -18,135 +18,79 @@
 package com.spotify.featran
 
 import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
-import io.circe._
-import io.circe.parser._
 
 /**
  * Package for an intermediate format for feature storage using JSON
  */
 package object json {
+
   implicit val jsonFlatReader: FlatReader[String] = new FlatReader[String] {
-    private def toJson(str: String): Option[Json] = {
-      val parsed = parse(str)
-      if (parsed.isLeft) None else Some(parsed.right.get)
-    }
+    import io.circe._
+    import cats.syntax.either._
+    import CirceImplicits._
 
-    private def toFeature(str: String, name: String): Option[Json] =
-      for {
-        keyedJson <- toJson(str)
-        jsonObj <- keyedJson.asObject
-        feature <- jsonObj.apply(name)
-      } yield feature
+    private def toFeature[T: Decoder: Encoder](name: String): String => Option[T] =
+      json =>
+        JsonSerializable[Map[String, Option[String]]]
+          .decode(json)
+          .toOption
+          .flatMap { map =>
+            map
+              .get(name)
+              .flatten
+              .flatMap(o => JsonSerializable[T].decode(o).toOption)
+        }
 
-    override def readDouble(name: String): String => Option[Double] =
-      (jsonStr: String) =>
-        for {
-          feature <- toFeature(jsonStr, name)
-          number <- feature.asNumber
-        } yield number.toDouble
+    override def readDouble(name: String): String => Option[Double] = toFeature[Double](name)
 
     override def readMdlRecord(name: String): String => Option[MDLRecord[String]] =
-      (jsonStr: String) =>
-        for {
-          feature <- toFeature(jsonStr, name)
-          obj <- feature.asObject
-          label <- obj.keys.headOption
-          valueObj <- obj.values.headOption
-          num <- valueObj.asNumber
-        } yield MDLRecord(label, num.toDouble)
+      toFeature[MDLRecord[String]](name)
 
     override def readWeightedLabel(name: String): String => Option[List[WeightedLabel]] =
-      (jsonStr: String) => {
-        val weights = for {
-          feature <- toFeature(jsonStr, name).toList
-          objs <- feature.asArray.toList.flatten
-          obj <- objs.asObject.toList
-          name <- obj.keys
-          values <- obj.values
-          num <- values.asNumber
-        } yield WeightedLabel(name, num.toDouble)
-        if (weights.isEmpty) None else Some(weights)
-      }
+      toFeature[List[WeightedLabel]](name)
 
     override def readDoubles(name: String): String => Option[Seq[Double]] =
-      (jsonStr: String) => {
-        val items = for {
-          feature <- toFeature(jsonStr, name).toList
-          objOpt <- feature.asArray.toList
-          obj <- objOpt
-          number <- obj.asNumber
-        } yield number.toDouble
-        if (items.isEmpty) None else Some(items)
-      }
+      toFeature[Seq[Double]](name)
 
-    override def readDoubleArray(name: String): String => Option[Array[Double]] = {
-      val doubles = readDoubles(name)
-      (jsonStr: String) =>
-        doubles(jsonStr).map(_.toArray)
-    }
+    override def readDoubleArray(name: String): String => Option[Array[Double]] =
+      toFeature[Array[Double]](name)
 
-    override def readString(name: String): String => Option[String] =
-      (jsonStr: String) =>
-        for {
-          feature <- toFeature(jsonStr, name)
-          str <- feature.asString
-        } yield str
+    override def readString(name: String): String => Option[String] = toFeature[String](name)
 
     override def readStrings(name: String): String => Option[Seq[String]] =
-      (jsonStr: String) => {
-        val items = for {
-          feature <- toFeature(jsonStr, name).toList
-          objOpt <- feature.asArray.toList
-          obj <- objOpt
-          str <- obj.asString
-        } yield str
-        if (items.isEmpty) None else Some(items)
-      }
+      toFeature[Seq[String]](name)
   }
 
   implicit val jsonFlatWriter: FlatWriter[String] = new FlatWriter[String] {
+    import io.circe._
+    import CirceImplicits._
+
     override type IF = (String, Option[Json])
 
     override def writeDouble(name: String): Option[Double] => (String, Option[Json]) =
-      (v: Option[Double]) => (name, v.flatMap(Json.fromDouble))
+      (v: Option[Double]) => (name, v.map(JsonSerializable[Double].encode))
 
     override def writeMdlRecord(name: String): Option[MDLRecord[String]] => (String, Option[Json]) =
-      (v: Option[MDLRecord[String]]) => {
-        val json = for {
-          record <- v
-          jsonDouble <- Json.fromDouble(record.value)
-        } yield Json.obj((record.label, jsonDouble))
-        (name, json)
-      }
+      (v: Option[MDLRecord[String]]) => (name, v.map(JsonSerializable[MDLRecord[String]].encode))
 
     override def writeWeightedLabel(
       name: String): Option[Seq[WeightedLabel]] => (String, Option[Json]) =
-      (v: Option[Seq[WeightedLabel]]) => {
-        val json = v.map { weights =>
-          val keyValues = weights.flatMap { weight =>
-            Json.fromDouble(weight.value).map { w =>
-              (weight.name, w)
-            }
-          }
-          Json.fromValues(keyValues.map(t => Json.obj(t)))
-        }
-        (name, json)
-      }
+      (v: Option[Seq[WeightedLabel]]) => (name, v.map(JsonSerializable[Seq[WeightedLabel]].encode))
 
     override def writeDoubles(name: String): Option[Seq[Double]] => (String, Option[Json]) =
-      (v: Option[Seq[Double]]) => (name, v.map(r => Json.fromValues(r.flatMap(Json.fromDouble))))
+      (v: Option[Seq[Double]]) => (name, v.map(JsonSerializable[Seq[Double]].encode))
 
     override def writeDoubleArray(name: String): Option[Array[Double]] => (String, Option[Json]) =
-      (v: Option[Array[Double]]) => (name, v.map(r => Json.fromValues(r.flatMap(Json.fromDouble))))
+      (v: Option[Array[Double]]) => (name, v.map(JsonSerializable[Array[Double]].encode))
 
     override def writeString(name: String): Option[String] => (String, Option[Json]) =
-      (v: Option[String]) => (name, v.map(Json.fromString))
+      (v: Option[String]) => (name, v.map(JsonSerializable[String].encode))
 
     override def writeStrings(name: String): Option[Seq[String]] => (String, Option[Json]) =
-      (v: Option[Seq[String]]) => (name, v.map(r => Json.fromValues(r.map(Json.fromString))))
+      (v: Option[Seq[String]]) => (name, v.map(JsonSerializable[Seq[String]].encode))
 
     override def writer: Seq[(String, Option[Json])] => String =
       (v: Seq[(String, Option[Json])]) =>
-        Json.obj(v.collect { case (n, Some(json)) => (n, json) }: _*).noSpaces
+        JsonSerializable[Seq[(String, Option[Json])]].encode(v).noSpaces
   }
 }
