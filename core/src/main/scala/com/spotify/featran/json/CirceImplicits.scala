@@ -26,7 +26,7 @@ import io.circe.parser.{decode => circeDecode}
 private[featran] object CirceImplicits {
 
   implicit val decodeMDLRecord: Decoder[MDLRecord[String]] = new Decoder[MDLRecord[String]] {
-    final def apply(c: HCursor): Decoder.Result[MDLRecord[String]] =
+    override def apply(c: HCursor): Decoder.Result[MDLRecord[String]] =
       c.keys.toList.flatten.headOption match {
         case None => Left(DecodingFailure("", c.history))
         case Some(label) =>
@@ -43,7 +43,7 @@ private[featran] object CirceImplicits {
   }
 
   implicit val decodeWeightedLabel: Decoder[WeightedLabel] = new Decoder[WeightedLabel] {
-    final def apply(c: HCursor): Decoder.Result[WeightedLabel] =
+    override def apply(c: HCursor): Decoder.Result[WeightedLabel] =
       c.keys.toList.flatten.headOption match {
         case None => Left(DecodingFailure("", c.history))
         case Some(label) =>
@@ -61,7 +61,7 @@ private[featran] object CirceImplicits {
 
   implicit val decodeGenericMap: Decoder[Map[String, Option[String]]] =
     new Decoder[Map[String, Option[String]]] {
-      final def apply(c: HCursor): Decoder.Result[Map[String, Option[String]]] =
+      override def apply(c: HCursor): Decoder.Result[Map[String, Option[String]]] =
         c.keys
           .filter(_.nonEmpty)
           .toRight(DecodingFailure("flat decoding", c.history))
