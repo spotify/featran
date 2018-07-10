@@ -110,10 +110,11 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
   def extractWithSubsetSettings[M[_]: CollectionType](
     input: M[T],
     settings: M[String]): MultiFeatureExtractor[M, T] = {
+    import json._
     import CollectionType.ops._
 
     val featureSet = settings.map { s =>
-      val settingsJson = JsonSerializable[Seq[Settings]].decode(s).right.get
+      val settingsJson = decode[Seq[Settings]](s).right.get
       val predicate: Feature[T, _, _, _] => Boolean =
         f => settingsJson.exists(x => x.name == f.transformer.name)
 

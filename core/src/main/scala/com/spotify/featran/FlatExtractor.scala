@@ -104,13 +104,14 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
   settings: M[String])
     extends Serializable {
 
+  import json._
   import CollectionType.ops._
   import scala.reflect.runtime.universe
 
   @transient private val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
 
   private val converters = settings.map { str =>
-    val jsonOpt = JsonSerializable[Seq[Settings]].decode(str)
+    val jsonOpt = decode[Seq[Settings]](str)
     assert(jsonOpt.isRight, "Unable to parse the settings files.")
     jsonOpt.right.get.map { setting =>
       val transformer = runtimeMirror

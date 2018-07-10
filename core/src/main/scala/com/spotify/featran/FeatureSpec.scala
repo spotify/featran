@@ -156,10 +156,11 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   def extractWithSubsetSettings[M[_]: CollectionType](
     input: M[T],
     settings: M[String]): FeatureExtractor[M, T] = {
+    import json._
     import CollectionType.ops._
 
     val featureSet = settings.map { s =>
-      val settingsJson = JsonSerializable[Seq[Settings]].decode(s).right.get
+      val settingsJson = decode[Seq[Settings]](s).right.get
       val predicate: Feature[T, _, _, _] => Boolean =
         f => settingsJson.exists(x => x.name == f.transformer.name)
 
@@ -197,7 +198,9 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    */
   def extractWithSubsetSettings[F: FeatureBuilder: ClassTag](
     settings: String): RecordExtractor[T, F] = {
-    val s = JsonSerializable[Seq[Settings]].decode(settings).right.get
+    import json._
+
+    val s = decode[Seq[Settings]](settings).right.get
     val predicate: Feature[T, _, _, _] => Boolean = f => s.exists(x => x.name == f.transformer.name)
 
     new RecordExtractor[T, F](filter(predicate).featureSet, settings)

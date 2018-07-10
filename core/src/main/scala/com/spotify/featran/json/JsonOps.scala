@@ -15,16 +15,15 @@
  * under the License.
  */
 
-package com.spotify.featran
+package com.spotify.featran.json
 
-import io.circe.{Error, Json}
-import simulacrum.typeclass
+import io.circe.{Decoder, Encoder, Error, Json}
+import io.circe.parser
 
-/**
- * Type class for json serialization.
- */
-@typeclass private[featran] trait JsonSerializable[T] {
-  def encode(t: T): Json
+private[json] trait JsonEncoder {
+  final def encode[T: Encoder](t: T): Json = Encoder[T].apply(t)
+}
 
-  def decode(str: String): Either[Error, T]
+private[json] trait JsonDecoder {
+  final def decode[T: Decoder](str: String): Either[Error, T] = parser.decode[T](str)
 }
