@@ -51,8 +51,15 @@ val commonSettings = Seq(
     compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
   ),
   ivyConfigurations += CompileTime,
-  unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name)),
-  // Release settings
+  unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name))
+)
+
+val publishSettings = Seq(
+  credentials ++= (for {
+    username <- sys.env.get("SONATYPE_USERNAME")
+    password <- sys.env.get("SONATYPE_PASSWORD")
+  } yield
+    Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
   publishTo := Some(
     if (isSnapshot.value) Opts.resolver.sonatypeSnapshots
     else Opts.resolver.sonatypeStaging),
@@ -137,6 +144,7 @@ lazy val root: Project = project
 lazy val core: Project = project
   .in(file("core"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-core"))
   .settings(
     name := "core",
@@ -161,6 +169,7 @@ lazy val core: Project = project
 lazy val java: Project = project
   .in(file("java"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-java"))
   .settings(
     name := "java",
@@ -184,6 +193,7 @@ lazy val java: Project = project
 lazy val flink: Project = project
   .in(file("flink"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-flink"))
   .settings(
     name := "flink",
@@ -205,6 +215,7 @@ lazy val flink: Project = project
 lazy val scalding: Project = project
   .in(file("scalding"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-scalding"))
   .settings(
     name := "scalding",
@@ -227,6 +238,7 @@ lazy val scalding: Project = project
 lazy val scio: Project = project
   .in(file("scio"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-scio"))
   .settings(
     name := "scio",
@@ -247,6 +259,7 @@ lazy val scio: Project = project
 lazy val spark: Project = project
   .in(file("spark"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-spark"))
   .settings(
     name := "spark",
@@ -267,6 +280,7 @@ lazy val spark: Project = project
 lazy val numpy: Project = project
   .in(file("numpy"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-numpy"))
   .settings(
     name := "numpy",
@@ -283,6 +297,7 @@ lazy val numpy: Project = project
 lazy val tensorflow: Project = project
   .in(file("tensorflow"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-tensorflow"))
   .settings(
     name := "tensorflow",
@@ -304,6 +319,7 @@ lazy val tensorflow: Project = project
 lazy val xgboost: Project = project
   .in(file("xgboost"))
   .settings(commonSettings)
+  .settings(publishSettings)
   .settings(mimaSettings("featran-xgboost"))
   .settings(
     name := "xgboost",
