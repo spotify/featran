@@ -1,29 +1,39 @@
 language: scala
+jdk: oraclejdk8
+
+env:
+  global:
+  - secure: CsYe+Yu3rnEjRIcNQ/OFD+SoyotadyZ2oVM367Y6t4F+d5zKlts5QZI5v3jyG2M9R58v9c58YNJ5GVhlDr5W5asTTeX9jXZB38Icdp3Ig95q/J5IoJ0Qk1lsBkdiqSJyDybrhlysKjWGjAQ58kWZOpMetsPAUbkYa6Z8MdPLxuwLz9Z7YTYwv3MZFot3+XGJyvE6LUKmLyiqpjDJ7sS04yk9h28wlRNSOTnaWLlfqMvLRq+XKB75Hs0Bjut5MCXJ1SQcJvl+tnHx3mrQ1O1TyXAqtrNAKBmOxCuT6lHQvcCGfGNeG+vR2AGdd48LBKHVm2b2Xaaz35PYl44G5Iv9pBifJriJt8mK21Rm7i0TbwQ+3ZkRlvuKoXjJSrsiIrTLc9pyofh0K/SDdE1W4CsKTpbXaKYXh0Z04fMlWxr3mgELV6YRD/d4W/3GRPdgGpiSySnQVWP3I693r1pqNXhloH3nvQrM/hSOCKmZIbd1MmYBJFNtvM1+AWN+mblRQnaXmaC1X1mLzr5sJPWcVqajVoOWZuWGVDC7Fth+lAT/AiIU5OgAQCQ7YIzQpsCXGPkTkZPXFbNlo7FkxDc2/cHbJhkhveiqndmXuMuiGFROcWL1/CJqN+Z1hXI0qLClk7fLH/qeepa/NguY7nEBvFoVvpm8Dw4fH79RzKIK8L1Jnfs=
+  - secure: a6MiHrBGrK+kWmRUOmWCUKzljbybWxVJuepbkD7SjcaFjPT/GhAO7Hz/3WRd6NAlmFl+0FXbhnl0pzf70IHj7LqdclA0tHjyKW4Vgovyc5SmBNs7KSY7gy2WY+7nYzDPQxdmF3/atCr3oMMW/QF68rl7KyHUzpVK3TaQAj3uVvk6y+C4VljOvwoWevJqcovnyMnR+TX+ZktSoCtOo6T6t+olGmQ+rBtItq006DvXZhTaReSp9nTA2/AYsX3/N5a6vRkUeTriBd6D4BJrXvWsFM8B3olGGv5D7zbjHaHLHUKRJEPET/Gk81kJu6BbsdBOkpTLH8H7zbjp3nsJAGJg8iqMb/0csEeTZKo+nX10bdMJ/gsNDl33OBSV5wldovx4uTt4CoNRmgHKhdhbW0DQtnvy5CjGPL+d0sB8E3EXuAH9F8LjwwzCGeyMiFgPrafMCcF4coJMvHZNW0yghCKt/GPPK27nkTn7K2IaGSUezlHxbAAeuCyiC+MEa9kLpUV5A3Pn6znayWE6xqbQMCfhKegE4ESc1twEs8DBNPa50uEFV9pokgXX4h0XwVR9Bjpe92kUu+NRMzRPRAJEWnJEeTIhPTMlB9fy4RjB40GYzvJfVXV+yVd2WjVgqnL22iLiVqHOSfMC6CConsGd5IzpqqJ4x+ztnk7TewHiaT/ggmE=
 
 matrix:
   fast_finish: true
   include:
-  - scala: 2.11.12
-    jdk: oraclejdk8
+  - stage: test
+    scala: 2.11.12
     script: sbt scalafmtSbtCheck scalafmtCheck test:scalafmtCheck scalastyle test:scalastyle
 
   - scala: 2.11.12
-    jdk: oraclejdk8
     script: sbt mimaReportBinaryIssues
 
   - scala: 2.11.12
-    jdk: oraclejdk8
     script: sbt coverage "++$TRAVIS_SCALA_VERSION test" coverageReport coverageAggregate
     after_success:
     - bash <(curl -s https://codecov.io/bash)
 
   - scala: 2.12.6
-    jdk: oraclejdk8
     script: sbt "++$TRAVIS_SCALA_VERSION test"
+
+  - stage: Deploy
+    scala: 2.11.12
+    script:
+    - |
+      if [ "$TRAVIS_BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == false ]; then
+        sbt +publish
+      fi
 
   allow_failures:
   - scala: 2.11.12
-    jdk: oraclejdk8
     script: sbt mimaReportBinaryIssues
 
 cache:
