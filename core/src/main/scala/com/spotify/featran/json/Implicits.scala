@@ -25,7 +25,7 @@ import io.circe.generic.semiauto
 import io.circe.parser.{decode => circeDecode}
 import io.circe.syntax._
 
-private[featran] trait Implicits {
+private[featran] trait Implicits extends Serializable {
 
   implicit val mdlRecordDecoder: Decoder[MDLRecord[String]] = new Decoder[MDLRecord[String]] {
     override def apply(c: HCursor): Decoder.Result[MDLRecord[String]] =

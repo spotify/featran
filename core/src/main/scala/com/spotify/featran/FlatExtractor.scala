@@ -108,9 +108,8 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
   import CollectionType.ops._
   import scala.reflect.runtime.universe
 
-  @transient private val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
-
-  private val converters = settings.map { str =>
+  @transient private val converters = settings.map { str =>
+    val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
     val jsonOpt = decode[Seq[Settings]](str)
     assert(jsonOpt.isRight, "Unable to parse the settings files.")
     jsonOpt.right.get.map { setting =>
@@ -124,7 +123,7 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
     }
   }
 
-  private val dimSize: M[Int] = converters.map { items =>
+  @transient private val dimSize: M[Int] = converters.map { items =>
     items.map {
       case (_, aggr, tr) =>
         val ta = aggr.map(tr.decodeAggregator)
