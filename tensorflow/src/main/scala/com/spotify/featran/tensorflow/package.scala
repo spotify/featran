@@ -163,7 +163,8 @@ package object tensorflow {
         val builder = Features.newBuilder()
         fns.foreach { f =>
           f.foreach { nf =>
-            builder.putFeature(nf.name, nf.f)
+            val normalized_name = FeatureNameNormalization.matcher(nf.name).replaceAll("_")
+            builder.putFeature(normalized_name, nf.f)
           }
         }
         Example

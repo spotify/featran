@@ -74,7 +74,7 @@ class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
     val spec = FeatureSpec
       .of[TransformerTypes]
       .required(_.d)(Identity("d"))
-      .required(_.s)(OneHotEncoder("s"))
+      .required(_.s)(OneHotEncoder("s.with$pecial characters"))
       .required(_.ds)(VectorIdentity("ds"))
       .required(_.ss)(NHotEncoder("ss"))
       .required(_.we)(NHotWeightedEncoder("we"))
@@ -86,7 +86,7 @@ class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
       val fm = ex.getFeatures.getFeatureMap.asScala
       TransformerTypes(
         toDoubles(fm("d")).head,
-        toStrings(fm("s")).head,
+        toStrings(fm("s_with_pecial_characters")).head,
         toDoubles(fm("ds")).toList,
         toStrings(fm("ss")).toList,
         List(WeightedLabel(toStrings(fm("we_key")).head, toDoubles(fm("we_value")).head)),
