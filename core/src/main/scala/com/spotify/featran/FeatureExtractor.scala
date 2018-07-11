@@ -31,7 +31,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
   @transient private val input: M[T],
   @transient private val settings: Option[M[String]])
     extends Serializable {
-  import FeatureSpec.ARRAY, CollectionType.ops._
+  import FeatureSpec.ARRAY, CollectionType.ops._, json._
 
   @transient private[featran] lazy val as: M[(T, ARRAY)] =
     input.cross(fs).map { case (in, spec) => (in, spec.unsafeGet(in)) }
@@ -40,7 +40,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
     case Some(x) =>
       x.cross(fs).map {
         case (s, spec) =>
-          spec.decodeAggregators(JsonSerializable[Seq[Settings]].decode(s).right.get)
+          spec.decodeAggregators(decode[Seq[Settings]](s).right.get)
       }
     case None =>
       as.cross(fs)
@@ -67,7 +67,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
     case None =>
       aggregate.cross(fs).map {
         case (a, featureSet) =>
-          JsonSerializable[Seq[Settings]].encode(featureSet.featureSettings(a)).noSpaces
+          encode[Seq[Settings]](featureSet.featureSettings(a)).noSpaces
       }
   }
 
