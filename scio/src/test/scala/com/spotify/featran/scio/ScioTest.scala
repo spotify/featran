@@ -20,6 +20,8 @@ package com.spotify.featran.scio
 import com.spotify.featran._
 import com.spotify.featran.transformers._
 import com.spotify.scio.testing._
+import com.spotify.featran.json._
+import com.spotify.scio.values.SCollection
 
 class ScioTest extends PipelineSpec {
 
@@ -40,6 +42,54 @@ class ScioTest extends PipelineSpec {
         f.featureNames
         f.featureValues[Seq[Double]]
       }
+    }
+  }
+
+  it should "work with FlatConverter on FeatureSpec" in {
+    runWithContext { sc =>
+      FlatConverter[(String, Int), String](TestSpec)
+        .convert(sc.parallelize(TestData))
+    }
+  }
+
+  it should "work with FlatConverter on MultiFeatureSpec" in {
+    noException shouldBe thrownBy {
+      runWithContext { sc =>
+        FlatConverter
+          .multiSpec[Record, String](RecordSpec)
+          .convert(sc.parallelize(Records))
+      }
+    }
+  }
+
+  it should "work with FlatExtractor on FeatureSpec" in {
+    runWithContext { sc =>
+      val json = FlatConverter[(String, Int), String](TestSpec)
+        .convert(sc.parallelize(TestData))
+      FlatExtractor.flatSpec(TestSpec).extract(json)
+    }
+  }
+
+  it should "work with FlatExtractor on MuiltiFeatureSpec" in {
+    runWithContext { sc =>
+      val json = FlatConverter
+        .multiSpec[Record, String](RecordSpec)
+        .convert(sc.parallelize(Records))
+      FlatExtractor.multiFlatSpec(RecordSpec).extract(json)
+    }
+  }
+
+  it should "work with FlatExtractor on Settings" in {
+    runWithContext { sc =>
+      val settings = TestSpec
+        .extract(sc.parallelize(TestData))
+        .featureSettings
+
+      val json = FlatConverter[(String, Int), String](TestSpec)
+        .convert(sc.parallelize(TestData))
+
+      FlatExtractor[SCollection, String](settings)
+        .featureValues[Seq[Double]](json) should containInAnyOrder(ExpectedValues)
     }
   }
 
