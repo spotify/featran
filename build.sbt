@@ -37,7 +37,7 @@ val shapelessDatatypeVersion = "0.1.9"
 
 val CompileTime = config("compile-time").hide
 
-val commonSettings = Seq(
+lazy val commonSettings = Seq(
   organization := "com.spotify",
   name := "featran",
   description := "Feature Transformers",
@@ -54,7 +54,7 @@ val commonSettings = Seq(
   unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name))
 )
 
-val publishSettings = Seq(
+lazy val publishSettings = Seq(
   credentials ++= (for {
     username <- sys.env.get("SONATYPE_USERNAME")
     password <- sys.env.get("SONATYPE_PASSWORD")
@@ -105,17 +105,18 @@ val publishSettings = Seq(
   )
 )
 
-val noPublishSettings = Seq(
+lazy val noPublishSettings = Seq(
   publish := {},
   publishLocal := {},
   publishArtifact := false
 )
 
+lazy val featranSettings = commonSettings ++ publishSettings
+
 lazy val root: Project = project
   .in(file("."))
   .enablePlugins(GhpagesPlugin, ScalaUnidocPlugin)
-  .settings(commonSettings)
-  .settings(noPublishSettings)
+  .settings(featranSettings)
   .settings(
     scalaVersion := "2.11.12",
     siteSubdirName in ScalaUnidoc := "api",
@@ -143,8 +144,7 @@ lazy val root: Project = project
 
 lazy val core: Project = project
   .in(file("core"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-core"))
   .settings(
     name := "core",
@@ -168,8 +168,7 @@ lazy val core: Project = project
 
 lazy val java: Project = project
   .in(file("java"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-java"))
   .settings(
     name := "java",
@@ -192,8 +191,7 @@ lazy val java: Project = project
 
 lazy val flink: Project = project
   .in(file("flink"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-flink"))
   .settings(
     name := "flink",
@@ -214,8 +212,7 @@ lazy val flink: Project = project
 
 lazy val scalding: Project = project
   .in(file("scalding"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-scalding"))
   .settings(
     name := "scalding",
@@ -237,8 +234,7 @@ lazy val scalding: Project = project
 
 lazy val scio: Project = project
   .in(file("scio"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-scio"))
   .settings(
     name := "scio",
@@ -258,8 +254,7 @@ lazy val scio: Project = project
 
 lazy val spark: Project = project
   .in(file("spark"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-spark"))
   .settings(
     name := "spark",
@@ -279,8 +274,7 @@ lazy val spark: Project = project
 
 lazy val numpy: Project = project
   .in(file("numpy"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-numpy"))
   .settings(
     name := "numpy",
@@ -296,8 +290,7 @@ lazy val numpy: Project = project
 
 lazy val tensorflow: Project = project
   .in(file("tensorflow"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-tensorflow"))
   .settings(
     name := "tensorflow",
@@ -318,8 +311,7 @@ lazy val tensorflow: Project = project
 
 lazy val xgboost: Project = project
   .in(file("xgboost"))
-  .settings(commonSettings)
-  .settings(publishSettings)
+  .settings(featranSettings)
   .settings(mimaSettings("featran-xgboost"))
   .settings(
     name := "xgboost",
@@ -339,7 +331,7 @@ lazy val xgboost: Project = project
 
 lazy val examples: Project = project
   .in(file("examples"))
-  .settings(commonSettings)
+  .settings(featranSettings)
   .settings(noPublishSettings)
   .settings(soccoSettings)
   .settings(
@@ -357,7 +349,7 @@ lazy val examples: Project = project
 
 lazy val featranJmh: Project = project
   .in(file("jmh"))
-  .settings(commonSettings)
+  .settings(featranSettings)
   .settings(noPublishSettings)
   .settings(
     scalaVersion := "2.11.12",
