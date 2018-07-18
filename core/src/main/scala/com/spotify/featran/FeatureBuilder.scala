@@ -42,7 +42,7 @@ object FeatureRejection {
  */
 @typeclass trait FeatureBuilder[T] extends Serializable { self =>
 
-  private val _rejections: mutable.Map[String, FeatureRejection] =
+  private[this] val _rejections: mutable.Map[String, FeatureRejection] =
     mutable.Map.empty
 
   /**

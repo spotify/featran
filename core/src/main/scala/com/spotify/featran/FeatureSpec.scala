@@ -420,7 +420,7 @@ private class MultiFeatureSet[T](features: Array[Feature[T, _, _, _]],
 
   import FeatureSpec.ARRAY
 
-  private val dims = mapping.values.toSet.size
+  private[this] val dims = mapping.values.toSet.size
 
   def multiFeatureBuilders[F: FeatureBuilder]: Array[FeatureBuilder[F]] =
     // each underlying FeatureSpec should get a unique copy of FeatureBuilder

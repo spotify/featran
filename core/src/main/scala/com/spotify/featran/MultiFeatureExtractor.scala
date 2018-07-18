@@ -32,7 +32,8 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
     extends Serializable {
   import CollectionType.ops._
 
-  private val extractor = new FeatureExtractor(fs.asInstanceOf[M[FeatureSet[T]]], input, settings)
+  private[this] val extractor =
+    new FeatureExtractor(fs.asInstanceOf[M[FeatureSet[T]]], input, settings)
 
   /**
    * JSON settings of the [[MultiFeatureSpec]] and aggregated feature summary.

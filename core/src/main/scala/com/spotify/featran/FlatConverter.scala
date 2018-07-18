@@ -52,10 +52,10 @@ import scala.reflect.ClassTag
  * to write out the data into a new flat format.
  */
 object FlatConverter {
-  def apply[T: ClassTag, A: ClassTag: FlatWriter](spec: FeatureSpec[T]): FlatConverter[T, A] =
-    new FlatConverter[T, A](spec)
+  @inline def apply[T: ClassTag, A: ClassTag: FlatWriter](
+    spec: FeatureSpec[T]): FlatConverter[T, A] = new FlatConverter[T, A](spec)
 
-  def multiSpec[T: ClassTag, A: ClassTag: FlatWriter](
+  @inline def multiSpec[T: ClassTag, A: ClassTag: FlatWriter](
     spec: MultiFeatureSpec[T]): FlatConverter[T, A] =
     FlatConverter(new FeatureSpec[T](spec.features, spec.crossings))
 }
@@ -64,11 +64,11 @@ private[featran] class FlatConverter[T: ClassTag, A: ClassTag: FlatWriter](spec:
     extends Serializable {
   import CollectionType.ops._
 
-  private val fns = spec.features.map { feature => (t: T) =>
+  private[this] val fns = spec.features.map { feature => (t: T) =>
     feature.transformer.unsafeFlatWriter.apply(feature.f(t))
   }
 
-  private val writer = FlatWriter[A].writer
+  private[this] val writer = FlatWriter[A].writer
 
   def convert[M[_]: CollectionType](col: M[T]): M[A] =
     col.map { record =>

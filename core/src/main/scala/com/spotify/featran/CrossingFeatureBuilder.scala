@@ -56,7 +56,7 @@ private case class Crossings(map: Crossings.MAP, keys: Set[String]) {
 }
 
 object CrossingFeatureBuilder {
-  def apply[F](fb: FeatureBuilder[F], crossings: Crossings): FeatureBuilder[F] =
+  @inline def apply[F](fb: FeatureBuilder[F], crossings: Crossings): FeatureBuilder[F] =
     new CrossingFeatureBuilder[F](fb, crossings)
 }
 
@@ -65,14 +65,14 @@ private class CrossingFeatureBuilder[F] private (private val fb: FeatureBuilder[
     extends FeatureBuilder[F] {
 
   private case class CrossValue(name: String, offset: Int, value: Double)
-  private var xEnabled = false // true if current transformer will be crossed
+  private[this] var xEnabled = false // true if current transformer will be crossed
   // name, offset and values of the current transformer
-  private var xName: String = _
-  private var xOffset = 0
-  private var xQueue: mutable.Queue[CrossValue] = _
+  private[this] var xName: String = _
+  private[this] var xOffset = 0
+  private[this] var xQueue: mutable.Queue[CrossValue] = _
   // values and dimensions of transformers to be crossed
-  private val xValues = mutable.Map.empty[String, mutable.Queue[CrossValue]]
-  private val xDims = mutable.Map.empty[String, Int]
+  private[this] val xValues = mutable.Map.empty[String, mutable.Queue[CrossValue]]
+  private[this] val xDims = mutable.Map.empty[String, Int]
 
   override def prepare(transformer: Transformer[_, _, _]): Unit = {
     updateDim()
