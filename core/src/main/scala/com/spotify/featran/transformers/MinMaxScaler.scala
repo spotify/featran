@@ -81,14 +81,18 @@ private[featran] class MinMaxScaler(name: String, val min: Double, val max: Doub
   }
 
   override def encodeAggregator(c: C): String = s"${c._1},${c._2},${c._3}"
+
   override def decodeAggregator(s: String): C = {
     val t = s.split(",")
     (t(0).toDouble, t(1).toDouble, t(2).toDouble)
   }
+
   override def params: Map[String, String] =
     Map("min" -> min.toString, "max" -> max.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+  override def flatRead[T](implicit fr: FlatReader[T]): fr.ReadType => Option[Any] =
+    fr.readDouble(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
     fw.writeDouble(name)
 }

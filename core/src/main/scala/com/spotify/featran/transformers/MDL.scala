@@ -168,8 +168,10 @@ private[featran] class MDL[T: ClassTag](name: String,
       "seed" -> seed.toString
     )
 
-  def flatRead[A: FlatReader]: A => Option[Any] = FlatReader[A].readMdlRecord(name)
-  def flatWriter[A](implicit fw: FlatWriter[A]): Option[MDLRecord[T]] => fw.IF =
+  override def flatRead[A](implicit fr: FlatReader[A]): fr.ReadType => Option[Any] =
+    fr.readMdlRecord(name)
+
+  override def flatWriter[A](implicit fw: FlatWriter[A]): Option[MDLRecord[T]] => fw.IF =
     (v: Option[MDLRecord[T]]) =>
       fw.writeMdlRecord(name)(v.map(r => MDLRecord(r.label.toString, r.value)))
 }

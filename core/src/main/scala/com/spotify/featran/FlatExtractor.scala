@@ -28,19 +28,23 @@ import scala.reflect.ClassTag
  * @tparam T The intermediate storage format for each feature.
  */
 @typeclass trait FlatReader[T] extends Serializable {
-  def readDouble(name: String): T => Option[Double]
+  type ReadType
 
-  def readMdlRecord(name: String): T => Option[MDLRecord[String]]
+  def readDouble(name: String): ReadType => Option[Double]
 
-  def readWeightedLabel(name: String): T => Option[List[WeightedLabel]]
+  def readMdlRecord(name: String): ReadType => Option[MDLRecord[String]]
 
-  def readDoubles(name: String): T => Option[Seq[Double]]
+  def readWeightedLabel(name: String): ReadType => Option[List[WeightedLabel]]
 
-  def readDoubleArray(name: String): T => Option[Array[Double]]
+  def readDoubles(name: String): ReadType => Option[Seq[Double]]
 
-  def readString(name: String): T => Option[String]
+  def readDoubleArray(name: String): ReadType => Option[Array[Double]]
 
-  def readStrings(name: String): T => Option[Seq[String]]
+  def readString(name: String): ReadType => Option[String]
+
+  def readStrings(name: String): ReadType => Option[Seq[String]]
+
+  def reader: T => ReadType
 }
 
 /**
@@ -72,9 +76,12 @@ object FlatExtractor {
    * @return FeatureSpec for the intermediate format
    */
   def flatSpec[T: ClassTag: FlatReader, X: ClassTag](spec: FeatureSpec[X]): FeatureSpec[T] = {
+    val reader = FlatReader[T].reader
     val features = spec.features.map { feature =>
       val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
-      new Feature(feature.transformer.flatRead, feature.default, t)
+      val flatRead = reader.andThen(feature.transformer.flatRead)
+
+      new Feature(flatRead, feature.default, t)
         .asInstanceOf[Feature[T, _, _, _]]
     }
     new FeatureSpec[T](features, spec.crossings)
@@ -91,9 +98,12 @@ object FlatExtractor {
    */
   def multiFlatSpec[T: ClassTag: FlatReader, X: ClassTag](
     spec: MultiFeatureSpec[X]): MultiFeatureSpec[T] = {
+    val reader = FlatReader[T].reader
     val features = spec.features.map { feature =>
       val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
-      new Feature(feature.transformer.flatRead, feature.default, t)
+      val flatRead = reader.andThen(feature.transformer.flatRead)
+
+      new Feature(flatRead, feature.default, t)
         .asInstanceOf[Feature[T, _, _, _]]
     }
     new MultiFeatureSpec[T](spec.mapping, features, spec.crossings)
@@ -108,6 +118,8 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
   import CollectionType.ops._
   import scala.reflect.runtime.universe
 
+  private[this] val reader = FlatReader[T].reader
+
   @transient private[this] val converters = settings.map { str =>
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
     val jsonOpt = decode[Seq[Settings]](str)
@@ -119,7 +131,7 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
         .asInstanceOf[SettingsBuilder]
         .fromSettings(setting)
 
-      (transformer.flatRead[T], setting.aggregators, transformer)
+      (reader.andThen(transformer.flatRead[T]), setting.aggregators, transformer)
     }
   }
 

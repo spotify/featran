@@ -73,7 +73,9 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
   override def params: Map[String, String] =
     Map("expectedLength" -> expectedLength.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubles(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[M[Double]] => fw.IF =
+  override def flatRead[T](implicit fr: FlatReader[T]): fr.ReadType => Option[Any] =
+    fr.readDoubles(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[M[Double]] => fw.IF =
     (v: Option[M[Double]]) => fw.writeDoubles(name)(v.map(_.toSeq))
 }
