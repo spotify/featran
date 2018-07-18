@@ -21,10 +21,10 @@ import com.spotify.featran.transformers.{Identity, Transformer}
 
 package object converters {
   implicit class RichBoolean(val self: Boolean) extends AnyVal {
-    def asDouble: Double = if (self) 1.0 else 0.0
+    final def asDouble: Double = if (self) 1.0 else 0.0
   }
 
   implicit val identityDefault: DefaultTransform[Double] = new DefaultTransform[Double] {
-    def apply(featureName: String): Transformer[Double, _, _] = Identity(featureName)
+    final def apply(featureName: String): Transformer[Double, _, _] = Identity(featureName)
   }
 }

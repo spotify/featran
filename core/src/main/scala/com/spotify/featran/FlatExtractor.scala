@@ -59,7 +59,7 @@ object FlatExtractor {
    * @tparam T The intermediate format where the data is stored
    * @return Class for converting to Features
    */
-  def apply[M[_]: CollectionType, T: ClassTag: FlatReader](
+  @inline def apply[M[_]: CollectionType, T: ClassTag: FlatReader](
     settings: M[String]): FlatExtractor[M, T] = new FlatExtractor[M, T](settings)
 
   /**
@@ -108,7 +108,7 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
   import CollectionType.ops._
   import scala.reflect.runtime.universe
 
-  @transient private val converters = settings.map { str =>
+  @transient private[this] val converters = settings.map { str =>
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
     val jsonOpt = decode[Seq[Settings]](str)
     assert(jsonOpt.isRight, "Unable to parse the settings files.")
@@ -123,7 +123,7 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
     }
   }
 
-  @transient private val dimSize: M[Int] = converters.map { items =>
+  @transient private[this] val dimSize: M[Int] = converters.map { items =>
     items.map {
       case (_, aggr, tr) =>
         val ta = aggr.map(tr.decodeAggregator)
