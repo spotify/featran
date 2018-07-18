@@ -17,20 +17,34 @@
 
 package com.spotify.featran
 
-import org.tensorflow.example.{Example, Features}
-import org.tensorflow.{example => tf}
 import _root_.java.util.regex.Pattern
+import _root_.java.util.concurrent.ConcurrentHashMap
+import _root_.java.util.function.Function
 
 import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
+import org.tensorflow.example.{Example, Features}
+import org.tensorflow.{example => tf}
 import shapeless.datatype.tensorflow.TensorFlowType
 
-case class NamedTFFeature(name: String, f: tf.Feature)
-
 package object tensorflow {
-  private val FeatureNameNormalization = Pattern.compile("[^A-Za-z0-9_]")
+
+  private[this] object FeatureNameNormalization {
+    private[this] val NamePattern = Pattern.compile("[^A-Za-z0-9_]")
+
+    val normalize: String => String = {
+      lazy val cache = new ConcurrentHashMap[String, String]()
+      fn =>
+        cache.computeIfAbsent(fn, new Function[String, String] {
+          override def apply(n: String): String =
+            NamePattern.matcher(n).replaceAll("_")
+        })
+    }
+  }
+
+  final case class NamedTFFeature(name: String, f: tf.Feature)
 
   final case class TensorFlowFeatureBuilder(
-    @transient private var underlying: Features.Builder = tf.Features.newBuilder())
+    @transient private var underlying: tf.Features.Builder = tf.Features.newBuilder())
       extends FeatureBuilder[tf.Example] {
     override def init(dimension: Int): Unit = {
       if (underlying == null) {
@@ -43,7 +57,7 @@ package object tensorflow {
         .newBuilder()
         .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
         .build()
-      val normalized = FeatureNameNormalization.matcher(name).replaceAll("_")
+      val normalized = FeatureNameNormalization.normalize(name)
       underlying.putFeature(normalized, feature)
     }
     override def skip(): Unit = Unit
@@ -51,13 +65,18 @@ package object tensorflow {
     override def result: tf.Example =
       tf.Example.newBuilder().setFeatures(underlying).build()
 
-    override def newBuilder: FeatureBuilder[Example] = TensorFlowFeatureBuilder()
+    override def newBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
   }
 
-  implicit val exampleFlatReader: FlatReader[Example] = new FlatReader[tf.Example] {
+  /**
+   * [[FeatureBuilder]] for output as TensorFlow `Example` type.
+   */
+  implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
+
+  implicit val exampleFlatReader: FlatReader[tf.Example] = new FlatReader[tf.Example] {
     import TensorFlowType._
 
-    def toFeature(name: String, ex: Example): Option[tf.Feature] = {
+    def toFeature(name: String, ex: tf.Example): Option[tf.Feature] = {
       val fm = ex.getFeatures.getFeatureMap
       if (fm.containsKey(name)) {
         Some(fm.get(name))
@@ -163,8 +182,8 @@ package object tensorflow {
         val builder = Features.newBuilder()
         fns.foreach { f =>
           f.foreach { nf =>
-            val normalized_name = FeatureNameNormalization.matcher(nf.name).replaceAll("_")
-            builder.putFeature(normalized_name, nf.f)
+            val normalized = FeatureNameNormalization.normalize(nf.name)
+            builder.putFeature(normalized, nf.f)
           }
         }
         Example
@@ -173,9 +192,4 @@ package object tensorflow {
           .build()
       }
   }
-
-  /**
-   * [[FeatureBuilder]] for output as TensorFlow `Example` type.
-   */
-  implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
 }
