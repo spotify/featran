@@ -119,7 +119,9 @@ private[featran] class QuantileDiscretizer(name: String, val numBuckets: Int, va
   override def params: Map[String, String] =
     Map("numBuckets" -> numBuckets.toString, "k" -> k.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+  override def flatRead[T](implicit fr: FlatReader[T]): fr.ReadType => Option[Any] =
+    fr.readDouble(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
     fw.writeDouble(name)
 }

@@ -76,50 +76,53 @@ package object tensorflow {
   implicit val exampleFlatReader: FlatReader[tf.Example] = new FlatReader[tf.Example] {
     import TensorFlowType._
 
-    def toFeature(name: String, ex: tf.Example): Option[tf.Feature] = {
-      val fm = ex.getFeatures.getFeatureMap
-      if (fm.containsKey(name)) {
-        Some(fm.get(name))
-      } else {
-        None
-      }
-    }
+    override type ReadType = String => Option[tf.Feature]
 
-    def readDouble(name: String): Example => Option[Double] =
-      (ex: Example) => toFeature(name, ex).flatMap(v => toDoubles(v).headOption)
+    def readDouble(name: String): ReadType => Option[Double] =
+      rt => rt(name).flatMap(v => toDoubles(v).headOption)
 
-    def readMdlRecord(name: String): Example => Option[MDLRecord[String]] =
-      (ex: Example) => {
+    def readMdlRecord(name: String): ReadType => Option[MDLRecord[String]] =
+      rt => {
         for {
-          labelFeature <- toFeature(name + "_label", ex)
+          labelFeature <- rt(name + "_label")
           label <- toStrings(labelFeature).headOption
-          valueFeature <- toFeature(name + "_value", ex)
+          valueFeature <- rt(name + "_value")
           value <- toDoubles(valueFeature).headOption
         } yield MDLRecord(label, value)
       }
 
-    def readWeightedLabel(name: String): Example => Option[List[WeightedLabel]] =
-      (ex: Example) => {
+    def readWeightedLabel(name: String): ReadType => Option[List[WeightedLabel]] =
+      rt => {
         val labels = for {
-          keyFeature <- toFeature(name + "_key", ex).toList
+          keyFeature <- rt(name + "_key").toList
           key <- toStrings(keyFeature)
-          valueFeature <- toFeature(name + "_value", ex).toList
+          valueFeature <- rt(name + "_value").toList
           value <- toDoubles(valueFeature)
         } yield WeightedLabel(key, value)
         if (labels.isEmpty) None else Some(labels)
       }
 
-    def readDoubles(name: String): Example => Option[Seq[Double]] =
-      (ex: Example) => toFeature(name, ex).map(v => toDoubles(v))
+    def readDoubles(name: String): ReadType => Option[Seq[Double]] =
+      rt => rt(name).map(v => toDoubles(v))
 
-    def readDoubleArray(name: String): Example => Option[Array[Double]] =
-      (ex: Example) => toFeature(name, ex).map(v => toDoubles(v).toArray)
+    def readDoubleArray(name: String): ReadType => Option[Array[Double]] =
+      rt => rt(name).map(v => toDoubles(v).toArray)
 
-    def readString(name: String): Example => Option[String] =
-      (ex: Example) => toFeature(name, ex).flatMap(v => toStrings(v).headOption)
+    def readString(name: String): ReadType => Option[String] =
+      rt => rt(name).flatMap(v => toStrings(v).headOption)
 
-    def readStrings(name: String): Example => Option[Seq[String]] =
-      (ex: Example) => toFeature(name, ex).map(v => toStrings(v))
+    def readStrings(name: String): ReadType => Option[Seq[String]] =
+      rt => rt(name).map(v => toStrings(v))
+
+    override def reader: Example => String => Option[tf.Feature] = ex => {
+      val fm = ex.getFeatures.getFeatureMap
+      name =>
+        if (fm.containsKey(name)) {
+          Some(fm.get(name))
+        } else {
+          None
+        }
+    }
   }
 
   implicit val exampleFlatWriter: FlatWriter[Example] = new FlatWriter[tf.Example] {

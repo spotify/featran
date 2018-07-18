@@ -128,7 +128,9 @@ private[featran] class HeavyHitters(name: String,
         "delta" -> delta.toString,
         "heavyHittersCount" -> heavyHittersCount.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[String] => fw.IF =
+  override def flatRead[T](implicit fr: FlatReader[T]): fr.ReadType => Option[Any] =
+    fr.readString(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[String] => fw.IF =
     fw.writeString(name)
 }

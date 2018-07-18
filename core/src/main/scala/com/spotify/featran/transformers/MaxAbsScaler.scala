@@ -47,8 +47,10 @@ object MaxAbsScaler extends SettingsBuilder {
 
 private[featran] class MaxAbsScaler(name: String)
     extends OneDimensional[Double, Max[Double], Double](name) {
+
   override val aggregator: Aggregator[Double, Max[Double], Double] =
     Aggregators.from[Double](x => Max(math.abs(x))).to(_.get)
+
   override def buildFeatures(a: Option[Double], c: Double, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
       // truncate x to [-max, max]
@@ -59,9 +61,14 @@ private[featran] class MaxAbsScaler(name: String)
       }
     case None => fb.skip()
   }
+
   override def encodeAggregator(c: Double): String = c.toString
+
   override def decodeAggregator(s: String): Double = s.toDouble
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+
+  override def flatRead[T](implicit fr: FlatReader[T]): fr.ReadType => Option[Any] =
+    fr.readDouble(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
     fw.writeDouble(name)
 }

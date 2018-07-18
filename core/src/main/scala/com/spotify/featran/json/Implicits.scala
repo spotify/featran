@@ -85,34 +85,37 @@ private[featran] trait Implicits extends Serializable {
   implicit val settingsEncoder: Encoder[Settings] = semiauto.deriveEncoder[Settings]
 
   implicit val jsonFlatReader: FlatReader[String] = new FlatReader[String] {
-    private def toFeature[T: Decoder: Encoder](name: String): String => Option[T] =
-      json =>
-        circeDecode[Map[String, Option[String]]](json).toOption
-          .flatMap { map =>
-            map
-              .get(name)
-              .flatten
-              .flatMap(o => circeDecode[T](o).toOption)
-        }
+    override type ReadType = Option[Map[String, Option[String]]]
 
-    override def readDouble(name: String): String => Option[Double] = toFeature[Double](name)
+    private def toFeature[T: Decoder](name: String): ReadType => Option[T] =
+      _.flatMap { map =>
+        map
+          .get(name)
+          .flatten
+          .flatMap(o => circeDecode[T](o).toOption)
+      }
 
-    override def readMdlRecord(name: String): String => Option[MDLRecord[String]] =
+    override def readDouble(name: String): ReadType => Option[Double] = toFeature[Double](name)
+
+    override def readMdlRecord(name: String): ReadType => Option[MDLRecord[String]] =
       toFeature[MDLRecord[String]](name)
 
-    override def readWeightedLabel(name: String): String => Option[List[WeightedLabel]] =
+    override def readWeightedLabel(name: String): ReadType => Option[List[WeightedLabel]] =
       toFeature[List[WeightedLabel]](name)
 
-    override def readDoubles(name: String): String => Option[Seq[Double]] =
+    override def readDoubles(name: String): ReadType => Option[Seq[Double]] =
       toFeature[Seq[Double]](name)
 
-    override def readDoubleArray(name: String): String => Option[Array[Double]] =
+    override def readDoubleArray(name: String): ReadType => Option[Array[Double]] =
       toFeature[Array[Double]](name)
 
-    override def readString(name: String): String => Option[String] = toFeature[String](name)
+    override def readString(name: String): ReadType => Option[String] = toFeature[String](name)
 
-    override def readStrings(name: String): String => Option[Seq[String]] =
+    override def readStrings(name: String): ReadType => Option[Seq[String]] =
       toFeature[Seq[String]](name)
+
+    override def reader: String => Option[Map[String, Option[String]]] =
+      json => circeDecode[Map[String, Option[String]]](json).toOption
   }
 
   implicit val jsonFlatWriter: FlatWriter[String] = new FlatWriter[String] {
