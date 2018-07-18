@@ -18,6 +18,8 @@
 package com.spotify.featran
 
 import _root_.java.util.regex.Pattern
+import _root_.java.util.concurrent.ConcurrentHashMap
+import _root_.java.util.function.Function
 
 import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
 import org.tensorflow.example.{Example, Features}
@@ -29,7 +31,14 @@ package object tensorflow {
   private[this] object FeatureNameNormalization {
     private[this] val NamePattern = Pattern.compile("[^A-Za-z0-9_]")
 
-    val normalize: String => String = fn => NamePattern.matcher(fn).replaceAll("_")
+    val normalize: String => String = {
+      lazy val cache = new ConcurrentHashMap[String, String]()
+      fn =>
+        cache.computeIfAbsent(fn, new Function[String, String] {
+          override def apply(n: String): String =
+            NamePattern.matcher(n).replaceAll("_")
+        })
+    }
   }
 
   final case class NamedTFFeature(name: String, f: tf.Feature)
