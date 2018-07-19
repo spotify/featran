@@ -46,8 +46,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
       as.cross(fs)
         .map {
           case ((_, array), featureSet) =>
-            val asd = featureSet.unsafePrepare(array)
-            (featureSet, asd)
+            (featureSet, featureSet.unsafePrepare(array))
         }
         .reduce {
           case ((featureSet, a), (_, b)) =>

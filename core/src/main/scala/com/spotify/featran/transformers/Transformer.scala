@@ -96,7 +96,9 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
     optFeatureDimension(c.asInstanceOf[Option[C]])
 
   def flatRead[T: FlatReader]: T => Option[Any]
+
   def flatWriter[T](implicit fw: FlatWriter[T]): Option[A] => fw.IF
+
   def unsafeFlatWriter[T](implicit fw: FlatWriter[T]): Option[Any] => fw.IF =
     (o: Option[Any]) => flatWriter.apply(o.asInstanceOf[Option[A]]).asInstanceOf[fw.IF]
 
