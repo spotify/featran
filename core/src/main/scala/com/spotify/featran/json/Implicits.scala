@@ -85,7 +85,7 @@ private[featran] trait Implicits extends Serializable {
   implicit val settingsEncoder: Encoder[Settings] = semiauto.deriveEncoder[Settings]
 
   implicit val jsonFlatReader: FlatReader[String] = new FlatReader[String] {
-    private def toFeature[T: Decoder: Encoder](name: String): String => Option[T] =
+    private def toFeature[T: Decoder](name: String): String => Option[T] =
       json =>
         circeDecode[Map[String, Option[String]]](json).toOption
           .flatMap { map =>
