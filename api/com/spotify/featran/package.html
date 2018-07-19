@@ -168,6 +168,42 @@
       </a>
     </span>
       <p class="shortcomment cmt">Encapsulate specification for feature extraction and transformation.</p><div class="fullcomment"><div class="comment cmt"><p>Encapsulate specification for feature extraction and transformation.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>input record type to extract features from</p></dd></dl></div>
+    </li><li name="com.spotify.featran.FlatReader" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="FlatReader[T]extendsSerializable"></a>
+      <a id="FlatReader[T]:FlatReader[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="FlatReader.html"><span class="name">FlatReader</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.package@FlatReader[T]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">TypeClass that is used to read data from flat files.</p><div class="fullcomment"><div class="comment cmt"><p>TypeClass that is used to read data from flat files.  The requirement is that each
+feature comes from the same type and can be looked up by name.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>The intermediate storage format for each feature.</p></dd></dl></div>
+    </li><li name="com.spotify.featran.FlatWriter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FlatWriter[+T]extendsSerializable"></a>
+      <a id="FlatWriter[+T]:FlatWriter[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="FlatWriter.html"><span class="name">FlatWriter</span></a><span class="tparams">[<span name="T">+T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.package@FlatWriter[+T]extendsSerializable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">TypeClass for implementing the writer to a flat format keyed by name
+</p>
     </li><li name="com.spotify.featran.FloatingPoint" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="FloatingPoint[T]extendsSerializable"></a>
       <a id="FloatingPoint[T]:FloatingPoint[T]"></a>
@@ -220,6 +256,23 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
       </a>
     </span>
       <p class="shortcomment cmt">Wrapper for <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a> that allows for combination and separation of different specs.</p>
+    </li><li name="com.spotify.featran.NamedSparseArray" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NamedSparseArray[T]extendsProductwithSerializable"></a>
+      <a id="NamedSparseArray[T]:NamedSparseArray[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="NamedSparseArray.html"><span class="name">NamedSparseArray</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="indices">indices: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="values">values: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.spotify.featran.NamedSparseArray.T">T</span>]</span>, <span name="length">length: <span class="extype" name="scala.Int">Int</span></span>, <span name="names">names: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.package@NamedSparseArray[T]extendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A <a href="SparseArray.html" class="extype" name="com.spotify.featran.SparseArray">SparseArray</a> with names of non-zero entries.</p>
     </li><li name="com.spotify.featran.RecordExtractor" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="RecordExtractor[T,F]extendsAnyRef"></a>
       <a id="RecordExtractor[T,F]:RecordExtractor[T,F]"></a>
@@ -346,6 +399,82 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
       </a>
     </span>
       <p class="shortcomment cmt">Companion object for <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>.</p>
+    </li><li name="com.spotify.featran.FlatConverter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="FlatConverter"></a>
+      <a id="FlatConverter:FlatConverter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FlatConverter$.html"><span class="name">FlatConverter</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.package@FlatConverter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Companion to FlatReader.</p><div class="fullcomment"><div class="comment cmt"><p>Companion to FlatReader.  Sometimes for serialization and compatability reasons it
+is better to write out data in an intermediate format such as JSON or tf.examples to
+interface with storage or other systems.  This class uses the functions internal to a spec
+to write out the data into a new flat format.
+</p></div></div>
+    </li><li name="com.spotify.featran.FlatExtractor" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="FlatExtractor"></a>
+      <a id="FlatExtractor:FlatExtractor"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FlatExtractor$.html"><span class="name">FlatExtractor</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.package@FlatExtractor" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Sometimes it is useful to store the features in an intermediate state in normally
+a flat version like Examples or maybe JSON.</p><div class="fullcomment"><div class="comment cmt"><p>Sometimes it is useful to store the features in an intermediate state in normally
+a flat version like Examples or maybe JSON.  This makes it easier to interface with
+other systems.
+</p></div></div>
+    </li><li name="com.spotify.featran.FlatReader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FlatReader"></a>
+      <a id="FlatReader:FlatReader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FlatReader$.html"><span class="name">FlatReader</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.package@FlatReader" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
+    </li><li name="com.spotify.featran.FlatWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FlatWriter"></a>
+      <a id="FlatWriter:FlatWriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FlatWriter$.html"><span class="name">FlatWriter</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.package@FlatWriter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      
     </li><li name="com.spotify.featran.FloatingPoint" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="FloatingPoint"></a>
       <a id="FloatingPoint:FloatingPoint"></a>

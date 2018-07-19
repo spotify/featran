@@ -262,6 +262,26 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.spotify.featran.FeatureSpec#from" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="from[T&lt;:Product](implicitevidence$1:scala.reflect.ClassTag[T],implicitevidence$2:reflect.runtime.universe.TypeTag[T],implicitdt:com.spotify.featran.converters.DefaultTransform[Double]):com.spotify.featran.FeatureSpec[T]"></a>
+      <a id="from[T&lt;:Product](ClassTag[T],scala.reflect.api.JavaUniverse.TypeTag[T],DefaultTransform[Double]):FeatureSpec[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">from</span><span class="tparams">[<span name="T">T &lt;: <span class="extype" name="scala.Product">Product</span></span>]</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.spotify.featran.FeatureSpec.from.T">T</span>]</span>, <span name="arg1">arg1: <span class="extype" name="scala.reflect.api.TypeTags.TypeTag">scala.reflect.api.JavaUniverse.TypeTag</span>[<span class="extype" name="com.spotify.featran.FeatureSpec.from.T">T</span>]</span>, <span name="dt">dt: <a href="converters/DefaultTransform.html" class="extype" name="com.spotify.featran.converters.DefaultTransform">DefaultTransform</a>[<span class="extype" name="scala.Double">Double</span>]</span>)</span><span class="result">: <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>[<span class="extype" name="com.spotify.featran.FeatureSpec.from.T">T</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#com.spotify.featran.FeatureSpec$@from[T&lt;:Product](implicitevidence$1:scala.reflect.ClassTag[T],implicitevidence$2:reflect.runtime.universe.TypeTag[T],implicitdt:com.spotify.featran.converters.DefaultTransform[Double]):com.spotify.featran.FeatureSpec[T]" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Generates a new <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a> for case class of type <code>T</code>.</p><div class="fullcomment"><div class="comment cmt"><p>Generates a new <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a> for case class of type <code>T</code>.  This method
+defaults the transformers based on the types of the fields.</p><p>The implicit parameter can be used to change the default of the Transformer used for
+continuous values.  When another isn't suppilied Identity will be used.
+</p></div></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>

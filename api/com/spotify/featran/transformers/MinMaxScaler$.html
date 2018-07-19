@@ -45,7 +45,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">MinMaxScaler</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">MinMaxScaler</span><span class="result"> extends <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -54,7 +54,7 @@
 truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejection$$OutOfBound.html" class="extype" name="com.spotify.featran.FeatureRejection.OutOfBound">FeatureRejection.OutOfBound</a> rejections are reported.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -72,7 +72,7 @@ truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejecti
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.spotify.featran.transformers.MinMaxScaler"><span>MinMaxScaler</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.spotify.featran.transformers.MinMaxScaler"><span>MinMaxScaler</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="com.spotify.featran.transformers.SettingsBuilder"><span>SettingsBuilder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -164,7 +164,7 @@ truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejecti
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.MinMaxScaler">MinMaxScaler</a> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <a href="" class="extype" name="com.spotify.featran.transformers.MinMaxScaler">MinMaxScaler</a> instance.</p></div><dl class="paramcmts block"><dt class="param">min</dt><dd class="cmt"><p>lower bound after transformation, shared by all features</p></dd><dt class="param">max</dt><dd class="cmt"><p>upper bound after transformation, shared by all features</p></dd></dl></div>
+      <p class="shortcomment cmt">Create a new <span class="extype" name="MinMaxScaler">MinMaxScaler</span> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="MinMaxScaler">MinMaxScaler</span> instance.</p></div><dl class="paramcmts block"><dt class="param">min</dt><dd class="cmt"><p>lower bound after transformation, shared by all features</p></dd><dt class="param">max</dt><dd class="cmt"><p>upper bound after transformation, shared by all features</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -262,6 +262,23 @@ truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejecti
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.spotify.featran.transformers.MinMaxScaler#fromSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromSettings(setting:com.spotify.featran.transformers.Settings):com.spotify.featran.transformers.Transformer[Double,(com.twitter.algebird.Min[Double],com.twitter.algebird.Max[Double]),com.spotify.featran.transformers.MinMaxScaler.C]"></a>
+      <a id="fromSettings(Settings):Transformer[Double,(Min[Double],Max[Double]),C]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fromSettings</span><span class="params">(<span name="setting">setting: <a href="Settings.html" class="extype" name="com.spotify.featran.transformers.Settings">Settings</a></span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<span class="extype" name="scala.Double">Double</span>, (<span class="extype" name="com.twitter.algebird.Min">Min</span>[<span class="extype" name="scala.Double">Double</span>], <span class="extype" name="com.twitter.algebird.Max">Max</span>[<span class="extype" name="scala.Double">Double</span>]), <span class="extype" name="com.spotify.featran.transformers.MinMaxScaler.C">C</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.transformers.MinMaxScaler$@fromSettings(setting:com.spotify.featran.transformers.Settings):com.spotify.featran.transformers.Transformer[Double,(com.twitter.algebird.Min[Double],com.twitter.algebird.Max[Double]),com.spotify.featran.transformers.MinMaxScaler.C]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Create a new <span class="extype" name="MinMaxScaler">MinMaxScaler</span> from a settings object</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="MinMaxScaler">MinMaxScaler</span> from a settings object</p></div><dl class="paramcmts block"><dt class="param">setting</dt><dd class="cmt"><p>Settings object</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.spotify.featran.transformers.MinMaxScaler">MinMaxScaler</a> → <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -480,6 +497,8 @@ truncated to <code>min</code> or <code>max</code> and <a href="../FeatureRejecti
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="com.spotify.featran.transformers.SettingsBuilder">
+              <h3>Inherited from <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

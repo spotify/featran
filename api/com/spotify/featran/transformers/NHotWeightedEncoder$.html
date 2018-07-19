@@ -45,18 +45,18 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">NHotWeightedEncoder</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">NHotWeightedEncoder</span><span class="result"> extends <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform a collection of weighted categorical features to columns of weight sums, with at most
 N values.</p><p>Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
-<a href="NHotEncoder$.html" class="extype" name="com.spotify.featran.transformers.NHotEncoder">NHotEncoder</a>.</p><p>Missing values are either transformed to zero vectors or encoded as a missing value.</p><p>When using aggregated feature summary from a previous session, unseen labels are either
+<span class="extype" name="NHotEncoder">NHotEncoder</span>.</p><p>Missing values are either transformed to zero vectors or encoded as a missing value.</p><p>When using aggregated feature summary from a previous session, unseen labels are either
 transformed to zero vectors or encoded as <code><u>unknown</u></code> (if <code>encodeMissingValue</code> is true) and
 [FeatureRejection.Unseen]] rejections are reported.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -74,7 +74,7 @@ transformed to zero vectors or encoded as <code><u>unknown</u></code> (if <code>
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.spotify.featran.transformers.NHotWeightedEncoder"><span>NHotWeightedEncoder</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.spotify.featran.transformers.NHotWeightedEncoder"><span>NHotWeightedEncoder</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="com.spotify.featran.transformers.SettingsBuilder"><span>SettingsBuilder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -166,7 +166,7 @@ transformed to zero vectors or encoded as <code><u>unknown</u></code> (if <code>
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.NHotWeightedEncoder">NHotWeightedEncoder</a> instance.</p>
+      <p class="shortcomment cmt">Create a new <span class="extype" name="NHotWeightedEncoder">NHotWeightedEncoder</span> instance.</p>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -264,6 +264,23 @@ transformed to zero vectors or encoded as <code><u>unknown</u></code> (if <code>
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.spotify.featran.transformers.NHotWeightedEncoder#fromSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromSettings(setting:com.spotify.featran.transformers.Settings):com.spotify.featran.transformers.Transformer[Seq[com.spotify.featran.transformers.WeightedLabel],Set[String],scala.collection.SortedMap[String,Int]]"></a>
+      <a id="fromSettings(Settings):Transformer[Seq[WeightedLabel],Set[String],SortedMap[String,Int]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fromSettings</span><span class="params">(<span name="setting">setting: <a href="Settings.html" class="extype" name="com.spotify.featran.transformers.Settings">Settings</a></span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<span class="extype" name="scala.Seq">Seq</span>[<a href="WeightedLabel.html" class="extype" name="com.spotify.featran.transformers.WeightedLabel">WeightedLabel</a>], <span class="extype" name="scala.Predef.Set">Set</span>[<span class="extype" name="scala.Predef.String">String</span>], <span class="extype" name="scala.collection.SortedMap">SortedMap</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Int">Int</span>]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.transformers.NHotWeightedEncoder$@fromSettings(setting:com.spotify.featran.transformers.Settings):com.spotify.featran.transformers.Transformer[Seq[com.spotify.featran.transformers.WeightedLabel],Set[String],scala.collection.SortedMap[String,Int]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Create a new <span class="extype" name="NHotWeightedEncoder">NHotWeightedEncoder</span> from a settings object</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="NHotWeightedEncoder">NHotWeightedEncoder</span> from a settings object</p></div><dl class="paramcmts block"><dt class="param">setting</dt><dd class="cmt"><p>Settings object</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.spotify.featran.transformers.NHotWeightedEncoder">NHotWeightedEncoder</a> → <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -482,6 +499,8 @@ transformed to zero vectors or encoded as <code><u>unknown</u></code> (if <code>
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="com.spotify.featran.transformers.SettingsBuilder">
+              <h3>Inherited from <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

@@ -45,7 +45,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">HeavyHitters</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">HeavyHitters</span><span class="result"> extends <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -57,7 +57,7 @@ at least <code>1 - delta</code>, this estimate is within <code>eps * N</code> of
 input collection.</p><p>Missing values are transformed to [0.0, 0.0].
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -75,7 +75,7 @@ input collection.</p><p>Missing values are transformed to [0.0, 0.0].
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.spotify.featran.transformers.HeavyHitters"><span>HeavyHitters</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.spotify.featran.transformers.HeavyHitters"><span>HeavyHitters</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="com.spotify.featran.transformers.SettingsBuilder"><span>SettingsBuilder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -167,7 +167,7 @@ input collection.</p><p>Missing values are transformed to [0.0, 0.0].
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.HeavyHitters">HeavyHitters</a> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <a href="" class="extype" name="com.spotify.featran.transformers.HeavyHitters">HeavyHitters</a> instance.</p></div><dl class="paramcmts block"><dt class="param">heavyHittersCount</dt><dd class="cmt"><p>number of heavy hitters to keep track of</p></dd><dt class="param">eps</dt><dd class="cmt"><p>one-sided error bound on the error of each point query, i.e. frequency estimate</p></dd><dt class="param">delta</dt><dd class="cmt"><p>a bound on the probability that a query estimate does not lie within some small
+      <p class="shortcomment cmt">Create a new <span class="extype" name="HeavyHitters">HeavyHitters</span> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="HeavyHitters">HeavyHitters</span> instance.</p></div><dl class="paramcmts block"><dt class="param">heavyHittersCount</dt><dd class="cmt"><p>number of heavy hitters to keep track of</p></dd><dt class="param">eps</dt><dd class="cmt"><p>one-sided error bound on the error of each point query, i.e. frequency estimate</p></dd><dt class="param">delta</dt><dd class="cmt"><p>a bound on the probability that a query estimate does not lie within some small
              interval (an interval that depends on <code>eps</code>) around the truth</p></dd><dt class="param">seed</dt><dd class="cmt"><p>a seed to initialize the random number generator used to create the pairwise
             independent hash functions</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
@@ -267,6 +267,23 @@ input collection.</p><p>Missing values are transformed to [0.0, 0.0].
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.spotify.featran.transformers.HeavyHitters#fromSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromSettings(setting:com.spotify.featran.transformers.Settings):com.spotify.featran.transformers.Transformer[String,com.twitter.algebird.SketchMap[String,Long],Map[String,(Int,Long)]]"></a>
+      <a id="fromSettings(Settings):Transformer[String,SketchMap[String,Long],Map[String,(Int,Long)]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fromSettings</span><span class="params">(<span name="setting">setting: <a href="Settings.html" class="extype" name="com.spotify.featran.transformers.Settings">Settings</a></span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="com.twitter.algebird.SketchMap">SketchMap</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Long">Long</span>], <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, (<span class="extype" name="scala.Int">Int</span>, <span class="extype" name="scala.Long">Long</span>)]]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.transformers.HeavyHitters$@fromSettings(setting:com.spotify.featran.transformers.Settings):com.spotify.featran.transformers.Transformer[String,com.twitter.algebird.SketchMap[String,Long],Map[String,(Int,Long)]]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Create a new <span class="extype" name="HeavyHitters">HeavyHitters</span> from a settings object</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="HeavyHitters">HeavyHitters</span> from a settings object</p></div><dl class="paramcmts block"><dt class="param">setting</dt><dd class="cmt"><p>Settings object</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.spotify.featran.transformers.HeavyHitters">HeavyHitters</a> → <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -485,6 +502,8 @@ input collection.</p><p>Missing values are transformed to [0.0, 0.0].
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="com.spotify.featran.transformers.SettingsBuilder">
+              <h3>Inherited from <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

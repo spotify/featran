@@ -45,7 +45,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">Binarizer</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">Binarizer</span><span class="result"> extends <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -53,7 +53,7 @@
 <code>threshold</code> are binarized to 0.0.</p><p>Missing values are binarized to 0.0.
 </p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -71,7 +71,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.spotify.featran.transformers.Binarizer"><span>Binarizer</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.spotify.featran.transformers.Binarizer"><span>Binarizer</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="com.spotify.featran.transformers.SettingsBuilder"><span>SettingsBuilder</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -163,7 +163,7 @@
         <img src="../../../../lib/permalink.png" alt="Permalink" />
       </a>
     </span>
-      <p class="shortcomment cmt">Create a new <a href="" class="extype" name="com.spotify.featran.transformers.Binarizer">Binarizer</a> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <a href="" class="extype" name="com.spotify.featran.transformers.Binarizer">Binarizer</a> instance.</p></div><dl class="paramcmts block"><dt class="param">threshold</dt><dd class="cmt"><p>threshold to binarize continuous features</p></dd></dl></div>
+      <p class="shortcomment cmt">Create a new <span class="extype" name="Binarizer">Binarizer</span> instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="Binarizer">Binarizer</span> instance.</p></div><dl class="paramcmts block"><dt class="param">threshold</dt><dd class="cmt"><p>threshold to binarize continuous features</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -261,6 +261,23 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.spotify.featran.transformers.Binarizer#fromSettings" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="fromSettings(setting:com.spotify.featran.transformers.Settings):com.spotify.featran.transformers.Transformer[Double,Unit,Unit]"></a>
+      <a id="fromSettings(Settings):Transformer[Double,Unit,Unit]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">fromSettings</span><span class="params">(<span name="setting">setting: <a href="Settings.html" class="extype" name="com.spotify.featran.transformers.Settings">Settings</a></span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<span class="extype" name="scala.Double">Double</span>, <span class="extype" name="scala.Unit">Unit</span>, <span class="extype" name="scala.Unit">Unit</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#com.spotify.featran.transformers.Binarizer$@fromSettings(setting:com.spotify.featran.transformers.Settings):com.spotify.featran.transformers.Transformer[Double,Unit,Unit]" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" alt="Permalink" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Create a new <span class="extype" name="Binarizer">Binarizer</span> from a settings object</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="Binarizer">Binarizer</span> from a settings object</p></div><dl class="paramcmts block"><dt class="param">setting</dt><dd class="cmt"><p>Settings object</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.spotify.featran.transformers.Binarizer">Binarizer</a> → <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -479,6 +496,8 @@
               <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="com.spotify.featran.transformers.SettingsBuilder">
+              <h3>Inherited from <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
