@@ -75,7 +75,8 @@ private[featran] class StandardScaler(name: String, val withStd: Boolean, val wi
   override def params: Map[String, String] =
     Map("withStd" -> withStd.toString, "withMean" -> withMean.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+  override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
     fw.writeDouble(name)
 }

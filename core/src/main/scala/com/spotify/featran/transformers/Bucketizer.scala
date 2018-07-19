@@ -101,7 +101,8 @@ private[featran] class Bucketizer(name: String, val splits: Array[Double])
   override def params: Map[String, String] =
     Map("splits" -> splits.mkString("[", ",", "]"))
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+  override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
     fw.writeDouble(name)
 }

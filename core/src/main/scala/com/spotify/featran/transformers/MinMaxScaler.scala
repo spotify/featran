@@ -88,7 +88,8 @@ private[featran] class MinMaxScaler(name: String, val min: Double, val max: Doub
   override def params: Map[String, String] =
     Map("min" -> min.toString, "max" -> max.toString)
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
+  override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
     fw.writeDouble(name)
 }

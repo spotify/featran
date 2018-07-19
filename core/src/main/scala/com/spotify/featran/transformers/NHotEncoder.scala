@@ -95,7 +95,8 @@ private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
     case None => addMissingItem(c, fb)
   }
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readStrings(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[Seq[String]] => fw.IF =
+  override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readStrings(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Seq[String]] => fw.IF =
     fw.writeStrings(name)
 }

@@ -94,8 +94,9 @@ private[featran] class HashOneHotEncoder(name: String,
     }
   }
 
-  def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
-  def flatWriter[T](implicit fw: FlatWriter[T]): Option[String] => fw.IF =
+  override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
+
+  override def flatWriter[T](implicit fw: FlatWriter[T]): Option[String] => fw.IF =
     fw.writeString(name)
 }
 
