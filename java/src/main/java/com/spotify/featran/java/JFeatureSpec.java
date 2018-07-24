@@ -137,6 +137,14 @@ public class JFeatureSpec<T> {
   }
 
   /**
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag)}.
+   */
+  public JRecordExtractor<T, FloatSparseArray>
+  extractWithSubsetSettingsFloatSparseArray(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsFloatSparseArray(self, settings));
+  }
+
+  /**
    * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag).
    */
   public JRecordExtractor<T, DoubleSparseArray>
