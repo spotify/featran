@@ -91,7 +91,7 @@ private object JavaOps {
     fs: FeatureSpec[T],
     settings: String): RecordExtractor[T, FloatNamedSparseArray] =
     fs.extractWithSettings(settings)
-  
+
   def extractWithSettingsDoubleNamedSparseArray[T](
     fs: FeatureSpec[T],
     settings: String): RecordExtractor[T, DoubleNamedSparseArray] =
@@ -110,32 +110,36 @@ private object JavaOps {
     settings: String): RecordExtractor[T, SparseLabeledPoint] =
     fs.extractWithSettings(settings)
 
-  def extractWithSubsetSettingsFloat[T](fs: FeatureSpec[T], settings: String):
-        RecordExtractor[T, Array[Float]] =
+  def extractWithSubsetSettingsFloat[T](fs: FeatureSpec[T],
+                                        settings: String): RecordExtractor[T, Array[Float]] =
     fs.extractWithSubsetSettings(settings)
 
-  def extractWithSubsetSettingsDouble[T](fs: FeatureSpec[T], settings: String):
-        RecordExtractor[T, Array[Double]] =
+  def extractWithSubsetSettingsDouble[T](fs: FeatureSpec[T],
+                                         settings: String): RecordExtractor[T, Array[Double]] =
     fs.extractWithSubsetSettings(settings)
 
-  def extractWithSubsetSettingsFloatSparseArray[T](fs: FeatureSpec[T], settings: String):
-        RecordExtractor[T, FloatSparseArray] =
+  def extractWithSubsetSettingsFloatSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatSparseArray] =
     fs.extractWithSubsetSettings(settings)
 
-  def extractWithSubsetSettingsDoubleSparseArray[T](fs: FeatureSpec[T], settings: String):
-        RecordExtractor[T, DoubleSparseArray] =
+  def extractWithSubsetSettingsDoubleSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, DoubleSparseArray] =
     fs.extractWithSubsetSettings(settings)
 
-  def extractWithSubsetSettingsDoubleNamedSparseArray[T](fs: FeatureSpec[T], settings: String):
-  RecordExtractor[T, DoubleNamedSparseArray] =
+  def extractWithSubsetSettingsDoubleNamedSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, DoubleNamedSparseArray] =
     fs.extractWithSubsetSettings(settings)
 
-  def extractWithSubsetSettingsFloatNamedSparseArray[T](fs: FeatureSpec[T], settings: String):
-  RecordExtractor[T, FloatNamedSparseArray] =
+  def extractWithSubsetSettingsFloatNamedSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatNamedSparseArray] =
     fs.extractWithSubsetSettings(settings)
 
-  def extractWithSubsetSettingsExample[T](fs: FeatureSpec[T], settings: String):
-        RecordExtractor[T, Example] =
+  def extractWithSubsetSettingsExample[T](fs: FeatureSpec[T],
+                                          settings: String): RecordExtractor[T, Example] =
     fs.extractWithSubsetSettings(settings)
 
   //================================================================================
