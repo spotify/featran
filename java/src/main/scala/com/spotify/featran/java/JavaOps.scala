@@ -78,7 +78,8 @@ private object JavaOps {
     fs.extractWithSettings(settings)
 
   def extractWithSettingsFloatSparseArray[T](
-        fs: FeatureSpec[T], settings: String): RecordExtractor[T, FloatSparseArray] =
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatSparseArray] =
     fs.extractWithSettings(settings)
 
   def extractWithSettingsDoubleSparseArray[T](
@@ -90,6 +91,7 @@ private object JavaOps {
     fs: FeatureSpec[T],
     settings: String): RecordExtractor[T, FloatNamedSparseArray] =
     fs.extractWithSettings(settings)
+  
   def extractWithSettingsDoubleNamedSparseArray[T](
     fs: FeatureSpec[T],
     settings: String): RecordExtractor[T, DoubleNamedSparseArray] =
