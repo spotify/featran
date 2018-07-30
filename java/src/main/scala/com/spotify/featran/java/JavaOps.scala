@@ -90,6 +90,16 @@ private object JavaOps {
                                           settings: String): RecordExtractor[T, Example] =
     fs.extractWithSubsetSettings(settings)
 
+  def extractWithSubsetSettingsLabeledPoint[T](
+      fs: FeatureSpec[T],
+      settings: String): RecordExtractor[T, LabeledPoint] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsSparseLabeledPoint[T](
+      fs: FeatureSpec[T],
+      settings: String): RecordExtractor[T, SparseLabeledPoint] =
+    fs.extractWithSubsetSettings(settings)
+
   //================================================================================
   // Wrappers for FeatureSpec
   //================================================================================

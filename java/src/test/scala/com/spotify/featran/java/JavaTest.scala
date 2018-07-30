@@ -145,10 +145,18 @@ class JavaTest extends FlatSpec with Matchers {
   }
 
   it should "work with extractWithSubsetSettings and RecordExtractor" in {
-    val ExpectedNamesSubset = Seq("one_hot_a")
-    val ExpectedValuesSubset = Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00)
+    // keeps only the names and values that start with "one_hot"
+    val transformerToKeep = "one_hot"
+    val ExpectedNamesSubset = ExpectedNames.filter(_.startsWith(transformerToKeep))
+    val ExpectedValuesSubset: Seq[Seq[Float]] = Seq(
+      Seq(1.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+      Seq(0.0f, 1.0f, 0.0f, 0.0f, 0.0f),
+      Seq(0.0f, 0.0f, 1.0f, 0.0f, 0.0f),
+      Seq(0.0f, 0.0f, 0.0f, 1.0f, 0.0f),
+      Seq(0.0f, 0.0f, 0.0f, 0.0f, 1.0f)
+    )
 
-    val TestSpecSubset = TestSpec.filter(feature => feature.transformer.name == "one_hot_a")
+    val TestSpecSubset = TestSpec.filter(feature => feature.transformer.name == transformerToKeep)
 
     val fs = JFeatureSpec.wrap(TestSpecSubset)
     val settings = fs.extract(TestData.asJava).featureSettings()

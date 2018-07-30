@@ -241,6 +241,22 @@ public class JFeatureSpec<T> {
   }
 
   /**
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag).
+   */
+  public JRecordExtractor<T, LabeledPoint>
+  extractWithSubsetSettingsLabeledPoint(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsLabeledPoint(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSettings(String, FeatureBuilder, ClassTag).
+   */
+  public JRecordExtractor<T, SparseLabeledPoint>
+  extractWithSubsetSettingsSparseLabeledPoint(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsSparseLabeledPoint(self, settings));
+  }
+
+  /**
    * Returns internal {@link FeatureSpec}.
    */
   public FeatureSpec<T> internal() {
