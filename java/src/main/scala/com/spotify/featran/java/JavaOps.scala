@@ -67,37 +67,36 @@ private object JavaOps {
     fs.extractWithSubsetSettings(settings)
 
   def extractWithSubsetSettingsFloatSparseArray[T](
-      fs: FeatureSpec[T],
-      settings: String): RecordExtractor[T, FloatSparseArray] =
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatSparseArray] =
     fs.extractWithSubsetSettings(settings)
 
   def extractWithSubsetSettingsDoubleSparseArray[T](
-      fs: FeatureSpec[T],
-      settings: String): RecordExtractor[T, DoubleSparseArray] =
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, DoubleSparseArray] =
     fs.extractWithSubsetSettings(settings)
 
   def extractWithSubsetSettingsDoubleNamedSparseArray[T](
-      fs: FeatureSpec[T],
-      settings: String): RecordExtractor[T, DoubleNamedSparseArray] =
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, DoubleNamedSparseArray] =
     fs.extractWithSubsetSettings(settings)
 
   def extractWithSubsetSettingsFloatNamedSparseArray[T](
-      fs: FeatureSpec[T],
-      settings: String): RecordExtractor[T, FloatNamedSparseArray] =
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatNamedSparseArray] =
     fs.extractWithSubsetSettings(settings)
 
   def extractWithSubsetSettingsExample[T](fs: FeatureSpec[T],
                                           settings: String): RecordExtractor[T, Example] =
     fs.extractWithSubsetSettings(settings)
 
-  def extractWithSubsetSettingsLabeledPoint[T](
-      fs: FeatureSpec[T],
-      settings: String): RecordExtractor[T, LabeledPoint] =
+  def extractWithSubsetSettingsLabeledPoint[T](fs: FeatureSpec[T],
+                                               settings: String): RecordExtractor[T, LabeledPoint] =
     fs.extractWithSubsetSettings(settings)
 
   def extractWithSubsetSettingsSparseLabeledPoint[T](
-      fs: FeatureSpec[T],
-      settings: String): RecordExtractor[T, SparseLabeledPoint] =
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, SparseLabeledPoint] =
     fs.extractWithSubsetSettings(settings)
 
   //================================================================================
