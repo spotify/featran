@@ -186,6 +186,61 @@ public class JFeatureSpec<T> {
   }
 
   /**
+   * Java wrapper for {@link FeatureSpec#extractWithSubsetSettings(String, FeatureBuilder, ClassTag)}.
+   */
+  public JRecordExtractor<T, float[]> extractWithSubsetSettingsFloat(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsFloat(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSubsetSettings(String, FeatureBuilder, ClassTag)}.
+   */
+  public JRecordExtractor<T, double[]> extractWithSubsetSettingsDouble(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsDouble(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSubsetSettings(String, FeatureBuilder, ClassTag)}.
+   */
+  public JRecordExtractor<T, FloatSparseArray>
+  extractWithSubsetSettingsFloatSparseArray(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsFloatSparseArray(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSubsetSettings(String, FeatureBuilder, ClassTag).
+   */
+  public JRecordExtractor<T, DoubleSparseArray>
+  extractWithSubsetSettingsDoubleSparseArray(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsDoubleSparseArray(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSubsetSettings(String, FeatureBuilder, ClassTag)}.
+   */
+  public JRecordExtractor<T, FloatNamedSparseArray>
+  extractWithSubsetSettingsFloatNamedSparseArray(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsFloatNamedSparseArray(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSubsetSettings(String, FeatureBuilder, ClassTag).
+   */
+  public JRecordExtractor<T, DoubleNamedSparseArray>
+  extractWithSubsetSettingsDoubleNamedSparseArray(String settings) {
+    return new JRecordExtractor<>(
+        JavaOps.extractWithSubsetSettingsDoubleNamedSparseArray(self, settings));
+  }
+
+  /**
+   * Java wrapper for {@link FeatureSpec#extractWithSubsetSettings(String, FeatureBuilder, ClassTag).
+   */
+  public JRecordExtractor<T, Example>
+  extractWithSubsetSettingsExample(String settings) {
+    return new JRecordExtractor<>(JavaOps.extractWithSubsetSettingsExample(self, settings));
+  }
+
+  /**
    * Returns internal {@link FeatureSpec}.
    */
   public FeatureSpec<T> internal() {
