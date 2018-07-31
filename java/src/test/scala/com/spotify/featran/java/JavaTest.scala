@@ -144,6 +144,51 @@ class JavaTest extends FlatSpec with Matchers {
     TestData.map(f9.featureValue).map(l2v(ExpectedNames.size)) shouldBe ExpectedValues
   }
 
+  it should "work with extractWithSubsetSettings and RecordExtractor" in {
+    // keeps only the names and values that start with "one_hot"
+    val transformerToKeep = "one_hot"
+    val ExpectedNamesSubset = ExpectedNames.filter(_.startsWith(transformerToKeep))
+    val ExpectedValuesSubset: Seq[Seq[Float]] = Seq(
+      Seq(1.0f, 0.0f, 0.0f, 0.0f, 0.0f),
+      Seq(0.0f, 1.0f, 0.0f, 0.0f, 0.0f),
+      Seq(0.0f, 0.0f, 1.0f, 0.0f, 0.0f),
+      Seq(0.0f, 0.0f, 0.0f, 1.0f, 0.0f),
+      Seq(0.0f, 0.0f, 0.0f, 0.0f, 1.0f)
+    )
+
+    val TestSpecSubset = TestSpec.filter(feature => feature.transformer.name == transformerToKeep)
+
+    val fs = JFeatureSpec.wrap(TestSpecSubset)
+    val settings = fs.extract(TestData.asJava).featureSettings()
+    val f1 = fs.extractWithSubsetSettingsFloat(settings)
+    val f2 = fs.extractWithSubsetSettingsDouble(settings)
+    val f3 = fs.extractWithSubsetSettingsFloatSparseArray(settings)
+    val f4 = fs.extractWithSubsetSettingsDoubleSparseArray(settings)
+    val f5 = fs.extractWithSubsetSettingsFloatNamedSparseArray(settings)
+    val f6 = fs.extractWithSubsetSettingsDoubleNamedSparseArray(settings)
+    val f7 = fs.extractWithSubsetSettingsExample(settings)
+    val f8 = fs.extractWithSubsetSettingsLabeledPoint(settings)
+    val f9 = fs.extractWithSubsetSettingsSparseLabeledPoint(settings)
+    f1.featureNames().asScala shouldBe ExpectedNamesSubset
+    f2.featureNames().asScala shouldBe ExpectedNamesSubset
+    f3.featureNames().asScala shouldBe ExpectedNamesSubset
+    f4.featureNames().asScala shouldBe ExpectedNamesSubset
+    f5.featureNames().asScala shouldBe ExpectedNamesSubset
+    f6.featureNames().asScala shouldBe ExpectedNamesSubset
+    f7.featureNames().asScala shouldBe ExpectedNamesSubset
+    f8.featureNames().asScala shouldBe ExpectedNamesSubset
+    f9.featureNames().asScala shouldBe ExpectedNamesSubset
+    TestData.map(f1.featureValue).map(_.toSeq) shouldBe ExpectedValuesSubset
+    TestData.map(f2.featureValue).map(_.toSeq) shouldBe ExpectedValuesSubset
+    TestData.map(f3.featureValue).map(_.toDense.toSeq) shouldBe ExpectedValuesSubset
+    TestData.map(f4.featureValue).map(_.toDense.toSeq) shouldBe ExpectedValuesSubset
+    TestData.map(f5.featureValue).map(_.toDense.toSeq) shouldBe ExpectedValuesSubset
+    TestData.map(f6.featureValue).map(_.toDense.toSeq) shouldBe ExpectedValuesSubset
+    TestData.map(f7.featureValue).map(e2v(ExpectedNamesSubset)) shouldBe ExpectedValuesSubset
+    TestData.map(f8.featureValue).map(_.values.toSeq.map(_.toDouble)) shouldBe ExpectedValuesSubset
+    TestData.map(f9.featureValue).map(l2v(ExpectedNamesSubset.size)) shouldBe ExpectedValuesSubset
+  }
+
   it should "work with sparse arrays" in {
     val in = Seq("a", "b")
     val indices = Seq(Seq(0), Seq(1))

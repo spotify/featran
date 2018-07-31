@@ -58,6 +58,47 @@ private object JavaOps {
     override def pure[A, B: ClassTag](ma: JList[A])(b: B): JList[B] = Collections.singletonList(b)
   }
 
+  def extractWithSubsetSettingsFloat[T](fs: FeatureSpec[T],
+                                        settings: String): RecordExtractor[T, Array[Float]] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsDouble[T](fs: FeatureSpec[T],
+                                         settings: String): RecordExtractor[T, Array[Double]] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsFloatSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatSparseArray] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsDoubleSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, DoubleSparseArray] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsDoubleNamedSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, DoubleNamedSparseArray] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsFloatNamedSparseArray[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, FloatNamedSparseArray] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsExample[T](fs: FeatureSpec[T],
+                                          settings: String): RecordExtractor[T, Example] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsLabeledPoint[T](fs: FeatureSpec[T],
+                                               settings: String): RecordExtractor[T, LabeledPoint] =
+    fs.extractWithSubsetSettings(settings)
+
+  def extractWithSubsetSettingsSparseLabeledPoint[T](
+    fs: FeatureSpec[T],
+    settings: String): RecordExtractor[T, SparseLabeledPoint] =
+    fs.extractWithSubsetSettings(settings)
+
   //================================================================================
   // Wrappers for FeatureSpec
   //================================================================================
