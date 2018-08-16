@@ -120,12 +120,6 @@ lazy val publishSettings = Seq(
   )
 )
 
-lazy val noPublishSettings = Seq(
-  publish := {},
-  publishLocal := {},
-  publishArtifact := false
-)
-
 lazy val featranSettings = commonSettings ++ publishSettings
 
 lazy val root: Project = project
@@ -143,7 +137,8 @@ lazy val root: Project = project
     mappings in makeSite ++= Seq(
       file("site/index.html") -> "index.html",
       file("examples/target/site/Examples.scala.html") -> "examples/Examples.scala.html"
-    )
+    ),
+    publish / skip := true
   )
   .aggregate(
     core,
@@ -338,7 +333,6 @@ lazy val xgboost: Project = project
 lazy val examples: Project = project
   .in(file("examples"))
   .settings(featranSettings)
-  .settings(noPublishSettings)
   .settings(soccoSettings)
   .settings(
     crossScalaVersions := Seq("2.11.12", "2.12.6"),
@@ -348,21 +342,22 @@ lazy val examples: Project = project
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion
-    )
+    ),
+    publish / skip := true
   )
   .dependsOn(core, scio, tensorflow)
 
 lazy val featranJmh: Project = project
   .in(file("jmh"))
   .settings(featranSettings)
-  .settings(noPublishSettings)
   .settings(
     crossScalaVersions := Seq("2.11.12", "2.12.6"),
     name := "jmh",
     description := "Featran JMH Microbenchmarks",
     sourceDirectory in Jmh := (sourceDirectory in Test).value,
     classDirectory in Jmh := (classDirectory in Test).value,
-    dependencyClasspath in Jmh := (dependencyClasspath in Test).value
+    dependencyClasspath in Jmh := (dependencyClasspath in Test).value,
+    publish / skip := true
   )
   .dependsOn(
     core,
