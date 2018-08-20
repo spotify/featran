@@ -33,7 +33,7 @@ val scioVersion = "0.5.7"
 val simulacrumVersion = "0.12.0"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
-val xgBoostVersion = "0.72-20180627-1214081f"
+val xgBoostVersion = "0.80"
 val shapelessDatatypeVersion = "0.1.9"
 
 val CompileTime = config("compile-time").hide
@@ -187,7 +187,7 @@ lazy val java: Project = project
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test",
-      "me.lyh" % "xgboost4j" % xgBoostVersion % "provided"
+      "ml.dmlc" % "xgboost4j" % xgBoostVersion % "provided"
     )
   )
   .dependsOn(
@@ -321,7 +321,7 @@ lazy val xgboost: Project = project
     description := "Feature Transformers - XGBoost",
     crossScalaVersions := Seq("2.11.12"),
     libraryDependencies ++= Seq(
-      "me.lyh" % "xgboost4j" % xgBoostVersion % "provided",
+      "ml.dmlc" % "xgboost4j" % xgBoostVersion % "provided",
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )
