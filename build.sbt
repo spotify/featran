@@ -29,7 +29,7 @@ val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.5"
 val scaldingVersion = "0.17.4"
-val scioVersion = "0.6.1"
+val scioVersion = "0.7.0-alpha1"
 val simulacrumVersion = "0.12.0"
 val sparkVersion = "2.3.0"
 val tensorflowVersion = "1.8.0"
@@ -249,7 +249,9 @@ lazy val scio: Project = project
     crossScalaVersions := Seq("2.11.12", "2.12.6"),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
-      "com.spotify" %% "scio-test" % scioVersion % "test"
+      "com.spotify" %% "scio-test" % scioVersion % "test",
+      "com.spotify" %% "scio-coders" % scioVersion % "provided",
+      "com.spotify" %% "scio-coders-macros" % scioVersion % "provided"
     )
   )
   .dependsOn(
