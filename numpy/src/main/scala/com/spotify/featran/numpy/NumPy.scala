@@ -35,7 +35,7 @@ import simulacrum.typeclass
 object NumPyType {
 
   // from Guava LittleEndianDataOutputStream
-  implicit class LittleEndianOutputStream(val out: OutputStream) extends AnyVal {
+  implicit class LittleEndianOutputStream(private val out: OutputStream) extends AnyVal {
     def writeInt(v: Int): Unit = {
       out.write(0xFF & v)
       out.write(0xFF & (v >> 8))
