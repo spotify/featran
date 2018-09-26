@@ -38,9 +38,8 @@ package object flink {
     override def reduce[A](ma: DataSet[A])(f: (A, A) => A): DataSet[A] =
       ma.reduce(f)
 
-    override def cross[A, B: ClassTag](ma: DataSet[A])(mb: DataSet[B]): DataSet[(A, B)] = {
+    override def cross[A, B: ClassTag](ma: DataSet[A])(mb: DataSet[B]): DataSet[(A, B)] =
       ma.crossWithTiny(mb)
-    }
 
     override def pure[A, B: ClassTag](ma: DataSet[A])(b: B): DataSet[B] = {
       implicit val tib = Ti.asInstanceOf[TypeInformation[B]]
