@@ -90,7 +90,7 @@ private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boo
 
       val keys = weights.keySet.toList.sorted
       var prev = -1
-      var unseen = MSet[String]()
+      val unseen = MSet[String]()
       keys.foreach { key =>
         c.get(key) match {
           case Some(curr) =>
