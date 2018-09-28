@@ -1,4 +1,4 @@
 #!/bin/bash
 
-SOCCO=true sbt ++2.12.6 examples/clean examples/compile
+SOCCO=true sbt ++2.12.7 examples/clean examples/compile
 sbt ghpagesPushSite

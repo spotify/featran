@@ -21,7 +21,7 @@ matrix:
     after_success:
     - bash <(curl -s https://codecov.io/bash)
 
-  - scala: 2.12.6
+  - scala: 2.12.7
     script: sbt "++$TRAVIS_SCALA_VERSION test"
 
   - stage: Deploy
