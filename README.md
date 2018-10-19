@@ -60,6 +60,10 @@ See [Examples](https://spotify.github.io/featran/examples/Examples.scala.html) (
 
 See [ScalaDocs](https://spotify.github.io/featran) for current API documentation.
 
+# Presentations
+
+- [Featran - Type safe and generic feature transformation in Scala](https://www.lyh.me/slides/featran.html) - NABD Conf Palo Alto 2017 talk
+
 # Artifacts
 
 Feature includes the following artifacts:
