@@ -21,20 +21,20 @@ import sbtrelease.ReleaseStateTransformations._
 
 val algebirdVersion = "0.13.4"
 val breezeVersion = "1.0-RC2"
-val circeVersion = "0.9.1"
+val circeVersion = "0.10.1"
 val commonsMathVersion = "3.6.1"
-val flinkVersion = "1.4.2"
+val flinkVersion = "1.5.4"
 val hadoopVersion = "2.8.0"
 val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.13.5"
 val scalatestVersion = "3.0.5"
 val scaldingVersion = "0.17.4"
-val scioVersion = "0.7.0-alpha1"
+val scioVersion = "0.7.0-beta1"
 val simulacrumVersion = "0.12.0"
-val sparkVersion = "2.3.0"
+val sparkVersion = "2.3.2"
 val tensorflowVersion = "1.11.0"
 val xgBoostVersion = "0.80"
-val shapelessDatatypeVersion = "0.1.9"
+val shapelessDatatypeVersion = "0.1.10"
 
 val CompileTime = config("compile-time").hide
 
@@ -249,9 +249,7 @@ lazy val scio: Project = project
     crossScalaVersions := Seq("2.11.12", "2.12.7"),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
-      "com.spotify" %% "scio-test" % scioVersion % "test",
-      "com.spotify" %% "scio-coders" % scioVersion % "provided",
-      "com.spotify" %% "scio-coders-macros" % scioVersion % "provided"
+      "com.spotify" %% "scio-test" % scioVersion % "test"
     )
   )
   .dependsOn(
