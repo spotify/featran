@@ -28,7 +28,7 @@ commands:
           - v1-dependencies-
       - steps: << parameters.build-steps >>
       - save_cache:
-          key: v1-dependencies--{{ checksum "build.sbt" }}
+          key: v1-dependencies-{{ checksum "build.sbt" }}
           paths:
           - "~/.ivy2/cache"
           - "~/.sbt"
