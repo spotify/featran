@@ -87,13 +87,11 @@ workflows:
             - checks
             - mima_report
 
-  publish:
-    triggers:
-    - schedule:
-        cron: "0 0 * * *"
-        filters:
-          branches:
-            only:
-            - master
-    jobs:
-      - publish
+      - publish:
+          requires:
+            - build_211
+            - build_212
+          filters:
+            branches:
+              only:
+                - master
