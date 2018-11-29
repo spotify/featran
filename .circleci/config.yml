@@ -23,16 +23,17 @@ commands:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "build.sbt" }}
+          - v1-dependencies-{{ .Environment.CIRCLE_JOB }}-{{ checksum "build.sbt" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
       - steps: << parameters.build-steps >>
       - save_cache:
-          key: v1-dependencies-{{ checksum "build.sbt" }}
+          key: v1-dependencies-{{ .Environment.CIRCLE_JOB }}-{{ checksum "build.sbt" }}
           paths:
           - "~/.ivy2/cache"
           - "~/.sbt"
           - "~/.m2"
+          - "~/.cache/coursier"
 
 settings: &settings
   working_directory: ~/featran
