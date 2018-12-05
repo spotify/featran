@@ -160,7 +160,7 @@ lazy val core: Project = project
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "algebird-core" % algebirdVersion,
       "org.scalanlp" %% "breeze" % breezeVersion,
@@ -226,7 +226,7 @@ lazy val scalding: Project = project
     moduleName := "featran-scalding",
     description := "Feature Transformers - Scalding",
     resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "scalding-core" % scaldingVersion % "provided",
       "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
@@ -246,7 +246,7 @@ lazy val scio: Project = project
     name := "scio",
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8"),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -284,7 +284,7 @@ lazy val numpy: Project = project
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -299,7 +299,7 @@ lazy val tensorflow: Project = project
     name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8"),
     libraryDependencies ++= Seq(
       "org.tensorflow" % "proto" % tensorflowVersion,
       "me.lyh" %% "shapeless-datatype-tensorflow" % shapelessDatatypeVersion,
@@ -335,7 +335,7 @@ lazy val examples: Project = project
   .settings(featranSettings)
   .settings(soccoSettings)
   .settings(
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8"),
     name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
@@ -351,7 +351,7 @@ lazy val featranJmh: Project = project
   .in(file("jmh"))
   .settings(featranSettings)
   .settings(
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8"),
     name := "jmh",
     description := "Featran JMH Microbenchmarks",
     sourceDirectory in Jmh := (sourceDirectory in Test).value,
