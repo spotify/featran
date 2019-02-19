@@ -17,9 +17,8 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FlatReader, FlatWriter, FeatureBuilder}
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
-
 
 /**
  * Transform an optional 1D feature to an indicator variable indicating presence.
@@ -39,14 +38,13 @@ object Indicator extends SettingsBuilder {
    * Create a new [[Indicator]] from a settings object
    * @param setting Settings object
    */
-  def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] = {
+  def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] =
     Indicator(setting.name)
-  }
 }
 
 private[featran] class Indicator(name: String) extends OneDimensional[Double, Unit, Unit](name) {
   override val aggregator: Aggregator[Double, Unit, Unit] = Aggregators.unit[Double]
-  
+
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) => fb.add(name, 1.0)
     case None    => fb.add(name, 0.0)
