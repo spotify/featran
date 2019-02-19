@@ -88,6 +88,7 @@ object Fixtures {
     .required(_.s3)(HashNHotWeightedEncoder("hash-n-hot-weighted"))
     .required(_.s1)(HeavyHitters("heavy-hitters", 10, 0.001, 0.001, 1))
     .required(_.x)(Identity("id"))
+    .optional(_.xo)(Indicator("indic"))
     .required(_.x)(IQROutlierRejector("iqr"))
     .required(_.x)(MaxAbsScaler("max-abs"))
     .required(v => MDLRecord(v.s1, v.x))(MDL("mdl"))
