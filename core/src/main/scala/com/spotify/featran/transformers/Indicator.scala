@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Spotify AB.
+ * Copyright 2019 Spotify AB.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,22 +42,15 @@ object Indicator extends SettingsBuilder {
     Indicator(setting.name)
 }
 
-private[featran] class Indicator(name: String) extends OneDimensional[Double, Unit, Unit](name) {
-  override val aggregator: Aggregator[Double, Unit, Unit] = Aggregators.unit[Double]
 
-  override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
-    case Some(x) => fb.add(name, 1.0)
-    case None    => fb.add(name, 0.0)
-  }
 
-  override def params: Map[String, String] = Map()
+private[featran] class Indicator(name: String) extends MapOne[Double](name) {
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 
   override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
     fw.writeDouble(name)
 
-  override def encodeAggregator(c: Unit): String = ""
-  override def decodeAggregator(s: String): Unit = ()
+  override def map(a: Double): Double = 1
 
 }
