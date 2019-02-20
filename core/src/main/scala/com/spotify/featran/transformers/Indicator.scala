@@ -42,8 +42,6 @@ object Indicator extends SettingsBuilder {
     Indicator(setting.name)
 }
 
-
-
 private[featran] class Indicator(name: String) extends MapOne[Double](name) {
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
