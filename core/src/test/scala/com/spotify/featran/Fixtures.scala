@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Spotify AB.
+ * Copyright 2019 Spotify AB.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,7 @@ object Fixtures {
     .required(_.s3)(HashNHotWeightedEncoder("hash-n-hot-weighted"))
     .required(_.s1)(HeavyHitters("heavy-hitters", 10, 0.001, 0.001, 1))
     .required(_.x)(Identity("id"))
+    .optional(_.xo)(Indicator("indicator"))
     .required(_.x)(IQROutlierRejector("iqr"))
     .required(_.x)(MaxAbsScaler("max-abs"))
     .required(v => MDLRecord(v.s1, v.x))(MDL("mdl"))
