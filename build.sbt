@@ -32,7 +32,7 @@ val scaldingVersion = "0.17.4"
 val scioVersion = "0.7.1"
 val simulacrumVersion = "0.15.0"
 val sparkVersion = "2.4.0"
-val tensorflowVersion = "1.11.0"
+val tensorflowVersion = "1.13.1"
 val xgBoostVersion = "0.80"
 val shapelessDatatypeVersion = "0.1.10"
 
