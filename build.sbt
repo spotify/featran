@@ -33,7 +33,7 @@ val scioVersion = "0.7.4"
 val simulacrumVersion = "0.17.0"
 val sparkVersion = "2.4.3"
 val tensorflowVersion = "1.13.1"
-val xgBoostVersion = "0.80"
+val xgBoostVersion = "0.90"
 val shapelessDatatypeVersion = "0.1.10"
 
 val CompileTime = config("compile-time").hide
