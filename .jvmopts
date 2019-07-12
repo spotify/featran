@@ -4,8 +4,6 @@
 -Xmx6G
 -XX:ReservedCodeCacheSize=250M
 -XX:+TieredCompilation
--XX:-UseGCOverheadLimit
--XX:+CMSClassUnloadingEnabled
--XX:+UseConcMarkSweepGC
+-XX:+UseParallelGC
 # Additional flag that might help in case of serialization failures
 -Dsun.io.serialization.extendedDebugInfo=true
