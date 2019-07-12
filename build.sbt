@@ -138,7 +138,8 @@ lazy val root: Project = project
       file("site/index.html") -> "index.html",
       file("examples/target/site/Examples.scala.html") -> "examples/Examples.scala.html"
     ),
-    publish / skip := true
+    publish / skip := true,
+    mimaFailOnNoPrevious := false
   )
   .aggregate(
     core,
