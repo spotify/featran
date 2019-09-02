@@ -101,7 +101,8 @@ object FeatureRejection {
    * dimension in [[init]].
    */
   def add[M[_]](names: Iterable[String], values: M[Double])(
-    implicit ev: M[Double] => Seq[Double]): Unit = {
+    implicit ev: M[Double] => Seq[Double]
+  ): Unit = {
     val i = names.iterator
     val j = values.iterator
     while (i.hasNext && j.hasNext) {
@@ -142,9 +143,11 @@ object FeatureRejection {
 /**
  * A sparse representation of an array using two arrays for indices and values of non-zero entries.
  */
-case class SparseArray[@specialized(Float, Double) T](indices: Array[Int],
-                                                      values: Array[T],
-                                                      length: Int) {
+case class SparseArray[@specialized(Float, Double) T](
+  indices: Array[Int],
+  values: Array[T],
+  length: Int
+) {
   def toDense(implicit ct: ClassTag[T]): Array[T] = {
     val r = new Array[T](length)
     var i = 0
@@ -159,10 +162,12 @@ case class SparseArray[@specialized(Float, Double) T](indices: Array[Int],
 /**
  * A [[SparseArray]] with names of non-zero entries.
  */
-case class NamedSparseArray[@specialized(Float, Double) T](indices: Array[Int],
-                                                           values: Array[T],
-                                                           length: Int,
-                                                           names: Seq[String]) {
+case class NamedSparseArray[@specialized(Float, Double) T](
+  indices: Array[Int],
+  values: Array[T],
+  length: Int,
+  names: Seq[String]
+) {
   def toDense(implicit ct: ClassTag[T]): Array[T] = {
     val r = new Array[T](length)
     var i = 0
@@ -177,8 +182,8 @@ case class NamedSparseArray[@specialized(Float, Double) T](indices: Array[Int],
 object FeatureBuilder {
 
   private final case class ArrayFB[T: ClassTag: FloatingPoint](
-    private var underlying: Array[T] = null)
-      extends FeatureBuilder[Array[T]] {
+    private var underlying: Array[T] = null
+  ) extends FeatureBuilder[Array[T]] {
     private var offset: Int = 0
 
     override def init(dimension: Int): Unit = underlying = new Array[T](dimension)
@@ -229,8 +234,8 @@ object FeatureBuilder {
   //scalastyle:on public.methods.have.type
 
   private final case class TraversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint]()(
-    implicit cb: CanBuild[T, M[T]])
-      extends FeatureBuilder[M[T]] {
+    implicit cb: CanBuild[T, M[T]]
+  ) extends FeatureBuilder[M[T]] {
     private var underlying: mutable.Builder[T, M[T]] = null
 
     override def init(dimension: Int): Unit = underlying = cb()
@@ -246,11 +251,12 @@ object FeatureBuilder {
   }
 
   implicit def traversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
-    implicit cb: CanBuild[T, M[T]]): FeatureBuilder[M[T]] = TraversableFB[M, T]()
+    implicit cb: CanBuild[T, M[T]]
+  ): FeatureBuilder[M[T]] = TraversableFB[M, T]()
 
   private final case class NamedSparseArrayFB[T: ClassTag: FloatingPoint](
-    private val withNames: Boolean)
-      extends FeatureBuilder[NamedSparseArray[T]] {
+    private val withNames: Boolean
+  ) extends FeatureBuilder[NamedSparseArray[T]] {
     private var indices: Array[Int] = null
     private var values: Array[T] = null
     private val names: mutable.Buffer[String] = mutable.Buffer.empty

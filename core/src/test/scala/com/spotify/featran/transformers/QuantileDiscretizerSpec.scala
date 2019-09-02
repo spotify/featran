@@ -49,8 +49,10 @@ object QuantileDiscretizerSpec extends TransformerProp("QuantileDiscretizer") {
         .map(_._2)
       val names = (0 until numBuckets).map("quantile_" + _)
       val missing = (0 until numBuckets).map(_ => 0.0)
-      val oob = List((lowerBound(xs.min), 1.0 +: (0 until numBuckets - 1).map(_ => 0.0)),
-                     (upperBound(xs.max), (0 until numBuckets - 1).map(_ => 0.0) :+ 1.0))
+      val oob = List(
+        (lowerBound(xs.min), 1.0 +: (0 until numBuckets - 1).map(_ => 0.0)),
+        (upperBound(xs.max), (0 until numBuckets - 1).map(_ => 0.0) :+ 1.0)
+      )
       test(QuantileDiscretizer("quantile", numBuckets), xs, names, expected, missing, oob)
   }
 

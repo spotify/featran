@@ -126,19 +126,23 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
    * @param c aggregator summary
    */
   def settings(c: Option[C]): Settings =
-    Settings(this.getClass.getCanonicalName,
-             name,
-             params,
-             optFeatureNames(c),
-             c.map(encodeAggregator))
+    Settings(
+      this.getClass.getCanonicalName,
+      name,
+      params,
+      optFeatureNames(c),
+      c.map(encodeAggregator)
+    )
 
 }
 
-case class Settings(cls: String,
-                    name: String,
-                    params: Map[String, String],
-                    featureNames: Seq[String],
-                    aggregators: Option[String])
+case class Settings(
+  cls: String,
+  name: String,
+  params: Map[String, String],
+  featureNames: Seq[String],
+  aggregators: Option[String]
+)
 
 private[featran] abstract class OneDimensional[A, B, C](name: String)
     extends Transformer[A, B, C](name) {
@@ -174,13 +178,16 @@ private object Aggregators {
     }
   }
 
-  def seqLength[T, M[_]](expectedLength: Int = 0)(
-    implicit ev: M[T] => Seq[T]): Aggregator[M[T], Int, Int] =
+  def seqLength[T, M[_]](
+    expectedLength: Int = 0
+  )(implicit ev: M[T] => Seq[T]): Aggregator[M[T], Int, Int] =
     new Aggregator[M[T], Int, Int] {
       override def prepare(input: M[T]): Int = {
         if (expectedLength > 0) {
-          require(input.length == expectedLength,
-                  s"Invalid input length, expected: $expectedLength, actual: ${input.length}")
+          require(
+            input.length == expectedLength,
+            s"Invalid input length, expected: $expectedLength, actual: ${input.length}"
+          )
         }
         input.length
       }

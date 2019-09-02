@@ -46,12 +46,13 @@ object QuantileOutlierRejector extends SettingsBuilder {
    *                    grouped, must be greater than or equal to 2
    * @param k           precision of the underlying Algebird QTree approximation
    */
-  def apply(name: String,
-            rejectLower: Boolean = true,
-            rejectUpper: Boolean = true,
-            numBuckets: Int = 3,
-            k: Int = QTreeAggregator.DefaultK)
-    : Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
+  def apply(
+    name: String,
+    rejectLower: Boolean = true,
+    rejectUpper: Boolean = true,
+    numBuckets: Int = 3,
+    k: Int = QTreeAggregator.DefaultK
+  ): Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
     new QuantileOutlierRejector(name, rejectLower, rejectUpper, numBuckets, k)
 
   /**
@@ -62,12 +63,13 @@ object QuantileOutlierRejector extends SettingsBuilder {
     QuantileOutlierRejector(setting.name)
 }
 
-private class QuantileOutlierRejector(name: String,
-                                      val rejectLower: Boolean,
-                                      val rejectUpper: Boolean,
-                                      numBuckets: Int,
-                                      k: Int)
-    extends BaseQuantileRejector(name, numBuckets, k) {
+private class QuantileOutlierRejector(
+  name: String,
+  val rejectLower: Boolean,
+  val rejectUpper: Boolean,
+  numBuckets: Int,
+  k: Int
+) extends BaseQuantileRejector(name, numBuckets, k) {
   require(rejectLower || rejectUpper, "at least one of [rejectLower, rejectLower] must be set")
 
   import BaseQuantileRejector.C

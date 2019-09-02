@@ -39,8 +39,9 @@ package object scio {
       ma.reduce(f)
     }
 
-    override def cross[A, B: ClassTag](ma: SCollection[A])(
-      mb: SCollection[B]): SCollection[(A, B)] = {
+    override def cross[A, B: ClassTag](
+      ma: SCollection[A]
+    )(mb: SCollection[B]): SCollection[(A, B)] = {
       implicit val ct: ClassTag[A] = classTag[Any].asInstanceOf[ClassTag[A]]
       implicit val coderA: Coder[A] = Coder.kryo
       implicit val coderB: Coder[B] = Coder.kryo

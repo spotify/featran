@@ -212,11 +212,13 @@ class JavaTest extends FlatSpec with Matchers {
     val dense = Seq(Seq(1.0, 0.0), Seq(0.0, 1.0))
     import scala.concurrent.ExecutionContext.Implicits.global
     (1 to 5).par
-      .map(_ =>
-        Future {
-          val f = JavaTestUtil.optionalSpec().extract(in.asJava)
-          f.featureValuesFloatSparse().asScala
-      })
+      .map(
+        _ =>
+          Future {
+            val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+            f.featureValuesFloatSparse().asScala
+          }
+      )
       .map { lfs =>
         val fs = Await.result(lfs, Duration.Inf)
         fs.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
@@ -224,11 +226,13 @@ class JavaTest extends FlatSpec with Matchers {
         fs.map(JavaTestUtil.getDense(_).toSeq) shouldBe dense
       }
     (1 to 5).par
-      .map(_ =>
-        Future {
-          val f = JavaTestUtil.optionalSpec().extract(in.asJava)
-          f.featureValuesDoubleSparse().asScala
-      })
+      .map(
+        _ =>
+          Future {
+            val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+            f.featureValuesDoubleSparse().asScala
+          }
+      )
       .map { lfs =>
         val fs = Await.result(lfs, Duration.Inf)
         fs.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
@@ -239,11 +243,13 @@ class JavaTest extends FlatSpec with Matchers {
 
   it should "work with cross terms" in {
     val data = Seq(("foo", "bar"), ("foo", "baz")).asJava
-    val names = Seq("one_hot_a_foo",
-                    "one_hot_b_bar",
-                    "one_hot_b_baz",
-                    "cross_one_hot_a_foo_x_one_hot_b_bar",
-                    "cross_one_hot_a_foo_x_one_hot_b_baz")
+    val names = Seq(
+      "one_hot_a_foo",
+      "one_hot_b_bar",
+      "one_hot_b_baz",
+      "cross_one_hot_a_foo_x_one_hot_b_bar",
+      "cross_one_hot_a_foo_x_one_hot_b_baz"
+    )
     val values = Seq(Seq(1.0, 1.0, 0.0, 1.0, 0.0), Seq(1.0, 0.0, 1.0, 0.0, 1.0))
     val fs = JavaTestUtil.crossSpec()
     val f = fs.extract(data)

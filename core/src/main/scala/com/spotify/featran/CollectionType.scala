@@ -39,7 +39,8 @@ import scala.reflect.ClassTag
 
 object CollectionType {
   implicit def scalaCollectionType[M[_] <: Traversable[_]](
-    implicit cbf: CanBuildFrom[M[_], _, M[_]]): CollectionType[M] =
+    implicit cbf: CanBuildFrom[M[_], _, M[_]]
+  ): CollectionType[M] =
     new CollectionType[M] {
       override def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B] = {
         val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]

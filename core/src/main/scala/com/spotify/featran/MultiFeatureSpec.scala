@@ -31,18 +31,22 @@ object MultiFeatureSpec {
         spec.features.map(_.transformer.name -> index)
     }(breakOut)
 
-    new MultiFeatureSpec(nameToSpec,
-                         specs.map(_.features).reduce(_ ++ _),
-                         specs.map(_.crossings).reduce(_ ++ _))
+    new MultiFeatureSpec(
+      nameToSpec,
+      specs.map(_.features).reduce(_ ++ _),
+      specs.map(_.crossings).reduce(_ ++ _)
+    )
   }
 }
 
 /**
  * Wrapper for [[FeatureSpec]] that allows for combination and separation of different specs.
  */
-class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
-                          private[featran] val features: Array[Feature[T, _, _, _]],
-                          private[featran] val crossings: Crossings) {
+class MultiFeatureSpec[T](
+  private[featran] val mapping: Map[String, Int],
+  private[featran] val features: Array[Feature[T, _, _, _]],
+  private[featran] val crossings: Crossings
+) {
 
   private def multiFeatureSet: MultiFeatureSet[T] =
     new MultiFeatureSet[T](features, crossings, mapping)
@@ -71,8 +75,9 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
   def filter(predicate: Feature[T, _, _, _] => Boolean): MultiFeatureSpec[T] = {
     val filteredFeatures = features.filter(predicate)
     val featuresByName =
-      filteredFeatures.map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](f =>
-        f.transformer.name -> f)(breakOut)
+      filteredFeatures.map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](
+        f => f.transformer.name -> f
+      )(breakOut)
 
     val filteredMapping = mapping.filterKeys(featuresByName.contains)
     val filteredCrossings = crossings.filter(featuresByName.contains)
@@ -91,7 +96,8 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    */
   def extractWithSettings[M[_]: CollectionType](
     input: M[T],
-    settings: M[String]): MultiFeatureExtractor[M, T] = {
+    settings: M[String]
+  ): MultiFeatureExtractor[M, T] = {
     import CollectionType.ops._
 
     val fs = input.pure(multiFeatureSet)
@@ -109,7 +115,8 @@ class MultiFeatureSpec[T](private[featran] val mapping: Map[String, Int],
    */
   def extractWithSubsetSettings[M[_]: CollectionType](
     input: M[T],
-    settings: M[String]): MultiFeatureExtractor[M, T] = {
+    settings: M[String]
+  ): MultiFeatureExtractor[M, T] = {
     import json._
     import CollectionType.ops._
 

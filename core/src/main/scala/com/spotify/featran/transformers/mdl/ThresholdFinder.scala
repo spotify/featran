@@ -19,11 +19,12 @@ package com.spotify.featran.transformers.mdl
 
 import scala.collection.mutable
 
-private[transformers] class ThresholdFinder(nLabels: Int,
-                                            stoppingCriterion: Double,
-                                            maxBins: Int,
-                                            minBinWeight: Long)
-    extends Serializable {
+private[transformers] class ThresholdFinder(
+  nLabels: Int,
+  stoppingCriterion: Double,
+  maxBins: Int,
+  minBinWeight: Long
+) extends Serializable {
 
   class BucketInfo(totals: Seq[Long]) extends Serializable {
     // number of elements in bucket
@@ -49,9 +50,11 @@ private[transformers] class ThresholdFinder(nLabels: Int,
       }
     }
 
-  def calcCriterionValue(bucketInfo: BucketInfo,
-                         leftFreqs: Seq[Long],
-                         rightFreqs: Seq[Long]): (Double, Double, Long, Long) = {
+  def calcCriterionValue(
+    bucketInfo: BucketInfo,
+    leftFreqs: Seq[Long],
+    rightFreqs: Seq[Long]
+  ): (Double, Double, Long, Long) = {
     val k1 = leftFreqs.count(_ != 0)
     val s1 = if (k1 > 0) leftFreqs.sum else 0
     val hs1 = entropy(leftFreqs, s1)
@@ -98,9 +101,11 @@ private[transformers] class ThresholdFinder(nLabels: Int,
     (Float.PositiveInfinity :: result).sorted
   }
 
-  def bestThreshold(entropyFreqs: Seq[(Float, Array[Long], Array[Long], Array[Long])],
-                    lastSelected: Option[Float],
-                    totals: Array[Long]): Seq[(Double, Float)] = {
+  def bestThreshold(
+    entropyFreqs: Seq[(Float, Array[Long], Array[Long], Array[Long])],
+    lastSelected: Option[Float],
+    totals: Array[Long]
+  ): Seq[(Double, Float)] = {
     val bucketInfo = new BucketInfo(totals)
     entropyFreqs.flatMap {
       case (cand, _, leftFreqs, rightFreqs) =>
@@ -130,9 +135,11 @@ private[transformers] class ThresholdFinder(nLabels: Int,
    * @return the minimum-entropy cut point
    *
    */
-  private def evalThresholds(candidates: Seq[(Float, Array[Long])],
-                             lastSelected: Option[Float],
-                             nLabels: Int): Option[Float] = {
+  private def evalThresholds(
+    candidates: Seq[(Float, Array[Long])],
+    lastSelected: Option[Float],
+    nLabels: Int
+  ): Option[Float] = {
     // Calculate the total frequencies by label
     val totals = Array.fill(nLabels)(0L)
     candidates.foreach(kv => MDLUtil.plusI(totals, kv._2))

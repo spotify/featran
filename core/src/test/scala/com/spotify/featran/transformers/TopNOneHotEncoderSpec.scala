@@ -31,9 +31,11 @@ object TopNOneHotEncoderSpec extends TransformerProp("TopNOneHotEncoder") {
 
   import MissingValue.MissingValueToken
 
-  def getExpectedOutputVector(s: String,
-                              cats: List[String],
-                              encodeMissingValue: Boolean): Seq[Double] = {
+  def getExpectedOutputVector(
+    s: String,
+    cats: List[String],
+    encodeMissingValue: Boolean
+  ): Seq[Double] = {
     val v = cats.map(c => if (s == c) 1.0 else 0.0)
     if (encodeMissingValue && v.sum == 0.0) {
       cats.map(c => if (c == MissingValueToken) 1.0 else 0.0)

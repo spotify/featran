@@ -51,9 +51,11 @@ object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
     test(HashNHotEncoder("n_hot", 0, scalingFactor), size, xs)
   }
 
-  private def test(encoder: Transformer[List[String], _, _],
-                   size: Int,
-                   xs: List[List[String]]): Prop = {
+  private def test(
+    encoder: Transformer[List[String], _, _],
+    size: Int,
+    xs: List[List[String]]
+  ): Prop = {
     val cats = 0 until size
     val names = cats.map("n_hot_" + _)
     val expected = xs.map { s =>

@@ -62,12 +62,14 @@ object MDL extends SettingsBuilder {
    * @param minBinPercentage minimum percent of total data allowed in a single bin
    * @param maxBins maximum number of thresholds per feature
    */
-  def apply[T: ClassTag](name: String,
-                         sampleRate: Double = 1.0,
-                         stoppingCriterion: Double = DefaultStoppingCriterion,
-                         minBinPercentage: Double = DefaultMinBinPercentage,
-                         maxBins: Int = DefaultMaxBins,
-                         seed: Int = Random.nextInt()): Transformer[MDLRecord[T], B[T], C] =
+  def apply[T: ClassTag](
+    name: String,
+    sampleRate: Double = 1.0,
+    stoppingCriterion: Double = DefaultStoppingCriterion,
+    minBinPercentage: Double = DefaultMinBinPercentage,
+    maxBins: Int = DefaultMaxBins,
+    seed: Int = Random.nextInt()
+  ): Transformer[MDLRecord[T], B[T], C] =
     new MDL(name, sampleRate, stoppingCriterion, minBinPercentage, maxBins, seed)
 
   /**
@@ -88,13 +90,14 @@ object MDL extends SettingsBuilder {
   private type C = JTreeMap[Double, Int]
 }
 
-private[featran] class MDL[T: ClassTag](name: String,
-                                        val sampleRate: Double,
-                                        val stoppingCriterion: Double,
-                                        val minBinPercentage: Double,
-                                        val maxBins: Int,
-                                        val seed: Int)
-    extends Transformer[MDLRecord[T], MDL.B[T], MDL.C](name) {
+private[featran] class MDL[T: ClassTag](
+  name: String,
+  val sampleRate: Double,
+  val stoppingCriterion: Double,
+  val minBinPercentage: Double,
+  val maxBins: Int,
+  val seed: Int
+) extends Transformer[MDLRecord[T], MDL.B[T], MDL.C](name) {
   checkRange("sampleRate", sampleRate, 0.0, 1.0)
   require(stoppingCriterion >= 0, "stoppingCriterion must be > 0")
   checkRange("minBinPercentage", minBinPercentage, 0.0, 1.0)

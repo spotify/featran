@@ -97,8 +97,10 @@ object CrossingSpec extends Properties("CrossingSpec") {
     val f = MultiFeatureSpec(f1, f2).extract(xs)
     val expected =
       xs.map(x => Seq(denseValues(x, _ * _), denseValues(x, _ + _)))
-    Prop.all(f.featureNames == Seq(Seq(denseNames("a", "b"), denseNames("c", "d"))),
-             f.featureValues[Seq[Double]] == expected)
+    Prop.all(
+      f.featureNames == Seq(Seq(denseNames("a", "b"), denseNames("c", "d"))),
+      f.featureValues[Seq[Double]] == expected
+    )
   }
 
   private implicit val labelArb = Arbitrary(Gen.alphaStr)
@@ -165,8 +167,10 @@ object CrossingSpec extends Properties("CrossingSpec") {
     val expected = xs.map { x =>
       Seq(sparseValues("a", "b", x, _ * _), sparseValues("c", "d", x, _ + _))
     }
-    Prop.all(f.featureNames == Seq(Seq(sparseNames("a", "b", xs), sparseNames("c", "d", xs))),
-             f.featureValues[Map[String, Double]] == expected)
+    Prop.all(
+      f.featureNames == Seq(Seq(sparseNames("a", "b", xs), sparseNames("c", "d", xs))),
+      f.featureValues[Map[String, Double]] == expected
+    )
   }
 
 }

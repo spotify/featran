@@ -60,11 +60,11 @@ lazy val publishSettings = Seq(
   credentials ++= (for {
     username <- sys.env.get("SONATYPE_USERNAME")
     password <- sys.env.get("SONATYPE_PASSWORD")
-  } yield
-    Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
+  } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
   publishTo := Some(
     if (isSnapshot.value) Opts.resolver.sonatypeSnapshots
-    else Opts.resolver.sonatypeStaging),
+    else Opts.resolver.sonatypeStaging
+  ),
   releaseCrossBuild := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   releaseProcess := Seq[ReleaseStep](
@@ -86,37 +86,54 @@ lazy val publishSettings = Seq(
   licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   homepage := Some(url("https://github.com/spotify/featran")),
   scmInfo := Some(
-    ScmInfo(url("https://github.com/spotify/featran.git"),
-            "scm:git:git@github.com:spotify/featran.git")),
+    ScmInfo(
+      url("https://github.com/spotify/featran.git"),
+      "scm:git:git@github.com:spotify/featran.git"
+    )
+  ),
   developers := List(
-    Developer(id = "sinisa_lyh",
-              name = "Neville Li",
-              email = "neville.lyh@gmail.com",
-              url = url("https://twitter.com/sinisa_lyh")),
-    Developer(id = "rwhitcomb",
-              name = "Richard Whitcomb",
-              email = "richwhitjr@gmail.com",
-              url = url("https://twitter.com/rwhitcomb")),
-    Developer(id = "ravwojdyla",
-              name = "Rafal Wojdyla",
-              email = "ravwojdyla@gmail.com",
-              url = url("https://twitter.com/ravwojdyla")),
-    Developer(id = "fallonfofallon",
-              name = "Fallon Chen",
-              email = "fallon@spotify.com",
-              url = url("https://twitter.com/fallonfofallon")),
-    Developer(id = "andrew_martin92",
-              name = "Andrew Martin",
-              email = "andrewsmartin.mg@gmail.com",
-              url = url("https://twitter.com/andrew_martin92")),
-    Developer(id = "regadas",
-              name = "Filipe Regadas",
-              email = "filiperegadas@gmail.com",
-              url = url("https://twitter.com/regadas")),
-    Developer(id = "slhansen",
-              name = "Samantha Hansen",
-              email = "slhansen@spotify.com",
-              url = url("https://github.com/slhansen"))
+    Developer(
+      id = "sinisa_lyh",
+      name = "Neville Li",
+      email = "neville.lyh@gmail.com",
+      url = url("https://twitter.com/sinisa_lyh")
+    ),
+    Developer(
+      id = "rwhitcomb",
+      name = "Richard Whitcomb",
+      email = "richwhitjr@gmail.com",
+      url = url("https://twitter.com/rwhitcomb")
+    ),
+    Developer(
+      id = "ravwojdyla",
+      name = "Rafal Wojdyla",
+      email = "ravwojdyla@gmail.com",
+      url = url("https://twitter.com/ravwojdyla")
+    ),
+    Developer(
+      id = "fallonfofallon",
+      name = "Fallon Chen",
+      email = "fallon@spotify.com",
+      url = url("https://twitter.com/fallonfofallon")
+    ),
+    Developer(
+      id = "andrew_martin92",
+      name = "Andrew Martin",
+      email = "andrewsmartin.mg@gmail.com",
+      url = url("https://twitter.com/andrew_martin92")
+    ),
+    Developer(
+      id = "regadas",
+      name = "Filipe Regadas",
+      email = "filiperegadas@gmail.com",
+      url = url("https://twitter.com/regadas")
+    ),
+    Developer(
+      id = "slhansen",
+      name = "Samantha Hansen",
+      email = "slhansen@spotify.com",
+      url = url("https://github.com/slhansen")
+    )
   )
 )
 
@@ -133,7 +150,8 @@ lazy val root: Project = project
     gitRemoteRepo := "git@github.com:spotify/featran.git",
     // com.spotify.featran.java pollutes namespaces and breaks unidoc class path
     unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(java) -- inProjects(
-      examples),
+      examples
+    ),
     mappings in makeSite ++= Seq(
       file("site/index.html") -> "index.html",
       file("examples/target/site/Examples.scala.html") -> "examples/Examples.scala.html"
@@ -442,5 +460,6 @@ def mimaSettings(moduleName: String): Seq[Def.Setting[Set[sbt.ModuleID]]] = {
   Seq(
     mimaPreviousArtifacts := (mimaVersions(version.value) ++ extraVersions)
       .diff(excludedVersions)
-      .map(v => "com.spotify" %% moduleName % v))
+      .map(v => "com.spotify" %% moduleName % v)
+  )
 }

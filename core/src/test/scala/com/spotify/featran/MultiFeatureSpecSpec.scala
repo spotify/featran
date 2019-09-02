@@ -52,8 +52,10 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
 
     val expected = MultiFeatureSpec(f, f2).extract(xs)
 
-    Prop.all(filtered.featureNames == expected.featureNames,
-             filtered.featureValues[Seq[Double]] == expected.featureValues[Seq[Double]])
+    Prop.all(
+      filtered.featureNames == expected.featureNames,
+      filtered.featureValues[Seq[Double]] == expected.featureValues[Seq[Double]]
+    )
   }
 
   property("multi feature extraction based on predicate keeps order") = Prop.forAll {
@@ -88,8 +90,10 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
   property("multi feature extraction map") = Prop.forAll { xs: List[Record] =>
     val multi = MultiFeatureSpec(f, f2).extract(xs)
     val expected = xs.map(r => Seq(Map("id" -> r.d), Map("id2" -> r.d)))
-    Prop.all(multi.featureNames == Seq(Seq(Seq("id"), Seq("id2"))),
-             multi.featureValues[Map[String, Double]] == expected)
+    Prop.all(
+      multi.featureNames == Seq(Seq(Seq("id"), Seq("id2"))),
+      multi.featureValues[Map[String, Double]] == expected
+    )
   }
 
   property("multi feature extraction sparse") = Prop.forAll { xs: List[Record] =>

@@ -140,13 +140,16 @@ object NumPy {
   def write[@specialized(Int, Long, Float, Double) T: NumPyType](
     out: OutputStream,
     data: Array[T],
-    shape: Seq[Int] = Seq.empty): Unit = {
+    shape: Seq[Int] = Seq.empty
+  ): Unit = {
 
     val dims = if (shape.isEmpty) {
       Seq(data.length)
     } else {
-      require(data.length == shape.product,
-              s"Invalid shape, ${shape.mkString(" * ")} != ${data.length}")
+      require(
+        data.length == shape.product,
+        s"Invalid shape, ${shape.mkString(" * ")} != ${data.length}"
+      )
       shape
     }
     writeHeader(out, dims)
@@ -158,10 +161,12 @@ object NumPy {
    * Write an iterator of arrays as a 2-dimensional NumPy `.npy` file to an output stream. Each
    * array should have length `numCols` and the iterator should have `numRows` elements.
    */
-  def write[@specialized(Int, Long, Float, Double) T: NumPyType](out: OutputStream,
-                                                                 data: Iterator[Array[T]],
-                                                                 numRows: Int,
-                                                                 numCols: Int): Unit = {
+  def write[@specialized(Int, Long, Float, Double) T: NumPyType](
+    out: OutputStream,
+    data: Iterator[Array[T]],
+    numRows: Int,
+    numCols: Int
+  ): Unit = {
 
     val dims = Seq(numRows, numCols)
     writeHeader[T](out, dims)

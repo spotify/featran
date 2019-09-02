@@ -60,9 +60,10 @@ object CrossingFeatureBuilder {
     new CrossingFeatureBuilder[F](fb, crossings)
 }
 
-private class CrossingFeatureBuilder[F] private (private val fb: FeatureBuilder[F],
-                                                 private val crossings: Crossings)
-    extends FeatureBuilder[F] {
+private class CrossingFeatureBuilder[F] private (
+  private val fb: FeatureBuilder[F],
+  private val crossings: Crossings
+) extends FeatureBuilder[F] {
 
   private case class CrossValue(name: String, offset: Int, value: Double)
   private[this] var xEnabled = false // true if current transformer will be crossed
@@ -104,7 +105,8 @@ private class CrossingFeatureBuilder[F] private (private val fb: FeatureBuilder[
     fb.add(name, value)
   }
   override def add[M[_]](names: Iterable[String], values: M[Double])(
-    implicit ev: M[Double] => Seq[Double]): Unit = {
+    implicit ev: M[Double] => Seq[Double]
+  ): Unit = {
     if (xEnabled) {
       val i = names.iterator
       val j = values.iterator

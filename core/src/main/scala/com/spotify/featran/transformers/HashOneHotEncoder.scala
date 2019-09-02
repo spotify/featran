@@ -60,9 +60,11 @@ object HashOneHotEncoder extends SettingsBuilder {
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
    * @param sizeScalingFactor when hashBucketSize is 0, scale HLL estimate by this amount
    */
-  def apply(name: String,
-            hashBucketSize: Int = 0,
-            sizeScalingFactor: Double = 8.0): Transformer[String, HLL, Int] =
+  def apply(
+    name: String,
+    hashBucketSize: Int = 0,
+    sizeScalingFactor: Double = 8.0
+  ): Transformer[String, HLL, Int] =
     new HashOneHotEncoder(name, hashBucketSize, sizeScalingFactor)
 
   /**
@@ -76,10 +78,11 @@ object HashOneHotEncoder extends SettingsBuilder {
   }
 }
 
-private[featran] class HashOneHotEncoder(name: String,
-                                         hashBucketSize: Int,
-                                         sizeScalingFactor: Double)
-    extends BaseHashHotEncoder[String](name, hashBucketSize, sizeScalingFactor) {
+private[featran] class HashOneHotEncoder(
+  name: String,
+  hashBucketSize: Int,
+  sizeScalingFactor: Double
+) extends BaseHashHotEncoder[String](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: String): HLL = hllMonoid.toHLL(a)
 
   override def buildFeatures(a: Option[String], c: Int, fb: FeatureBuilder[_]): Unit = {
@@ -100,10 +103,11 @@ private[featran] class HashOneHotEncoder(name: String,
     fw.writeString(name)
 }
 
-private[featran] abstract class BaseHashHotEncoder[A](name: String,
-                                                      val hashBucketSize: Int,
-                                                      val sizeScalingFactor: Double)
-    extends Transformer[A, HLL, Int](name) {
+private[featran] abstract class BaseHashHotEncoder[A](
+  name: String,
+  val hashBucketSize: Int,
+  val sizeScalingFactor: Double
+) extends Transformer[A, HLL, Int](name) {
   require(hashBucketSize >= 0, "hashBucketSize must be >= 0")
   require(sizeScalingFactor >= 1.0, "hashBucketSize must be >= 1.0")
 
@@ -130,8 +134,10 @@ private[featran] abstract class BaseHashHotEncoder[A](name: String,
   override def encodeAggregator(c: Int): String = c.toString
   override def decodeAggregator(s: String): Int = s.toInt
   override def params: Map[String, String] =
-    Map("hashBucketSize" -> hashBucketSize.toString,
-        "sizeScalingFactor" -> sizeScalingFactor.toString)
+    Map(
+      "hashBucketSize" -> hashBucketSize.toString,
+      "sizeScalingFactor" -> sizeScalingFactor.toString
+    )
 }
 
 private object HashEncoder {

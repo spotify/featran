@@ -37,11 +37,13 @@ object Fixtures {
   val ExpectedNames =
     Seq("one_hot_a", "one_hot_b", "one_hot_c", "one_hot_d", "one_hot_e", "min_max")
 
-  val ExpectedValues = Seq(Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
-                           Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
-                           Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
-                           Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
-                           Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00))
+  val ExpectedValues = Seq(
+    Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
+    Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
+    Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
+    Seq(0.0, 0.0, 0.0, 1.0, 0.0, 0.75),
+    Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00)
+  )
 
   val ExpectedMapValues = Seq(
     Map("one_hot_a" -> 1.0, "min_max" -> 0.0),
@@ -51,24 +53,28 @@ object Fixtures {
     Map("one_hot_e" -> 1.0, "min_max" -> 1.0)
   )
 
-  case class Record(x: Double,
-                    xo: Option[Double],
-                    v: Array[Double],
-                    vo: Option[Array[Double]],
-                    s1: String,
-                    s2: Seq[String],
-                    s3: Seq[WeightedLabel])
+  case class Record(
+    x: Double,
+    xo: Option[Double],
+    v: Array[Double],
+    vo: Option[Array[Double]],
+    s1: String,
+    s2: Seq[String],
+    s3: Seq[WeightedLabel]
+  )
 
   val Records = (1 to 100).map { x =>
     val d = x.toDouble
     val s = "v" + d
-    Record(d,
-           Some(d),
-           Array.fill(10)(d),
-           Some(Array.fill(10)(d)),
-           s,
-           Seq(s),
-           Seq(WeightedLabel(s, 1.0)))
+    Record(
+      d,
+      Some(d),
+      Array.fill(10)(d),
+      Some(Array.fill(10)(d)),
+      s,
+      Seq(s),
+      Seq(WeightedLabel(s, 1.0))
+    )
   }
 
   private val RecordSpec1 = FeatureSpec
@@ -121,17 +127,21 @@ object Fixtures {
       .flatMap(_.listFiles())
       .filter(f => f.getName.endsWith(".class") && !f.getName.contains("$"))
       .map(f => classLoader.loadClass(s"$pkg.${f.getName.replace(".class", "")}"))
-      .filter(c =>
-        (baseCls isAssignableFrom c) && c != baseCls &&
-          Try(classLoader.loadClass(c.getName + "$")).isSuccess)
+      .filter(
+        c =>
+          (baseCls isAssignableFrom c) && c != baseCls &&
+            Try(classLoader.loadClass(c.getName + "$")).isSuccess
+      )
       .filter(c => !Modifier.isAbstract(c.getModifiers()))
       .toSet
 
     val covered = RecordSpec2.features.map(_.transformer.getClass).toSet
     val missing = transformers -- covered
-    require(missing.isEmpty,
-            "Not all transformers are covered in Fixtures, missing: " +
-              missing.map(_.getSimpleName).mkString(", "))
+    require(
+      missing.isEmpty,
+      "Not all transformers are covered in Fixtures, missing: " +
+        missing.map(_.getSimpleName).mkString(", ")
+    )
   }
 
 }

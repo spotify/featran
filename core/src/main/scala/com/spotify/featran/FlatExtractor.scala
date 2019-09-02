@@ -60,7 +60,8 @@ object FlatExtractor {
    * @return Class for converting to Features
    */
   @inline def apply[M[_]: CollectionType, T: ClassTag: FlatReader](
-    settings: M[String]): FlatExtractor[M, T] = new FlatExtractor[M, T](settings)
+    settings: M[String]
+  ): FlatExtractor[M, T] = new FlatExtractor[M, T](settings)
 
   /**
    * Another useful operation is to use the Spec and Information we have to map from
@@ -90,7 +91,8 @@ object FlatExtractor {
    * @return FeatureSpec for the intermediate format
    */
   def multiFlatSpec[T: ClassTag: FlatReader, X: ClassTag](
-    spec: MultiFeatureSpec[X]): MultiFeatureSpec[T] = {
+    spec: MultiFeatureSpec[X]
+  ): MultiFeatureSpec[T] = {
     val features = spec.features.map { feature =>
       val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
       new Feature(feature.transformer.flatRead, feature.default, t)
@@ -101,8 +103,8 @@ object FlatExtractor {
 }
 
 private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](
-  settings: M[String])
-    extends Serializable {
+  settings: M[String]
+) extends Serializable {
 
   import json._
   import CollectionType.ops._
@@ -135,7 +137,8 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
     featureResults(records).map(_._1)
 
   def featureResults[F: FeatureBuilder: ClassTag](
-    records: M[T]): M[(F, Map[String, FeatureRejection])] = {
+    records: M[T]
+  ): M[(F, Map[String, FeatureRejection])] = {
     val fb = FeatureBuilder[F].newBuilder
     records.cross(converters).cross(dimSize).map {
       case ((record, convs), size) =>

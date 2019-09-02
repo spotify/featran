@@ -60,8 +60,10 @@ object FeatureSpec {
  * Encapsulate specification for feature extraction and transformation.
  * @tparam T input record type to extract features from
  */
-class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feature[T, _, _, _]],
-                                       private[featran] val crossings: Crossings) {
+class FeatureSpec[T] private[featran] (
+  private[featran] val features: Array[Feature[T, _, _, _]],
+  private[featran] val crossings: Crossings
+) {
 
   private def featureSet: FeatureSet[T] = new FeatureSet[T](features, crossings)
 
@@ -82,7 +84,8 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @tparam A extracted feature type
    */
   def optional[A](f: T => Option[A], default: Option[A] = None)(
-    t: Transformer[A, _, _]): FeatureSpec[T] =
+    t: Transformer[A, _, _]
+  ): FeatureSpec[T] =
     new FeatureSpec[T](this.features :+ new Feature(f, default, t), this.crossings)
 
   /**
@@ -137,8 +140,9 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
   def filter(predicate: Feature[T, _, _, _] => Boolean): FeatureSpec[T] = {
     val filteredFeatures = features.filter(predicate)
     val featuresByName =
-      filteredFeatures.map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](f =>
-        f.transformer.name -> f)(breakOut)
+      filteredFeatures.map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](
+        f => f.transformer.name -> f
+      )(breakOut)
     val filteredCrossings = crossings.filter[T](featuresByName.contains)
 
     new FeatureSpec[T](filteredFeatures, filteredCrossings)
@@ -155,7 +159,8 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    */
   def extractWithSubsetSettings[M[_]: CollectionType](
     input: M[T],
-    settings: M[String]): FeatureExtractor[M, T] = {
+    settings: M[String]
+  ): FeatureExtractor[M, T] = {
     import json._
     import CollectionType.ops._
 
@@ -179,8 +184,10 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param settings JSON settings from a previous session
    * @tparam M input collection type, e.g. `Array`, `List`
    */
-  def extractWithSettings[M[_]: CollectionType](input: M[T],
-                                                settings: M[String]): FeatureExtractor[M, T] = {
+  def extractWithSettings[M[_]: CollectionType](
+    input: M[T],
+    settings: M[String]
+  ): FeatureExtractor[M, T] = {
     import CollectionType.ops._
 
     val fs = input.pure(featureSet)
@@ -197,7 +204,8 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
    * @param settings JSON settings from a previous session
    */
   def extractWithSubsetSettings[F: FeatureBuilder: ClassTag](
-    settings: String): RecordExtractor[T, F] = {
+    settings: String
+  ): RecordExtractor[T, F] = {
     import json._
 
     val s = decode[Seq[Settings]](settings).right.get
@@ -220,10 +228,11 @@ class FeatureSpec[T] private[featran] (private[featran] val features: Array[Feat
 
 }
 
-private class Feature[T, A, B, C](val f: T => Option[A],
-                                  val default: Option[A],
-                                  val transformer: Transformer[A, B, C])
-    extends Serializable {
+private class Feature[T, A, B, C](
+  val f: T => Option[A],
+  val default: Option[A],
+  val transformer: Transformer[A, B, C]
+) extends Serializable {
 
   def get(t: T): Option[A] = f(t).orElse(default)
 
@@ -263,9 +272,10 @@ private class Feature[T, A, B, C](val f: T => Option[A],
 
 }
 
-private class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _, _]],
-                            private[featran] val crossings: Crossings)
-    extends Serializable {
+private class FeatureSet[T](
+  private[featran] val features: Array[Feature[T, _, _, _]],
+  private[featran] val crossings: Crossings
+) extends Serializable {
 
   {
     val (_, dups) = features.foldLeft((Set.empty[String], Set.empty[String])) {
@@ -412,10 +422,11 @@ private class FeatureSet[T](private[featran] val features: Array[Feature[T, _, _
 
 }
 
-private class MultiFeatureSet[T](features: Array[Feature[T, _, _, _]],
-                                 crossings: Crossings,
-                                 private val mapping: Map[String, Int])
-    extends FeatureSet[T](features, crossings)
+private class MultiFeatureSet[T](
+  features: Array[Feature[T, _, _, _]],
+  crossings: Crossings,
+  private val mapping: Map[String, Int]
+) extends FeatureSet[T](features, crossings)
     with Serializable {
 
   import FeatureSpec.ARRAY

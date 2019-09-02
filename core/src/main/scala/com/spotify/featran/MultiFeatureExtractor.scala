@@ -28,8 +28,8 @@ import scala.reflect.ClassTag
 class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
   private val fs: M[MultiFeatureSet[T]],
   @transient private val input: M[T],
-  @transient private val settings: Option[M[String]])
-    extends Serializable {
+  @transient private val settings: Option[M[String]]
+) extends Serializable {
   import CollectionType.ops._
 
   private[this] val extractor =

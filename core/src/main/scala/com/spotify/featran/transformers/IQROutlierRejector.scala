@@ -48,12 +48,13 @@ object IQROutlierRejector extends SettingsBuilder {
    * @param rejectUpper whether to reject outliers `factor` * IQR above the third quartile
    * @param k           precision of the underlying Algebird QTree approximation
    */
-  def apply(name: String,
-            rejectLower: Boolean = true,
-            rejectUpper: Boolean = true,
-            k: Int = QTreeAggregator.DefaultK,
-            factor: Double = DefaultFactor)
-    : Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
+  def apply(
+    name: String,
+    rejectLower: Boolean = true,
+    rejectUpper: Boolean = true,
+    k: Int = QTreeAggregator.DefaultK,
+    factor: Double = DefaultFactor
+  ): Transformer[Double, BaseQuantileRejector.B, BaseQuantileRejector.C] =
     new IQROutlierRejector(name, rejectLower, rejectUpper, k, factor)
 
   /**
@@ -64,12 +65,13 @@ object IQROutlierRejector extends SettingsBuilder {
     IQROutlierRejector(setting.name)
 }
 
-private class IQROutlierRejector(name: String,
-                                 rejectLower: Boolean,
-                                 rejectUpper: Boolean,
-                                 k: Int,
-                                 val factor: Double)
-    extends QuantileOutlierRejector(name, rejectLower, rejectUpper, 4, k) {
+private class IQROutlierRejector(
+  name: String,
+  rejectLower: Boolean,
+  rejectUpper: Boolean,
+  k: Int,
+  val factor: Double
+) extends QuantileOutlierRejector(name, rejectLower, rejectUpper, 4, k) {
 
   override def calculateBounds(fq: Double, lq: Double): (Double, Double) = {
     val iqr = lq - fq

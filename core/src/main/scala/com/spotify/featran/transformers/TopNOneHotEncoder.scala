@@ -50,13 +50,14 @@ object TopNOneHotEncoder extends SettingsBuilder {
    * @param encodeMissingValue whether to indicate to encode items outside of the top n set as
    *                           `__unknown__`
    */
-  def apply(name: String,
-            n: Int,
-            eps: Double = 0.001,
-            delta: Double = 0.001,
-            seed: Int = Random.nextInt,
-            encodeMissingValue: Boolean = false)
-    : Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
+  def apply(
+    name: String,
+    n: Int,
+    eps: Double = 0.001,
+    delta: Double = 0.001,
+    seed: Int = Random.nextInt,
+    encodeMissingValue: Boolean = false
+  ): Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
     new TopNOneHotEncoder(name, n, eps, delta, seed, encodeMissingValue)
 
   /**
@@ -64,7 +65,8 @@ object TopNOneHotEncoder extends SettingsBuilder {
    * @param setting Settings object
    */
   def fromSettings(
-    setting: Settings): Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] = {
+    setting: Settings
+  ): Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] = {
     val n = setting.params("n").toInt
     val eps = setting.params("eps").toDouble
     val delta = setting.params("delta").toDouble
@@ -75,13 +77,14 @@ object TopNOneHotEncoder extends SettingsBuilder {
   }
 }
 
-private[featran] class TopNOneHotEncoder(name: String,
-                                         val n: Int,
-                                         val eps: Double,
-                                         val delta: Double,
-                                         val seed: Int,
-                                         val encodeMissingValue: Boolean)
-    extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
+private[featran] class TopNOneHotEncoder(
+  name: String,
+  val n: Int,
+  val eps: Double,
+  val delta: Double,
+  val seed: Int,
+  val encodeMissingValue: Boolean
+) extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
 
   import MissingValue.MissingValueToken
 
@@ -117,9 +120,11 @@ private[featran] class TopNOneHotEncoder(name: String,
     }
   }
 
-  override def buildFeatures(a: Option[String],
-                             c: SortedMap[String, Int],
-                             fb: FeatureBuilder[_]): Unit = a match {
+  override def buildFeatures(
+    a: Option[String],
+    c: SortedMap[String, Int],
+    fb: FeatureBuilder[_]
+  ): Unit = a match {
     case Some(k) =>
       c.get(k) match {
         case Some(v) =>
@@ -147,11 +152,13 @@ private[featran] class TopNOneHotEncoder(name: String,
     b.result()
   }
   override def params: Map[String, String] =
-    Map("n" -> n.toString,
-        "eps" -> eps.toString,
-        "delta" -> delta.toString,
-        "seed" -> seed.toString,
-        "encodeMissingValue" -> encodeMissingValue.toString)
+    Map(
+      "n" -> n.toString,
+      "eps" -> eps.toString,
+      "delta" -> delta.toString,
+      "seed" -> seed.toString,
+      "encodeMissingValue" -> encodeMissingValue.toString
+    )
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 

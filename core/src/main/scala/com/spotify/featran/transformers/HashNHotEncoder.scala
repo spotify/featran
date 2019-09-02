@@ -59,9 +59,11 @@ object HashNHotEncoder extends SettingsBuilder {
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
    * @param sizeScalingFactor when hashBucketSize is 0, scale HLL estimate by this amount
    */
-  def apply(name: String,
-            hashBucketSize: Int = 0,
-            sizeScalingFactor: Double = 8.0): Transformer[Seq[String], HLL, Int] =
+  def apply(
+    name: String,
+    hashBucketSize: Int = 0,
+    sizeScalingFactor: Double = 8.0
+  ): Transformer[Seq[String], HLL, Int] =
     new HashNHotEncoder(name, hashBucketSize, sizeScalingFactor)
 
   /**

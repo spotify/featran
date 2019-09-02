@@ -36,8 +36,10 @@ object NHotEncoder extends SettingsBuilder {
   /**
    * Create a new [[NHotEncoder]] instance.
    */
-  def apply(name: String, encodeMissingValue: Boolean = false)
-    : Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
+  def apply(
+    name: String,
+    encodeMissingValue: Boolean = false
+  ): Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     new NHotEncoder(name, encodeMissingValue)
 
   /**
@@ -45,7 +47,8 @@ object NHotEncoder extends SettingsBuilder {
    * @param setting Settings object
    */
   def fromSettings(
-    setting: Settings): Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
+    setting: Settings
+  ): Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
     val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
     NHotEncoder(setting.name, encodeMissingValue)
   }
@@ -66,9 +69,11 @@ private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
   }
 
   override def prepare(a: Seq[String]): Set[String] = Set(a: _*)
-  override def buildFeatures(a: Option[Seq[String]],
-                             c: SortedMap[String, Int],
-                             fb: FeatureBuilder[_]): Unit = a match {
+  override def buildFeatures(
+    a: Option[Seq[String]],
+    c: SortedMap[String, Int],
+    fb: FeatureBuilder[_]
+  ): Unit = a match {
     case Some(xs) =>
       val keys = xs.distinct.sorted
       var prev = -1

@@ -45,8 +45,10 @@ object NHotWeightedEncoder extends SettingsBuilder {
   /**
    * Create a new [[NHotWeightedEncoder]] instance.
    */
-  def apply(name: String, encodeMissingValue: Boolean = false)
-    : Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
+  def apply(
+    name: String,
+    encodeMissingValue: Boolean = false
+  ): Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] =
     new NHotWeightedEncoder(name, encodeMissingValue)
 
   /**
@@ -54,7 +56,8 @@ object NHotWeightedEncoder extends SettingsBuilder {
    * @param setting Settings object
    */
   def fromSettings(
-    setting: Settings): Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] = {
+    setting: Settings
+  ): Transformer[Seq[WeightedLabel], Set[String], SortedMap[String, Int]] = {
     val encodeMissingValue = setting.params("encodeMissingValue").toBoolean
     NHotWeightedEncoder(setting.name, encodeMissingValue)
   }
@@ -65,10 +68,12 @@ private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boo
 
   import MissingValue.MissingValueToken
 
-  def addMissingValue(fb: FeatureBuilder[_],
-                      unseen: MSet[String],
-                      keys: Seq[String],
-                      unseenWeight: Double): Unit = {
+  def addMissingValue(
+    fb: FeatureBuilder[_],
+    unseen: MSet[String],
+    keys: Seq[String],
+    unseenWeight: Double
+  ): Unit = {
     if (keys.isEmpty) {
       fb.add(name + '_' + MissingValueToken, 1.0)
     } else if (unseen.isEmpty) {
@@ -80,9 +85,11 @@ private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boo
 
   override def prepare(a: Seq[WeightedLabel]): Set[String] =
     Set(a.map(_.name): _*)
-  override def buildFeatures(a: Option[Seq[WeightedLabel]],
-                             c: SortedMap[String, Int],
-                             fb: FeatureBuilder[_]): Unit = a match {
+  override def buildFeatures(
+    a: Option[Seq[WeightedLabel]],
+    c: SortedMap[String, Int],
+    fb: FeatureBuilder[_]
+  ): Unit = a match {
     case Some(xs) =>
       val weights = MMap.empty[String, Double].withDefaultValue(0.0)
       xs.foreach(x => weights(x.name) += x.value)

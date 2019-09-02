@@ -44,8 +44,8 @@ package object tensorflow {
   final case class NamedTFFeature(name: String, f: tf.Feature)
 
   final case class TensorFlowFeatureBuilder(
-    @transient private var underlying: tf.Features.Builder = tf.Features.newBuilder())
-      extends FeatureBuilder[tf.Example] {
+    @transient private var underlying: tf.Features.Builder = tf.Features.newBuilder()
+  ) extends FeatureBuilder[tf.Example] {
     override def init(dimension: Int): Unit = {
       if (underlying == null) {
         underlying = tf.Features.newBuilder()

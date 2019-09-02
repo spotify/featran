@@ -29,8 +29,8 @@ import scala.reflect.ClassTag
 class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
   private val fs: M[FeatureSet[T]],
   @transient private val input: M[T],
-  @transient private val settings: Option[M[String]])
-    extends Serializable {
+  @transient private val settings: Option[M[String]]
+) extends Serializable {
   import FeatureSpec.ARRAY, CollectionType.ops._, json._
 
   @transient private[featran] lazy val as: M[(T, ARRAY)] =
@@ -120,14 +120,18 @@ object RecordExtractor {
     }
   }
 
-  private final case class State[F, T](input: PipeIterator[T],
-                                       extractor: FeatureExtractor[Iterator, T],
-                                       output: Iterator[FeatureResult[F, T]])
+  private final case class State[F, T](
+    input: PipeIterator[T],
+    extractor: FeatureExtractor[Iterator, T],
+    output: Iterator[FeatureResult[F, T]]
+  )
 }
 
 /** Encapsulate [[RecordExtractor]] for extracting individual records. */
-class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: FeatureSet[T],
-                                                                        settings: String) {
+class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (
+  fs: FeatureSet[T],
+  settings: String
+) {
   import RecordExtractor._
 
   private implicit val iteratorCollectionType: CollectionType[Iterator] =
@@ -148,9 +152,11 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (fs: Feat
     override def initialValue(): State[F, T] = {
       val input: PipeIterator[T] = new PipeIterator[T]
       val extractor: FeatureExtractor[Iterator, T] =
-        new FeatureExtractor[Iterator, T](Iterator.continually(fs),
-                                          input,
-                                          Some(Iterator.continually(settings)))
+        new FeatureExtractor[Iterator, T](
+          Iterator.continually(fs),
+          input,
+          Some(Iterator.continually(settings))
+        )
       val output: Iterator[FeatureResult[F, T]] = extractor.featureResults
 
       State(input, extractor, output)

@@ -43,10 +43,12 @@ object NGrams extends SettingsBuilder {
    *             input `Seq[String]`
    * @param sep a string separator used to join individual tokens
    */
-  def apply(name: String,
-            low: Int = 1,
-            high: Int = -1,
-            sep: String = " "): Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
+  def apply(
+    name: String,
+    low: Int = 1,
+    high: Int = -1,
+    sep: String = " "
+  ): Transformer[Seq[String], Set[String], SortedMap[String, Int]] = {
     require(low > 0, "low must be > 0")
     require(high >= low || high == -1, "high must >= low or -1")
     new NGrams(name, low, high, sep)
@@ -57,7 +59,8 @@ object NGrams extends SettingsBuilder {
    * @param setting Settings object
    */
   def fromSettings(
-    setting: Settings): Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
+    setting: Settings
+  ): Transformer[Seq[String], Set[String], SortedMap[String, Int]] =
     NGrams(setting.name)
 }
 
@@ -65,9 +68,11 @@ private[featran] class NGrams(name: String, val low: Int, val high: Int, val sep
     extends NHotEncoder(name, false) {
   override def prepare(a: Seq[String]): Set[String] = ngrams(a).toSet
 
-  override def buildFeatures(a: Option[Seq[String]],
-                             c: SortedMap[String, Int],
-                             fb: FeatureBuilder[_]): Unit =
+  override def buildFeatures(
+    a: Option[Seq[String]],
+    c: SortedMap[String, Int],
+    fb: FeatureBuilder[_]
+  ): Unit =
     super.buildFeatures(a.map(ngrams), c, fb)
 
   private[transformers] def ngrams(a: Seq[String]): Seq[String] = {

@@ -45,9 +45,11 @@ object QuantileDiscretizer extends SettingsBuilder {
    *                   grouped, must be greater than or equal to 2
    * @param k precision of the underlying Algebird QTree approximation
    */
-  def apply(name: String,
-            numBuckets: Int = 2,
-            k: Int = QTreeAggregator.DefaultK): Transformer[Double, B, C] =
+  def apply(
+    name: String,
+    numBuckets: Int = 2,
+    k: Int = QTreeAggregator.DefaultK
+  ): Transformer[Double, B, C] =
     new QuantileDiscretizer(name, numBuckets, k)
 
   /**

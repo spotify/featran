@@ -60,9 +60,11 @@ object HashNHotWeightedEncoder extends SettingsBuilder {
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
    * @param sizeScalingFactor when hashBucketSize is 0, scale HLL estimate by this amount
    */
-  def apply(name: String,
-            hashBucketSize: Int = 0,
-            sizeScalingFactor: Double = 8.0): Transformer[Seq[WeightedLabel], HLL, Int] =
+  def apply(
+    name: String,
+    hashBucketSize: Int = 0,
+    sizeScalingFactor: Double = 8.0
+  ): Transformer[Seq[WeightedLabel], HLL, Int] =
     new HashNHotWeightedEncoder(name, hashBucketSize, sizeScalingFactor)
 
   /**
@@ -76,10 +78,11 @@ object HashNHotWeightedEncoder extends SettingsBuilder {
   }
 }
 
-private[featran] class HashNHotWeightedEncoder(name: String,
-                                               hashBucketSize: Int,
-                                               sizeScalingFactor: Double)
-    extends BaseHashHotEncoder[Seq[WeightedLabel]](name, hashBucketSize, sizeScalingFactor) {
+private[featran] class HashNHotWeightedEncoder(
+  name: String,
+  hashBucketSize: Int,
+  sizeScalingFactor: Double
+) extends BaseHashHotEncoder[Seq[WeightedLabel]](name, hashBucketSize, sizeScalingFactor) {
 
   override def prepare(a: Seq[WeightedLabel]): HLL =
     a.map(_.name).map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)

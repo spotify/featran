@@ -36,16 +36,21 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
         fb.add(key, x)
         b.putFeature(
           key,
-          Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(x.toFloat)).build())
+          Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(x.toFloat)).build()
+        )
       case (None, _) => fb.skip()
     }
     fb.add(Iterable("x", "y"), Seq(0.0, 0.0))
     fb.skip(2)
     val actual = fb.result
-    b.putFeature("x",
-                 Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build())
-    b.putFeature("y",
-                 Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build())
+    b.putFeature(
+      "x",
+      Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build()
+    )
+    b.putFeature(
+      "y",
+      Feature.newBuilder().setFloatList(FloatList.newBuilder().addValue(0.0f)).build()
+    )
     val expected = Example.newBuilder().setFeatures(b).build()
     actual == expected
   }

@@ -42,9 +42,11 @@ object CaseClassConverter {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  def toSpec[T <: Product](implicit tt: TypeTag[T],
-                           ct: ClassTag[T],
-                           d: DefaultTransform[Double]): FeatureSpec[T] =
+  def toSpec[T <: Product](
+    implicit tt: TypeTag[T],
+    ct: ClassTag[T],
+    d: DefaultTransform[Double]
+  ): FeatureSpec[T] =
     properties[T].zipWithIndex
       .foldLeft(FeatureSpec.of[T]) {
         case (s, (m, idx)) =>
@@ -65,10 +67,12 @@ object CaseClassConverter {
             // Optional Native Types
             case c if c =:= typeOf[Option[Int]] =>
               s.optional[Double](v => get(v, idx).asInstanceOf[Option[Int]].map(_.toDouble))(
-                d(name))
+                d(name)
+              )
             case c if c =:= typeOf[Option[Long]] =>
               s.optional[Double](v => get(v, idx).asInstanceOf[Option[Long]].map(_.toDouble))(
-                d(name))
+                d(name)
+              )
             case c if c =:= typeOf[Option[Short]] =>
               s.optional[Double] { v =>
                 get(v, idx).asInstanceOf[Option[Short]].map(_.toDouble)

@@ -28,7 +28,8 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
     Gen.listOfN(100, arb.arbitrary)
 
   private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], builder: FeatureBuilder[F])(
-    toSeq: F => Seq[T]): Prop = {
+    toSeq: F => Seq[T]
+  ): Prop = {
     val fb = SerializableUtils.ensureSerializable(builder)
     val num = implicitly[Numeric[T]]
     fb.init(xs.size + 4)
@@ -119,10 +120,12 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
     val indices = nonZeros.map(_._2) ++ Seq(xs.size, xs.size + 1)
     val values = nonZeros.map(_._1.get) ++ Seq(0.0, 0.0)
     val names = nonZeros.map(t => "key" + t._2) ++ Seq("x", "y")
-    Prop.all(actual.indices.toSeq == indices,
-             actual.values.toSeq == values,
-             actual.length == xs.size + 4,
-             actual.names == names)
+    Prop.all(
+      actual.indices.toSeq == indices,
+      actual.values.toSeq == values,
+      actual.length == xs.size + 4,
+      actual.names == names
+    )
   }
 
   property("float dense vector") = Prop.forAll(list[Float]) { xs =>
@@ -156,10 +159,12 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
       .filter(_._1.isDefined)
       .map(t => ("key" + t._2, t._1.getOrElse(0.0)))
       .toMap ++ Map("x" -> 0.0, "y" -> 0.0)
-    Prop.all(actual == expected,
-             actual + ("z" -> 1.0) == expected + ("z" -> 1.0),
-             actual - "x" == expected - "x",
-             expected.forall(kv => actual(kv._1) == kv._2))
+    Prop.all(
+      actual == expected,
+      actual + ("z" -> 1.0) == expected + ("z" -> 1.0),
+      actual - "x" == expected - "x",
+      expected.forall(kv => actual(kv._1) == kv._2)
+    )
   }
 
 }

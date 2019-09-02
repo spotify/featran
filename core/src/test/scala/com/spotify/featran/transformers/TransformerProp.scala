@@ -47,13 +47,15 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     xs.map(_.map(d2e)) == ys.map(_.map(d2e))
 
   // scalastyle:off method.length
-  def test[T: ClassTag](t: Transformer[T, _, _],
-                        input: List[T],
-                        names: Seq[String],
-                        expected: List[Seq[Double]],
-                        missing: Seq[Double],
-                        outOfBoundsElems: List[(T, Seq[Double])] = Nil,
-                        rejected: List[Seq[Double]] = Nil): Prop = {
+  def test[T: ClassTag](
+    t: Transformer[T, _, _],
+    input: List[T],
+    names: Seq[String],
+    expected: List[Seq[Double]],
+    missing: Seq[Double],
+    outOfBoundsElems: List[(T, Seq[Double])] = Nil,
+    rejected: List[Seq[Double]] = Nil
+  ): Prop = {
     val fsRequired = FeatureSpec.of[T].required(identity)(t)
     val fsOptional = FeatureSpec.of[Option[T]].optional(identity)(t)
 
@@ -85,7 +87,8 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "f1 values" |: safeCompare(f1.featureValues[Seq[Double]], expected),
       "f1 sparse values" |: safeCompare(
         f1.featureValues[SparseVector[Double]].map(_.toDenseVector.data.toSeq),
-        expected),
+        expected
+      ),
       "f1 rejections" |: safeCompare(rejections, rejected),
       "f2 values" |: safeCompare(f2.featureValues[Seq[Double]], expected :+ missing),
       "f3 values" |: safeCompare(f3.featureValues[Seq[Double]], expected.take(input.size / 2)),

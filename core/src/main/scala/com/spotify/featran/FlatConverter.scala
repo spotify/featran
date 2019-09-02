@@ -53,10 +53,12 @@ import scala.reflect.ClassTag
  */
 object FlatConverter {
   @inline def apply[T: ClassTag, A: ClassTag: FlatWriter](
-    spec: FeatureSpec[T]): FlatConverter[T, A] = new FlatConverter[T, A](spec)
+    spec: FeatureSpec[T]
+  ): FlatConverter[T, A] = new FlatConverter[T, A](spec)
 
   @inline def multiSpec[T: ClassTag, A: ClassTag: FlatWriter](
-    spec: MultiFeatureSpec[T]): FlatConverter[T, A] =
+    spec: MultiFeatureSpec[T]
+  ): FlatConverter[T, A] =
     FlatConverter(new FeatureSpec[T](spec.features, spec.crossings))
 }
 

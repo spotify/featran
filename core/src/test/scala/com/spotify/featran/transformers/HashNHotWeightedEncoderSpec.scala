@@ -58,9 +58,11 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     test(HashNHotWeightedEncoder("n_hot", 0, scalingFactor), size, xs)
   }
 
-  private def test(encoder: Transformer[List[WeightedLabel], _, _],
-                   size: Int,
-                   xs: List[List[WeightedLabel]]): Prop = {
+  private def test(
+    encoder: Transformer[List[WeightedLabel], _, _],
+    size: Int,
+    xs: List[List[WeightedLabel]]
+  ): Prop = {
     val cats = 0 until size
     val names = cats.map("n_hot_" + _)
     val expected = xs.map { s =>
@@ -68,11 +70,13 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
         .map(x => (HashEncoder.bucket(x.name, size), x.value))
         .groupBy(_._1)
         .map(l => (l._1, l._2.map(_._2).sum))
-      cats.map(c =>
-        hashes.get(c) match {
-          case Some(v) => v
-          case None    => 0.0
-      })
+      cats.map(
+        c =>
+          hashes.get(c) match {
+            case Some(v) => v
+            case None    => 0.0
+          }
+      )
     }
     val missing = cats.map(_ => 0.0)
     test(encoder, xs, names, expected, missing)

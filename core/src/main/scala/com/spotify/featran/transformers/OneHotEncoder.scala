@@ -41,7 +41,8 @@ object OneHotEncoder extends SettingsBuilder {
    */
   def apply(
     name: String,
-    encodeMissingValue: Boolean = false): Transformer[String, Set[String], SortedMap[String, Int]] =
+    encodeMissingValue: Boolean = false
+  ): Transformer[String, Set[String], SortedMap[String, Int]] =
     new OneHotEncoder(name, encodeMissingValue)
 
   /**
@@ -58,9 +59,11 @@ private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[String](name, encodeMissingValue) {
   override def prepare(a: String): Set[String] = Set(a)
 
-  override def buildFeatures(a: Option[String],
-                             c: SortedMap[String, Int],
-                             fb: FeatureBuilder[_]): Unit = {
+  override def buildFeatures(
+    a: Option[String],
+    c: SortedMap[String, Int],
+    fb: FeatureBuilder[_]
+  ): Unit = {
     a match {
       case Some(k) =>
         c.get(k) match {

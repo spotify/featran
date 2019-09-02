@@ -29,11 +29,13 @@ object HeavyHittersSpec extends TransformerProp("HeavyHitters") {
   }
   private val seed = 1
 
-  private def test(transformer: Transformer[String, _, _],
-                   xs: List[String],
-                   count: Int,
-                   eps: Double,
-                   delta: Double): Prop = {
+  private def test(
+    transformer: Transformer[String, _, _],
+    xs: List[String],
+    count: Int,
+    eps: Double,
+    delta: Double
+  ): Prop = {
     val params = SketchMapParams[String](seed, eps, delta, count)(_.getBytes)
     val aggregator = SketchMap.aggregator[String, Long](params)
     val sm =

@@ -34,9 +34,11 @@ object StandardScaler extends SettingsBuilder {
    * @param withStd whether to scale the data to unit standard deviation
    * @param withMean whether to center the data with mean before scaling
    */
-  def apply(name: String,
-            withStd: Boolean = true,
-            withMean: Boolean = false): Transformer[Double, Moments, (Double, Double)] =
+  def apply(
+    name: String,
+    withStd: Boolean = true,
+    withMean: Boolean = false
+  ): Transformer[Double, Moments, (Double, Double)] =
     new StandardScaler(name, withStd, withMean)
 
   /**

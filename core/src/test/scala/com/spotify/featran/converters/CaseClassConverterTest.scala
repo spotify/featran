@@ -65,8 +65,11 @@ class CaseClassConverterTest extends FlatSpec with Matchers {
     val spec = CaseClassConverter.toSpec[TestData]
     val features = spec.extract(data).featureValues[Seq[Double]]
     assert(
-      features === List(Seq(1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0),
-                        Seq(2.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0)))
+      features === List(
+        Seq(1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0),
+        Seq(2.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0)
+      )
+    )
   }
 
   it should "convert a simple option" in {

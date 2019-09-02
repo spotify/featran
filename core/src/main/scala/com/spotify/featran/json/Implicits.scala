@@ -93,7 +93,7 @@ private[featran] trait Implicits extends Serializable {
               .get(name)
               .flatten
               .flatMap(o => circeDecode[T](o).toOption)
-        }
+          }
 
     override def readDouble(name: String): String => Option[Double] = toFeature[Double](name)
 
@@ -125,7 +125,8 @@ private[featran] trait Implicits extends Serializable {
       (v: Option[MDLRecord[String]]) => (name, v.map(_.asJson))
 
     override def writeWeightedLabel(
-      name: String): Option[Seq[WeightedLabel]] => (String, Option[Json]) =
+      name: String
+    ): Option[Seq[WeightedLabel]] => (String, Option[Json]) =
       (v: Option[Seq[WeightedLabel]]) => (name, v.map(_.asJson))
 
     override def writeDoubles(name: String): Option[Seq[Double]] => (String, Option[Json]) =

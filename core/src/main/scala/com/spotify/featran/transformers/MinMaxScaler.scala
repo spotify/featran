@@ -38,9 +38,11 @@ object MinMaxScaler extends SettingsBuilder {
    * @param min lower bound after transformation, shared by all features
    * @param max upper bound after transformation, shared by all features
    */
-  def apply(name: String,
-            min: Double = 0.0,
-            max: Double = 1.0): Transformer[Double, (Min[Double], Max[Double]), C] =
+  def apply(
+    name: String,
+    min: Double = 0.0,
+    max: Double = 1.0
+  ): Transformer[Double, (Min[Double], Max[Double]), C] =
     new MinMaxScaler(name, min, max)
 
   /**

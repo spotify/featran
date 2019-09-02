@@ -29,7 +29,8 @@ object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
     Gen.listOfN(100, arb.arbitrary)
 
   private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], builder: FeatureBuilder[F])(
-    toSeq: F => Seq[Float]): Prop = {
+    toSeq: F => Seq[Float]
+  ): Prop = {
     val num = implicitly[Numeric[T]]
     val fb = SerializableUtils.ensureSerializable(builder)
     fb.init(xs.size + 4)
@@ -53,21 +54,25 @@ object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
   }
 
   property("Sparse LabeledPoint on Float input") = Prop.forAll(list[Float]) { xs =>
-    test(xs, FeatureBuilder[SparseLabeledPoint])(r =>
-      SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs.size).toDense.toSeq)
+    test(xs, FeatureBuilder[SparseLabeledPoint])(
+      r => SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs.size).toDense.toSeq
+    )
     val n = 1024 / xs.size + 1
     val xs2 = Seq.fill(n)(xs).reduce(_ ++ _)
-    test(xs2, FeatureBuilder[SparseLabeledPoint])(r =>
-      SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs2.size).toDense.toSeq)
+    test(xs2, FeatureBuilder[SparseLabeledPoint])(
+      r => SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs2.size).toDense.toSeq
+    )
   }
 
   property("Sparse LabeledPoint on Double input") = Prop.forAll(list[Double]) { xs =>
-    test(xs, FeatureBuilder[SparseLabeledPoint])(r =>
-      SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs.size).toDense.toSeq)
+    test(xs, FeatureBuilder[SparseLabeledPoint])(
+      r => SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs.size).toDense.toSeq
+    )
     val n = 1024 / xs.size + 1
     val xs2 = Seq.fill(n)(xs).reduce(_ ++ _)
-    test(xs2, FeatureBuilder[SparseLabeledPoint])(r =>
-      SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs2.size).toDense.toSeq)
+    test(xs2, FeatureBuilder[SparseLabeledPoint])(
+      r => SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs2.size).toDense.toSeq
+    )
   }
 
 }

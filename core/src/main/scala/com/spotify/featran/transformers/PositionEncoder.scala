@@ -51,9 +51,11 @@ private[featran] class PositionEncoder(name: String) extends BaseHotEncoder[Stri
   override def prepare(a: String): Set[String] = Set(a)
   override def featureDimension(c: SortedMap[String, Int]): Int = 1
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = Seq(name)
-  override def buildFeatures(a: Option[String],
-                             c: SortedMap[String, Int],
-                             fb: FeatureBuilder[_]): Unit = {
+  override def buildFeatures(
+    a: Option[String],
+    c: SortedMap[String, Int],
+    fb: FeatureBuilder[_]
+  ): Unit = {
     a match {
       case Some(k) =>
         c.get(k) match {

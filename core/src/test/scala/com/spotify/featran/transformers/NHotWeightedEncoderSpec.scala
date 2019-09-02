@@ -50,13 +50,16 @@ object NHotWeightedEncoderSpec extends TransformerProp("NHotWeightedEncoder") {
     val missingBase = cats.map(c => if (c == MissingValueToken) 1.0 else 0.0)
 
     val oob = List(
-      (List(WeightedLabel("s1", 0.2), WeightedLabel("s2", 0.1)), missingBase.map(v => v * 0.3)))
-    test(NHotWeightedEncoder("n_hot", encodeMissingValue = true),
-         xs,
-         names,
-         expected,
-         missingBase,
-         oob)
+      (List(WeightedLabel("s1", 0.2), WeightedLabel("s2", 0.1)), missingBase.map(v => v * 0.3))
+    )
+    test(
+      NHotWeightedEncoder("n_hot", encodeMissingValue = true),
+      xs,
+      names,
+      expected,
+      missingBase,
+      oob
+    )
   }
 
 }

@@ -47,12 +47,13 @@ object HeavyHitters extends SettingsBuilder {
    * @param seed a seed to initialize the random number generator used to create the pairwise
    *             independent hash functions
    */
-  def apply(name: String,
-            heavyHittersCount: Int,
-            eps: Double = 0.001,
-            delta: Double = 0.001,
-            seed: Int = Random.nextInt)
-    : Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
+  def apply(
+    name: String,
+    heavyHittersCount: Int,
+    eps: Double = 0.001,
+    delta: Double = 0.001,
+    seed: Int = Random.nextInt
+  ): Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
     new HeavyHitters(name, heavyHittersCount, eps, delta, seed)
 
   /**
@@ -60,7 +61,8 @@ object HeavyHitters extends SettingsBuilder {
    * @param setting Settings object
    */
   def fromSettings(
-    setting: Settings): Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] = {
+    setting: Settings
+  ): Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] = {
     val seed = setting.params("seed").toInt
     val eps = setting.params("eps").toDouble
     val delta = setting.params("delta").toDouble
@@ -69,12 +71,13 @@ object HeavyHitters extends SettingsBuilder {
   }
 }
 
-private[featran] class HeavyHitters(name: String,
-                                    val heavyHittersCount: Int,
-                                    val eps: Double,
-                                    val delta: Double,
-                                    val seed: Int)
-    extends Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]](name) {
+private[featran] class HeavyHitters(
+  name: String,
+  val heavyHittersCount: Int,
+  val eps: Double,
+  val delta: Double,
+  val seed: Int
+) extends Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]](name) {
 
   @transient private lazy val sketchMapParams =
     SketchMapParams[String](seed, eps, delta, heavyHittersCount)(_.getBytes)
@@ -95,9 +98,11 @@ private[featran] class HeavyHitters(name: String,
   override def featureDimension(c: Map[String, (Int, Long)]): Int = 2
   override def featureNames(c: Map[String, (Int, Long)]): Seq[String] =
     Seq(s"${name}_rank", s"${name}_freq")
-  override def buildFeatures(a: Option[String],
-                             c: Map[String, (Int, Long)],
-                             fb: FeatureBuilder[_]): Unit = a match {
+  override def buildFeatures(
+    a: Option[String],
+    c: Map[String, (Int, Long)],
+    fb: FeatureBuilder[_]
+  ): Unit = a match {
     case Some(x) =>
       c.get(x) match {
         case Some((rank, freq)) =>
@@ -123,10 +128,12 @@ private[featran] class HeavyHitters(name: String,
     b.result()
   }
   override def params: Map[String, String] =
-    Map("seed" -> seed.toString,
-        "eps" -> eps.toString,
-        "delta" -> delta.toString,
-        "heavyHittersCount" -> heavyHittersCount.toString)
+    Map(
+      "seed" -> seed.toString,
+      "eps" -> eps.toString,
+      "delta" -> delta.toString,
+      "heavyHittersCount" -> heavyHittersCount.toString
+    )
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 

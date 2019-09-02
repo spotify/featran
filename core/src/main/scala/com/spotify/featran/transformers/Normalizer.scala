@@ -37,9 +37,11 @@ object Normalizer extends SettingsBuilder {
    * @param p normalization in L^p^ space, must be greater than or equal to 1.0
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
-  def apply(name: String,
-            p: Double = 2.0,
-            expectedLength: Int = 0): Transformer[Array[Double], Int, Int] =
+  def apply(
+    name: String,
+    p: Double = 2.0,
+    expectedLength: Int = 0
+  ): Transformer[Array[Double], Int, Int] =
     new Normalizer(name, p, expectedLength)
 
   /**

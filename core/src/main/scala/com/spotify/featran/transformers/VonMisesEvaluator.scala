@@ -38,10 +38,12 @@ object VonMisesEvaluator extends SettingsBuilder {
    * @param scale scaling factor
    * @param points points to evaluate the distribution with
    */
-  def apply(name: String,
-            kappa: Double,
-            scale: Double,
-            points: Array[Double]): Transformer[Double, Unit, Unit] =
+  def apply(
+    name: String,
+    kappa: Double,
+    scale: Double,
+    points: Array[Double]
+  ): Transformer[Double, Unit, Unit] =
     new VonMisesEvaluator(name, kappa, scale, points)
 
   /**
@@ -64,11 +66,12 @@ object VonMisesEvaluator extends SettingsBuilder {
   }
 }
 
-private[featran] class VonMisesEvaluator(name: String,
-                                         val kappa: Double,
-                                         val scale: Double,
-                                         val points: Array[Double])
-    extends Transformer[Double, Unit, Unit](name) {
+private[featran] class VonMisesEvaluator(
+  name: String,
+  val kappa: Double,
+  val scale: Double,
+  val points: Array[Double]
+) extends Transformer[Double, Unit, Unit](name) {
 
   private val pMax = points.max
   private val upperBound = 2 * math.Pi / scale
@@ -90,9 +93,11 @@ private[featran] class VonMisesEvaluator(name: String,
   override def encodeAggregator(c: Unit): String = ""
   override def decodeAggregator(s: String): Unit = ()
   override def params: Map[String, String] =
-    Map("kappa" -> kappa.toString,
-        "scale" -> scale.toString,
-        "points" -> points.mkString("[", ",", "]"))
+    Map(
+      "kappa" -> kappa.toString,
+      "scale" -> scale.toString,
+      "points" -> points.mkString("[", ",", "]")
+    )
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 
