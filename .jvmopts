@@ -7,3 +7,7 @@
 -XX:+UseParallelGC
 # Additional flag that might help in case of serialization failures
 -Dsun.io.serialization.extendedDebugInfo=true
+
+# https://github.com/spotify/scio/issues/2096
+# # https://github.com/sbt/sbt/issues/4794#issuecomment-500602546
+# -Dsbt.classloader.close=false
