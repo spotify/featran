@@ -244,7 +244,7 @@ lazy val scalding: Project = project
     name := "scalding",
     moduleName := "featran-scalding",
     description := "Feature Transformers - Scalding",
-    resolvers += "Concurrent Maven Repo" at "http://conjars.org/repo",
+    resolvers += "Concurrent Maven Repo" at "https://conjars.org/repo",
     crossScalaVersions := Seq("2.11.12", "2.12.10"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "scalding-core" % scaldingVersion % "provided",
