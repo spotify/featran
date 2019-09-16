@@ -12,6 +12,10 @@ jdk8: &jdk8
   docker:
     - image: circleci/openjdk:8-jdk
 
+jdk11: &jdk11
+  docker:
+    - image: circleci/openjdk:11-jdk
+
 commands:
   build_featran:
     parameters:
@@ -66,6 +70,13 @@ jobs:
         build-steps:
           - run: sbt "++$SCALA_VERSION test"
 
+  build_212_jdk11:
+    <<: [*settings, *scala_212, *jdk11]
+    steps:
+      - build_featran:
+          build-steps:
+            - run: sbt "++$SCALA_VERSION test"
+
   publish:
     <<: [*settings, *scala_211, *jdk8]
     steps:
@@ -87,6 +98,9 @@ workflows:
           requires:
             - checks
             - mima_report
+      - build_212_jdk11:
+          requires:
+            - checks
 
       - publish:
           requires:
