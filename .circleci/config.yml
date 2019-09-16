@@ -6,7 +6,7 @@ scala_211: &scala_211
 
 scala_212: &scala_212
   environment:
-    - SCALA_VERSION: 2.12.8
+    - SCALA_VERSION: 2.12.10
 
 jdk8: &jdk8
   docker:
