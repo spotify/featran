@@ -224,7 +224,7 @@ lazy val flink: Project = project
     name := "flink",
     moduleName := "featran-flink",
     description := "Feature Transformers - Flink",
-    crossScalaVersions := Seq("2.11.12"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10"),
     libraryDependencies ++= Seq(
       "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
       "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",

@@ -17,6 +17,7 @@
 
 package com.spotify.featran
 
+import com.esotericsoftware.kryo.serializers.JavaSerializer
 import org.apache.flink.api.common.typeinfo.TypeInformation
 import org.apache.flink.api.scala.DataSet
 
@@ -43,7 +44,10 @@ package object flink {
 
     override def pure[A, B: ClassTag](ma: DataSet[A])(b: B): DataSet[B] = {
       implicit val tib = Ti.asInstanceOf[TypeInformation[B]]
-      ma.getExecutionEnvironment.fromElements(b)
+      val env = ma.getExecutionEnvironment
+      // Kryo throws NPE on `Feature`, use Java serialization instead
+      env.addDefaultKryoSerializer(classOf[FeatureSet[Any]], classOf[JavaSerializer])
+      env.fromElements(b)
     }
   }
 
