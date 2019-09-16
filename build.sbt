@@ -144,7 +144,7 @@ lazy val root: Project = project
   .enablePlugins(GhpagesPlugin, ScalaUnidocPlugin)
   .settings(featranSettings)
   .settings(
-    crossScalaVersions := Seq("2.11.12"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10"),
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
     gitRemoteRepo := "git@github.com:spotify/featran.git",
@@ -202,11 +202,10 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq("2.11.12"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
-      "org.scalatest" %% "scalatest" % scalatestVersion % "test",
-      "ml.dmlc" % "xgboost4j" % xgBoostVersion % "provided"
+      "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )
   .dependsOn(
@@ -338,9 +337,8 @@ lazy val xgboost: Project = project
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("2.11.12"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10"),
     libraryDependencies ++= Seq(
-      "ml.dmlc" % "xgboost4j" % xgBoostVersion % "provided",
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )
