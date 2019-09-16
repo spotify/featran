@@ -284,7 +284,7 @@ lazy val spark: Project = project
     name := "spark",
     moduleName := "featran-spark",
     description := "Feature Transformers - Spark",
-    crossScalaVersions := Seq("2.11.12"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10"),
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
