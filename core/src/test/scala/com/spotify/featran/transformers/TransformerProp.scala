@@ -21,7 +21,7 @@ import breeze.linalg.SparseVector
 
 import scala.collection.Set
 import com.spotify.featran.{FeatureSpec, FlatConverter, FlatExtractor, MultiFeatureSpec}
-import org.scalacheck.Prop.BooleanOperators
+import org.scalacheck.Prop.propBoolean
 import org.scalacheck._
 
 import scala.reflect.ClassTag
