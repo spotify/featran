@@ -30,7 +30,7 @@ val scalacheckVersion = "1.14.2"
 val scalatestVersion = "3.0.8"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.7.4"
-val simulacrumVersion = "0.19.0"
+val simulacrumVersion = "1.0.0"
 val sparkVersion = "2.4.4"
 val tensorflowVersion = "1.14.0"
 val xgBoostVersion = "0.90"
@@ -49,7 +49,7 @@ lazy val commonSettings = Seq(
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
   testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
-    "com.github.mpilquist" %% "simulacrum" % simulacrumVersion % CompileTime,
+    "org.typelevel" %% "simulacrum" % simulacrumVersion % CompileTime,
     compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
   ),
   ivyConfigurations += CompileTime,
