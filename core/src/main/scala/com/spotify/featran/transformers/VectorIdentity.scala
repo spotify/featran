@@ -39,7 +39,7 @@ object VectorIdentity extends SettingsBuilder {
   def apply[M[_]](name: String, expectedLength: Int = 0)(
     implicit ev: M[Double] => Seq[Double]
   ): Transformer[M[Double], Int, Int] =
-    new VectorIdentity(name, expectedLength)(ev)
+    new VectorIdentity(name, expectedLength) (ev)
 
   /**
    * Create a new [[VectorIdentity]] from a settings object
