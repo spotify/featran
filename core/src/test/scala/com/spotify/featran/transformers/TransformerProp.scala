@@ -138,9 +138,21 @@ abstract class TransformerProp(name: String) extends Properties(name) {
       "Flat Settings Match" |: flatMultiSettings == multiSettings
     )
 
-    Prop.all(propStandard, propConverters)
+    val propContramap = Prop.all(
+      "identity contramap" |: testContramap[T, T](t, input)(identity),
+      "hash contramap" |: {
+        val dummyFunction = input.map(x => x.## -> x).toMap
+        val newInput = dummyFunction.keys.toList
+        testContramap[Int, T](t, newInput)(dummyFunction.apply)
+      }
+    )
+
+    Prop.all(propStandard, propConverters, propContramap)
   }
   // scalastyle:on method.length
+  def testContramap[A, B](t: Transformer[B, _, _], input: List[A])(f: A => B): Prop =
+    FeatureSpec.of[A].required(f)(t).extract(input).featureValues[Seq[Double]] ==
+      FeatureSpec.of[A].required(identity)(t.contramap(f)).extract(input).featureValues[Seq[Double]]
 
   def testException[T](t: Transformer[T, _, _], input: List[T])(p: Throwable => Boolean): Prop =
     try {
