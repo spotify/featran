@@ -77,20 +77,20 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
   def contramap[AA](f: AA => A): Transformer[AA, B, C] = {
     val self = this
     new Transformer[AA, B, C](name) {
-      val aggregator: Aggregator[AA, B, C] = new Aggregator[AA, B, C] {
+      override val aggregator: Aggregator[AA, B, C] = new Aggregator[AA, B, C] {
         override def prepare(a: AA): B = self.aggregator.prepare(f(a))
         override def semigroup = self.aggregator.semigroup
         override def present(b: B): C = self.aggregator.present(b)
       }
-      def buildFeatures(a: Option[AA], c: C, fb: FeatureBuilder[_]): Unit =
+      override def buildFeatures(a: Option[AA], c: C, fb: FeatureBuilder[_]): Unit =
         self.buildFeatures(a.map(f), c, fb)
-      def decodeAggregator(s: String): C = self.decodeAggregator(s)
-      def encodeAggregator(c: C): String = self.encodeAggregator(c)
-      def featureDimension(c: C): Int = self.featureDimension(c)
-      def featureNames(c: C): Seq[String] = self.featureNames(c)
-      def flatRead[T](implicit evidence$1: FlatReader[T]): T => Option[Any] =
+      override def decodeAggregator(s: String): C = self.decodeAggregator(s)
+      override def encodeAggregator(c: C): String = self.encodeAggregator(c)
+      override def featureDimension(c: C): Int = self.featureDimension(c)
+      override def featureNames(c: C): Seq[String] = self.featureNames(c)
+      override def flatRead[T: FlatReader]: T => Option[Any] =
         self.flatRead[T]
-      def flatWriter[T](implicit fw: FlatWriter[T]): Option[AA] => fw.IF =
+      override def flatWriter[T](implicit fw: FlatWriter[T]): Option[AA] => fw.IF =
         self.flatWriter[T].compose(x => x.map(f))
     }
   }
