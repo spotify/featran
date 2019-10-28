@@ -37,7 +37,7 @@ trait SettingsBuilder {
  * @tparam B aggregator intermediate type
  * @tparam C aggregator summary type
  */
-abstract class Transformer[-A, B, C](val name: String) extends Serializable {
+abstract class Transformer[-A, B, C](val name: String) extends Serializable { self =>
 
   require(name != null && name.nonEmpty, "name cannot be null or empty")
 
@@ -69,6 +69,28 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable {
 
   protected def nameAt(n: Int): String = name + '_' + n
   protected def names(n: Int): Stream[String] = (0 until n).toStream.map(nameAt)
+
+  /**
+   * Builds a new transformer with an extra input preprocessing step
+   * @param f input preprocessing function
+   */
+  def contramap[AA](f: AA => A): Transformer[AA, B, C] = new Transformer[AA, B, C](name) {
+    override val aggregator: Aggregator[AA, B, C] = new Aggregator[AA, B, C] {
+      override def prepare(a: AA): B = self.aggregator.prepare(f(a))
+      override def semigroup = self.aggregator.semigroup
+      override def present(b: B): C = self.aggregator.present(b)
+    }
+    override def buildFeatures(a: Option[AA], c: C, fb: FeatureBuilder[_]): Unit =
+      self.buildFeatures(a.map(f), c, fb)
+    override def decodeAggregator(s: String): C = self.decodeAggregator(s)
+    override def encodeAggregator(c: C): String = self.encodeAggregator(c)
+    override def featureDimension(c: C): Int = self.featureDimension(c)
+    override def featureNames(c: C): Seq[String] = self.featureNames(c)
+    override def flatRead[T: FlatReader]: T => Option[Any] =
+      self.flatRead[T]
+    override def flatWriter[T](implicit fw: FlatWriter[T]): Option[AA] => fw.IF =
+      self.flatWriter[T].compose(x => x.map(f))
+  }
 
   //================================================================================
   // Special cases when value is missing in all rows
