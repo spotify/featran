@@ -85,7 +85,7 @@ private[featran] class HashNHotWeightedEncoder(
 ) extends BaseHashHotEncoder[Seq[WeightedLabel]](name, hashBucketSize, sizeScalingFactor) {
 
   override def prepare(a: Seq[WeightedLabel]): HLL =
-    a.map(_.name).map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)
+    a.map(_.name).map(hllMonoid.toHLL(_)).fold(hllMonoid.zero)(hllMonoid.plus)
 
   override def buildFeatures(a: Option[Seq[WeightedLabel]], c: Int, fb: FeatureBuilder[_]): Unit = {
     a match {

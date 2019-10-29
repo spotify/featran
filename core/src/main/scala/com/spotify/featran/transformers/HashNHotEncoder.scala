@@ -80,7 +80,7 @@ object HashNHotEncoder extends SettingsBuilder {
 private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeScalingFactor: Double)
     extends BaseHashHotEncoder[Seq[String]](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: Seq[String]): HLL =
-    a.map(hllMonoid.toHLL(_)).reduce(hllMonoid.plus)
+    a.map(hllMonoid.toHLL(_)).fold(hllMonoid.zero)(hllMonoid.plus)
 
   override def buildFeatures(a: Option[Seq[String]], c: Int, fb: FeatureBuilder[_]): Unit = {
     a match {
