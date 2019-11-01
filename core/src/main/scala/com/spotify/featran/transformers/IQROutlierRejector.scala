@@ -72,7 +72,6 @@ private class IQROutlierRejector(
   k: Int,
   val factor: Double
 ) extends QuantileOutlierRejector(name, rejectLower, rejectUpper, 4, k) {
-
   override def calculateBounds(fq: Double, lq: Double): (Double, Double) = {
     val iqr = lq - fq
     val l = fq - (iqr * factor)

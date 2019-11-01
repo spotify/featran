@@ -22,7 +22,6 @@ import com.spotify.featran.transformers.Identity
 import org.scalacheck._
 
 class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
-
   case class Record(d: Double, optD: Option[Double])
 
   implicit val arbRecords: Arbitrary[List[Record]] = Arbitrary {
@@ -123,5 +122,4 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
       multi.featureValues[Seq[Double]] == xs.map(r => Seq(Seq(r.d), Seq(r.d)))
     )
   }
-
 }

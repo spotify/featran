@@ -21,7 +21,6 @@ import com.twitter.algebird._
 import org.scalacheck._
 
 object HeavyHittersSpec extends TransformerProp("HeavyHitters") {
-
   private implicit val labelArb: Arbitrary[String] = Arbitrary {
     val infrequent = Gen.listOfN(50, Gen.alphaStr).flatMap(xs => Gen.oneOf(xs))
     val frequent = Gen.listOfN(5, Gen.alphaStr).flatMap(xs => Gen.oneOf(xs))
@@ -68,5 +67,4 @@ object HeavyHittersSpec extends TransformerProp("HeavyHitters") {
   property("delta") = Prop.forAll { xs: List[String] =>
     test(HeavyHitters("hh", 10, delta = 0.01, seed = 1), xs, 10, 0.001, 0.01)
   }
-
 }

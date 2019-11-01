@@ -25,7 +25,6 @@ private[transformers] class ThresholdFinder(
   maxBins: Int,
   minBinWeight: Long
 ) extends Serializable {
-
   class BucketInfo(totals: Seq[Long]) extends Serializable {
     // number of elements in bucket
     lazy val s: Long = totals.sum
@@ -161,5 +160,4 @@ private[transformers] class ThresholdFinder(
     // Select among the list of accepted candidate, that with the minimum weightedHs
     if (finalCandidates.nonEmpty) Some(finalCandidates.min._2) else None
   }
-
 }

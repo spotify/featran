@@ -37,7 +37,6 @@ import scala.util.Random
  * Missing values are transformed to [0.0, 0.0].
  */
 object HeavyHitters extends SettingsBuilder {
-
   /**
    * Create a new [[HeavyHitters]] instance.
    * @param heavyHittersCount number of heavy hitters to keep track of
@@ -78,7 +77,6 @@ private[featran] class HeavyHitters(
   val delta: Double,
   val seed: Int
 ) extends Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]](name) {
-
   @transient private lazy val sketchMapParams =
     SketchMapParams[String](seed, eps, delta, heavyHittersCount)(_.getBytes)
 

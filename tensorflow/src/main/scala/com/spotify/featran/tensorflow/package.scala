@@ -27,7 +27,6 @@ import org.tensorflow.{example => tf}
 import shapeless.datatype.tensorflow.TensorFlowType
 
 package object tensorflow {
-
   private[this] object FeatureNameNormalization {
     private[this] val NamePattern = Pattern.compile("[^A-Za-z0-9_]")
 

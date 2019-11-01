@@ -23,7 +23,6 @@ import org.scalacheck._
 import scala.util.Try
 
 object FeatureSpecSpec extends Properties("FeatureSpec") {
-
   case class Record(d: Double, optD: Option[Double])
   case class RecordWrapper(record: Record, d: Double)
 
@@ -275,5 +274,4 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       fs.extract(xs.toBuffer).featureValues[Seq[Double]].map(_.head) == xs
     )
   }
-
 }

@@ -28,7 +28,6 @@ import scala.reflect.runtime.universe.TypeTag
  * Companion object for [[FeatureSpec]].
  */
 object FeatureSpec {
-
   private[featran] type ARRAY = Array[Option[Any]]
 
   /**
@@ -64,7 +63,6 @@ class FeatureSpec[T] private[featran] (
   private[featran] val features: Array[Feature[T, _, _, _]],
   private[featran] val crossings: Crossings
 ) {
-
   private def featureSet: FeatureSet[T] = new FeatureSet[T](features, crossings)
 
   /**
@@ -225,7 +223,6 @@ class FeatureSpec[T] private[featran] (
    */
   def extractWithSettings[F: FeatureBuilder: ClassTag](settings: String): RecordExtractor[T, F] =
     new RecordExtractor[T, F](new FeatureSet[T](features, crossings), settings)
-
 }
 
 private class Feature[T, A, B, C](
@@ -233,7 +230,6 @@ private class Feature[T, A, B, C](
   val default: Option[A],
   val transformer: Transformer[A, B, C]
 ) extends Serializable {
-
   def get(t: T): Option[A] = f(t).orElse(default)
 
   // Option[A] => Option[B]
@@ -269,14 +265,12 @@ private class Feature[T, A, B, C](
   // Option[C]
   def unsafeSettings(c: Option[Any]): Settings =
     transformer.settings(c.asInstanceOf[Option[C]])
-
 }
 
 private class FeatureSet[T](
   private[featran] val features: Array[Feature[T, _, _, _]],
   private[featran] val crossings: Crossings
 ) extends Serializable {
-
   {
     val (_, dups) = features.foldLeft((Set.empty[String], Set.empty[String])) {
       case ((u, d), f) =>
@@ -419,7 +413,6 @@ private class FeatureSet[T](
       m(feature.transformer.name).aggregators.map(feature.transformer.decodeAggregator)
     }
   }
-
 }
 
 private class MultiFeatureSet[T](
@@ -428,7 +421,6 @@ private class MultiFeatureSet[T](
   private val mapping: Map[String, Int]
 ) extends FeatureSet[T](features, crossings)
     with Serializable {
-
   import FeatureSpec.ARRAY
 
   private[this] val dims = mapping.values.toSet.size
@@ -519,5 +511,4 @@ private class MultiFeatureSet[T](
       i += 1
     }
   }
-
 }

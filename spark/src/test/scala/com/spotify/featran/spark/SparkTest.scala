@@ -22,7 +22,6 @@ import org.apache.spark.SparkContext
 import org.scalatest._
 
 class SparkTest extends FlatSpec with Matchers {
-
   import Fixtures._
 
   "FeatureSpec" should "work with Spark" in {
@@ -47,5 +46,4 @@ class SparkTest extends FlatSpec with Matchers {
       sc.stop()
     }
   }
-
 }

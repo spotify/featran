@@ -33,7 +33,6 @@ import simulacrum.typeclass
 }
 
 object NumPyType {
-
   // from Guava LittleEndianDataOutputStream
   implicit class LittleEndianOutputStream(private val out: OutputStream) extends AnyVal {
     def writeInt(v: Int): Unit = {
@@ -87,14 +86,12 @@ object NumPyType {
     override def write(out: OutputStream, value: Double): Unit =
       out.writeDouble(value)
   }
-
 }
 
 /**
  * Utilities for writing data as NumPy `.npy` files.
  */
 object NumPy {
-
   private def header[T: NumPyType](dimensions: Seq[Int]): String = {
     // https://docs.scipy.org/doc/numpy/neps/npy-format.html
     val dims = dimensions.mkString(", ")
@@ -142,7 +139,6 @@ object NumPy {
     data: Array[T],
     shape: Seq[Int] = Seq.empty
   ): Unit = {
-
     val dims = if (shape.isEmpty) {
       Seq(data.length)
     } else {
@@ -167,7 +163,6 @@ object NumPy {
     numRows: Int,
     numCols: Int
   ): Unit = {
-
     val dims = Seq(numRows, numCols)
     writeHeader[T](out, dims)
     var n = 0
@@ -180,5 +175,4 @@ object NumPy {
     require(n == numRows, s"Invalid number of rows, expected: $numRows, actual: $n")
     out.flush()
   }
-
 }

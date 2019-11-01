@@ -32,7 +32,6 @@ import scala.collection.SortedMap
  * truncated to `min` or `max` and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
 object MinMaxScaler extends SettingsBuilder {
-
   /**
    * Create a new [[MinMaxScaler]] instance.
    * @param min lower bound after transformation, shared by all features

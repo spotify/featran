@@ -32,7 +32,6 @@ import scala.reflect.ClassTag
 
 // scalastyle:off number.of.methods
 private object JavaOps {
-
   def requiredFn[I, O](f: SerializableFunction[I, O]): I => O =
     (input: I) => f(input)
 
@@ -234,7 +233,6 @@ private object JavaOps {
 
   def featureNames[F, T](fe: RecordExtractor[T, F]): JList[String] =
     fe.featureNames.asJava
-
 }
 // scalastyle:on number.of.methods
 

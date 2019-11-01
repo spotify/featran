@@ -35,7 +35,6 @@ import scala.collection.SortedMap
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object OneHotEncoder extends SettingsBuilder {
-
   /**
    * Create a new [[OneHotEncoder]] instance.
    */
@@ -92,7 +91,6 @@ private[featran] object MissingValue {
 
 private[featran] abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
     extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
-
   import MissingValue.MissingValueToken
 
   def prepare(a: A): Set[String]

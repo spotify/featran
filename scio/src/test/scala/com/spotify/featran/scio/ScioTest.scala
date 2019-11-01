@@ -24,7 +24,6 @@ import com.spotify.featran.json._
 import com.spotify.scio.values.SCollection
 
 class ScioTest extends PipelineSpec {
-
   import Fixtures._
 
   "Scio" should "work with FeatureSpec" in {
@@ -112,5 +111,4 @@ class ScioTest extends PipelineSpec {
     }
   }
   // scalastyle:on no.whitespace.before.left.bracket
-
 }

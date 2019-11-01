@@ -20,7 +20,6 @@ package com.spotify.featran.transformers.mdl
 import org.scalatest._
 
 class MDLPDiscretizerTest extends FlatSpec with Matchers {
-
   import com.spotify.featran.transformers.mdl.TestUtility._
 
   "MDLPDiscretizer" should "work with cars data (maxBins = 10)" in {
@@ -46,5 +45,4 @@ class MDLPDiscretizerTest extends FlatSpec with Matchers {
     val expected = List(Double.NegativeInfinity, Double.PositiveInfinity)
     result.length shouldBe expected.length
   }
-
 }

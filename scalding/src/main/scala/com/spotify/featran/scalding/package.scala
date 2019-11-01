@@ -23,7 +23,6 @@ import com.twitter.scalding.typed.TypedPipe
 import scala.reflect.ClassTag
 
 package object scalding {
-
   /**
    * [[CollectionType]] for extraction from Scalding `TypedPipe` type.
    */
@@ -39,5 +38,4 @@ package object scalding {
     override def pure[A, B: ClassTag](ma: TypedPipe[A])(b: B): TypedPipe[B] =
       TypedPipe.from(Iterable(b))
   }
-
 }

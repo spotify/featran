@@ -47,7 +47,6 @@ class MultiFeatureSpec[T](
   private[featran] val features: Array[Feature[T, _, _, _]],
   private[featran] val crossings: Crossings
 ) {
-
   private def multiFeatureSet: MultiFeatureSet[T] =
     new MultiFeatureSet[T](features, crossings, mapping)
 
@@ -130,5 +129,4 @@ class MultiFeatureSpec[T](
 
     new MultiFeatureExtractor[M, T](featureSet, input, Some(settings))
   }
-
 }

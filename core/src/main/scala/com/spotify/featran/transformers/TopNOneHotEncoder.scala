@@ -37,7 +37,6 @@ import scala.util.Random
  * Missing values are either transformed to zero vectors or encoded as `__unknown__`.
  */
 object TopNOneHotEncoder extends SettingsBuilder {
-
   /**
    * Create a new [[TopNOneHotEncoder]] instance.
    *
@@ -85,7 +84,6 @@ private[featran] class TopNOneHotEncoder(
   val seed: Int,
   val encodeMissingValue: Boolean
 ) extends Transformer[String, SketchMap[String, Long], SortedMap[String, Int]](name) {
-
   import MissingValue.MissingValueToken
 
   @transient private lazy val sketchMapParams =

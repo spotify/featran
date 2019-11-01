@@ -32,7 +32,6 @@ import scala.collection.mutable.{Set => MSet}
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotEncoder extends SettingsBuilder {
-
   /**
    * Create a new [[NHotEncoder]] instance.
    */
@@ -56,7 +55,6 @@ object NHotEncoder extends SettingsBuilder {
 
 private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
-
   import MissingValue.MissingValueToken
 
   def addMissingValue(fb: FeatureBuilder[_], unseen: MSet[String], keys: Seq[String]): Unit = {

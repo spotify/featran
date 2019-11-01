@@ -20,11 +20,9 @@ package com.spotify.featran
 import ml.dmlc.xgboost4j.LabeledPoint
 
 package object xgboost {
-
   private final case class LabeledPointFB(
     private val underlying: FeatureBuilder[Array[Float]] = FeatureBuilder[Array[Float]].newBuilder
   ) extends FeatureBuilder[LabeledPoint] {
-
     override def init(dimension: Int): Unit =
       underlying.init(dimension)
 
@@ -70,5 +68,4 @@ package object xgboost {
    */
   implicit def sparseXGBoostLabeledPointFeatureBuilder: FeatureBuilder[SparseLabeledPoint] =
     SparseLabeledPointFB()
-
 }

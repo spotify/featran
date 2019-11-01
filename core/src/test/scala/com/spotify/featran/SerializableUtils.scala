@@ -20,7 +20,6 @@ package com.spotify.featran
 import java.{io => jio}
 
 object SerializableUtils {
-
   private def serializeToByteArray(value: Serializable): Array[Byte] = {
     val buffer = new jio.ByteArrayOutputStream()
     val oos = new jio.ObjectOutputStream(buffer)
@@ -37,5 +36,4 @@ object SerializableUtils {
     deserializeFromByteArray(serializeToByteArray(value)).asInstanceOf[T]
 
   trait SerializableFunction[A, B] extends (A => B) with Serializable
-
 }

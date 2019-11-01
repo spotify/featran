@@ -53,7 +53,6 @@ import scala.collection.SortedSet
  * }}}
  */
 object HashNHotEncoder extends SettingsBuilder {
-
   /**
    * Create a new [[HashNHotEncoder]] instance.
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog

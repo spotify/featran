@@ -23,7 +23,6 @@ import com.twitter.algebird.{QTree, QTreeAggregator, QTreeSemigroup}
 import org.scalacheck._
 
 object QuantileDiscretizerSpec extends TransformerProp("QuantileDiscretizer") {
-
   private implicit val arbPosDouble = Arbitrary(Gen.posNum[Double])
 
   property("default") = Prop.forAll(list[Double].arbitrary, Gen.oneOf(2, 4, 5)) {
@@ -55,5 +54,4 @@ object QuantileDiscretizerSpec extends TransformerProp("QuantileDiscretizer") {
       )
       test(QuantileDiscretizer("quantile", numBuckets), xs, names, expected, missing, oob)
   }
-
 }

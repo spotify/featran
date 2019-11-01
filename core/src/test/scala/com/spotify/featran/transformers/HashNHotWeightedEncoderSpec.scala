@@ -23,7 +23,6 @@ import org.scalacheck._
 import scala.math.ceil
 
 object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEncoder") {
-
   private implicit val weightedVectors = Arbitrary {
     val weightedValueGen = for {
       value <- Gen.chooseNum(-1.0, 1.0)
@@ -81,5 +80,4 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     val missing = cats.map(_ => 0.0)
     test(encoder, xs, names, expected, missing)
   }
-
 }

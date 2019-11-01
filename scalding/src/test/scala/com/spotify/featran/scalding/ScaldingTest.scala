@@ -22,7 +22,6 @@ import com.twitter.scalding._
 import org.scalatest._
 
 class ScaldingTest extends FlatSpec with Matchers {
-
   import Fixtures._
 
   def materialize[T](p: TypedPipe[T]): Iterable[T] =
@@ -41,5 +40,4 @@ class ScaldingTest extends FlatSpec with Matchers {
       materialize(f.featureValues[Seq[Double]])
     }
   }
-
 }

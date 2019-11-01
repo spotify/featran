@@ -155,7 +155,6 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
       optFeatureNames(c),
       c.map(encodeAggregator)
     )
-
 }
 
 case class Settings(
@@ -219,5 +218,4 @@ private object Aggregators {
       }
       override def present(reduction: Int): Int = reduction
     }
-
 }

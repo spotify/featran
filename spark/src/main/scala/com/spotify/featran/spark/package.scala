@@ -22,7 +22,6 @@ import org.apache.spark.rdd.{RDD, RDDUtil}
 import scala.reflect.ClassTag
 
 package object spark {
-
   /**
    * [[CollectionType]] for extraction from Apache Spark `RDD` type.
    */
@@ -40,5 +39,4 @@ package object spark {
 
     override def pure[A, B: ClassTag](ma: RDD[A])(b: B): RDD[B] = ma.context.parallelize(Seq(b))
   }
-
 }

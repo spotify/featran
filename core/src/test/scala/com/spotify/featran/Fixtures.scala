@@ -26,7 +26,6 @@ import scala.collection.JavaConverters._
 import scala.util.Try
 
 object Fixtures {
-
   val TestData = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
 
   val TestSpec = FeatureSpec
@@ -143,5 +142,4 @@ object Fixtures {
         missing.map(_.getSimpleName).mkString(", ")
     )
   }
-
 }

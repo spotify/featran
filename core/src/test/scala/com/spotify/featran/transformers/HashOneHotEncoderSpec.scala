@@ -23,7 +23,6 @@ import org.scalacheck._
 import scala.math.ceil
 
 object HashOneHotEncoderSpec extends TransformerProp("HashOneHotEncoder") {
-
   private implicit val labelArb = Arbitrary(Gen.alphaStr)
 
   private def estimateSize(xs: List[String]): Double = {
@@ -54,5 +53,4 @@ object HashOneHotEncoderSpec extends TransformerProp("HashOneHotEncoder") {
     val missing = cats.map(_ => 0.0)
     test(encoder, xs, names, expected, missing)
   }
-
 }

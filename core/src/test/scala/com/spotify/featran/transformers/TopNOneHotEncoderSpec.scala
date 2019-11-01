@@ -21,7 +21,6 @@ import com.twitter.algebird._
 import org.scalacheck._
 
 object TopNOneHotEncoderSpec extends TransformerProp("TopNOneHotEncoder") {
-
   private implicit val labelArb: Arbitrary[String] = Arbitrary {
     val infrequent = Gen.listOfN(50, Gen.alphaStr).flatMap(xs => Gen.oneOf(xs))
     val frequent = Gen.listOfN(5, Gen.alphaStr).flatMap(xs => Gen.oneOf(xs))
@@ -89,5 +88,4 @@ object TopNOneHotEncoderSpec extends TransformerProp("TopNOneHotEncoder") {
   property("encodeMissingValue") = Prop.forAll { xs: List[String] =>
     test(TopNOneHotEncoder("tn1h", 10, delta = 0.01, seed = 1, encodeMissingValue = true), xs)
   }
-
 }

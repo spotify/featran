@@ -21,7 +21,6 @@ import com.twitter.algebird.{QTree, QTreeAggregator, QTreeSemigroup}
 import org.scalacheck.{Arbitrary, Gen, Prop}
 
 object IQROutlierRejectorSpec extends TransformerProp("IQROutlierRejector") {
-
   private implicit val arbPosDouble = Arbitrary(Gen.posNum[Double])
 
   def lowerUpper(xs: List[Double], numBuckets: Int): (Double, Double) = {
@@ -58,5 +57,4 @@ object IQROutlierRejectorSpec extends TransformerProp("IQROutlierRejector") {
     val r = IQROutlierRejector("iqr", rejectLower = false, rejectUpper = true)
     test(r, xs, Seq("iqr"), xs.map(_ => Seq(0d)), Seq(0.0), rejected = rejected)
   }
-
 }

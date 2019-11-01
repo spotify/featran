@@ -28,7 +28,6 @@ import com.twitter.algebird.{Aggregator, Moments}
  * Missing values are transformed to 0.0 if `withMean` is true or population mean otherwise.
  */
 object StandardScaler extends SettingsBuilder {
-
   /**
    * Create a new [[StandardScaler]] instance.
    * @param withStd whether to scale the data to unit standard deviation

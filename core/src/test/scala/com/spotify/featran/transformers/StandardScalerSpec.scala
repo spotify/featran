@@ -20,7 +20,6 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object StandardScalerSpec extends TransformerProp("StandardScaler") {
-
   def meanAndStddev(xs: List[Double]): (Double, Double) = {
     // breeze.stats.stddev is sample stddev
     val mean = xs.map(_ / xs.length).sum
@@ -60,5 +59,4 @@ object StandardScalerSpec extends TransformerProp("StandardScaler") {
     val (withStd, withMean) = (false, false)
     test(StandardScaler("std", withStd, withMean), xs, Seq("std"), expected, Seq(mean))
   }
-
 }

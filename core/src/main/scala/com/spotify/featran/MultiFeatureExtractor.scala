@@ -75,5 +75,4 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
           (fb.map(_.result).toSeq, fb.map(_.rejections), o)
       }
   }
-
 }

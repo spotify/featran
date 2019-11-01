@@ -165,5 +165,4 @@ abstract class TransformerProp(name: String) extends Properties(name) {
 
   def upperBound(x: Double): Double = if (x > 0.0) x * 2 else x / 2
   def lowerBound(x: Double): Double = if (x < 0.0) x * 2 else x / 2
-
 }

@@ -22,7 +22,6 @@ import java.io.{ByteArrayOutputStream, OutputStream}
 import org.scalatest._
 
 class NumPyTest extends FlatSpec with Matchers {
-
   private def test(f: OutputStream => Unit)(expectedFile: String): Unit = {
     val actual = {
       val baos = new ByteArrayOutputStream()
@@ -98,5 +97,4 @@ class NumPyTest extends FlatSpec with Matchers {
     } should have message "requirement failed: Invalid row size, expected: 50, actual: 5"
     // scalastyle:on no.whitespace.before.left.bracket
   }
-
 }
