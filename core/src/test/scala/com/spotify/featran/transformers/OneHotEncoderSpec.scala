@@ -20,7 +20,6 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object OneHotEncoderSpec extends TransformerProp("OneHotEncoder") {
-
   private implicit val labelArb = Arbitrary(Gen.alphaStr)
 
   property("default") = Prop.forAll { xs: List[String] =>

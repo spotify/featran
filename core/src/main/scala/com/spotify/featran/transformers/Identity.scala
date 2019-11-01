@@ -25,7 +25,6 @@ import com.spotify.featran.{FlatReader, FlatWriter}
  * Missing values are transformed to 0.0.
  */
 object Identity extends SettingsBuilder {
-
   /**
    * Create a new [[Identity]] instance.
    */

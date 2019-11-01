@@ -20,7 +20,6 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object NHotEncoderSpec extends TransformerProp("NHotEncoder") {
-
   private implicit val labelArb = Arbitrary {
     Gen.choose(1, 10).flatMap(Gen.listOfN(_, Gen.alphaStr))
   }
@@ -48,5 +47,4 @@ object NHotEncoderSpec extends TransformerProp("NHotEncoder") {
     val oob = List((List("s1", "s2"), missing), (List("s1", "s2") ++ xs.head, partialMiss))
     test(NHotEncoder("n_hot", encodeMissingValue = true), xs, names, expected, missing, oob)
   }
-
 }

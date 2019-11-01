@@ -22,7 +22,6 @@ import org.apache.flink.api.scala._
 import org.scalatest._
 
 class FlinkTest extends FlatSpec with Matchers {
-
   import Fixtures._
 
   "Flink" should "work with FeatureSpec" in {
@@ -40,5 +39,4 @@ class FlinkTest extends FlatSpec with Matchers {
       f.featureValues[Seq[Double]].collect()
     }
   }
-
 }

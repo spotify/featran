@@ -24,7 +24,6 @@ import org.apache.flink.api.scala.DataSet
 import scala.reflect.ClassTag
 
 package object flink {
-
   /**
    * [[CollectionType]] for extraction from Apache Flink `DataSet` type.
    */
@@ -50,5 +49,4 @@ package object flink {
       env.fromElements(b)
     }
   }
-
 }

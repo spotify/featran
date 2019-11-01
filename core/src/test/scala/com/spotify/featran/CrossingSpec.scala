@@ -23,7 +23,6 @@ import org.scalacheck._
 import scala.collection.SortedSet
 
 object CrossingSpec extends Properties("CrossingSpec") {
-
   implicit def arbList[T: Arbitrary]: Arbitrary[List[T]] =
     Arbitrary(Gen.listOfN(10, Arbitrary.arbitrary[T]))
 
@@ -172,5 +171,4 @@ object CrossingSpec extends Properties("CrossingSpec") {
       f.featureValues[Map[String, Double]] == expected
     )
   }
-
 }

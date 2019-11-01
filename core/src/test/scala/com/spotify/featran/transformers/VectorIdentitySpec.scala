@@ -20,7 +20,6 @@ package com.spotify.featran.transformers
 import org.scalacheck.Prop
 
 object VectorIdentitySpec extends TransformerProp("VectorIdentity") {
-
   property("default") = Prop.forAll { xs: List[List[Double]] =>
     val dim = xs.head.length
     val names = (0 until dim).map("id_" + _)
@@ -37,5 +36,4 @@ object VectorIdentitySpec extends TransformerProp("VectorIdentity") {
       e.isInstanceOf[IllegalArgumentException] && e.getMessage == msg
     }
   }
-
 }

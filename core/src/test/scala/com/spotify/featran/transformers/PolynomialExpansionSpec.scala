@@ -22,7 +22,6 @@ import org.scalacheck._
 import scala.util.Try
 
 object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
-
   property("default") = Prop.forAll(list[Array[Double]].arbitrary, Gen.choose(2, 4)) {
     (xs, degree) =>
       val dim = PolynomialExpansion.expand(xs.head, degree).length
@@ -76,5 +75,4 @@ object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
   property("abs") = Prop.forAll { x: Int =>
     CombinatoricsUtils.abs(x) == math.abs(x)
   }
-
 }

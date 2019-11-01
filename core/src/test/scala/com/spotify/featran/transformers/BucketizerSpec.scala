@@ -20,7 +20,6 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object BucketizerSpec extends TransformerProp("Bucketizer") {
-
   private val SplitsGen =
     Gen.choose(3, 10).flatMap(n => Gen.listOfN(n, Arbitrary.arbitrary[Double]))
 
@@ -55,5 +54,4 @@ object BucketizerSpec extends TransformerProp("Bucketizer") {
       List((lowerBound(splits.min), missing), (upperBound(splits.max), missing))
     test(Bucketizer("bucketizer", splits), xs, names, expected, missing, oob, rejections)
   }
-
 }

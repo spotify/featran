@@ -21,7 +21,6 @@ import breeze.stats.distributions.VonMises
 import org.scalacheck._
 
 object VonMisesEvaluatorSpec extends TransformerProp("VonMisesEvaluator") {
-
   private val MinPoint = 0.0
   private val MaxPoint = 1000.0
   private val Scale = 2 * math.Pi / MaxPoint
@@ -40,5 +39,4 @@ object VonMisesEvaluatorSpec extends TransformerProp("VonMisesEvaluator") {
     }
     test(VonMisesEvaluator("vm", kappa, Scale, points.toArray), xs, names, expected, missing)
   }
-
 }

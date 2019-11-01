@@ -26,7 +26,6 @@ import io.circe.parser.{decode => circeDecode}
 import io.circe.syntax._
 
 private[featran] trait Implicits extends Serializable {
-
   implicit val mdlRecordDecoder: Decoder[MDLRecord[String]] = new Decoder[MDLRecord[String]] {
     override def apply(c: HCursor): Decoder.Result[MDLRecord[String]] =
       c.keys.toList.flatten.headOption match {

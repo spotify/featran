@@ -20,7 +20,6 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object MinMaxScalerSpec extends TransformerProp("MinMaxScaler") {
-
   property("default") = Prop.forAll { xs: List[Double] =>
     test(xs, 0.0, 1.0)
   }
@@ -47,5 +46,4 @@ object MinMaxScalerSpec extends TransformerProp("MinMaxScaler") {
     val t = MinMaxScaler("min_max", minP, maxP)
     test(t, xs, Seq("min_max"), expected, Seq(minP), oob, rejected)
   }
-
 }

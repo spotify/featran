@@ -22,7 +22,6 @@ import org.scalacheck._
 import org.tensorflow.example.{Example, Feature, Features, FloatList}
 
 object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder") {
-
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
@@ -62,5 +61,4 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     val actual = fb.result.getFeatures.getFeatureMap.keySet().iterator().next()
     Prop.all(actual.length == key.length, actual.replaceAll("[^A-Za-z0-9_]", "_") == actual)
   }
-
 }

@@ -20,7 +20,6 @@ package com.spotify.featran.transformers
 import org.scalacheck.{Arbitrary, Gen, Prop}
 
 object PositionEncoderSpec extends TransformerProp("PositionEncoder") {
-
   private implicit val labelArb = Arbitrary(Gen.alphaStr)
 
   property("default") = Prop.forAll { xs: List[String] =>
@@ -30,5 +29,4 @@ object PositionEncoderSpec extends TransformerProp("PositionEncoder") {
     val oob = List(("s1", Seq(0.0)), ("s2", Seq(0.0))) // unseen labels
     test(PositionEncoder("position"), xs, List("position"), expected, Seq(0.0), oob)
   }
-
 }

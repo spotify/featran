@@ -26,7 +26,6 @@ import com.twitter.algebird.Aggregator
  * Missing values are mapped to 0.0. Present values are mapped to 1.0.
  */
 object Indicator extends SettingsBuilder {
-
   /**
    * Create a new [[Indicator]] instance.
    * @param threshold threshold to binarize continuous features
@@ -43,12 +42,10 @@ object Indicator extends SettingsBuilder {
 }
 
 private[featran] class Indicator(name: String) extends MapOne[Double](name) {
-
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDouble(name)
 
   override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Double] => fw.IF =
     fw.writeDouble(name)
 
   override def map(a: Double): Double = 1
-
 }

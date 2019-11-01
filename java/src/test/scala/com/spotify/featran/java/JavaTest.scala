@@ -28,7 +28,6 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 class JavaTest extends FlatSpec with Matchers {
-
   import com.spotify.featran.Fixtures._
 
   private def e2v(names: Seq[String])(e: Example): Seq[Double] = {
@@ -258,5 +257,4 @@ class JavaTest extends FlatSpec with Matchers {
     val ds = f.featureValuesDouble().asScala
     ds.map(x => x.toSeq) shouldBe values
   }
-
 }

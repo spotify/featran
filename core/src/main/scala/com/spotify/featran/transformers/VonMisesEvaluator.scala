@@ -31,7 +31,6 @@ import com.twitter.algebird.Aggregator
  * and is only valid for x, mu in the interval [0, 2*pi/scale].
  */
 object VonMisesEvaluator extends SettingsBuilder {
-
   /**
    * Create a new [[VonMisesEvaluator]] instance.
    * @param kappa measure of concentration
@@ -72,7 +71,6 @@ private[featran] class VonMisesEvaluator(
   val scale: Double,
   val points: Array[Double]
 ) extends Transformer[Double, Unit, Unit](name) {
-
   private val pMax = points.max
   private val upperBound = 2 * math.Pi / scale
   checkRange("point", pMax, 0.0, upperBound)

@@ -34,7 +34,6 @@ import scala.collection.{mutable, SortedMap}
  * As with [[NHotEncoder]], missing values are transformed to [0.0, 0.0, ...].
  */
 object NGrams extends SettingsBuilder {
-
   /**
    * Create a new [[NGrams]] instance.
    *

@@ -64,7 +64,6 @@ private class CrossingFeatureBuilder[F] private (
   private val fb: FeatureBuilder[F],
   private val crossings: Crossings
 ) extends FeatureBuilder[F] {
-
   private case class CrossValue(name: String, offset: Int, value: Double)
   private[this] var xEnabled = false // true if current transformer will be crossed
   // name, offset and values of the current transformer

@@ -20,10 +20,8 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object IndicatorSpec extends TransformerProp("Indicator") {
-
   property("default") = Prop.forAll { xs: List[Double] =>
     val expected = xs.map(x => Seq(1.0))
     test(Indicator("id"), xs, Seq("id"), expected, Seq(0.0))
   }
-
 }

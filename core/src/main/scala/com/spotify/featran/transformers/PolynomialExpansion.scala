@@ -30,7 +30,6 @@ import com.twitter.algebird.Aggregator
  * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
 object PolynomialExpansion extends SettingsBuilder {
-
   /**
    * Create a new [[PolynomialExpansion]] instance.
    * @param degree the polynomial degree to expand, which should be greater than or equal to 1

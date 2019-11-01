@@ -54,7 +54,6 @@ import scala.collection.JavaConverters._
  * }}}
  */
 object HashNHotWeightedEncoder extends SettingsBuilder {
-
   /**
    * Create a new [[HashNHotWeightedEncoder]] instance.
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
@@ -83,7 +82,6 @@ private[featran] class HashNHotWeightedEncoder(
   hashBucketSize: Int,
   sizeScalingFactor: Double
 ) extends BaseHashHotEncoder[Seq[WeightedLabel]](name, hashBucketSize, sizeScalingFactor) {
-
   override def prepare(a: Seq[WeightedLabel]): HLL =
     a.map(_.name).map(hllMonoid.toHLL(_)).fold(hllMonoid.zero)(hllMonoid.plus)
 

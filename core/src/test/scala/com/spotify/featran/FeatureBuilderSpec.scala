@@ -23,7 +23,6 @@ import org.scalacheck._
 import scala.reflect.ClassTag
 
 object FeatureBuilderSpec extends Properties("FeatureBuilder") {
-
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
@@ -166,5 +165,4 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
       expected.forall(kv => actual(kv._1) == kv._2)
     )
   }
-
 }

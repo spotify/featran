@@ -23,7 +23,6 @@ import com.spotify.scio.values.SCollection
 import scala.reflect.{classTag, ClassTag}
 
 package object scio {
-
   /**
    * [[CollectionType]] for extraction from Scio `SCollection` type.
    */
@@ -53,5 +52,4 @@ package object scio {
       ma.context.parallelize(Seq(b))
     }
   }
-
 }

@@ -21,7 +21,6 @@ import com.spotify.featran.transformers.mdl.MDLPDiscretizer
 import org.scalacheck._
 
 object MDLSpec extends TransformerProp("MDL") {
-
   private implicit val arbMdlRecord = Arbitrary {
     for {
       label <- Gen.oneOf("1", "2", "3")
@@ -47,5 +46,4 @@ object MDLSpec extends TransformerProp("MDL") {
     val missing = Seq.fill(slices.size)(0.0)
     test(MDL[String]("mdl"), xs, names, expected, missing)
   }
-
 }

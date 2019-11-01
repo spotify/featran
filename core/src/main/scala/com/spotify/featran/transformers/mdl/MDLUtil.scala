@@ -18,7 +18,6 @@
 package com.spotify.featran.transformers.mdl
 
 private object MDLUtil {
-
   def plusI(x: Array[Long], y: Array[Long]): Unit = {
     var i = 0
     while (i < x.length) {
@@ -46,5 +45,4 @@ private object MDLUtil {
     }
     r
   }
-
 }

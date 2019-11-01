@@ -180,7 +180,6 @@ case class NamedSparseArray[@specialized(Float, Double) T](
 }
 
 object FeatureBuilder {
-
   private final case class ArrayFB[T: ClassTag: FloatingPoint](
     private var underlying: Array[T] = null
   ) extends FeatureBuilder[Array[T]] {

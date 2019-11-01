@@ -20,7 +20,6 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object NGramsSpec extends TransformerProp("NHotEncoder") {
-
   private implicit val labelArb = Arbitrary {
     Gen.choose(1, 5).flatMap(Gen.listOfN(_, Gen.alphaStr))
   }
@@ -36,5 +35,4 @@ object NGramsSpec extends TransformerProp("NHotEncoder") {
     val oob = List((List("s1", "s2"), missing)) // unseen labels
     test(transformer, xs, names, expected, missing, oob)
   }
-
 }

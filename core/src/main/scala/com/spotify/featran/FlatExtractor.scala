@@ -49,7 +49,6 @@ import scala.reflect.ClassTag
  * other systems.
  */
 object FlatExtractor {
-
   /**
    * This function allows the reading of data from these flat versions by name with a given
    * settings file to extract the final output.
@@ -105,7 +104,6 @@ object FlatExtractor {
 private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](
   settings: M[String]
 ) extends Serializable {
-
   import json._
   import CollectionType.ops._
   import scala.reflect.runtime.universe

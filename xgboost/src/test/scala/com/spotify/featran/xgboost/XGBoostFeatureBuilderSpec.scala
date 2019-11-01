@@ -24,7 +24,6 @@ import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
 import scala.reflect.ClassTag
 
 object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
-
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
@@ -74,5 +73,4 @@ object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
       r => SparseArray(r.labeledPoint.indices, r.labeledPoint.values, 4 + xs2.size).toDense.toSeq
     )
   }
-
 }

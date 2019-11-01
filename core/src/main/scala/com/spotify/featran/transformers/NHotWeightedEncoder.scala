@@ -41,7 +41,6 @@ case class WeightedLabel(name: String, value: Double)
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotWeightedEncoder extends SettingsBuilder {
-
   /**
    * Create a new [[NHotWeightedEncoder]] instance.
    */
@@ -65,7 +64,6 @@ object NHotWeightedEncoder extends SettingsBuilder {
 
 private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[WeightedLabel]](name, encodeMissingValue) {
-
   import MissingValue.MissingValueToken
 
   def addMissingValue(

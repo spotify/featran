@@ -42,7 +42,6 @@ import com.twitter.algebird.{Aggregator, HLL}
  * Missing values are transformed to zero vectors.
  */
 object Bucketizer extends SettingsBuilder {
-
   /**
    * Create a new [[Bucketizer]] instance.
    * @param splits parameter for mapping continuous features into buckets

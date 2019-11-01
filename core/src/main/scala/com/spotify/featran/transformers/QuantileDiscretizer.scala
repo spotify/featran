@@ -38,7 +38,6 @@ import scala.collection.JavaConverters._
  * rejections are reported.
  */
 object QuantileDiscretizer extends SettingsBuilder {
-
   /**
    * Create a new [[QuantileDiscretizer]] instance.
    * @param numBuckets number of buckets (quantiles, or categories) into which data points are

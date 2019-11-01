@@ -26,7 +26,6 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
   stoppingCriterion: Double = MDLPDiscretizer.DefaultStoppingCriterion,
   minBinPercentage: Double = MDLPDiscretizer.DefaultMinBinPercentage
 ) extends Serializable {
-
   private val labels = {
     val m = mutable.Map.empty[T, Int]
     data.foreach {
@@ -94,7 +93,6 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
       new ThresholdFinder(labels.size, stoppingCriterion, maxBins, minBinWeight)
     finder.findThresholds(cutPoint.sortBy(_._1)).map(_.toDouble)
   }
-
 }
 
 private[transformers] object MDLPDiscretizer {
