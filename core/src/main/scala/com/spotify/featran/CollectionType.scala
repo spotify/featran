@@ -19,7 +19,6 @@ package com.spotify.featran
 
 import simulacrum._
 
-import scala.collection.generic.CanBuildFrom
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
@@ -38,36 +37,35 @@ import scala.reflect.ClassTag
 }
 
 object CollectionType {
-  implicit def scalaCollectionType[M[_] <: Traversable[_]](
-    implicit cbf: CanBuildFrom[M[_], _, M[_]]
+  implicit def scalaCollectionType[M[_]](
+    implicit cb: CanBuild[_, M], ti: M[_] => Iterable[_]
   ): CollectionType[M] =
     new CollectionType[M] {
       override def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B] = {
-        val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]
-        ma.asInstanceOf[Seq[A]].foreach(a => builder += f(a))
+        val builder = cb().asInstanceOf[mutable.Builder[B, M[B]]]
+        ma.asInstanceOf[Iterable[A]].foreach(a => builder += f(a))
         builder.result()
       }
 
       override def pure[A, B: ClassTag](ma: M[A])(b: B): M[B] = {
-        val builder = cbf().asInstanceOf[mutable.Builder[B, M[B]]]
+        val builder = cb().asInstanceOf[mutable.Builder[B, M[B]]]
         builder += b
         builder.result()
       }
 
       override def reduce[A](ma: M[A])(f: (A, A) => A): M[A] = {
-        val builder = cbf().asInstanceOf[mutable.Builder[A, M[A]]]
-        if (ma.asInstanceOf[Seq[A]].nonEmpty) {
-          builder += ma.asInstanceOf[Seq[A]].reduce(f)
+        val builder = cb().asInstanceOf[mutable.Builder[A, M[A]]]
+        if (ma.nonEmpty) {
+          builder += ma.asInstanceOf[Iterable[A]].reduce(f)
         }
         builder.result()
       }
 
       override def cross[A, B: ClassTag](ma: M[A])(mb: M[B]): M[(A, B)] = {
-        val builder = cbf().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
-        val seq = mb.asInstanceOf[Seq[B]]
-        if (seq.nonEmpty) {
-          val b = mb.asInstanceOf[Seq[B]].head
-          ma.asInstanceOf[Seq[A]].foreach(a => builder += ((a, b)))
+        val builder = cb().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
+        if (mb.nonEmpty) {
+          val b = mb.asInstanceOf[Iterable[B]].head
+          ma.asInstanceOf[Iterable[A]].foreach(a => builder += ((a, b)))
         }
         builder.result()
       }

@@ -23,7 +23,6 @@ import breeze.storage.Zero
 import com.spotify.featran.transformers.Transformer
 import simulacrum.typeclass
 
-import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
@@ -77,7 +76,7 @@ object FeatureRejection {
    * per input row.
    * @param transformer the next transformer in line
    */
-  def prepare(transformer: Transformer[_, _, _]): Unit = Unit
+  def prepare(transformer: Transformer[_, _, _]): Unit = ()
 
   /**
    * Gather builder result for a result. This should be called only once per input row.
@@ -180,60 +179,8 @@ case class NamedSparseArray[@specialized(Float, Double) T](
 }
 
 object FeatureBuilder {
-  private final case class ArrayFB[T: ClassTag: FloatingPoint](
-    private var underlying: Array[T] = null
-  ) extends FeatureBuilder[Array[T]] {
-    private var offset: Int = 0
-
-    override def init(dimension: Int): Unit = underlying = new Array[T](dimension)
-
-    override def add(name: String, value: Double): Unit = {
-      underlying(offset) = FloatingPoint[T].fromDouble(value)
-      offset += 1
-    }
-
-    override def skip(): Unit = offset += 1
-
-    override def skip(n: Int): Unit = offset += n
-
-    override def result: Array[T] = {
-      require(offset == underlying.length)
-      offset = 0
-      underlying.clone()
-    }
-
-    override def newBuilder: FeatureBuilder[Array[T]] = ArrayFB()
-  }
-
-  implicit def arrayFB[T: ClassTag: FloatingPoint]: FeatureBuilder[Array[T]] = ArrayFB()
-
-  // Workaround for CanBuildFrom not serializable
-  trait CanBuild[T, M] extends Serializable {
-    def apply(): mutable.Builder[T, M]
-  }
-
-  private def newCB[T, M](f: () => mutable.Builder[T, M]) = new CanBuild[T, M] {
-    override def apply(): mutable.Builder[T, M] = f()
-  }
-
-  // Collection types in _root_.scala.*
-  //scalastyle:off public.methods.have.type
-  implicit def traversableCB[T] = newCB(() => Traversable.newBuilder[T])
-
-  implicit def iterableCB[T] = newCB(() => Iterable.newBuilder[T])
-
-  implicit def seqCB[T] = newCB(() => Seq.newBuilder[T])
-
-  implicit def indexedSeqCB[T] = newCB(() => IndexedSeq.newBuilder[T])
-
-  implicit def listCB[T] = newCB(() => List.newBuilder[T])
-
-  implicit def vectorCB[T] = newCB(() => Vector.newBuilder[T])
-
-  //scalastyle:on public.methods.have.type
-
-  private final case class TraversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint]()(
-    implicit cb: CanBuild[T, M[T]]
+  private final case class IterableFB[M[_], T: ClassTag: FloatingPoint]()(
+    implicit cb: CanBuild[T, M], ti: M[T] => Iterable[T]
   ) extends FeatureBuilder[M[T]] {
     private var underlying: mutable.Builder[T, M[T]] = null
 
@@ -246,19 +193,19 @@ object FeatureBuilder {
 
     override def result: M[T] = underlying.result()
 
-    override def newBuilder: FeatureBuilder[M[T]] = TraversableFB[M, T]()
+    override def newBuilder: FeatureBuilder[M[T]] = IterableFB[M, T]()
   }
 
-  implicit def traversableFB[M[_] <: Traversable[_], T: ClassTag: FloatingPoint](
-    implicit cb: CanBuild[T, M[T]]
-  ): FeatureBuilder[M[T]] = TraversableFB[M, T]()
+  implicit def iterableFB[M[_], T: ClassTag: FloatingPoint](
+    implicit cb: CanBuild[T, M], ti: M[T] => Iterable[T]
+  ): FeatureBuilder[M[T]] = IterableFB[M, T]()
 
   private final case class NamedSparseArrayFB[T: ClassTag: FloatingPoint](
     private val withNames: Boolean
   ) extends FeatureBuilder[NamedSparseArray[T]] {
     private var indices: Array[Int] = null
     private var values: Array[T] = null
-    private val names: mutable.Buffer[String] = mutable.Buffer.empty
+    private val namesBuilder = Seq.newBuilder[String]
     private val initCapacity = 1024
     private var dim: Int = _
     private var offset: Int = 0
@@ -279,7 +226,7 @@ object FeatureBuilder {
       indices(i) = offset
       values(i) = FloatingPoint[T].fromDouble(value)
       if (withNames) {
-        names.append(name)
+        namesBuilder += name
       }
       i += 1
       offset += 1
@@ -304,7 +251,7 @@ object FeatureBuilder {
       val rValues = new Array[T](i)
       Array.copy(indices, 0, rIndices, 0, i)
       Array.copy(values, 0, rValues, 0, i)
-      NamedSparseArray(rIndices, rValues, dim, names)
+      NamedSparseArray(rIndices, rValues, dim, namesBuilder.result())
     }
 
     override def newBuilder: FeatureBuilder[NamedSparseArray[T]] = NamedSparseArrayFB(withNames)
@@ -328,34 +275,22 @@ object FeatureBuilder {
 
   private final case class MapFB[T: ClassTag: FloatingPoint]()
       extends FeatureBuilder[Map[String, T]] { self =>
-    private var underlying: java.util.Map[String, T] = null
+    private var builder: mutable.Builder[(String, T), Map[String, T]] = null
 
     override def init(dimension: Int): Unit =
-      underlying = new java.util.HashMap[String, T]
+      builder = Map.newBuilder
 
     override def add(name: String, value: Double): Unit =
-      underlying.put(name, FloatingPoint[T].fromDouble(value))
+      builder += name -> FloatingPoint[T].fromDouble(value)
 
-    override def skip(): Unit = Unit
+    override def skip(): Unit = ()
 
-    override def skip(n: Int): Unit = Unit
+    override def skip(n: Int): Unit = ()
 
-    override def result: Map[String, T] = new JMapWrapper(underlying)
+    override def result: Map[String, T] = builder.result()
 
     override def newBuilder: FeatureBuilder[Map[String, T]] = MapFB()
   }
 
   implicit def mapFB[T: ClassTag: FloatingPoint]: FeatureBuilder[Map[String, T]] = MapFB()
-}
-
-private final class JMapWrapper[K, V](m: java.util.Map[K, V]) extends Map[K, V] with Serializable {
-  // scalastyle:off method.name
-  override def +[B1 >: V](kv: (K, B1)): Map[K, B1] = m.asScala.toMap + kv
-
-  override def -(key: K): Map[K, V] = m.asScala.toMap - key
-  // scalastyle:on method.name
-
-  override def get(key: K): Option[V] = Option(m.get(key))
-
-  override def iterator: Iterator[(K, V)] = m.asScala.iterator
 }

@@ -46,9 +46,11 @@ private case class Crossings(map: Crossings.MAP, keys: Set[String]) {
 
   def filter[T](predicate: String => Boolean): Crossings = {
     val filteredKeys = keys.filter(predicate)
-    val filteredMap = map.filterKeys {
+    val b = SortedMap.newBuilder[Crossings.KEY, Crossings.FN]
+    b ++= map.filterKeys {
       case (k1, k2) => filteredKeys.contains(k1) || filteredKeys.contains(k2)
     }
+    val filteredMap = b.result()
 
     Crossings(filteredMap, filteredKeys)
   }

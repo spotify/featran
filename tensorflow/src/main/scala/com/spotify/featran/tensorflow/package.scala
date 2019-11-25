@@ -59,8 +59,8 @@ package object tensorflow {
       val normalized = FeatureNameNormalization.normalize(name)
       underlying.putFeature(normalized, feature)
     }
-    override def skip(): Unit = Unit
-    override def skip(n: Int): Unit = Unit
+    override def skip(): Unit = ()
+    override def skip(n: Int): Unit = ()
     override def result: tf.Example =
       tf.Example.newBuilder().setFeatures(underlying).build()
 
