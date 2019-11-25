@@ -36,9 +36,6 @@ class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
     mdl: MDLRecord[String]
   )
 
-  private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
-    Gen.listOfN(100, arb.arbitrary)
-
   implicit val arbRecords: Arbitrary[List[Record]] = Arbitrary {
     Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(Record.tupled))
   }

@@ -23,7 +23,7 @@ import org.scalacheck.{Arbitrary, Gen, Prop}
 object IQROutlierRejectorSpec extends TransformerProp("IQROutlierRejector") {
   private implicit val arbPosDouble = Arbitrary(Gen.posNum[Double])
 
-  def lowerUpper(xs: List[Double], numBuckets: Int): (Double, Double) = {
+  def lowerUpper(xs: List[Double]): (Double, Double) = {
     val qt = xs.map(QTree(_)).reduce(new QTreeSemigroup[Double](QTreeAggregator.DefaultK).plus)
     val (lq, _) = qt.quantileBounds(0.75)
     val (_, fq) = qt.quantileBounds(0.25)
@@ -34,7 +34,7 @@ object IQROutlierRejectorSpec extends TransformerProp("IQROutlierRejector") {
   }
 
   property("default") = Prop.forAll(list[Double].arbitrary) { xs =>
-    val (l, u) = lowerUpper(xs, 4)
+    val (l, u) = lowerUpper(xs)
     val rejected = xs.filter(_ => xs.min < xs.max).filter(x => x > u || x < l).map(_ => Seq(0d))
     // records that are not within bounds should always be rejected
     val oob = List((lowerBound(xs.min), Seq(0d)), (upperBound(xs.max), Seq(0d)))
@@ -43,7 +43,7 @@ object IQROutlierRejectorSpec extends TransformerProp("IQROutlierRejector") {
   }
 
   property("rejectLower don't rejectUpper") = Prop.forAll(list[Double].arbitrary) { xs =>
-    val (l, _) = lowerUpper(xs, 4)
+    val (l, _) = lowerUpper(xs)
     val rejected =
       xs.filter(_ => xs.min < xs.max).filter(_ < l).map(_ => Seq(0d))
     val r = IQROutlierRejector("iqr", rejectLower = true, rejectUpper = false)
@@ -51,7 +51,7 @@ object IQROutlierRejectorSpec extends TransformerProp("IQROutlierRejector") {
   }
 
   property("rejectUpper don't rejectLower") = Prop.forAll(list[Double].arbitrary) { xs =>
-    val (_, u) = lowerUpper(xs, 4)
+    val (_, u) = lowerUpper(xs)
     val rejected =
       xs.filter(_ => xs.min < xs.max).filter(_ > u).map(_ => Seq(0d))
     val r = IQROutlierRejector("iqr", rejectLower = false, rejectUpper = true)

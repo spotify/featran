@@ -42,7 +42,6 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
 
   property("default") = Prop.forAll { xs: List[List[WeightedLabel]] =>
     val size = ceil(estimateSize(xs) * 8.0).toInt
-    val cats = 0 until size
     test(HashNHotWeightedEncoder("n_hot"), size, xs)
   }
 

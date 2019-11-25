@@ -45,7 +45,7 @@ object QuantileOutlierRejectorSpec extends TransformerProp("QuantileOutlierRejec
 
   property("rejectLower don't rejectUpper") =
     Prop.forAll(list[Double].arbitrary, Gen.oneOf(3 to 20)) { (xs, numBuckets) =>
-      val (l, u) = lowerUpper(xs, numBuckets)
+      val (l, _) = lowerUpper(xs, numBuckets)
       val rejected =
         xs.filter(_ => xs.min < xs.max).filter(_ < l).map(_ => Seq(0d))
       val r = QuantileOutlierRejector(
@@ -59,7 +59,7 @@ object QuantileOutlierRejectorSpec extends TransformerProp("QuantileOutlierRejec
 
   property("rejectUpper don't rejectLower") =
     Prop.forAll(list[Double].arbitrary, Gen.oneOf(3 to 20)) { (xs, numBuckets) =>
-      val (l, u) = lowerUpper(xs, numBuckets)
+      val (_, u) = lowerUpper(xs, numBuckets)
       val rejected =
         xs.filter(_ => xs.min < xs.max).filter(_ > u).map(_ => Seq(0d))
       val r = QuantileOutlierRejector(

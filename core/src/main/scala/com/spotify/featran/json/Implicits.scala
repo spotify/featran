@@ -17,7 +17,6 @@
 
 package com.spotify.featran.json
 
-import cats.syntax.either._
 import com.spotify.featran.transformers.{MDLRecord, Settings, WeightedLabel}
 import com.spotify.featran.{FlatReader, FlatWriter}
 import io.circe._

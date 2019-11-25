@@ -17,7 +17,7 @@
 
 package com.spotify.featran.converters
 
-import com.spotify.featran.transformers.{Identity, Transformer}
+import com.spotify.featran.transformers.Transformer
 import simulacrum.typeclass
 
 /**

@@ -17,8 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
-import com.twitter.algebird.Aggregator
+import com.spotify.featran.{FlatReader, FlatWriter}
 
 /**
  * Transform an optional 1D feature to an indicator variable indicating presence.
@@ -28,7 +27,6 @@ import com.twitter.algebird.Aggregator
 object Indicator extends SettingsBuilder {
   /**
    * Create a new [[Indicator]] instance.
-   * @param threshold threshold to binarize continuous features
    */
   def apply(name: String): Transformer[Double, Unit, Unit] =
     new Indicator(name)
