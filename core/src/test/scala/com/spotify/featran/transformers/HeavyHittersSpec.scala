@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import com.twitter.algebird._
+import com.twitter.algebird.{HeavyHitters => _, _}
 import org.scalacheck._
 
 object HeavyHittersSpec extends TransformerProp("HeavyHitters") {
