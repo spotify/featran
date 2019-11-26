@@ -77,7 +77,6 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     val f4 =
       fsRequired.extractWithSettings(outOfBoundsElems.map(_._1), settings)
     val f4results = f4.featureResults[Seq[Double]]
-    val c = f1.featureValues[Seq[Double]]
 
     val propStandard = Prop.all(
       "f1 names" |: f1.featureNames == List(names),

@@ -117,7 +117,7 @@ object CaseClassConverter {
               s.required[Seq[WeightedLabel]] { v =>
                 get(v, idx).asInstanceOf[Seq[WeightedLabel]]
               }(NHotWeightedEncoder(name))
-            case c =>
+            case _ =>
               sys.error("Not matching Conversions for " + m.toString)
           }
       }

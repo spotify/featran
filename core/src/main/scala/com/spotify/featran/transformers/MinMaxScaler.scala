@@ -20,8 +20,6 @@ package com.spotify.featran.transformers
 import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.{Aggregator, Max, Min}
 
-import scala.collection.SortedMap
-
 /**
  * Transform features by rescaling each feature to a specific range [`min`, `max`] (default
  * [0, 1]).

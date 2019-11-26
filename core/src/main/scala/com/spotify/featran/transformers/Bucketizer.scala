@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import java.util.{TreeMap => JTreeMap}
 
 import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
-import com.twitter.algebird.{Aggregator, HLL}
+import com.twitter.algebird.Aggregator
 
 /**
  * Transform a column of continuous features to n columns of feature buckets.

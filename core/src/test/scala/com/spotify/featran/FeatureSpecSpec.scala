@@ -77,7 +77,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       FeatureSpec.of[Record].optional(_.optD, Some(0.5))(id).extract(xs.map(_.copy(optD = None)))
     Prop.all(
       f.featureNames == Seq(Seq("id")),
-      f.featureValues[Seq[Double]] == xs.map(r => Seq(0.5))
+      f.featureValues[Seq[Double]] == xs.map(_ => Seq(0.5))
     )
   }
 
