@@ -49,16 +49,16 @@ lazy val commonSettings = Seq(
       Seq("-Ymacro-annotations")
     else
       Seq(
-      "-Xfuture",
-      "-Yno-adapted-args"
-    )
+        "-Xfuture",
+        "-Yno-adapted-args"
+      )
   },
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
   testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "simulacrum" % simulacrumVersion % CompileTime,
+    "org.typelevel" %% "simulacrum" % simulacrumVersion % CompileTime
   ),
   libraryDependencies ++= {
     if (scalaBinaryVersion.value == "2.13") {
@@ -76,7 +76,9 @@ lazy val publishSettings = Seq(
     username <- sys.env.get("SONATYPE_USERNAME")
     password <- sys.env.get("SONATYPE_PASSWORD")
   } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
-  publishTo := Some(if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging),
+  publishTo := Some(
+    if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging
+  ),
   releaseCrossBuild := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle := true,

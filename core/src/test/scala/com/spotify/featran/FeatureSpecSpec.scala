@@ -267,7 +267,9 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     Prop.all(
       fs.extract(xs.asInstanceOf[Iterable[Double]]).featureValues[Seq[Double]].map(_.head) == xs,
       fs.extract(xs.asInstanceOf[Seq[Double]]).featureValues[Seq[Double]].map(_.head) == xs,
-      fs.extract(xs.toVector.asInstanceOf[IndexedSeq[Double]]).featureValues[Seq[Double]].map(_.head) == xs,
+      fs.extract(xs.toVector.asInstanceOf[IndexedSeq[Double]])
+        .featureValues[Seq[Double]]
+        .map(_.head) == xs,
       fs.extract(xs).featureValues[Seq[Double]].map(_.head) == xs, // List
       fs.extract(xs.toVector).featureValues[Seq[Double]].map(_.head) == xs.toVector,
       fs.extract(xs.toBuffer).featureValues[Seq[Double]].map(_.head) == xs

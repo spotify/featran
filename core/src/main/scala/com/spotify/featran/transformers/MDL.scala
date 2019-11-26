@@ -128,7 +128,9 @@ private[featran] class MDL[T: ClassTag](
     new Aggregator[MDLRecord[T], B[T], C] {
       override def prepare(input: MDLRecord[T]): B[T] =
         mutable.WrappedArray
-          .make[MDLRecord[T]](if (rng.nextDouble() < sampleRate) Array(input) else Array.empty[MDLRecord[T]])
+          .make[MDLRecord[T]](
+            if (rng.nextDouble() < sampleRate) Array(input) else Array.empty[MDLRecord[T]]
+          )
 
       override def semigroup: Semigroup[B[T]] = new Semigroup[B[T]] {
         override def plus(x: B[T], y: B[T]): B[T] = x ++ y

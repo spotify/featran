@@ -38,7 +38,8 @@ import scala.reflect.ClassTag
 
 object CollectionType {
   implicit def scalaCollectionType[M[_]](
-    implicit cb: CanBuild[_, M], ti: M[_] => Iterable[_]
+    implicit cb: CanBuild[_, M],
+    ti: M[_] => Iterable[_]
   ): CollectionType[M] =
     new CollectionType[M] {
       override def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B] = {

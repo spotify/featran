@@ -180,7 +180,8 @@ case class NamedSparseArray[@specialized(Float, Double) T](
 
 object FeatureBuilder {
   private final case class IterableFB[M[_], T: ClassTag: FloatingPoint]()(
-    implicit cb: CanBuild[T, M], ti: M[T] => Iterable[T]
+    implicit cb: CanBuild[T, M],
+    ti: M[T] => Iterable[T]
   ) extends FeatureBuilder[M[T]] {
     private var underlying: mutable.Builder[T, M[T]] = null
 
@@ -197,7 +198,8 @@ object FeatureBuilder {
   }
 
   implicit def iterableFB[M[_], T: ClassTag: FloatingPoint](
-    implicit cb: CanBuild[T, M], ti: M[T] => Iterable[T]
+    implicit cb: CanBuild[T, M],
+    ti: M[T] => Iterable[T]
   ): FeatureBuilder[M[T]] = IterableFB[M, T]()
 
   private final case class NamedSparseArrayFB[T: ClassTag: FloatingPoint](
