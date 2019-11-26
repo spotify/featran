@@ -209,7 +209,7 @@ class JavaTest extends FlatSpec with Matchers {
     val values = Seq(Seq(1.0), Seq(1.0))
     val dense = Seq(Seq(1.0, 0.0), Seq(0.0, 1.0))
     import scala.concurrent.ExecutionContext.Implicits.global
-    (1 to 5).par
+    (1 to 5)
       .map(
         _ =>
           Future {
@@ -223,7 +223,7 @@ class JavaTest extends FlatSpec with Matchers {
         fs.map(JavaTestUtil.getValues(_).toSeq) shouldBe values
         fs.map(JavaTestUtil.getDense(_).toSeq) shouldBe dense
       }
-    (1 to 5).par
+    (1 to 5)
       .map(
         _ =>
           Future {
