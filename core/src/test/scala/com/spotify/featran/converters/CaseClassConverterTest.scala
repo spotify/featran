@@ -18,7 +18,8 @@
 package com.spotify.featran.converters
 
 import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 case class TestData(
   num: Int,
@@ -55,7 +56,7 @@ case class TestObjects(
   we: List[WeightedLabel] = List(WeightedLabel("a", 1.0))
 )
 
-class CaseClassConverterTest extends FlatSpec with Matchers {
+class CaseClassConverterTest extends AnyFlatSpec with Matchers {
   it should "convert a case class to a spec" in {
     val data = List(
       TestData(1, "a", 1.0, 1L, List("c"), b = true),

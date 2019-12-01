@@ -20,8 +20,10 @@ package com.spotify.featran.spark
 import com.spotify.featran._
 import org.apache.spark.SparkContext
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class SparkTest extends FlatSpec with Matchers {
+class SparkTest extends AnyFlatSpec with Matchers {
   import Fixtures._
 
   "FeatureSpec" should "work with Spark" in {

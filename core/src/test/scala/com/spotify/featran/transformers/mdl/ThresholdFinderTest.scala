@@ -18,8 +18,10 @@
 package com.spotify.featran.transformers.mdl
 
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ThresholdFinderTest extends FlatSpec with Matchers {
+class ThresholdFinderTest extends AnyFlatSpec with Matchers {
   "ThresholdFinder" should "work with nLabels = 3 and feature size = 4" in {
     val finder =
       new ThresholdFinder(nLabels = 3, stoppingCriterion = 0, maxBins = 100, minBinWeight = 1)

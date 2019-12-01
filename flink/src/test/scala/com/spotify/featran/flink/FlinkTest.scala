@@ -20,8 +20,10 @@ package com.spotify.featran.flink
 import com.spotify.featran._
 import org.apache.flink.api.scala._
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class FlinkTest extends FlatSpec with Matchers {
+class FlinkTest extends AnyFlatSpec with Matchers {
   import Fixtures._
 
   "Flink" should "work with FeatureSpec" in {
