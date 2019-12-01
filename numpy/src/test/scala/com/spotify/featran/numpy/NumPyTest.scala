@@ -20,8 +20,10 @@ package com.spotify.featran.numpy
 import java.io.{ByteArrayOutputStream, OutputStream}
 
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class NumPyTest extends FlatSpec with Matchers {
+class NumPyTest extends AnyFlatSpec with Matchers {
   private def test(f: OutputStream => Unit)(expectedFile: String): Unit = {
     val actual = {
       val baos = new ByteArrayOutputStream()

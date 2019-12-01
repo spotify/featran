@@ -25,8 +25,10 @@ import org.tensorflow.example.Example
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class JavaTest extends FlatSpec with Matchers {
+class JavaTest extends AnyFlatSpec with Matchers {
   import com.spotify.featran.Fixtures._
 
   private def e2v(names: Seq[String])(e: Example): Seq[Double] = {

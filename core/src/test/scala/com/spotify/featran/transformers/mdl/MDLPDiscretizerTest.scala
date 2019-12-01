@@ -18,8 +18,10 @@
 package com.spotify.featran.transformers.mdl
 
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class MDLPDiscretizerTest extends FlatSpec with Matchers {
+class MDLPDiscretizerTest extends AnyFlatSpec with Matchers {
   import com.spotify.featran.transformers.mdl.TestUtility._
 
   "MDLPDiscretizer" should "work with cars data (maxBins = 10)" in {
