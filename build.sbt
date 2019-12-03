@@ -21,7 +21,7 @@ import sbtrelease.ReleaseStateTransformations._
 
 val algebirdVersion = "0.13.6"
 val breezeVersion = "1.0"
-val circeVersion = "0.11.2"
+val circeVersion = "0.12.3"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.9.1"
 val hadoopVersion = "3.2.1"
@@ -44,14 +44,29 @@ lazy val commonSettings = Seq(
   description := "Feature Transformers",
   scalaVersion := "2.12.10",
   scalacOptions ++= commonScalacOptions,
+  scalacOptions ++= {
+    if (scalaBinaryVersion.value == "2.13")
+      Seq("-Ymacro-annotations")
+    else
+      Seq(
+        "-Xfuture",
+        "-Yno-adapted-args"
+      )
+  },
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
   testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "simulacrum" % simulacrumVersion % CompileTime,
-    compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full)
+    "org.typelevel" %% "simulacrum" % simulacrumVersion % CompileTime
   ),
+  libraryDependencies ++= {
+    if (scalaBinaryVersion.value == "2.13") {
+      Nil
+    } else {
+      Seq(compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full))
+    }
+  },
   ivyConfigurations += CompileTime,
   unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name))
 )
@@ -61,23 +76,11 @@ lazy val publishSettings = Seq(
     username <- sys.env.get("SONATYPE_USERNAME")
     password <- sys.env.get("SONATYPE_PASSWORD")
   } yield Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", username, password)).toSeq,
-  publishTo := sonatypePublishToBundle.value,
+  publishTo := Some(
+    if (isSnapshot.value) Opts.resolver.sonatypeSnapshots else Opts.resolver.sonatypeStaging
+  ),
   releaseCrossBuild := true,
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    releaseStepCommandAndRemaining("+test"),
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    releaseStepCommandAndRemaining("+publishSigned"),
-    releaseStepCommand("sonatypeBundleRelease"),
-    setNextVersion,
-    commitNextVersion,
-    pushChanges
-  ),
   publishMavenStyle := true,
   publishArtifact in Test := false,
   sonatypeProfileName := "com.spotify",
@@ -177,7 +180,7 @@ lazy val core: Project = project
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "algebird-core" % algebirdVersion,
       "org.scalanlp" %% "breeze" % breezeVersion,
@@ -189,7 +192,7 @@ lazy val core: Project = project
       "io.circe" %% "circe-core",
       "io.circe" %% "circe-generic",
       "io.circe" %% "circe-parser"
-    ).map(_ % circeVersion)
+    ).map(_ % (if (scalaBinaryVersion.value == "2.11") "0.11.2" else circeVersion))
   )
 
 lazy val java: Project = project
@@ -200,7 +203,7 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -300,7 +303,7 @@ lazy val numpy: Project = project
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -315,7 +318,7 @@ lazy val tensorflow: Project = project
     name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
     libraryDependencies ++= Seq(
       "org.tensorflow" % "proto" % tensorflowVersion,
       "me.lyh" %% "shapeless-datatype-tensorflow" % shapelessDatatypeVersion,
@@ -335,7 +338,7 @@ lazy val xgboost: Project = project
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
@@ -350,7 +353,7 @@ lazy val examples: Project = project
   .settings(featranSettings)
   .settings(soccoSettings)
   .settings(
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
     name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
@@ -388,10 +391,8 @@ lazy val commonScalacOptions = Seq(
   "-language:higherKinds",
   "-language:implicitConversions",
   "-unchecked",
-  "-Yno-adapted-args",
   "-Ywarn-unused",
-  "-Ywarn-dead-code",
-  "-Xfuture"
+  "-Ywarn-dead-code"
 )
 
 lazy val soccoSettings = if (sys.env.contains("SOCCO")) {

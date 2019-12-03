@@ -101,7 +101,7 @@ private[featran] class NGrams(name: String, val low: Int, val high: Int, val sep
     b.result()
   }
 
-  private def mkNGram(xs: Seq[String], sep: String): String = {
+  private def mkNGram(xs: mutable.Queue[String], sep: String): String = {
     val sb = StringBuilder.newBuilder
     val i = xs.iterator
     sb.append(i.next())

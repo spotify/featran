@@ -265,10 +265,11 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   property("seq") = Prop.forAll(Gen.listOfN(100, Arbitrary.arbitrary[Double])) { xs =>
     val fs = FeatureSpec.of[Double].required(identity)(Identity("id"))
     Prop.all(
-      fs.extract(xs.asInstanceOf[Traversable[Double]]).featureValues[Seq[Double]].map(_.head) == xs,
       fs.extract(xs.asInstanceOf[Iterable[Double]]).featureValues[Seq[Double]].map(_.head) == xs,
       fs.extract(xs.asInstanceOf[Seq[Double]]).featureValues[Seq[Double]].map(_.head) == xs,
-      fs.extract(xs.toIndexedSeq).featureValues[Seq[Double]].map(_.head) == xs,
+      fs.extract(xs.toVector.asInstanceOf[IndexedSeq[Double]])
+        .featureValues[Seq[Double]]
+        .map(_.head) == xs,
       fs.extract(xs).featureValues[Seq[Double]].map(_.head) == xs, // List
       fs.extract(xs.toVector).featureValues[Seq[Double]].map(_.head) == xs.toVector,
       fs.extract(xs.toBuffer).featureValues[Seq[Double]].map(_.head) == xs

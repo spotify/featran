@@ -50,9 +50,8 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
     test(xs, FeatureBuilder[Array[Double]])(_.toSeq)
   }
 
-  property("float traversable") = Prop.forAll(list[Float]) { xs =>
+  property("float iterable") = Prop.forAll(list[Float]) { xs =>
     Prop.all(
-      test(xs, FeatureBuilder[Traversable[Float]])(_.toSeq),
       test(xs, FeatureBuilder[Iterable[Float]])(_.toSeq),
       test(xs, FeatureBuilder[Seq[Float]])(identity),
       test(xs, FeatureBuilder[IndexedSeq[Float]])(identity),
@@ -61,19 +60,14 @@ object FeatureBuilderSpec extends Properties("FeatureBuilder") {
     )
   }
 
-  property("double traversable") = Prop.forAll(list[Double]) { xs =>
+  property("double iterable") = Prop.forAll(list[Double]) { xs =>
     Prop.all(
-      test(xs, FeatureBuilder[Traversable[Double]])(_.toSeq),
       test(xs, FeatureBuilder[Iterable[Double]])(_.toSeq),
       test(xs, FeatureBuilder[Seq[Double]])(identity),
       test(xs, FeatureBuilder[IndexedSeq[Double]])(identity),
       test(xs, FeatureBuilder[List[Double]])(identity),
       test(xs, FeatureBuilder[Vector[Double]])(identity)
     )
-  }
-
-  property("double traversable") = Prop.forAll(list[Double]) { xs =>
-    test(xs, FeatureBuilder[Seq[Double]])(identity)
   }
 
   property("float sparse array") = Prop.forAll(list[Float]) { xs =>

@@ -117,16 +117,15 @@ object CrossingSpec extends Properties("CrossingSpec") {
     } yield Crossings.name(a, b))
   }
   private def sparseValues(a: String, b: String, v: B, f: (Double, Double) => Double) = {
-    import scala.collection.breakOut
     val m1: Map[String, Double] =
-      flatten(v._1).map(s => (a + "_" + s, 1.0))(breakOut)
+      flatten(v._1).iterator.map(s => (a + "_" + s, 1.0)).toMap
     val m2: Map[String, Double] =
-      flatten(v._2).map(s => (b + "_" + s, 1.0))(breakOut)
+      flatten(v._2).iterator.map(s => (b + "_" + s, 1.0)).toMap
     val x: Map[String, Double] =
       (for {
         (k1, v1) <- m1
         (k2, v2) <- m2
-      } yield (Crossings.name(k1, k2), f(v1, v2)))(breakOut)
+      } yield (Crossings.name(k1, k2), f(v1, v2))).toMap
     m1 ++ m2 ++ x
   }
 
