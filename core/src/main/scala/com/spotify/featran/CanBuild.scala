@@ -27,41 +27,39 @@ trait CanBuild[T, M[_]] extends Serializable {
 
 object CanBuild {
   // Collection types in _root_.scala.*
-  //scalastyle:off public.methods.have.type
-  implicit def iterableCB[T] = new CanBuild[T, Iterable] {
+  implicit def iterableCB[T]: CanBuild[T, Iterable] = new CanBuild[T, Iterable] {
     override def apply(): mutable.Builder[T, Iterable[T]] = Iterable.newBuilder
   }
 
-  implicit def seqCB[T] = new CanBuild[T, Seq] {
+  implicit def seqCB[T]: CanBuild[T, Seq] = new CanBuild[T, Seq] {
     override def apply(): mutable.Builder[T, Seq[T]] = Seq.newBuilder
   }
 
-  implicit def indexedSeqCB[T] = new CanBuild[T, IndexedSeq] {
+  implicit def indexedSeqCB[T]: CanBuild[T, IndexedSeq] = new CanBuild[T, IndexedSeq] {
     override def apply(): mutable.Builder[T, IndexedSeq[T]] = IndexedSeq.newBuilder
   }
 
-  implicit def listCB[T] = new CanBuild[T, List] {
+  implicit def listCB[T]: CanBuild[T, List] = new CanBuild[T, List] {
     override def apply(): mutable.Builder[T, List[T]] = List.newBuilder
   }
 
-  implicit def vectorCB[T] = new CanBuild[T, Vector] {
+  implicit def vectorCB[T]: CanBuild[T, Vector] = new CanBuild[T, Vector] {
     override def apply(): mutable.Builder[T, Vector[T]] = Vector.newBuilder
   }
 
-  implicit def bufferCB[T] = new CanBuild[T, mutable.Buffer] {
+  implicit def bufferCB[T]: CanBuild[T, mutable.Buffer] = new CanBuild[T, mutable.Buffer] {
     override def apply(): mutable.Builder[T, mutable.Buffer[T]] = mutable.Buffer.newBuilder
   }
 
-  implicit def floatArrayCB = new CanBuild[Float, Array] {
+  implicit def floatArrayCB: CanBuild[Float, Array] = new CanBuild[Float, Array] {
     override def apply(): mutable.Builder[Float, Array[Float]] = Array.newBuilder[Float]
   }
 
-  implicit def doubleArrayCB = new CanBuild[Double, Array] {
+  implicit def doubleArrayCB: CanBuild[Double, Array] = new CanBuild[Double, Array] {
     override def apply(): mutable.Builder[Double, Array[Double]] = Array.newBuilder[Double]
   }
 
-  implicit def arrayCB[T: ClassTag] = new CanBuild[T, Array] {
+  implicit def arrayCB[T: ClassTag]: CanBuild[T, Array] = new CanBuild[T, Array] {
     override def apply(): mutable.Builder[T, Array[T]] = Array.newBuilder[T]
   }
-  //scalastyle:on public.methods.have.type
 }

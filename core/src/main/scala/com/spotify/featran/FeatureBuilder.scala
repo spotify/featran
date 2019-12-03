@@ -185,7 +185,10 @@ object FeatureBuilder {
   ) extends FeatureBuilder[M[T]] {
     private var underlying: mutable.Builder[T, M[T]] = null
 
-    override def init(dimension: Int): Unit = underlying = cb()
+    override def init(dimension: Int): Unit = {
+      underlying = cb()
+      underlying.sizeHint(dimension)
+    }
 
     override def add(name: String, value: Double): Unit =
       underlying += FloatingPoint[T].fromDouble(value)
