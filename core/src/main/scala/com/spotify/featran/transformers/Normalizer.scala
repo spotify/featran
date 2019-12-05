@@ -31,6 +31,7 @@ import com.twitter.algebird.Aggregator
  * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
 object Normalizer extends SettingsBuilder {
+
   /**
    * Create a new [[Normalizer]] instance.
    * @param p normalization in L^p^ space, must be greater than or equal to 1.0

@@ -22,6 +22,7 @@ import org.apache.spark.rdd.{RDD, RDDUtil}
 import scala.reflect.ClassTag
 
 package object spark {
+
   /**
    * [[CollectionType]] for extraction from Apache Spark `RDD` type.
    */

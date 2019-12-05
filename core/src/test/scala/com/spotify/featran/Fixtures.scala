@@ -126,10 +126,9 @@ object Fixtures {
       .flatMap(_.listFiles())
       .filter(f => f.getName.endsWith(".class") && !f.getName.contains("$"))
       .map(f => classLoader.loadClass(s"$pkg.${f.getName.replace(".class", "")}"))
-      .filter(
-        c =>
-          (baseCls isAssignableFrom c) && c != baseCls &&
-            Try(classLoader.loadClass(c.getName + "$")).isSuccess
+      .filter(c =>
+        (baseCls isAssignableFrom c) && c != baseCls &&
+          Try(classLoader.loadClass(c.getName + "$")).isSuccess
       )
       .filter(c => !Modifier.isAbstract(c.getModifiers()))
       .toSet

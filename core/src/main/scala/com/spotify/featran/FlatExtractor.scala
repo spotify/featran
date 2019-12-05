@@ -49,6 +49,7 @@ import scala.reflect.ClassTag
  * other systems.
  */
 object FlatExtractor {
+
   /**
    * This function allows the reading of data from these flat versions by name with a given
    * settings file to extract the final output.

@@ -31,6 +31,7 @@ import com.twitter.algebird.Aggregator
  * are transformed to zero vectors and [[FeatureRejection.WrongDimension]] rejections are reported.
  */
 object VectorIdentity extends SettingsBuilder {
+
   /**
    * Create a new [[VectorIdentity]] instance.
    * @param expectedLength expected length of the input vectors, or 0 to infer from data

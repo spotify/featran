@@ -41,6 +41,7 @@ case class WeightedLabel(name: String, value: Double)
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotWeightedEncoder extends SettingsBuilder {
+
   /**
    * Create a new [[NHotWeightedEncoder]] instance.
    */

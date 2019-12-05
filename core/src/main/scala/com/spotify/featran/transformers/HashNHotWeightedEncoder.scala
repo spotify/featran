@@ -54,6 +54,7 @@ import scala.collection.JavaConverters._
  * }}}
  */
 object HashNHotWeightedEncoder extends SettingsBuilder {
+
   /**
    * Create a new [[HashNHotWeightedEncoder]] instance.
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog

@@ -31,6 +31,7 @@ import com.twitter.algebird.Aggregator
  * and is only valid for x, mu in the interval [0, 2*pi/scale].
  */
 object VonMisesEvaluator extends SettingsBuilder {
+
   /**
    * Create a new [[VonMisesEvaluator]] instance.
    * @param kappa measure of concentration

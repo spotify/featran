@@ -68,13 +68,12 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
         .map(x => (HashEncoder.bucket(x.name, size), x.value))
         .groupBy(_._1)
         .map(l => (l._1, l._2.map(_._2).sum))
-      cats.map(
-        c =>
-          hashes.get(c) match {
-            case Some(v) => v
-            case None    => 0.0
-          }
-      )
+      cats.map { c =>
+        hashes.get(c) match {
+          case Some(v) => v
+          case None    => 0.0
+        }
+      }
     }
     val missing = cats.map(_ => 0.0)
     test(encoder, xs, names, expected, missing)

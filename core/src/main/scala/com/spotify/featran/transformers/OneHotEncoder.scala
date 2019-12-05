@@ -35,6 +35,7 @@ import scala.collection.SortedMap
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object OneHotEncoder extends SettingsBuilder {
+
   /**
    * Create a new [[OneHotEncoder]] instance.
    */
