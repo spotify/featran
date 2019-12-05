@@ -51,6 +51,7 @@ case class MDLRecord[T](label: T, value: Double)
  * - https://github.com/sramirez/spark-MDLP-discretization
  */
 object MDL extends SettingsBuilder {
+
   /**
    * Create an MDL Instance.
    *

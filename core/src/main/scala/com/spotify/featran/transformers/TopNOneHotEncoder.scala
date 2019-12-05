@@ -37,6 +37,7 @@ import scala.util.Random
  * Missing values are either transformed to zero vectors or encoded as `__unknown__`.
  */
 object TopNOneHotEncoder extends SettingsBuilder {
+
   /**
    * Create a new [[TopNOneHotEncoder]] instance.
    *

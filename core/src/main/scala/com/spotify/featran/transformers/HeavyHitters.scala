@@ -37,6 +37,7 @@ import scala.util.Random
  * Missing values are transformed to [0.0, 0.0].
  */
 object HeavyHitters extends SettingsBuilder {
+
   /**
    * Create a new [[HeavyHitters]] instance.
    * @param heavyHittersCount number of heavy hitters to keep track of

@@ -23,6 +23,7 @@ import com.twitter.scalding.typed.TypedPipe
 import scala.reflect.ClassTag
 
 package object scalding {
+
   /**
    * [[CollectionType]] for extraction from Scalding `TypedPipe` type.
    */

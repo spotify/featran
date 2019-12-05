@@ -25,6 +25,7 @@ import com.spotify.featran.{FlatReader, FlatWriter}
  * Missing values are mapped to 0.0. Present values are mapped to 1.0.
  */
 object Indicator extends SettingsBuilder {
+
   /**
    * Create a new [[Indicator]] instance.
    */

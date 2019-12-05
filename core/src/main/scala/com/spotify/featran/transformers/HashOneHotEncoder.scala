@@ -54,6 +54,7 @@ import scala.util.hashing.MurmurHash3
  * }}}
  */
 object HashOneHotEncoder extends SettingsBuilder {
+
   /**
    * Create a new [[HashOneHotEncoder]] instance.
    * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
