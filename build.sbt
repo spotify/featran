@@ -377,7 +377,7 @@ lazy val examples: Project = project
   )
   .dependsOn(core, scio, tensorflow)
 
-lazy val featranJmh: Project = project
+lazy val jmh: Project = project
   .in(file("jmh"))
   .settings(featranSettings)
   .settings(
