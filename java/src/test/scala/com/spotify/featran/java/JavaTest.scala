@@ -211,9 +211,10 @@ class JavaTest extends FlatSpec with Matchers {
     import scala.concurrent.ExecutionContext.Implicits.global
     (1 to 5)
       .map { _ =>
-        Future
-        val f = JavaTestUtil.optionalSpec().extract(in.asJava)
-        f.featureValuesFloatSparse().asScala
+        Future {
+          val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+          f.featureValuesFloatSparse().asScala
+        }
       }
       .map { lfs =>
         val fs = Await.result(lfs, Duration.Inf)
@@ -223,9 +224,10 @@ class JavaTest extends FlatSpec with Matchers {
       }
     (1 to 5)
       .map { _ =>
-        Future
-        val f = JavaTestUtil.optionalSpec().extract(in.asJava)
-        f.featureValuesDoubleSparse().asScala
+        Future {
+          val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+          f.featureValuesDoubleSparse().asScala
+        }
       }
       .map { lfs =>
         val fs = Await.result(lfs, Duration.Inf)
