@@ -83,7 +83,13 @@ lazy val publishSettings = Seq(
     checkSnapshotDependencies,
     inquireVersions,
     runClean,
-    releaseStepCommandAndRemaining("+test"),
+    ReleaseStep { st: State =>
+      if (!st.get(ReleaseKeys.skipTests).getOrElse(false)) {
+        releaseStepCommandAndRemaining("+test")(st)
+      } else {
+        st
+      }
+    },
     setReleaseVersion,
     commitReleaseVersion,
     tagRelease,
