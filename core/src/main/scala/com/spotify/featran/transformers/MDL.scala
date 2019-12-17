@@ -51,6 +51,7 @@ case class MDLRecord[T](label: T, value: Double)
  * - https://github.com/sramirez/spark-MDLP-discretization
  */
 object MDL extends SettingsBuilder {
+
   /**
    * Create an MDL Instance.
    *
@@ -128,7 +129,9 @@ private[featran] class MDL[T: ClassTag](
     new Aggregator[MDLRecord[T], B[T], C] {
       override def prepare(input: MDLRecord[T]): B[T] =
         mutable.WrappedArray
-          .make[MDLRecord[T]](if (rng.nextDouble() < sampleRate) Array(input) else Array.empty[T])
+          .make[MDLRecord[T]](
+            if (rng.nextDouble() < sampleRate) Array(input) else Array.empty[MDLRecord[T]]
+          )
 
       override def semigroup: Semigroup[B[T]] = new Semigroup[B[T]] {
         override def plus(x: B[T], y: B[T]): B[T] = x ++ y
@@ -136,7 +139,7 @@ private[featran] class MDL[T: ClassTag](
 
       override def present(reduction: B[T]): C = {
         val ranges = new MDLPDiscretizer[T](
-          reduction.view.map(l => (l.label, l.value)),
+          reduction.iterator.map(l => (l.label, l.value)).toSeq,
           stoppingCriterion,
           minBinPercentage
         ).discretize(maxBins)

@@ -28,6 +28,7 @@ import com.spotify.featran.{FlatReader, FlatWriter}
  * Missing values are binarized to 0.0.
  */
 object Binarizer extends SettingsBuilder {
+
   /**
    * Create a new [[Binarizer]] instance.
    * @param threshold threshold to binarize continuous features

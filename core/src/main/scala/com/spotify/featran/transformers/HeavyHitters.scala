@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import java.net.{URLDecoder, URLEncoder}
 
 import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
-import com.twitter.algebird._
+import com.twitter.algebird.{HeavyHitters => _, _}
 
 import scala.util.Random
 
@@ -37,6 +37,7 @@ import scala.util.Random
  * Missing values are transformed to [0.0, 0.0].
  */
 object HeavyHitters extends SettingsBuilder {
+
   /**
    * Create a new [[HeavyHitters]] instance.
    * @param heavyHittersCount number of heavy hitters to keep track of

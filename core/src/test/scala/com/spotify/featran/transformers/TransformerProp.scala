@@ -149,9 +149,12 @@ abstract class TransformerProp(name: String) extends Properties(name) {
     Prop.all(propStandard, propConverters, propContramap)
   }
   // scalastyle:on method.length
+
   def testContramap[A, B](t: Transformer[B, _, _], input: List[A])(f: A => B): Prop =
-    FeatureSpec.of[A].required(f)(t).extract(input).featureValues[Seq[Double]] ==
+    safeCompare(
+      FeatureSpec.of[A].required(f)(t).extract(input).featureValues[Seq[Double]],
       FeatureSpec.of[A].required(identity)(t.contramap(f)).extract(input).featureValues[Seq[Double]]
+    )
 
   def testException[T](t: Transformer[T, _, _], input: List[T])(p: Throwable => Boolean): Prop =
     try {

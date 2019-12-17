@@ -8,6 +8,10 @@ scala_212: &scala_212
   environment:
     - SCALA_VERSION: 2.12.10
 
+scala_213: &scala_213
+  environment:
+    - SCALA_VERSION: 2.13.1
+
 jdk8: &jdk8
   docker:
     - image: circleci/openjdk:8-jdk
@@ -69,6 +73,12 @@ jobs:
     - build_featran:
         build-steps:
           - run: sbt "++$SCALA_VERSION test"
+  build_213:
+    <<: [*settings, *scala_213, *jdk8]
+    steps:
+    - build_featran:
+        build-steps:
+          - run: sbt "++$SCALA_VERSION test"
 
   build_212_jdk11:
     <<: [*settings, *scala_212, *jdk11]
@@ -101,11 +111,16 @@ workflows:
       - build_212_jdk11:
           requires:
             - checks
+      - build_213:
+          requires:
+            - checks
+            - mima_report
 
       - publish:
           requires:
             - build_211
             - build_212
+            - build_213
           filters:
             branches:
               only:

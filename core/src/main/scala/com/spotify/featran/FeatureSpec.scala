@@ -20,7 +20,7 @@ package com.spotify.featran
 import com.spotify.featran.converters.{CaseClassConverter, DefaultTransform}
 import com.spotify.featran.transformers.{Settings, Transformer}
 
-import scala.collection.{breakOut, mutable}
+import scala.collection.mutable
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 
@@ -92,8 +92,7 @@ class FeatureSpec[T] private[featran] (
    * @param f function to cross feature value pairs
    */
   def cross(k: (String, String))(f: (Double, Double) => Double): FeatureSpec[T] = {
-    val names: Set[String] =
-      features.map(_.transformer.name)(scala.collection.breakOut)
+    val names: Set[String] = features.iterator.map(_.transformer.name).toSet
     val d = Set(k._1, k._2).diff(names)
     require(d.isEmpty, s"Feature ${d.mkString(", ")} not found")
     new FeatureSpec[T](this.features, this.crossings + (k -> f))
@@ -137,10 +136,11 @@ class FeatureSpec[T] private[featran] (
    */
   def filter(predicate: Feature[T, _, _, _] => Boolean): FeatureSpec[T] = {
     val filteredFeatures = features.filter(predicate)
-    val featuresByName =
-      filteredFeatures.map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](
-        f => f.transformer.name -> f
-      )(breakOut)
+    val featuresByName = {
+      val b = Map.newBuilder[String, Feature[T, _, _, _]]
+      b ++= filteredFeatures.iterator.map(f => f.transformer.name -> f)
+      b.result()
+    }
     val filteredCrossings = crossings.filter[T](featuresByName.contains)
 
     new FeatureSpec[T](filteredFeatures, filteredCrossings)
@@ -405,8 +405,7 @@ private class FeatureSet[T](
   }
 
   def decodeAggregators(s: Seq[Settings]): ARRAY = {
-    val m: Map[String, Settings] =
-      s.map(x => (x.name, x))(scala.collection.breakOut)
+    val m: Map[String, Settings] = s.iterator.map(x => (x.name, x)).toMap
     features.map { feature =>
       val name = feature.transformer.name
       require(m.contains(name), s"Missing settings for $name")

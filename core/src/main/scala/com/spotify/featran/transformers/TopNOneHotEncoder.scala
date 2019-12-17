@@ -37,6 +37,7 @@ import scala.util.Random
  * Missing values are either transformed to zero vectors or encoded as `__unknown__`.
  */
 object TopNOneHotEncoder extends SettingsBuilder {
+
   /**
    * Create a new [[TopNOneHotEncoder]] instance.
    *
@@ -107,7 +108,7 @@ private[featran] class TopNOneHotEncoder(
     if (encodeMissingValue) c.size + 1 else c.size
 
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
-    val names = c.map(name + '_' + _._1)(scala.collection.breakOut)
+    val names = c.iterator.map(name + '_' + _._1).toSeq
     if (encodeMissingValue) names :+ (name + '_' + MissingValueToken) else names
   }
 

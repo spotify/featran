@@ -34,6 +34,7 @@ import scala.collection.{mutable, SortedMap}
  * As with [[NHotEncoder]], missing values are transformed to [0.0, 0.0, ...].
  */
 object NGrams extends SettingsBuilder {
+
   /**
    * Create a new [[NGrams]] instance.
    *
@@ -101,7 +102,7 @@ private[featran] class NGrams(name: String, val low: Int, val high: Int, val sep
     b.result()
   }
 
-  private def mkNGram(xs: Seq[String], sep: String): String = {
+  private def mkNGram(xs: mutable.Queue[String], sep: String): String = {
     val sb = StringBuilder.newBuilder
     val i = xs.iterator
     sb.append(i.next())

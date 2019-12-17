@@ -19,17 +19,15 @@ package com.spotify.featran
 
 import com.spotify.featran.transformers.Settings
 
-import scala.collection.breakOut
-
 /**
  * Companion object for [[MultiFeatureSpec]].
  */
 object MultiFeatureSpec {
   def apply[T](specs: FeatureSpec[T]*): MultiFeatureSpec[T] = {
-    val nameToSpec: Map[String, Int] = specs.zipWithIndex.flatMap {
+    val nameToSpec: Map[String, Int] = specs.iterator.zipWithIndex.flatMap {
       case (spec, index) =>
         spec.features.map(_.transformer.name -> index)
-    }(breakOut)
+    }.toMap
 
     new MultiFeatureSpec(
       nameToSpec,
@@ -73,12 +71,13 @@ class MultiFeatureSpec[T](
    */
   def filter(predicate: Feature[T, _, _, _] => Boolean): MultiFeatureSpec[T] = {
     val filteredFeatures = features.filter(predicate)
-    val featuresByName =
-      filteredFeatures.map[(String, Feature[T, _, _, _]), Map[String, Feature[T, _, _, _]]](
-        f => f.transformer.name -> f
-      )(breakOut)
+    val featuresByName = {
+      val b = Map.newBuilder[String, Feature[T, _, _, _]]
+      b ++= filteredFeatures.iterator.map(f => f.transformer.name -> f)
+      b.result()
+    }
 
-    val filteredMapping = mapping.filterKeys(featuresByName.contains)
+    val filteredMapping = mapping.filter(kv => featuresByName.contains(kv._1))
     val filteredCrossings = crossings.filter(featuresByName.contains)
 
     new MultiFeatureSpec[T](filteredMapping, filteredFeatures, filteredCrossings)

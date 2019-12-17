@@ -35,6 +35,7 @@ import scala.collection.SortedMap
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object OneHotEncoder extends SettingsBuilder {
+
   /**
    * Create a new [[OneHotEncoder]] instance.
    */
@@ -119,7 +120,7 @@ private[featran] abstract class BaseHotEncoder[A](name: String, encodeMissingVal
   override def featureDimension(c: SortedMap[String, Int]): Int =
     if (encodeMissingValue) c.size + 1 else c.size
   override def featureNames(c: SortedMap[String, Int]): Seq[String] = {
-    val names = c.map(name + '_' + _._1)(scala.collection.breakOut)
+    val names = c.iterator.map(name + '_' + _._1).toSeq
     if (encodeMissingValue) names :+ (name + '_' + MissingValueToken) else names
   }
 

@@ -32,6 +32,7 @@ import scala.collection.mutable.{Set => MSet}
  * [FeatureRejection.Unseen]] rejections are reported.
  */
 object NHotEncoder extends SettingsBuilder {
+
   /**
    * Create a new [[NHotEncoder]] instance.
    */

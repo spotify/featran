@@ -211,28 +211,26 @@ class JavaTest extends AnyFlatSpec with Matchers {
     val values = Seq(Seq(1.0), Seq(1.0))
     val dense = Seq(Seq(1.0, 0.0), Seq(0.0, 1.0))
     import scala.concurrent.ExecutionContext.Implicits.global
-    (1 to 5).par
-      .map(
-        _ =>
-          Future {
-            val f = JavaTestUtil.optionalSpec().extract(in.asJava)
-            f.featureValuesFloatSparse().asScala
-          }
-      )
+    (1 to 5)
+      .map { _ =>
+        Future {
+          val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+          f.featureValuesFloatSparse().asScala
+        }
+      }
       .map { lfs =>
         val fs = Await.result(lfs, Duration.Inf)
         fs.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
         fs.map(JavaTestUtil.getValues(_).toSeq) shouldBe values
         fs.map(JavaTestUtil.getDense(_).toSeq) shouldBe dense
       }
-    (1 to 5).par
-      .map(
-        _ =>
-          Future {
-            val f = JavaTestUtil.optionalSpec().extract(in.asJava)
-            f.featureValuesDoubleSparse().asScala
-          }
-      )
+    (1 to 5)
+      .map { _ =>
+        Future {
+          val f = JavaTestUtil.optionalSpec().extract(in.asJava)
+          f.featureValuesDoubleSparse().asScala
+        }
+      }
       .map { lfs =>
         val fs = Await.result(lfs, Duration.Inf)
         fs.map(JavaTestUtil.getIndicies(_).toSeq) shouldBe indices
