@@ -20,8 +20,10 @@ package com.spotify.featran.scalding
 import com.spotify.featran._
 import com.twitter.scalding._
 import org.scalatest._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ScaldingTest extends FlatSpec with Matchers {
+class ScaldingTest extends AnyFlatSpec with Matchers {
   import Fixtures._
 
   def materialize[T](p: TypedPipe[T]): Iterable[T] =
