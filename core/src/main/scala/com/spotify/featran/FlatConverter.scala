@@ -66,14 +66,14 @@ private[featran] class FlatConverter[T: ClassTag, A: ClassTag: FlatWriter](spec:
     extends Serializable {
   import CollectionType.ops._
 
-  private[this] val fns = spec.features.iterator.map { feature => (t: T) =>
+  private[this] val fns = spec.features.map { feature => (t: T) =>
     feature.transformer.unsafeFlatWriter.apply(feature.f(t))
-  }.toList
+  }
 
   private[this] val writer = FlatWriter[A].writer
 
   def convert[M[_]: CollectionType](col: M[T]): M[A] =
     col.map { record =>
-      writer.apply(fns.map(f => f(record)))
+      writer.apply(fns.iterator.map(f => f(record)).toList)
     }
 }
