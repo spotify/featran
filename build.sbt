@@ -21,7 +21,7 @@ import sbtrelease.ReleaseStateTransformations._
 
 val algebirdVersion = "0.13.6"
 val breezeVersion = "1.0"
-val circeVersion = "0.12.3"
+val circeVersion = "0.13.0"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.9.2"
 val hadoopVersion = "3.2.1"
