@@ -55,7 +55,7 @@ private[featran] class PositionEncoder(name: String) extends BaseHotEncoder[Stri
     a: Option[String],
     c: SortedMap[String, Int],
     fb: FeatureBuilder[_]
-  ): Unit = {
+  ): Unit =
     a match {
       case Some(k) =>
         c.get(k) match {
@@ -68,7 +68,6 @@ private[featran] class PositionEncoder(name: String) extends BaseHotEncoder[Stri
         fb.skip(1)
         fb.reject(this, FeatureRejection.Collision)
     }
-  }
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 

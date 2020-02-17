@@ -91,11 +91,10 @@ private class CrossingFeatureBuilder[F] private (
   }
 
   // update dimension of the current transformer
-  private def updateDim(): Unit = {
+  private def updateDim(): Unit =
     if (xEnabled) {
       xDims(xName) = xOffset
     }
-  }
 
   override def init(dimension: Int): Unit = fb.init(dimension)
   override def add(name: String, value: Double): Unit = {

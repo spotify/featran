@@ -72,7 +72,7 @@ private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boo
     unseen: MSet[String],
     keys: Seq[String],
     unseenWeight: Double
-  ): Unit = {
+  ): Unit =
     if (keys.isEmpty) {
       fb.add(name + '_' + MissingValueToken, 1.0)
     } else if (unseen.isEmpty) {
@@ -80,7 +80,6 @@ private[featran] class NHotWeightedEncoder(name: String, encodeMissingValue: Boo
     } else {
       fb.add(name + '_' + MissingValueToken, unseenWeight)
     }
-  }
 
   override def prepare(a: Seq[WeightedLabel]): Set[String] =
     Set(a.map(_.name): _*)

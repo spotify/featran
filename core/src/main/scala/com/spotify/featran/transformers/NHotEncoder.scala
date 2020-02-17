@@ -58,14 +58,13 @@ private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
     extends BaseHotEncoder[Seq[String]](name, encodeMissingValue) {
   import MissingValue.MissingValueToken
 
-  def addMissingValue(fb: FeatureBuilder[_], unseen: MSet[String], keys: Seq[String]): Unit = {
+  def addMissingValue(fb: FeatureBuilder[_], unseen: MSet[String], keys: Seq[String]): Unit =
     if (unseen.isEmpty
         && keys.nonEmpty) {
       fb.skip()
     } else {
       fb.add(name + '_' + MissingValueToken, 1.0)
     }
-  }
 
   override def prepare(a: Seq[String]): Set[String] = Set(a: _*)
   override def buildFeatures(

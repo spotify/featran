@@ -113,7 +113,7 @@ private[featran] class MDL[T: ClassTag](
   override def featureDimension(c: C): Int = c.size()
   override def featureNames(c: C): Seq[String] = names(c.size())
 
-  def buildFeatures(a: Option[MDLRecord[T]], c: C, fb: FeatureBuilder[_]): Unit = {
+  def buildFeatures(a: Option[MDLRecord[T]], c: C, fb: FeatureBuilder[_]): Unit =
     a match {
       case Some(x) =>
         val e = c.higherEntry(x.value)
@@ -123,7 +123,6 @@ private[featran] class MDL[T: ClassTag](
         fb.skip(c.size() - 1 - offset)
       case None => fb.skip(c.size())
     }
-  }
 
   override val aggregator: Aggregator[MDLRecord[T], B[T], C] =
     new Aggregator[MDLRecord[T], B[T], C] {

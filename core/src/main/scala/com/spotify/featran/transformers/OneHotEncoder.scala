@@ -63,7 +63,7 @@ private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
     a: Option[String],
     c: SortedMap[String, Int],
     fb: FeatureBuilder[_]
-  ): Unit = {
+  ): Unit =
     a match {
       case Some(k) =>
         c.get(k) match {
@@ -78,7 +78,6 @@ private[featran] class OneHotEncoder(name: String, encodeMissingValue: Boolean)
         }
       case None => addMissingItem(c, fb)
     }
-  }
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 

@@ -194,7 +194,7 @@ private object CombinatoricsUtils {
   // scalastyle:on method.length
   // scalastyle:on cyclomatic.complexity
 
-  def gcd(p: Int, q: Int): Int = {
+  def gcd(p: Int, q: Int): Int =
     if (p == 0 || q == 0) {
       require(p != Int.MinValue && q != Int.MinValue, s"overflow: gcd($p, $q) is 2^31")
       abs(p + q)
@@ -238,9 +238,8 @@ private object CombinatoricsUtils {
         gcdPositive(a, b)
       }
     }
-  }
 
-  private def gcdPositive(p: Int, q: Int): Int = {
+  private def gcdPositive(p: Int, q: Int): Int =
     // assert q != 0
     if (p == 0) {
       q
@@ -270,9 +269,8 @@ private object CombinatoricsUtils {
       // Recover the common power of 2.
       a << shift
     }
-  }
 
-  def mulAndCheck(a: Long, b: Long): Long = {
+  def mulAndCheck(a: Long, b: Long): Long =
     if (a > b) {
       // use symmetry to reduce boundary cases
       mulAndCheck(b, a)
@@ -302,7 +300,6 @@ private object CombinatoricsUtils {
         0
       }
     }
-  }
 
   @inline
   def abs(x: Int): Int = (x ^ (~(x >>> 31) + 1)) + (x >>> 31)

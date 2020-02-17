@@ -82,7 +82,7 @@ private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeSc
   override def prepare(a: Seq[String]): HLL =
     a.map(hllMonoid.toHLL(_)).fold(hllMonoid.zero)(hllMonoid.plus)
 
-  override def buildFeatures(a: Option[Seq[String]], c: Int, fb: FeatureBuilder[_]): Unit = {
+  override def buildFeatures(a: Option[Seq[String]], c: Int, fb: FeatureBuilder[_]): Unit =
     a match {
       case Some(xs) =>
         var prev = -1
@@ -96,7 +96,6 @@ private[featran] class HashNHotEncoder(name: String, hashBucketSize: Int, sizeSc
         if (gap > 0) fb.skip(gap)
       case None => fb.skip(c)
     }
-  }
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readStrings(name)
 

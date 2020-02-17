@@ -64,7 +64,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
    *           `DenseVector[Double]`
    */
   def featureResults[F: FeatureBuilder: ClassTag]
-    : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] = {
+    : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] =
     extractor.as
       .cross(extractor.aggregate)
       .cross(fs)
@@ -74,5 +74,4 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
           featureSet.multiFeatureValues(a, c, fb)
           (fb.map(_.result).toSeq, fb.map(_.rejections), o)
       }
-  }
 }

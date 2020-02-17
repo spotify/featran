@@ -85,7 +85,7 @@ private[featran] class HashOneHotEncoder(
 ) extends BaseHashHotEncoder[String](name, hashBucketSize, sizeScalingFactor) {
   override def prepare(a: String): HLL = hllMonoid.toHLL(a)
 
-  override def buildFeatures(a: Option[String], c: Int, fb: FeatureBuilder[_]): Unit = {
+  override def buildFeatures(a: Option[String], c: Int, fb: FeatureBuilder[_]): Unit =
     a match {
       case Some(x) =>
         val i = HashEncoder.bucket(x, c)
@@ -95,7 +95,6 @@ private[featran] class HashOneHotEncoder(
       case None =>
         fb.skip(c)
     }
-  }
 
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readString(name)
 
