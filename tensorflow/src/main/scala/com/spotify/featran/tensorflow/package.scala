@@ -150,30 +150,22 @@ package object tensorflow {
 
     override def writeDoubles(name: String): Option[Seq[Double]] => List[NamedTFFeature] =
       (v: Option[Seq[Double]]) => {
-        v.toList.flatMap { values =>
-          List(NamedTFFeature(name, fromDoubles(values).build()))
-        }
+        v.toList.flatMap(values => List(NamedTFFeature(name, fromDoubles(values).build())))
       }
 
     override def writeDoubleArray(name: String): Option[Array[Double]] => List[NamedTFFeature] =
       (v: Option[Array[Double]]) => {
-        v.toList.flatMap { values =>
-          List(NamedTFFeature(name, fromDoubles(values).build()))
-        }
+        v.toList.flatMap(values => List(NamedTFFeature(name, fromDoubles(values).build())))
       }
 
     override def writeString(name: String): Option[String] => List[NamedTFFeature] =
       (v: Option[String]) => {
-        v.toList.flatMap { values =>
-          List(NamedTFFeature(name, fromStrings(Seq(values)).build()))
-        }
+        v.toList.flatMap(values => List(NamedTFFeature(name, fromStrings(Seq(values)).build())))
       }
 
     override def writeStrings(name: String): Option[Seq[String]] => List[NamedTFFeature] =
       (v: Option[Seq[String]]) => {
-        v.toList.flatMap { values =>
-          List(NamedTFFeature(name, fromStrings(values).build()))
-        }
+        v.toList.flatMap(values => List(NamedTFFeature(name, fromStrings(values).build())))
       }
 
     override def writer: Seq[List[NamedTFFeature]] => Example =

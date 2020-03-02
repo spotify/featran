@@ -66,11 +66,7 @@ private[featran] trait Implicits extends Serializable {
         c.keys
           .filter(_.nonEmpty)
           .toRight(DecodingFailure("flat decoding", c.history))
-          .map { list =>
-            list.map { f =>
-              (f, c.downField(f).focus.map(_.noSpaces))
-            }.toMap
-          }
+          .map(list => list.map(f => (f, c.downField(f).focus.map(_.noSpaces))).toMap)
     }
 
   implicit val genericSeqEncoder: Encoder[Seq[(String, Option[Json])]] =

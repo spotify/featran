@@ -72,7 +72,5 @@ object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
     actual.toOption == expected.toOption
   }
 
-  property("abs") = Prop.forAll { x: Int =>
-    CombinatoricsUtils.abs(x) == math.abs(x)
-  }
+  property("abs") = Prop.forAll { x: Int => CombinatoricsUtils.abs(x) == math.abs(x) }
 }

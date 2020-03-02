@@ -73,7 +73,5 @@ private[featran] class FlatConverter[T: ClassTag, A: ClassTag: FlatWriter](spec:
   private[this] val writer = FlatWriter[A].writer
 
   def convert[M[_]: CollectionType](col: M[T]): M[A] =
-    col.map { record =>
-      writer.apply(fns.iterator.map(f => f(record)).toList)
-    }
+    col.map(record => writer.apply(fns.iterator.map(f => f(record)).toList))
 }

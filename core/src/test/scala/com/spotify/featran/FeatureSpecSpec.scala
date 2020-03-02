@@ -178,9 +178,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       val f = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
       val includeFeatures = Set(id.name)
       val extracted = f
-        .filter { f =>
-          includeFeatures.contains(f.transformer.name)
-        }
+        .filter(f => includeFeatures.contains(f.transformer.name))
         .extract(xs)
       Prop.all(
         extracted.featureNames.head == Seq("id"),
@@ -192,9 +190,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     xs: List[Record] =>
       val spec = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
       val filtered = spec
-        .filter { feature =>
-          Set(id.name, id3.name).contains(feature.transformer.name)
-        }
+        .filter(feature => Set(id.name, id3.name).contains(feature.transformer.name))
         .extract(xs)
 
       val expectedSpec = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id3)
@@ -210,9 +206,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
     val includeList = Set(id.name, id3.name)
     val e1 = f1
-      .filter { f =>
-        includeList.contains(f.transformer.name)
-      }
+      .filter(f => includeList.contains(f.transformer.name))
       .extract(xs)
     val settings = e1.featureSettings
     val e2 = f1.extractWithSubsetSettings(xs, settings)
@@ -228,9 +222,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
     val includeList = Set(id.name, id3.name)
     val e1 = f1
-      .filter { f =>
-        includeList.contains(f.transformer.name)
-      }
+      .filter(f => includeList.contains(f.transformer.name))
       .extract(xs)
     val settings = e1.featureSettings.head
     val e2 = f1.extractWithSubsetSettings[Seq[Double]](settings)

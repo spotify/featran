@@ -74,32 +74,32 @@ object CaseClassConverter {
                 d(name)
               )
             case c if c =:= typeOf[Option[Short]] =>
-              s.optional[Double] { v =>
-                get(v, idx).asInstanceOf[Option[Short]].map(_.toDouble)
-              }(d(name))
+              s.optional[Double](v => get(v, idx).asInstanceOf[Option[Short]].map(_.toDouble))(
+                d(name)
+              )
             case c if c =:= typeOf[Option[Boolean]] =>
-              s.optional[Double] { v =>
-                get(v, idx).asInstanceOf[Option[Boolean]].map(_.asDouble)
-              }(d(name))
+              s.optional[Double](v => get(v, idx).asInstanceOf[Option[Boolean]].map(_.asDouble))(
+                d(name)
+              )
             case c if c =:= typeOf[Option[Double]] =>
               s.optional[Double](v => get(v, idx).asInstanceOf[Option[Double]])(d(name))
             // Seq Native Types
             case c if c <:< typeOf[Seq[Int]] =>
-              s.required { v =>
-                get(v, idx).asInstanceOf[Seq[Int]].map(_.toDouble)
-              }(VectorIdentity(name))
+              s.required(v => get(v, idx).asInstanceOf[Seq[Int]].map(_.toDouble))(
+                VectorIdentity(name)
+              )
             case c if c <:< typeOf[Seq[Long]] =>
-              s.required { v =>
-                get(v, idx).asInstanceOf[Seq[Long]].map(_.toDouble)
-              }(VectorIdentity(name))
+              s.required(v => get(v, idx).asInstanceOf[Seq[Long]].map(_.toDouble))(
+                VectorIdentity(name)
+              )
             case c if c <:< typeOf[Seq[Short]] =>
-              s.required { v =>
-                get(v, idx).asInstanceOf[Seq[Short]].map(_.toDouble)
-              }(VectorIdentity(name))
+              s.required(v => get(v, idx).asInstanceOf[Seq[Short]].map(_.toDouble))(
+                VectorIdentity(name)
+              )
             case c if c <:< typeOf[Seq[Boolean]] =>
-              s.required { v =>
-                get(v, idx).asInstanceOf[Seq[Boolean]].map(_.asDouble)
-              }(VectorIdentity(name))
+              s.required(v => get(v, idx).asInstanceOf[Seq[Boolean]].map(_.asDouble))(
+                VectorIdentity(name)
+              )
             case c if c <:< typeOf[Seq[Double]] =>
               s.required(v => get(v, idx).asInstanceOf[Seq[Double]])(VectorIdentity(name))
             // Strings
@@ -110,13 +110,13 @@ object CaseClassConverter {
             case c if c <:< typeOf[Seq[String]] =>
               s.required[Seq[String]](v => get(v, idx).asInstanceOf[Seq[String]])(NHotEncoder(name))
             case c if c <:< typeOf[MDLRecord[String]] =>
-              s.required[MDLRecord[String]] { v =>
-                get(v, idx).asInstanceOf[MDLRecord[String]]
-              }(MDL(name))
+              s.required[MDLRecord[String]](v => get(v, idx).asInstanceOf[MDLRecord[String]])(
+                MDL(name)
+              )
             case c if c <:< typeOf[Seq[WeightedLabel]] =>
-              s.required[Seq[WeightedLabel]] { v =>
-                get(v, idx).asInstanceOf[Seq[WeightedLabel]]
-              }(NHotWeightedEncoder(name))
+              s.required[Seq[WeightedLabel]](v => get(v, idx).asInstanceOf[Seq[WeightedLabel]])(
+                NHotWeightedEncoder(name)
+              )
             case _ =>
               sys.error("Not matching Conversions for " + m.toString)
           }
