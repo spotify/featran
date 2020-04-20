@@ -283,7 +283,7 @@ lazy val scio: Project = project
     name := "scio",
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
-    crossScalaVersions := Seq("2.12.11"),
+    crossScalaVersions := Seq("2.12.11", "2.13.1"),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
