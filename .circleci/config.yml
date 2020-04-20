@@ -1,12 +1,8 @@
 version: 2.1
 
-scala_211: &scala_211
-  environment:
-    - SCALA_VERSION: 2.11.12
-
 scala_212: &scala_212
   environment:
-    - SCALA_VERSION: 2.12.10
+    - SCALA_VERSION: 2.12.11
 
 scala_213: &scala_213
   environment:
@@ -49,30 +45,24 @@ settings: &settings
 
 jobs:
   checks:
-    <<: [*settings, *scala_211, *jdk8]
+    <<: [*settings, *scala_212, *jdk8]
     steps:
     - build_featran:
         build-steps:
           - run: sbt scalafmtSbtCheck scalafmtCheck test:scalafmtCheck scalastyle test:scalastyle
   mima_report:
-    <<: [*settings, *scala_211, *jdk8]
+    <<: [*settings, *scala_212, *jdk8]
     steps:
     - build_featran:
         build-steps:
           - run: sbt mimaReportBinaryIssues
-  build_211:
-    <<: [*settings, *scala_211, *jdk8]
+  build_212:
+    <<: [*settings, *scala_212, *jdk8]
     steps:
       - build_featran:
           build-steps:
             - run: sbt coverage "++$SCALA_VERSION test" coverageReport coverageAggregate
             - run: bash <(curl -s https://codecov.io/bash)
-  build_212:
-    <<: [*settings, *scala_212, *jdk8]
-    steps:
-    - build_featran:
-        build-steps:
-          - run: sbt "++$SCALA_VERSION test"
   build_213:
     <<: [*settings, *scala_213, *jdk8]
     steps:
@@ -88,7 +78,7 @@ jobs:
             - run: sbt "++$SCALA_VERSION test"
 
   publish:
-    <<: [*settings, *scala_211, *jdk8]
+    <<: [*settings, *scala_212, *jdk8]
     steps:
     - build_featran:
         build-steps:
@@ -100,10 +90,6 @@ workflows:
     jobs:
       - checks
       - mima_report
-      - build_211:
-          requires:
-            - checks
-            - mima_report
       - build_212:
           requires:
             - checks
@@ -118,7 +104,6 @@ workflows:
 
       - publish:
           requires:
-            - build_211
             - build_212
             - build_213
           filters:

@@ -42,7 +42,7 @@ lazy val commonSettings = Seq(
   organization := "com.spotify",
   name := "featran",
   description := "Feature Transformers",
-  scalaVersion := "2.12.10",
+  scalaVersion := "2.12.11",
   scalacOptions ++= commonScalacOptions,
   scalacOptions ++= {
     if (scalaBinaryVersion.value == "2.13")
@@ -163,7 +163,7 @@ lazy val root: Project = project
   .enablePlugins(GhpagesPlugin, ScalaUnidocPlugin)
   .settings(featranSettings)
   .settings(
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.12.11"),
     siteSubdirName in ScalaUnidoc := "api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
     gitRemoteRepo := "git@github.com:spotify/featran.git",
@@ -198,7 +198,7 @@ lazy val core: Project = project
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
+    crossScalaVersions := Seq("2.12.11", "2.13.1"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "algebird-core" % algebirdVersion,
       "org.scalanlp" %% "breeze" % breezeVersion,
@@ -221,7 +221,7 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
+    crossScalaVersions := Seq("2.12.11", "2.13.1"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -242,7 +242,7 @@ lazy val flink: Project = project
     name := "flink",
     moduleName := "featran-flink",
     description := "Feature Transformers - Flink",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.12.11"),
     libraryDependencies ++= Seq(
       "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
       "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
@@ -263,7 +263,7 @@ lazy val scalding: Project = project
     moduleName := "featran-scalding",
     description := "Feature Transformers - Scalding",
     resolvers += "Concurrent Maven Repo" at "https://conjars.org/repo",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.12.11"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "scalding-core" % scaldingVersion % "provided",
       "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
@@ -283,7 +283,7 @@ lazy val scio: Project = project
     name := "scio",
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.12.11"),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -302,7 +302,7 @@ lazy val spark: Project = project
     name := "spark",
     moduleName := "featran-spark",
     description := "Feature Transformers - Spark",
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.12.11"),
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -321,7 +321,7 @@ lazy val numpy: Project = project
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
+    crossScalaVersions := Seq("2.12.11", "2.13.1"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -336,7 +336,7 @@ lazy val tensorflow: Project = project
     name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
-    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
+    crossScalaVersions := Seq("2.12.11", "2.13.1"),
     libraryDependencies ++= Seq(
       "org.tensorflow" % "proto" % tensorflowVersion,
       "me.lyh" %% "shapeless-datatype-tensorflow" % shapelessDatatypeVersion,
@@ -356,7 +356,7 @@ lazy val xgboost: Project = project
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
+    crossScalaVersions := Seq("2.12.11", "2.13.1"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
@@ -371,7 +371,7 @@ lazy val examples: Project = project
   .settings(featranSettings)
   .settings(soccoSettings)
   .settings(
-    crossScalaVersions := Seq("2.11.12", "2.12.10", "2.13.1"),
+    crossScalaVersions := Seq("2.12.11", "2.13.1"),
     name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
@@ -387,7 +387,7 @@ lazy val jmh: Project = project
   .in(file("jmh"))
   .settings(featranSettings)
   .settings(
-    crossScalaVersions := Seq("2.11.12", "2.12.10"),
+    crossScalaVersions := Seq("2.12.11"),
     name := "jmh",
     description := "Featran JMH Microbenchmarks",
     sourceDirectory in Jmh := (sourceDirectory in Test).value,
