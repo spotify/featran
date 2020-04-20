@@ -210,7 +210,7 @@ lazy val core: Project = project
       "io.circe" %% "circe-core",
       "io.circe" %% "circe-generic",
       "io.circe" %% "circe-parser"
-    ).map(_ % (if (scalaBinaryVersion.value == "2.11") "0.11.2" else circeVersion))
+    ).map(_ % circeVersion)
   )
 
 lazy val java: Project = project
