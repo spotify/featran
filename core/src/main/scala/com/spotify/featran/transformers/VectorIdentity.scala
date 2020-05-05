@@ -36,8 +36,8 @@ object VectorIdentity extends SettingsBuilder {
    * Create a new [[VectorIdentity]] instance.
    * @param expectedLength expected length of the input vectors, or 0 to infer from data
    */
-  def apply[M[_]](name: String, expectedLength: Int = 0)(
-    implicit ev: M[Double] => Seq[Double]
+  def apply[M[_]](name: String, expectedLength: Int = 0)(implicit
+    ev: M[Double] => Seq[Double]
   ): Transformer[M[Double], Int, Int] =
     new VectorIdentity(name, expectedLength)(ev)
 
@@ -51,8 +51,8 @@ object VectorIdentity extends SettingsBuilder {
   }
 }
 
-private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: Int)(
-  implicit ev: M[Double] => Seq[Double]
+private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: Int)(implicit
+  ev: M[Double] => Seq[Double]
 ) extends Transformer[M[Double], Int, Int](name) {
   override val aggregator: Aggregator[M[Double], Int, Int] =
     Aggregators.seqLength(expectedLength)

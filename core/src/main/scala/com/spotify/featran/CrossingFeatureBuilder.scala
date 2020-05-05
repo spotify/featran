@@ -104,8 +104,8 @@ private class CrossingFeatureBuilder[F] private (
     }
     fb.add(name, value)
   }
-  override def add[M[_]](names: Iterable[String], values: M[Double])(
-    implicit ev: M[Double] => Seq[Double]
+  override def add[M[_]](names: Iterable[String], values: M[Double])(implicit
+    ev: M[Double] => Seq[Double]
   ): Unit = {
     if (xEnabled) {
       val i = names.iterator

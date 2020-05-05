@@ -37,8 +37,8 @@ import scala.reflect.ClassTag
 }
 
 object CollectionType {
-  implicit def scalaCollectionType[M[_]](
-    implicit cb: CanBuild[_, M],
+  implicit def scalaCollectionType[M[_]](implicit
+    cb: CanBuild[_, M],
     ti: M[_] => Iterable[_]
   ): CollectionType[M] =
     new CollectionType[M] {

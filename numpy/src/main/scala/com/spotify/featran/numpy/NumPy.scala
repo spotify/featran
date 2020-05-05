@@ -36,10 +36,10 @@ object NumPyType {
   // from Guava LittleEndianDataOutputStream
   implicit class LittleEndianOutputStream(private val out: OutputStream) extends AnyVal {
     def writeInt(v: Int): Unit = {
-      out.write(0xFF & v)
-      out.write(0xFF & (v >> 8))
-      out.write(0xFF & (v >> 16))
-      out.write(0xFF & (v >> 24))
+      out.write(0xff & v)
+      out.write(0xff & (v >> 8))
+      out.write(0xff & (v >> 16))
+      out.write(0xff & (v >> 24))
     }
 
     def writeLong(v: Long): Unit = {
@@ -47,7 +47,7 @@ object NumPyType {
       val result = new Array[Byte](8)
       var i = 7
       while (i >= 0) {
-        result(i) = (value & 0xFFL).toByte
+        result(i) = (value & 0xffL).toByte
         value >>= 8
         i -= 1
       }
@@ -118,8 +118,8 @@ object NumPy {
     val headerString = header(dimensions)
     // from Guava LittleEndianDataOutputStream#writeShort
     val l = headerString.length
-    out.write(0xFF & l)
-    out.write(0xFF & (l >> 8))
+    out.write(0xff & l)
+    out.write(0xff & (l >> 8))
     out.write(headerString.getBytes)
   }
 
