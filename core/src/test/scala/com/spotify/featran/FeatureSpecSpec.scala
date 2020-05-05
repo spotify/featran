@@ -31,9 +31,12 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   }
 
   implicit val arbWrapperRecords: Arbitrary[List[RecordWrapper]] = Arbitrary {
-    Gen.listOfN(100, Arbitrary.arbitrary[(Double, Double, Option[Double])].map {
-      case (d1, d2, od) => RecordWrapper(Record(d2, od), d1)
-    })
+    Gen.listOfN(
+      100,
+      Arbitrary.arbitrary[(Double, Double, Option[Double])].map {
+        case (d1, d2, od) => RecordWrapper(Record(d2, od), d1)
+      }
+    )
   }
 
   private val id = Identity("id")
@@ -84,9 +87,12 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   property("generator") = Prop.forAll { xs: List[Record] =>
     val spec = FeatureSpec.from[Record]
     val f = spec.extract(xs)
-    Prop.all(f.featureNames == Seq(Seq("d", "optD")), f.featureValues[Seq[Double]] == xs.map { r =>
-      r.optD.map(v => Seq(r.d, v)).getOrElse(Seq(r.d, 0.0))
-    })
+    Prop.all(
+      f.featureNames == Seq(Seq("d", "optD")),
+      f.featureValues[Seq[Double]] == xs.map { r =>
+        r.optD.map(v => Seq(r.d, v)).getOrElse(Seq(r.d, 0.0))
+      }
+    )
   }
 
   property("composite") = Prop.forAll { xs: List[Record] =>

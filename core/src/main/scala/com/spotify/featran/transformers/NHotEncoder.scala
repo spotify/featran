@@ -59,8 +59,10 @@ private[featran] class NHotEncoder(name: String, encodeMissingValue: Boolean)
   import MissingValue.MissingValueToken
 
   def addMissingValue(fb: FeatureBuilder[_], unseen: MSet[String], keys: Seq[String]): Unit =
-    if (unseen.isEmpty
-        && keys.nonEmpty) {
+    if (
+      unseen.isEmpty
+      && keys.nonEmpty
+    ) {
       fb.skip()
     } else {
       fb.add(name + '_' + MissingValueToken, 1.0)

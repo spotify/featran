@@ -33,10 +33,13 @@ package object tensorflow {
     val normalize: String => String = {
       lazy val cache = new ConcurrentHashMap[String, String]()
       fn =>
-        cache.computeIfAbsent(fn, new Function[String, String] {
-          override def apply(n: String): String =
-            NamePattern.matcher(n).replaceAll("_")
-        })
+        cache.computeIfAbsent(
+          fn,
+          new Function[String, String] {
+            override def apply(n: String): String =
+              NamePattern.matcher(n).replaceAll("_")
+          }
+        )
     }
   }
 

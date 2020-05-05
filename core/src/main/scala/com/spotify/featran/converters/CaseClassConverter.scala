@@ -42,8 +42,8 @@ object CaseClassConverter {
 
   // scalastyle:off cyclomatic.complexity
   // scalastyle:off method.length
-  def toSpec[T <: Product](
-    implicit tt: TypeTag[T],
+  def toSpec[T <: Product](implicit
+    tt: TypeTag[T],
     ct: ClassTag[T],
     d: DefaultTransform[Double]
   ): FeatureSpec[T] =

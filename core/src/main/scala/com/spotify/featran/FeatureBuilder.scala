@@ -99,8 +99,8 @@ object FeatureRejection {
    * Add multiple feature values. The total number of values added and skipped should equal to
    * dimension in [[init]].
    */
-  def add[M[_]](names: Iterable[String], values: M[Double])(
-    implicit ev: M[Double] => Seq[Double]
+  def add[M[_]](names: Iterable[String], values: M[Double])(implicit
+    ev: M[Double] => Seq[Double]
   ): Unit = {
     val i = names.iterator
     val j = values.iterator
@@ -179,8 +179,8 @@ case class NamedSparseArray[@specialized(Float, Double) T](
 }
 
 object FeatureBuilder {
-  private final case class IterableFB[M[_], T: ClassTag: FloatingPoint]()(
-    implicit cb: CanBuild[T, M],
+  private final case class IterableFB[M[_], T: ClassTag: FloatingPoint]()(implicit
+    cb: CanBuild[T, M],
     ti: M[T] => Iterable[T]
   ) extends FeatureBuilder[M[T]] {
     private var underlying: mutable.Builder[T, M[T]] = null
@@ -200,8 +200,8 @@ object FeatureBuilder {
     override def newBuilder: FeatureBuilder[M[T]] = IterableFB[M, T]()
   }
 
-  implicit def iterableFB[M[_], T: ClassTag: FloatingPoint](
-    implicit cb: CanBuild[T, M],
+  implicit def iterableFB[M[_], T: ClassTag: FloatingPoint](implicit
+    cb: CanBuild[T, M],
     ti: M[T] => Iterable[T]
   ): FeatureBuilder[M[T]] = IterableFB[M, T]()
 
