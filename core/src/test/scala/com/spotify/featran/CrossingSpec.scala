@@ -102,7 +102,7 @@ object CrossingSpec extends Properties("CrossingSpec") {
     )
   }
 
-  private implicit val labelArb = Arbitrary(Gen.alphaStr)
+  implicit private val labelArb = Arbitrary(Gen.alphaStr)
 
   type B = ((String, String), (String, String, String))
   private def flatten(v: (String, String)) = Seq(v._1, v._2)

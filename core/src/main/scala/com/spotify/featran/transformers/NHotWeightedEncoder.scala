@@ -22,9 +22,7 @@ import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWr
 import scala.collection.SortedMap
 import scala.collection.mutable.{Map => MMap, Set => MSet}
 
-/**
- * Weighted label. Also can be thought as a weighted value in a named sparse vector.
- */
+/** Weighted label. Also can be thought as a weighted value in a named sparse vector. */
 case class WeightedLabel(name: String, value: Double)
 
 /**
@@ -42,9 +40,7 @@ case class WeightedLabel(name: String, value: Double)
  */
 object NHotWeightedEncoder extends SettingsBuilder {
 
-  /**
-   * Create a new [[NHotWeightedEncoder]] instance.
-   */
+  /** Create a new [[NHotWeightedEncoder]] instance. */
   def apply(
     name: String,
     encodeMissingValue: Boolean = false

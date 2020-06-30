@@ -70,9 +70,7 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
       }
   }
 
-  /**
-   * Names of the extracted features, in the same order as values in [[featureValues]].
-   */
+  /** Names of the extracted features, in the same order as values in [[featureValues]]. */
   @transient lazy val featureNames: M[Seq[String]] =
     aggregate.cross(fs).map(x => x._2.featureNames(x._1))
 
@@ -120,7 +118,7 @@ object RecordExtractor {
     }
   }
 
-  private final case class State[F, T](
+  final private case class State[F, T](
     input: PipeIterator[T],
     extractor: FeatureExtractor[Iterator, T],
     output: Iterator[FeatureResult[F, T]]
@@ -134,7 +132,7 @@ class RecordExtractor[T, F: FeatureBuilder: ClassTag] private[featran] (
 ) {
   import RecordExtractor._
 
-  private implicit val iteratorCollectionType: CollectionType[Iterator] =
+  implicit private val iteratorCollectionType: CollectionType[Iterator] =
     new CollectionType[Iterator] {
       override def map[A, B: ClassTag](ma: Iterator[A])(f: A => B): Iterator[B] = ma.map(f)
 

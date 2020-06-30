@@ -24,9 +24,7 @@ import scala.reflect.{classTag, ClassTag}
 
 package object scio {
 
-  /**
-   * [[CollectionType]] for extraction from Scio `SCollection` type.
-   */
+  /** [[CollectionType]] for extraction from Scio `SCollection` type. */
   implicit object ScioCollectionType extends CollectionType[SCollection] {
     override def map[A, B: ClassTag](ma: SCollection[A])(f: A => B): SCollection[B] = {
       implicit val coder: Coder[B] = Coder.kryo

@@ -22,9 +22,7 @@ import simulacrum.typeclass
 
 import scala.reflect.ClassTag
 
-/**
- * TypeClass for implementing the writer to a flat format keyed by name
- */
+/** TypeClass for implementing the writer to a flat format keyed by name */
 @typeclass trait FlatWriter[+T] extends Serializable {
   type IF
 

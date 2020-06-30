@@ -33,9 +33,7 @@ import scala.collection.mutable.{Set => MSet}
  */
 object NHotEncoder extends SettingsBuilder {
 
-  /**
-   * Create a new [[NHotEncoder]] instance.
-   */
+  /** Create a new [[NHotEncoder]] instance. */
   def apply(
     name: String,
     encodeMissingValue: Boolean = false

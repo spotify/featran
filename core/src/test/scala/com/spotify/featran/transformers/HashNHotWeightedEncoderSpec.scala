@@ -23,7 +23,7 @@ import org.scalacheck._
 import scala.math.ceil
 
 object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEncoder") {
-  private implicit val weightedVectors = Arbitrary {
+  implicit private val weightedVectors = Arbitrary {
     val weightedValueGen = for {
       value <- Gen.chooseNum(-1.0, 1.0)
       n <- Gen.alphaStr
@@ -36,7 +36,7 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     xs.flatten.map(_.name).map(m.toHLL(_)).reduce(m.plus).estimatedSize
   }
 
-  override implicit def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {
+  implicit override def list[T](implicit arb: Arbitrary[T]): Arbitrary[List[T]] = Arbitrary {
     Gen.listOfN(10, arb.arbitrary).suchThat(_.nonEmpty) // workaround for shrinking failure
   }
 

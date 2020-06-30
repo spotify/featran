@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import org.scalacheck.{Arbitrary, Gen, Prop}
 
 object PositionEncoderSpec extends TransformerProp("PositionEncoder") {
-  private implicit val labelArb = Arbitrary(Gen.alphaStr)
+  implicit private val labelArb = Arbitrary(Gen.alphaStr)
 
   property("default") = Prop.forAll { xs: List[String] =>
     val cats = xs.distinct.sorted

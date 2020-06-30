@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import org.scalacheck.{Arbitrary, Gen, Prop}
 
 object NHotWeightedEncoderSpec extends TransformerProp("NHotWeightedEncoder") {
-  private implicit val weightedVectors = Arbitrary {
+  implicit private val weightedVectors = Arbitrary {
     val weightedValueGen = for {
       value <- Gen.chooseNum(-1.0, 1.0)
       n <- Gen.alphaStr

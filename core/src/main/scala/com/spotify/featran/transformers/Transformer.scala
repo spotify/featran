@@ -44,19 +44,13 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
   protected def checkRange(name: String, value: Double, lower: Double, upper: Double): Unit =
     require(value >= lower && value <= upper, s"$name $value not in the range[$lower, $upper]")
 
-  /**
-   * Aggregator for computing input values into a summary.
-   */
+  /** Aggregator for computing input values into a summary. */
   val aggregator: Aggregator[A, B, C]
 
-  /**
-   * Number of generated features given an aggregator summary.
-   */
+  /** Number of generated features given an aggregator summary. */
   def featureDimension(c: C): Int
 
-  /**
-   * Names of the generated features given an aggregator summary.
-   */
+  /** Names of the generated features given an aggregator summary. */
   def featureNames(c: C): Seq[String]
 
   /**
@@ -128,19 +122,13 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
   // Transformer parameter and aggregator persistence
   //================================================================================
 
-  /**
-   * Encode aggregator summary of the current extraction.
-   */
+  /** Encode aggregator summary of the current extraction. */
   def encodeAggregator(c: C): String
 
-  /**
-   * Decode aggregator summary from a previous extraction.
-   */
+  /** Decode aggregator summary from a previous extraction. */
   def decodeAggregator(s: String): C
 
-  /**
-   * Compile time parameters.
-   */
+  /** Compile time parameters. */
   def params: Map[String, String] = Map.empty
 
   /**
@@ -165,13 +153,13 @@ case class Settings(
   aggregators: Option[String]
 )
 
-private[featran] abstract class OneDimensional[A, B, C](name: String)
+abstract private[featran] class OneDimensional[A, B, C](name: String)
     extends Transformer[A, B, C](name) {
   override def featureDimension(c: C): Int = 1
   override def featureNames(c: C): Seq[String] = Seq(name)
 }
 
-private[featran] abstract class MapOne[A](name: String)
+abstract private[featran] class MapOne[A](name: String)
     extends OneDimensional[A, Unit, Unit](name) {
   override val aggregator: Aggregator[A, Unit, Unit] = Aggregators.unit[A]
   override def buildFeatures(a: Option[A], c: Unit, fb: FeatureBuilder[_]): Unit = a match {

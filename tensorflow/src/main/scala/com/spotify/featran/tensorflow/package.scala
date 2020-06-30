@@ -70,9 +70,7 @@ package object tensorflow {
     override def newBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
   }
 
-  /**
-   * [[FeatureBuilder]] for output as TensorFlow `Example` type.
-   */
+  /** [[FeatureBuilder]] for output as TensorFlow `Example` type. */
   implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
 
   implicit val exampleFlatReader: FlatReader[tf.Example] = new FlatReader[tf.Example] {
