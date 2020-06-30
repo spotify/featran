@@ -127,7 +127,10 @@ object NumPy {
     }
   }
 
-  /** Write an array as a NumPy `.npy` file to an output stream. Default shape is `(data.length)`. */
+  /**
+   * Write an array as a NumPy `.npy` file to an output stream.
+   * Default shape is `(data.length)`.
+   */
   def write[@specialized(Int, Long, Float, Double) T: NumPyType](
     out: OutputStream,
     data: Array[T],

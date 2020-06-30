@@ -135,7 +135,10 @@ object FeatureRejection {
   def newBuilder: FeatureBuilder[T]
 }
 
-/** A sparse representation of an array using two arrays for indices and values of non-zero entries. */
+/**
+ * A sparse representation of an array using two arrays for indices and
+ * values of non-zero entries.
+ */
 case class SparseArray[@specialized(Float, Double) T](
   indices: Array[Int],
   values: Array[T],
