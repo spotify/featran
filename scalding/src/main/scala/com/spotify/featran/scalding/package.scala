@@ -24,9 +24,7 @@ import scala.reflect.ClassTag
 
 package object scalding {
 
-  /**
-   * [[CollectionType]] for extraction from Scalding `TypedPipe` type.
-   */
+  /** [[CollectionType]] for extraction from Scalding `TypedPipe` type. */
   implicit object ScaldingCollectionType extends CollectionType[TypedPipe] {
     override def map[A, B: ClassTag](ma: TypedPipe[A])(f: A => B): TypedPipe[B] = ma.map(f)
 

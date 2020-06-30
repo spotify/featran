@@ -112,7 +112,7 @@ private[transformers] object BaseQuantileRejector {
   type C = (Double, Double, Double, Double)
 }
 
-private abstract class BaseQuantileRejector(name: String, val numBuckets: Int, val k: Int)
+abstract private class BaseQuantileRejector(name: String, val numBuckets: Int, val k: Int)
     extends OneDimensional[Double, BaseQuantileRejector.B, BaseQuantileRejector.C](name) {
   require(numBuckets >= 3, "numBuckets must be >= 3")
 

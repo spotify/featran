@@ -78,9 +78,7 @@ object FeatureRejection {
    */
   def prepare(transformer: Transformer[_, _, _]): Unit = ()
 
-  /**
-   * Gather builder result for a result. This should be called only once per input row.
-   */
+  /** Gather builder result for a result. This should be called only once per input row. */
   def result: T
 
   /**
@@ -121,9 +119,7 @@ object FeatureRejection {
     }
   }
 
-  /**
-   * Create a [[FeatureBuilder]] for type `U` by converting the result type `T` with `f`.
-   */
+  /** Create a [[FeatureBuilder]] for type `U` by converting the result type `T` with `f`. */
   def map[U](f: T => U): FeatureBuilder[U] = new FeatureBuilder[U] {
     private val delegate = self
     private val g = f
@@ -139,9 +135,7 @@ object FeatureRejection {
   def newBuilder: FeatureBuilder[T]
 }
 
-/**
- * A sparse representation of an array using two arrays for indices and values of non-zero entries.
- */
+/** A sparse representation of an array using two arrays for indices and values of non-zero entries. */
 case class SparseArray[@specialized(Float, Double) T](
   indices: Array[Int],
   values: Array[T],
@@ -158,9 +152,7 @@ case class SparseArray[@specialized(Float, Double) T](
   }
 }
 
-/**
- * A [[SparseArray]] with names of non-zero entries.
- */
+/** A [[SparseArray]] with names of non-zero entries. */
 case class NamedSparseArray[@specialized(Float, Double) T](
   indices: Array[Int],
   values: Array[T],
@@ -179,7 +171,7 @@ case class NamedSparseArray[@specialized(Float, Double) T](
 }
 
 object FeatureBuilder {
-  private final case class IterableFB[M[_], T: ClassTag: FloatingPoint]()(implicit
+  final private case class IterableFB[M[_], T: ClassTag: FloatingPoint]()(implicit
     cb: CanBuild[T, M],
     ti: M[T] => Iterable[T]
   ) extends FeatureBuilder[M[T]] {
@@ -205,7 +197,7 @@ object FeatureBuilder {
     ti: M[T] => Iterable[T]
   ): FeatureBuilder[M[T]] = IterableFB[M, T]()
 
-  private final case class NamedSparseArrayFB[T: ClassTag: FloatingPoint](
+  final private case class NamedSparseArrayFB[T: ClassTag: FloatingPoint](
     private val withNames: Boolean
   ) extends FeatureBuilder[NamedSparseArray[T]] {
     private var indices: Array[Int] = null
@@ -278,7 +270,7 @@ object FeatureBuilder {
       new SparseVector(a.indices, a.values, a.indices.length, a.length)
     }
 
-  private final case class MapFB[T: ClassTag: FloatingPoint]()
+  final private case class MapFB[T: ClassTag: FloatingPoint]()
       extends FeatureBuilder[Map[String, T]] { self =>
     private var builder: mutable.Builder[(String, T), Map[String, T]] = null
 

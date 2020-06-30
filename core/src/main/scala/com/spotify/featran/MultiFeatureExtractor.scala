@@ -43,9 +43,7 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
    */
   @transient lazy val featureSettings: M[String] = extractor.featureSettings
 
-  /**
-   * Names of the extracted features, in the same order as values in [[featureValues]].
-   */
+  /** Names of the extracted features, in the same order as values in [[featureValues]]. */
   @transient lazy val featureNames: M[Seq[Seq[String]]] =
     extractor.aggregate.cross(fs).map(x => x._2.multiFeatureNames(x._1))
 

@@ -113,10 +113,9 @@ private[featran] class HeavyHitters(
   }
   override def encodeAggregator(c: Map[String, (Int, Long)]): String =
     c.map {
-        case (key, (rank, freq)) =>
-          s"${URLEncoder.encode(key, "UTF-8")}:$rank:$freq"
-      }
-      .mkString(",")
+      case (key, (rank, freq)) =>
+        s"${URLEncoder.encode(key, "UTF-8")}:$rank:$freq"
+    }.mkString(",")
   override def decodeAggregator(s: String): Map[String, (Int, Long)] = {
     val kvs = s.split(",")
     val b = Map.newBuilder[String, (Int, Long)]

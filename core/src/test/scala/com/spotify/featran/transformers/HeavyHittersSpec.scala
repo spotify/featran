@@ -21,7 +21,7 @@ import com.twitter.algebird.{HeavyHitters => _, _}
 import org.scalacheck._
 
 object HeavyHittersSpec extends TransformerProp("HeavyHitters") {
-  private implicit val labelArb: Arbitrary[String] = Arbitrary {
+  implicit private val labelArb: Arbitrary[String] = Arbitrary {
     val infrequent = Gen.listOfN(50, Gen.alphaStr).flatMap(xs => Gen.oneOf(xs))
     val frequent = Gen.listOfN(5, Gen.alphaStr).flatMap(xs => Gen.oneOf(xs))
     Gen.frequency((1, infrequent), (50, frequent))

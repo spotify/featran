@@ -17,7 +17,5 @@
 
 package com.spotify.featran
 
-/**
- * Package for json serialization
- */
+/** Package for json serialization */
 package object json extends JsonEncoder with JsonDecoder with Implicits

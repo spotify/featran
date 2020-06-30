@@ -36,9 +36,7 @@ import scala.collection.SortedMap
  */
 object OneHotEncoder extends SettingsBuilder {
 
-  /**
-   * Create a new [[OneHotEncoder]] instance.
-   */
+  /** Create a new [[OneHotEncoder]] instance. */
   def apply(
     name: String,
     encodeMissingValue: Boolean = false
@@ -89,7 +87,7 @@ private[featran] object MissingValue {
   val MissingValueToken = "__missing__"
 }
 
-private[featran] abstract class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
+abstract private[featran] class BaseHotEncoder[A](name: String, encodeMissingValue: Boolean)
     extends Transformer[A, Set[String], SortedMap[String, Int]](name) {
   import MissingValue.MissingValueToken
 

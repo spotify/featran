@@ -102,7 +102,7 @@ private[featran] class HashOneHotEncoder(
     fw.writeString(name)
 }
 
-private[featran] abstract class BaseHashHotEncoder[A](
+abstract private[featran] class BaseHashHotEncoder[A](
   name: String,
   val hashBucketSize: Int,
   val sizeScalingFactor: Double

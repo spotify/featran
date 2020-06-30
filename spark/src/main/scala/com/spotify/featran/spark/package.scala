@@ -23,9 +23,7 @@ import scala.reflect.ClassTag
 
 package object spark {
 
-  /**
-   * [[CollectionType]] for extraction from Apache Spark `RDD` type.
-   */
+  /** [[CollectionType]] for extraction from Apache Spark `RDD` type. */
   implicit object SparkCollectionType extends CollectionType[RDD] {
     override def map[A, B: ClassTag](ma: RDD[A])(f: A => B): RDD[B] =
       ma.map(f)

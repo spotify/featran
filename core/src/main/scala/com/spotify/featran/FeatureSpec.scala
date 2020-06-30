@@ -24,9 +24,7 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 import scala.reflect.runtime.universe.TypeTag
 
-/**
- * Companion object for [[FeatureSpec]].
- */
+/** Companion object for [[FeatureSpec]]. */
 object FeatureSpec {
   private[featran] type ARRAY = Array[Option[Any]]
 
@@ -46,9 +44,7 @@ object FeatureSpec {
    */
   def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty, Crossings.empty)
 
-  /**
-   * Combine multiple [[FeatureSpec]]s into a single spec.
-   */
+  /** Combine multiple [[FeatureSpec]]s into a single spec. */
   def combine[T](specs: FeatureSpec[T]*): FeatureSpec[T] = {
     require(specs.nonEmpty, "Empty specs")
     new FeatureSpec(specs.map(_.features).reduce(_ ++ _), specs.map(_.crossings).reduce(_ ++ _))

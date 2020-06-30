@@ -21,9 +21,7 @@ import java.io.OutputStream
 
 import simulacrum.typeclass
 
-/**
- * Type class for NumPy numeric types.
- */
+/** Type class for NumPy numeric types. */
 @typeclass trait NumPyType[@specialized(Int, Long, Float, Double) T] {
   def descr: String
 
@@ -88,9 +86,7 @@ object NumPyType {
   }
 }
 
-/**
- * Utilities for writing data as NumPy `.npy` files.
- */
+/** Utilities for writing data as NumPy `.npy` files. */
 object NumPy {
   private def header[T: NumPyType](dimensions: Seq[Int]): String = {
     // https://docs.scipy.org/doc/numpy/neps/npy-format.html
@@ -131,9 +127,7 @@ object NumPy {
     }
   }
 
-  /**
-   * Write an array as a NumPy `.npy` file to an output stream. Default shape is `(data.length)`.
-   */
+  /** Write an array as a NumPy `.npy` file to an output stream. Default shape is `(data.length)`. */
   def write[@specialized(Int, Long, Float, Double) T: NumPyType](
     out: OutputStream,
     data: Array[T],

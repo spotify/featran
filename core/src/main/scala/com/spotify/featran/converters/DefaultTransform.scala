@@ -20,9 +20,7 @@ package com.spotify.featran.converters
 import com.spotify.featran.transformers.Transformer
 import simulacrum.typeclass
 
-/**
- * Default Type Class used by the from generator for Case Class Conversions
- */
+/** Default Type Class used by the from generator for Case Class Conversions */
 @typeclass trait DefaultTransform[T] {
   def apply(featureName: String): Transformer[T, _, _]
 }

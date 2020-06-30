@@ -132,7 +132,6 @@ private[transformers] class ThresholdFinder(
    * @param lastSelected last selected threshold
    * @param nLabels number of classes
    * @return the minimum-entropy cut point
-   *
    */
   private def evalThresholds(
     candidates: Seq[(Float, Array[Long])],
