@@ -20,7 +20,7 @@ import sbt.Def
 import sbtrelease.ReleaseStateTransformations._
 
 val algebirdVersion = "0.13.7"
-val breezeVersion = "1.0"
+val breezeVersion = "1.1"
 val circeVersion = "0.13.0"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.11.1"
