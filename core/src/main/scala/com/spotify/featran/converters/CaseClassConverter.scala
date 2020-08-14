@@ -40,8 +40,6 @@ object CaseClassConverter {
     instanceMirror.reflectMethod(methods(idx)).apply()
   }
 
-  // scalastyle:off cyclomatic.complexity
-  // scalastyle:off method.length
   def toSpec[T <: Product](implicit
     tt: TypeTag[T],
     ct: ClassTag[T],
@@ -121,6 +119,5 @@ object CaseClassConverter {
               sys.error("Not matching Conversions for " + m.toString)
           }
       }
-  // scalastyle:off cyclomatic.complexity
-  // scalastyle:on method.length
+
 }

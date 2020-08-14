@@ -77,7 +77,6 @@ private class QuantileOutlierRejector(
   protected def calculateBounds(fq: Double, lq: Double): (Double, Double) =
     (fq, lq)
 
-  // scalastyle:off cyclomatic.complexity
   override def buildFeatures(a: Option[Double], c: C, fb: FeatureBuilder[_]): Unit = {
     // we always skip since we don't care about the actual value, just the rejections
     fb.skip()
@@ -98,7 +97,6 @@ private class QuantileOutlierRejector(
       }
     }
   }
-  // scalastyle:on cyclomatic.complexity
 
   override def params: Map[String, String] =
     super.params ++ Map(

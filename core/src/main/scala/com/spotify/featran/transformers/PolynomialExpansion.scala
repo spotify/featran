@@ -131,8 +131,7 @@ private[featran] class PolynomialExpansion(name: String, val degree: Int, val ex
 
 // Ported from commons-math3
 private object CombinatoricsUtils {
-  // scalastyle:off cyclomatic.complexity
-  // scalastyle:off method.length
+
   def binomialCoefficient(n: Int, k: Int): Long = {
     checkBinomial(n, k)
     if (n == k || k == 0) {
@@ -191,8 +190,6 @@ private object CombinatoricsUtils {
       result
     }
   }
-  // scalastyle:on method.length
-  // scalastyle:on cyclomatic.complexity
 
   def gcd(p: Int, q: Int): Int =
     if (p == 0 || q == 0) {
