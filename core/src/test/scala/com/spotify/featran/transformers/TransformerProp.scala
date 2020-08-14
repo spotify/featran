@@ -46,7 +46,6 @@ abstract class TransformerProp(name: String) extends Properties(name) {
   private def safeCompare(xs: List[Seq[Double]], ys: List[Seq[Double]]): Boolean =
     xs.map(_.map(d2e)) == ys.map(_.map(d2e))
 
-  // scalastyle:off method.length
   def test[T: ClassTag](
     t: Transformer[T, _, _],
     input: List[T],
@@ -148,7 +147,6 @@ abstract class TransformerProp(name: String) extends Properties(name) {
 
     Prop.all(propStandard, propConverters, propContramap)
   }
-  // scalastyle:on method.length
 
   def testContramap[A, B](t: Transformer[B, _, _], input: List[A])(f: A => B): Prop =
     safeCompare(

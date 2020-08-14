@@ -96,7 +96,6 @@ class ScioTest extends PipelineSpec {
     def method(a: String): Double = a.toDouble
   }
 
-  // scalastyle:off no.whitespace.before.left.bracket
   it should "fail on serialization error" in {
     an[Exception] should be thrownBy {
       runWithContext { sc =>
@@ -110,5 +109,5 @@ class ScioTest extends PipelineSpec {
       }
     }
   }
-  // scalastyle:on no.whitespace.before.left.bracket
+
 }

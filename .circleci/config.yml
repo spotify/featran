@@ -49,7 +49,7 @@ jobs:
     steps:
     - build_featran:
         build-steps:
-          - run: sbt scalafmtSbtCheck scalafmtCheck test:scalafmtCheck scalastyle test:scalastyle
+          - run: sbt scalafmtSbtCheck scalafmtCheck test:scalafmtCheck
   mima_report:
     <<: [*settings, *scala_212, *jdk8]
     steps:

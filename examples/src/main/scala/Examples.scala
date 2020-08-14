@@ -15,9 +15,6 @@
  * under the License.
  */
 
-// scalastyle:off method.length
-// scalastyle:off regex
-
 // Example: Featran Examples
 
 // # Imports
@@ -32,13 +29,15 @@ object Examples {
   // # Input
 
   // Input record type
-  case class Record(b: Boolean,
-                    f: Float,
-                    d1: Double,
-                    d2: Option[Double],
-                    d3: Double,
-                    s1: String,
-                    s2: List[String])
+  case class Record(
+    b: Boolean,
+    f: Float,
+    d1: Double,
+    d2: Option[Double],
+    d3: Double,
+    s1: String,
+    s2: List[String]
+  )
 
   // Method for extracting an `Array[Double]` from a `Record`
   def toArray(r: Record): Array[Double] =
@@ -79,10 +78,14 @@ object Examples {
 
       // Evaluate von Mises distribution (mu = d3, kappa = 2) at values 0, 4, .., 24
       // (rescaled using scale=pi/12 to be in the interval [0, 2pi])
-      .required(_.d3)(VonMisesEvaluator("von_mises",
-                                        2.0,
-                                        math.Pi / 12,
-                                        Array(0.0, 4.0, 8.0, 12.0, 16.0, 20.0, 24.0)))
+      .required(_.d3)(
+        VonMisesEvaluator(
+          "von_mises",
+          2.0,
+          math.Pi / 12,
+          Array(0.0, 4.0, 8.0, 12.0, 16.0, 20.0, 24.0)
+        )
+      )
 
       // Normalize vector with default `p` 2.0 and custom `p`
       .required(toArray)(Normalizer("norm1"))
@@ -97,8 +100,9 @@ object Examples {
       // Encoders that hash features into buckets to reduce CPU and memory overhead
       .required(_.s1)(HashOneHotEncoder("hash_one_hot"))
       .required(_.s2)(HashNHotEncoder("hash_n_hot"))
-      .required(_.s2.map(s => WeightedLabel(s, 0.5)))(HashNHotWeightedEncoder(
-        "hash_n_hot_weighted"))
+      .required(_.s2.map(s => WeightedLabel(s, 0.5)))(
+        HashNHotWeightedEncoder("hash_n_hot_weighted")
+      )
 
       // `Record` to `Array[Double]` composite feature, polynomial expansion with default degree 2
       // and custom degree

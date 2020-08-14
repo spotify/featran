@@ -31,7 +31,7 @@ private object Crossings {
 }
 
 private case class Crossings(map: Crossings.MAP, keys: Set[String]) {
-  // scalastyle:off method.name
+
   def +(v: (Crossings.KEY, Crossings.FN)): Crossings = {
     val (k, f) = v
     require(!map.contains(k), s"Crossing $k already defined")
@@ -54,7 +54,7 @@ private case class Crossings(map: Crossings.MAP, keys: Set[String]) {
 
     Crossings(filteredMap, filteredKeys)
   }
-  // scalastyle:on method.name
+
 }
 
 object CrossingFeatureBuilder {
