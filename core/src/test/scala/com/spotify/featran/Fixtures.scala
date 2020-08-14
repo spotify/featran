@@ -24,19 +24,20 @@ import com.spotify.featran.transformers._
 
 import scala.collection.JavaConverters._
 import scala.util.Try
+import scala.collection.immutable
 
 object Fixtures {
-  val TestData = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
+  val TestData: Seq[(String, Int)] = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
 
-  val TestSpec = FeatureSpec
+  val TestSpec: FeatureSpec[(String, Int)] = FeatureSpec
     .of[(String, Int)]
     .required(_._1)(OneHotEncoder("one_hot"))
     .required(_._2.toDouble)(MinMaxScaler("min_max"))
 
-  val ExpectedNames =
+  val ExpectedNames: Seq[String] =
     Seq("one_hot_a", "one_hot_b", "one_hot_c", "one_hot_d", "one_hot_e", "min_max")
 
-  val ExpectedValues = Seq(
+  val ExpectedValues: Seq[Seq[Double]] = Seq(
     Seq(1.0, 0.0, 0.0, 0.0, 0.0, 0.00),
     Seq(0.0, 1.0, 0.0, 0.0, 0.0, 0.25),
     Seq(0.0, 0.0, 1.0, 0.0, 0.0, 0.50),
@@ -44,7 +45,7 @@ object Fixtures {
     Seq(0.0, 0.0, 0.0, 0.0, 1.0, 1.00)
   )
 
-  val ExpectedMapValues = Seq(
+  val ExpectedMapValues: Seq[Map[String, Double]] = Seq(
     Map("one_hot_a" -> 1.0, "min_max" -> 0.0),
     Map("one_hot_b" -> 1.0, "min_max" -> 0.25),
     Map("one_hot_c" -> 1.0, "min_max" -> 0.5),
@@ -62,7 +63,7 @@ object Fixtures {
     s3: Seq[WeightedLabel]
   )
 
-  val Records = (1 to 100).map { x =>
+  val Records: immutable.IndexedSeq[Record] = (1 to 100).map { x =>
     val d = x.toDouble
     val s = "v" + d
     Record(
@@ -112,7 +113,7 @@ object Fixtures {
     .required(_.v)(VectorIdentity("vec-id"))
     .required(_.x)(VonMisesEvaluator("von-mises", 1.0, 0.01, Array(0.0, 1.0, 2.0)))
 
-  val RecordSpec = MultiFeatureSpec(RecordSpec1, RecordSpec2)
+  val RecordSpec: MultiFeatureSpec[Record] = MultiFeatureSpec(RecordSpec1, RecordSpec2)
 
   {
     val pkg = "com.spotify.featran.transformers"

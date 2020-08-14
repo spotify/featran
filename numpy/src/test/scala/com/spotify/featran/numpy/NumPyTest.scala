@@ -19,7 +19,6 @@ package com.spotify.featran.numpy
 
 import java.io.{ByteArrayOutputStream, OutputStream}
 
-import org.scalatest._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

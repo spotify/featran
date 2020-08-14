@@ -19,7 +19,6 @@ package com.spotify.featran.flink
 
 import com.spotify.featran._
 import org.apache.flink.api.scala._
-import org.scalatest._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

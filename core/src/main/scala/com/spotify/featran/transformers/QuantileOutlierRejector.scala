@@ -118,7 +118,7 @@ abstract private class BaseQuantileRejector(name: String, val numBuckets: Int, v
 
   import BaseQuantileRejector.{B, C}
 
-  implicit val sg = new QTreeSemigroup[Double](k)
+  implicit val sg: QTreeSemigroup[Double] = new QTreeSemigroup[Double](k)
 
   override val aggregator: Aggregator[Double, B, C] =
     Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to {

@@ -57,28 +57,28 @@ object NumPyType {
       writeLong(java.lang.Double.doubleToLongBits(v))
   }
 
-  implicit val intNumPyType = new NumPyType[Int] {
+  implicit val intNumPyType: NumPyType[Int] = new NumPyType[Int] {
     override val descr: String = "<i4"
     override val sizeOf: Int = 4
     override def write(out: OutputStream, value: Int): Unit =
       out.writeInt(value)
   }
 
-  implicit val longNumPyType = new NumPyType[Long] {
+  implicit val longNumPyType: NumPyType[Long] = new NumPyType[Long] {
     override val descr: String = "<i8"
     override val sizeOf: Int = 8
     override def write(out: OutputStream, value: Long): Unit =
       out.writeLong(value)
   }
 
-  implicit val floatNumPyType = new NumPyType[Float] {
+  implicit val floatNumPyType: NumPyType[Float] = new NumPyType[Float] {
     override val descr: String = "<f4"
     override val sizeOf: Int = 4
     override def write(out: OutputStream, value: Float): Unit =
       out.writeFloat(value)
   }
 
-  implicit val doubleNumPyType = new NumPyType[Double] {
+  implicit val doubleNumPyType: NumPyType[Double] = new NumPyType[Double] {
     override val descr: String = "<f8"
     override val sizeOf: Int = 8
     override def write(out: OutputStream, value: Double): Unit =

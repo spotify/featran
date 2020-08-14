@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object NHotEncoderSpec extends TransformerProp("NHotEncoder") {
-  implicit private val labelArb = Arbitrary {
+  implicit private val labelArb: Arbitrary[List[String]] = Arbitrary {
     Gen.choose(1, 10).flatMap(Gen.listOfN(_, Gen.alphaStr))
   }
 

@@ -33,6 +33,6 @@ final class SparseLabeledPoint private[xgboost] (
   baseMargin: Float = Float.NaN
 ) extends Serializable {
   require(indices != null, "Indices can't be null")
-  val labeledPoint =
+  val labeledPoint: LabeledPoint =
     LabeledPoint(label, indices, values, weight, group, baseMargin)
 }
