@@ -415,7 +415,20 @@ lazy val commonScalacOptions = Seq(
   "-language:implicitConversions",
   "-unchecked",
   "-Ywarn-unused",
-  "-Ywarn-dead-code"
+  "-Ywarn-dead-code",
+  "-Xcheckinit",
+  "-Xlint:adapted-args",
+  "-Xlint:delayedinit-select",
+  "-Xlint:doc-detached",
+  "-Xlint:inaccessible",
+  "-Xlint:infer-any",
+  "-Xlint:missing-interpolator",
+  "-Xlint:nullary-unit",
+  "-Xlint:option-implicit",
+  "-Xlint:poly-implicit-overload",
+  "-Xlint:private-shadow",
+  "-Xlint:stars-align",
+  "-Xlint:type-parameter-shadow"
 )
 
 lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
