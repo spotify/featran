@@ -19,7 +19,6 @@ package com.spotify.featran.java
 
 import com.spotify.featran.SparseArray
 import com.spotify.featran.xgboost.SparseLabeledPoint
-import org.scalatest._
 import org.tensorflow.example.Example
 
 import scala.collection.JavaConverters._

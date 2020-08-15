@@ -23,7 +23,7 @@ import org.scalacheck._
 import scala.math.ceil
 
 object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
-  implicit private val labelArb = Arbitrary(Gen.alphaStr)
+  implicit private val labelArb: Arbitrary[String] = Arbitrary(Gen.alphaStr)
 
   private def estimateSize(xs: List[List[String]]): Double = {
     val m = new HyperLogLogMonoid(12)

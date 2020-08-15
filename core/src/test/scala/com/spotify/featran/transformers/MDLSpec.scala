@@ -21,7 +21,7 @@ import com.spotify.featran.transformers.mdl.MDLPDiscretizer
 import org.scalacheck._
 
 object MDLSpec extends TransformerProp("MDL") {
-  implicit private val arbMdlRecord = Arbitrary {
+  implicit private val arbMdlRecord: Arbitrary[MDLRecord[String]] = Arbitrary {
     for {
       label <- Gen.oneOf("1", "2", "3")
       value <- Gen.posNum[Double]

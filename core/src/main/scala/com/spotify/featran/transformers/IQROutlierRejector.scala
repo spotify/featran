@@ -17,7 +17,6 @@
 
 package com.spotify.featran.transformers
 
-import com.spotify.featran.FeatureRejection
 import com.twitter.algebird.QTreeAggregator
 
 /**

@@ -19,7 +19,6 @@ package com.spotify.featran.scalding
 
 import com.spotify.featran._
 import com.twitter.scalding._
-import org.scalatest._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

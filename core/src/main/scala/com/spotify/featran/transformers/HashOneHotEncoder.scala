@@ -111,7 +111,7 @@ abstract private[featran] class BaseHashHotEncoder[A](
   require(sizeScalingFactor >= 1.0, "hashBucketSize must be >= 1.0")
 
   private val hllBits = 12
-  implicit protected val hllMonoid = new HyperLogLogMonoid(hllBits)
+  implicit protected val hllMonoid: HyperLogLogMonoid = new HyperLogLogMonoid(hllBits)
 
   def prepare(a: A): HLL
 
