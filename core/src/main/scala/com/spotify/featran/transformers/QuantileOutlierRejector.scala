@@ -119,13 +119,12 @@ abstract private class BaseQuantileRejector(name: String, val numBuckets: Int, v
   implicit val sg: QTreeSemigroup[Double] = new QTreeSemigroup[Double](k)
 
   override val aggregator: Aggregator[Double, B, C] =
-    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to {
-      case (qt, min, max) =>
-        val lq = (numBuckets - 1.0) / numBuckets
-        val fq = 1.0 / numBuckets
-        val (u, _) = qt.quantileBounds(lq)
-        val (_, l) = qt.quantileBounds(fq)
-        (l, u, min.get, max.get)
+    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to { case (qt, min, max) =>
+      val lq = (numBuckets - 1.0) / numBuckets
+      val fq = 1.0 / numBuckets
+      val (u, _) = qt.quantileBounds(lq)
+      val (_, l) = qt.quantileBounds(fq)
+      (l, u, min.get, max.get)
     }
 
   override def encodeAggregator(c: (Double, Double, Double, Double)): String =

@@ -83,9 +83,8 @@ private[transformers] class ThresholdFinder(
     while (queue.nonEmpty && result.length < maxBins) {
       val (bounds, lastThresh) = queue.dequeue
       // Filter the candidates between the last limits added to the queue
-      val newCandidates = candidates.filter {
-        case (th, _) =>
-          th > bounds._1 && th < bounds._2
+      val newCandidates = candidates.filter { case (th, _) =>
+        th > bounds._1 && th < bounds._2
       }
       if (newCandidates.length > 0) {
         evalThresholds(newCandidates, lastThresh, nLabels) match {
@@ -106,22 +105,21 @@ private[transformers] class ThresholdFinder(
     totals: Array[Long]
   ): Seq[(Double, Float)] = {
     val bucketInfo = new BucketInfo(totals)
-    entropyFreqs.flatMap {
-      case (cand, _, leftFreqs, rightFreqs) =>
-        val duplicate = lastSelected match {
-          case None       => false
-          case Some(last) => cand == last
-        }
-        // avoid computing entropy if we have a dupe
-        if (duplicate) {
-          None
-        } else {
-          val (criterionValue, weightedHs, leftSum, rightSum) =
-            calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
-          val criterion =
-            criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
-          if (criterion) Some((weightedHs, cand)) else None
-        }
+    entropyFreqs.flatMap { case (cand, _, leftFreqs, rightFreqs) =>
+      val duplicate = lastSelected match {
+        case None       => false
+        case Some(last) => cand == last
+      }
+      // avoid computing entropy if we have a dupe
+      if (duplicate) {
+        None
+      } else {
+        val (criterionValue, weightedHs, leftSum, rightSum) =
+          calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
+        val criterion =
+          criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
+        if (criterion) Some((weightedHs, cand)) else None
+      }
     }
   }
 
@@ -146,11 +144,10 @@ private[transformers] class ThresholdFinder(
     var leftAccum = Array.fill(nLabels)(0L)
     var entropyFreqs =
       List.empty[(Float, Array[Long], Array[Long], Array[Long])]
-    candidates.foreach {
-      case (cand, freq) =>
-        leftAccum = MDLUtil.plus(leftAccum, freq)
-        val rightTotal = MDLUtil.minus(totals, leftAccum)
-        entropyFreqs = (cand, freq, leftAccum, rightTotal) :: entropyFreqs
+    candidates.foreach { case (cand, freq) =>
+      leftAccum = MDLUtil.plus(leftAccum, freq)
+      val rightTotal = MDLUtil.minus(totals, leftAccum)
+      entropyFreqs = (cand, freq, leftAccum, rightTotal) :: entropyFreqs
     }
 
     // select best threshold according to the criteria

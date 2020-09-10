@@ -268,14 +268,13 @@ private class FeatureSet[T](
   private[featran] val crossings: Crossings
 ) extends Serializable {
   {
-    val (_, dups) = features.foldLeft((Set.empty[String], Set.empty[String])) {
-      case ((u, d), f) =>
-        val n = f.transformer.name
-        if (u.contains(n)) {
-          (u, d + n)
-        } else {
-          (u + n, d)
-        }
+    val (_, dups) = features.foldLeft((Set.empty[String], Set.empty[String])) { case ((u, d), f) =>
+      val n = f.transformer.name
+      if (u.contains(n)) {
+        (u, d + n)
+      } else {
+        (u + n, d)
+      }
     }
     require(dups.isEmpty, "duplicate transformer names: " + dups.mkString(", "))
   }
@@ -340,9 +339,8 @@ private class FeatureSet[T](
       }
       i += 1
     }
-    crossings.map.keys.foreach {
-      case (n1, n2) =>
-        sum += m(n1) * m(n2)
+    crossings.map.keys.foreach { case (n1, n2) =>
+      sum += m(n1) * m(n2)
     }
     sum
   }
@@ -363,14 +361,13 @@ private class FeatureSet[T](
       }
       i += 1
     }
-    crossings.map.keys.foreach {
-      case (n1, n2) =>
-        for {
-          x <- m(n1)
-          y <- m(n2)
-        } {
-          b += Crossings.name(x, y)
-        }
+    crossings.map.keys.foreach { case (n1, n2) =>
+      for {
+        x <- m(n1)
+        y <- m(n2)
+      } {
+        b += Crossings.name(x, y)
+      }
     }
     b.result()
   }
@@ -446,14 +443,13 @@ private class MultiFeatureSet[T](
     var idx = 0
     while (idx < dims) {
       val m = maps(idx).withDefaultValue(Nil)
-      crossings.map.keys.foreach {
-        case (n1, n2) =>
-          for {
-            x <- m(n1)
-            y <- m(n2)
-          } {
-            bs(idx) += Crossings.name(x, y)
-          }
+      crossings.map.keys.foreach { case (n1, n2) =>
+        for {
+          x <- m(n1)
+          y <- m(n2)
+        } {
+          bs(idx) += Crossings.name(x, y)
+        }
       }
       idx += 1
     }
@@ -480,9 +476,8 @@ private class MultiFeatureSet[T](
     var idx = 0
     while (idx < dims) {
       val m = maps(idx).withDefaultValue(0)
-      crossings.map.keys.foreach {
-        case (n1, n2) =>
-          sums(idx) += m(n1) * m(n2)
+      crossings.map.keys.foreach { case (n1, n2) =>
+        sums(idx) += m(n1) * m(n2)
       }
       idx += 1
     }

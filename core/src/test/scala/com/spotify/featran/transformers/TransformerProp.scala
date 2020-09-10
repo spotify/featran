@@ -96,9 +96,8 @@ abstract class TransformerProp(name: String) extends Properties(name) {
         val fMap = f1.featureValues[Map[String, Double]]
         val eMap = expected.map(v => (names zip v).toMap)
         // expected map is a superset of feature map
-        (fMap zip eMap).forall {
-          case (f, e) =>
-            f.forall { case (k, v) => e.get(k).map(d2e).contains(d2e(v)) }
+        (fMap zip eMap).forall { case (f, e) =>
+          f.forall { case (k, v) => e.get(k).map(d2e).contains(d2e(v)) }
         }
       },
       "f2 settings" |: settings == f2.featureSettings,

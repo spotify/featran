@@ -22,9 +22,8 @@ import com.spotify.featran.transformers.Settings
 /** Companion object for [[MultiFeatureSpec]]. */
 object MultiFeatureSpec {
   def apply[T](specs: FeatureSpec[T]*): MultiFeatureSpec[T] = {
-    val nameToSpec: Map[String, Int] = specs.iterator.zipWithIndex.flatMap {
-      case (spec, index) =>
-        spec.features.map(_.transformer.name -> index)
+    val nameToSpec: Map[String, Int] = specs.iterator.zipWithIndex.flatMap { case (spec, index) =>
+      spec.features.map(_.transformer.name -> index)
     }.toMap
 
     new MultiFeatureSpec(

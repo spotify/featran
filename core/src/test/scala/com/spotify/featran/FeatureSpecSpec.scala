@@ -33,8 +33,8 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   implicit val arbWrapperRecords: Arbitrary[List[RecordWrapper]] = Arbitrary {
     Gen.listOfN(
       100,
-      Arbitrary.arbitrary[(Double, Double, Option[Double])].map {
-        case (d1, d2, od) => RecordWrapper(Record(d2, od), d1)
+      Arbitrary.arbitrary[(Double, Double, Option[Double])].map { case (d1, d2, od) =>
+        RecordWrapper(Record(d2, od), d1)
       }
     )
   }

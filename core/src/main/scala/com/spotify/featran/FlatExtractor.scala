@@ -125,10 +125,9 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
   }
 
   @transient private[this] val dimSize: M[Int] = converters.map { items =>
-    items.map {
-      case (_, aggr, tr) =>
-        val ta = aggr.map(tr.decodeAggregator)
-        tr.unsafeFeatureDimension(ta)
+    items.map { case (_, aggr, tr) =>
+      val ta = aggr.map(tr.decodeAggregator)
+      tr.unsafeFeatureDimension(ta)
     }.sum
   }
 
@@ -139,15 +138,13 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
     records: M[T]
   ): M[(F, Map[String, FeatureRejection])] = {
     val fb = FeatureBuilder[F].newBuilder
-    records.cross(converters).cross(dimSize).map {
-      case ((record, convs), size) =>
-        fb.init(size)
-        convs.foreach {
-          case (fn, aggr, conv) =>
-            val a = aggr.map(conv.decodeAggregator)
-            conv.unsafeBuildFeatures(fn(record), a, fb)
-        }
-        (fb.result, fb.rejections)
+    records.cross(converters).cross(dimSize).map { case ((record, convs), size) =>
+      fb.init(size)
+      convs.foreach { case (fn, aggr, conv) =>
+        val a = aggr.map(conv.decodeAggregator)
+        conv.unsafeBuildFeatures(fn(record), a, fb)
+      }
+      (fb.result, fb.rejections)
     }
   }
 }

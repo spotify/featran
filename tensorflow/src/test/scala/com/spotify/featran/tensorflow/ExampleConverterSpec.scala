@@ -45,16 +45,15 @@ class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
       100,
       Arbitrary
         .arbitrary[(Float, String)]
-        .map {
-          case (num, str) =>
-            TransformerTypes(
-              num.toDouble,
-              str,
-              List(num.toDouble),
-              List(str),
-              List(WeightedLabel(str, num.toDouble)),
-              MDLRecord(str, num.toDouble)
-            )
+        .map { case (num, str) =>
+          TransformerTypes(
+            num.toDouble,
+            str,
+            List(num.toDouble),
+            List(str),
+            List(WeightedLabel(str, num.toDouble)),
+            MDLRecord(str, num.toDouble)
+          )
         }
     )
   }

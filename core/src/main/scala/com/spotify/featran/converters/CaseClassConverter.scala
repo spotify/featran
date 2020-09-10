@@ -46,78 +46,77 @@ object CaseClassConverter {
     d: DefaultTransform[Double]
   ): FeatureSpec[T] =
     properties[T].zipWithIndex
-      .foldLeft(FeatureSpec.of[T]) {
-        case (s, (m, idx)) =>
-          @transient val method = m
-          val name = method.name.toString
-          method.info.resultType match {
-            // Native Types
-            case c if c =:= typeOf[Int] =>
-              s.required[Double](v => get(v, idx).asInstanceOf[Int].toDouble)(d(name))
-            case c if c =:= typeOf[Long] =>
-              s.required[Double](v => get(v, idx).asInstanceOf[Long].toDouble)(d(name))
-            case c if c =:= typeOf[Short] =>
-              s.required[Double](v => get(v, idx).asInstanceOf[Short].toDouble)(d(name))
-            case c if c =:= typeOf[Boolean] =>
-              s.required[Double](v => get(v, idx).asInstanceOf[Boolean].asDouble)(d(name))
-            case c if c =:= typeOf[Double] =>
-              s.required[Double](v => get(v, idx).asInstanceOf[Double])(d(name))
-            // Optional Native Types
-            case c if c =:= typeOf[Option[Int]] =>
-              s.optional[Double](v => get(v, idx).asInstanceOf[Option[Int]].map(_.toDouble))(
-                d(name)
-              )
-            case c if c =:= typeOf[Option[Long]] =>
-              s.optional[Double](v => get(v, idx).asInstanceOf[Option[Long]].map(_.toDouble))(
-                d(name)
-              )
-            case c if c =:= typeOf[Option[Short]] =>
-              s.optional[Double](v => get(v, idx).asInstanceOf[Option[Short]].map(_.toDouble))(
-                d(name)
-              )
-            case c if c =:= typeOf[Option[Boolean]] =>
-              s.optional[Double](v => get(v, idx).asInstanceOf[Option[Boolean]].map(_.asDouble))(
-                d(name)
-              )
-            case c if c =:= typeOf[Option[Double]] =>
-              s.optional[Double](v => get(v, idx).asInstanceOf[Option[Double]])(d(name))
-            // Seq Native Types
-            case c if c <:< typeOf[Seq[Int]] =>
-              s.required(v => get(v, idx).asInstanceOf[Seq[Int]].map(_.toDouble))(
-                VectorIdentity(name)
-              )
-            case c if c <:< typeOf[Seq[Long]] =>
-              s.required(v => get(v, idx).asInstanceOf[Seq[Long]].map(_.toDouble))(
-                VectorIdentity(name)
-              )
-            case c if c <:< typeOf[Seq[Short]] =>
-              s.required(v => get(v, idx).asInstanceOf[Seq[Short]].map(_.toDouble))(
-                VectorIdentity(name)
-              )
-            case c if c <:< typeOf[Seq[Boolean]] =>
-              s.required(v => get(v, idx).asInstanceOf[Seq[Boolean]].map(_.asDouble))(
-                VectorIdentity(name)
-              )
-            case c if c <:< typeOf[Seq[Double]] =>
-              s.required(v => get(v, idx).asInstanceOf[Seq[Double]])(VectorIdentity(name))
-            // Strings
-            case c if c =:= typeOf[String] =>
-              s.required[String](v => get(v, idx).asInstanceOf[String])(OneHotEncoder(name))
-            case c if c =:= typeOf[Option[String]] =>
-              s.optional[String](v => get(v, idx).asInstanceOf[Option[String]])(OneHotEncoder(name))
-            case c if c <:< typeOf[Seq[String]] =>
-              s.required[Seq[String]](v => get(v, idx).asInstanceOf[Seq[String]])(NHotEncoder(name))
-            case c if c <:< typeOf[MDLRecord[String]] =>
-              s.required[MDLRecord[String]](v => get(v, idx).asInstanceOf[MDLRecord[String]])(
-                MDL(name)
-              )
-            case c if c <:< typeOf[Seq[WeightedLabel]] =>
-              s.required[Seq[WeightedLabel]](v => get(v, idx).asInstanceOf[Seq[WeightedLabel]])(
-                NHotWeightedEncoder(name)
-              )
-            case _ =>
-              sys.error("Not matching Conversions for " + m.toString)
-          }
+      .foldLeft(FeatureSpec.of[T]) { case (s, (m, idx)) =>
+        @transient val method = m
+        val name = method.name.toString
+        method.info.resultType match {
+          // Native Types
+          case c if c =:= typeOf[Int] =>
+            s.required[Double](v => get(v, idx).asInstanceOf[Int].toDouble)(d(name))
+          case c if c =:= typeOf[Long] =>
+            s.required[Double](v => get(v, idx).asInstanceOf[Long].toDouble)(d(name))
+          case c if c =:= typeOf[Short] =>
+            s.required[Double](v => get(v, idx).asInstanceOf[Short].toDouble)(d(name))
+          case c if c =:= typeOf[Boolean] =>
+            s.required[Double](v => get(v, idx).asInstanceOf[Boolean].asDouble)(d(name))
+          case c if c =:= typeOf[Double] =>
+            s.required[Double](v => get(v, idx).asInstanceOf[Double])(d(name))
+          // Optional Native Types
+          case c if c =:= typeOf[Option[Int]] =>
+            s.optional[Double](v => get(v, idx).asInstanceOf[Option[Int]].map(_.toDouble))(
+              d(name)
+            )
+          case c if c =:= typeOf[Option[Long]] =>
+            s.optional[Double](v => get(v, idx).asInstanceOf[Option[Long]].map(_.toDouble))(
+              d(name)
+            )
+          case c if c =:= typeOf[Option[Short]] =>
+            s.optional[Double](v => get(v, idx).asInstanceOf[Option[Short]].map(_.toDouble))(
+              d(name)
+            )
+          case c if c =:= typeOf[Option[Boolean]] =>
+            s.optional[Double](v => get(v, idx).asInstanceOf[Option[Boolean]].map(_.asDouble))(
+              d(name)
+            )
+          case c if c =:= typeOf[Option[Double]] =>
+            s.optional[Double](v => get(v, idx).asInstanceOf[Option[Double]])(d(name))
+          // Seq Native Types
+          case c if c <:< typeOf[Seq[Int]] =>
+            s.required(v => get(v, idx).asInstanceOf[Seq[Int]].map(_.toDouble))(
+              VectorIdentity(name)
+            )
+          case c if c <:< typeOf[Seq[Long]] =>
+            s.required(v => get(v, idx).asInstanceOf[Seq[Long]].map(_.toDouble))(
+              VectorIdentity(name)
+            )
+          case c if c <:< typeOf[Seq[Short]] =>
+            s.required(v => get(v, idx).asInstanceOf[Seq[Short]].map(_.toDouble))(
+              VectorIdentity(name)
+            )
+          case c if c <:< typeOf[Seq[Boolean]] =>
+            s.required(v => get(v, idx).asInstanceOf[Seq[Boolean]].map(_.asDouble))(
+              VectorIdentity(name)
+            )
+          case c if c <:< typeOf[Seq[Double]] =>
+            s.required(v => get(v, idx).asInstanceOf[Seq[Double]])(VectorIdentity(name))
+          // Strings
+          case c if c =:= typeOf[String] =>
+            s.required[String](v => get(v, idx).asInstanceOf[String])(OneHotEncoder(name))
+          case c if c =:= typeOf[Option[String]] =>
+            s.optional[String](v => get(v, idx).asInstanceOf[Option[String]])(OneHotEncoder(name))
+          case c if c <:< typeOf[Seq[String]] =>
+            s.required[Seq[String]](v => get(v, idx).asInstanceOf[Seq[String]])(NHotEncoder(name))
+          case c if c <:< typeOf[MDLRecord[String]] =>
+            s.required[MDLRecord[String]](v => get(v, idx).asInstanceOf[MDLRecord[String]])(
+              MDL(name)
+            )
+          case c if c <:< typeOf[Seq[WeightedLabel]] =>
+            s.required[Seq[WeightedLabel]](v => get(v, idx).asInstanceOf[Seq[WeightedLabel]])(
+              NHotWeightedEncoder(name)
+            )
+          case _ =>
+            sys.error("Not matching Conversions for " + m.toString)
+        }
       }
 
 }

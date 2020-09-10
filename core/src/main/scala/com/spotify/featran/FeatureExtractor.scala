@@ -38,19 +38,16 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
 
   @transient private[featran] lazy val aggregate: M[ARRAY] = settings match {
     case Some(x) =>
-      x.cross(fs).map {
-        case (s, spec) =>
-          spec.decodeAggregators(decode[Seq[Settings]](s).right.get)
+      x.cross(fs).map { case (s, spec) =>
+        spec.decodeAggregators(decode[Seq[Settings]](s).right.get)
       }
     case None =>
       as.cross(fs)
-        .map {
-          case ((_, array), featureSet) =>
-            (featureSet, featureSet.unsafePrepare(array))
+        .map { case ((_, array), featureSet) =>
+          (featureSet, featureSet.unsafePrepare(array))
         }
-        .reduce {
-          case ((featureSet, a), (_, b)) =>
-            (featureSet, featureSet.unsafeSum(a, b))
+        .reduce { case ((featureSet, a), (_, b)) =>
+          (featureSet, featureSet.unsafeSum(a, b))
         }
         .map { case (featureSet, array) => featureSet.unsafePresent(array) }
   }
@@ -64,9 +61,8 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
   @transient lazy val featureSettings: M[String] = settings match {
     case Some(x) => x
     case None =>
-      aggregate.cross(fs).map {
-        case (a, featureSet) =>
-          encode[Seq[Settings]](featureSet.featureSettings(a)).noSpaces
+      aggregate.cross(fs).map { case (a, featureSet) =>
+        encode[Seq[Settings]](featureSet.featureSettings(a)).noSpaces
       }
   }
 
@@ -90,11 +86,10 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
    */
   def featureResults[F: FeatureBuilder: ClassTag]: M[FeatureResult[F, T]] = {
     val fb = FeatureBuilder[F].newBuilder
-    as.cross(aggregate).cross(fs).map {
-      case (((o, a), c), spec) =>
-        val cfb = CrossingFeatureBuilder(fb, spec.crossings)
-        spec.featureValues(a, c, cfb)
-        FeatureResult(cfb.result, cfb.rejections, o)
+    as.cross(aggregate).cross(fs).map { case (((o, a), c), spec) =>
+      val cfb = CrossingFeatureBuilder(fb, spec.crossings)
+      spec.featureValues(a, c, cfb)
+      FeatureResult(cfb.result, cfb.rejections, o)
     }
   }
 }

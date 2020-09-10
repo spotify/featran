@@ -28,11 +28,10 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
 ) extends Serializable {
   private val labels = {
     val m = mutable.Map.empty[T, Int]
-    data.foreach {
-      case (k, _) =>
-        if (!m.contains(k)) {
-          m(k) = m.size
-        }
+    data.foreach { case (k, _) =>
+      if (!m.contains(k)) {
+        m(k) = m.size
+      }
     }
     m
   }
@@ -54,18 +53,17 @@ private[transformers] class MDLPDiscretizer[T: ClassTag](
 
   def discretize(maxBins: Int = MDLPDiscretizer.DefaultMaxBins): Seq[Double] = {
     val featureValues = new java.util.TreeMap[Float, Array[Long]]()
-    data.foreach {
-      case (label, value) =>
-        val key = value.toFloat
-        val i = labels(label)
-        val x = featureValues.get(key)
-        if (x == null) {
-          val y = Array.fill(labels.size)(0L)
-          y(i) = 1L
-          featureValues.put(key, y)
-        } else {
-          x(i) += 1L
-        }
+    data.foreach { case (label, value) =>
+      val key = value.toFloat
+      val i = labels(label)
+      val x = featureValues.get(key)
+      if (x == null) {
+        val y = Array.fill(labels.size)(0L)
+        y(i) = 1L
+        featureValues.put(key, y)
+      } else {
+        x(i) += 1L
+      }
     }
 
     val cutPoint = if (!featureValues.isEmpty) {

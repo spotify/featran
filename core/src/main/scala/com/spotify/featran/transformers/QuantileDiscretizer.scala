@@ -74,19 +74,18 @@ private[featran] class QuantileDiscretizer(name: String, val numBuckets: Int, va
   implicit val sg: QTreeSemigroup[Double] = new QTreeSemigroup[Double](k)
 
   override val aggregator: Aggregator[Double, B, C] =
-    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to {
-      case (qt, min, max) =>
-        val m = new JTreeMap[Double, Int]() // upper bound -> offset
-        val interval = 1.0 / numBuckets
-        for (i <- 1 until numBuckets) {
-          val (l, u) = qt.quantileBounds(interval * i)
-          val k = l / 2 + u / 2 // (l + u) might overflow
-          if (!m.containsKey(k)) { // in case of too few distinct values
-            m.put(k, i - 1)
-          }
+    Aggregators.from[Double](x => (QTree(x), Min(x), Max(x))).to { case (qt, min, max) =>
+      val m = new JTreeMap[Double, Int]() // upper bound -> offset
+      val interval = 1.0 / numBuckets
+      for (i <- 1 until numBuckets) {
+        val (l, u) = qt.quantileBounds(interval * i)
+        val k = l / 2 + u / 2 // (l + u) might overflow
+        if (!m.containsKey(k)) { // in case of too few distinct values
+          m.put(k, i - 1)
         }
-        m.put(qt.upperBound, numBuckets - 1)
-        (m, min.get, max.get)
+      }
+      m.put(qt.upperBound, numBuckets - 1)
+      (m, min.get, max.get)
     }
   override def featureDimension(c: C): Int = numBuckets
   override def featureNames(c: C): Seq[String] = names(numBuckets)

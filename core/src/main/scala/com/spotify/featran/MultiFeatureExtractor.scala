@@ -66,10 +66,9 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
     extractor.as
       .cross(extractor.aggregate)
       .cross(fs)
-      .map {
-        case (((o, a), c), featureSet) =>
-          val fb = featureSet.multiFeatureBuilders
-          featureSet.multiFeatureValues(a, c, fb)
-          (fb.map(_.result).toSeq, fb.map(_.rejections), o)
+      .map { case (((o, a), c), featureSet) =>
+        val fb = featureSet.multiFeatureBuilders
+        featureSet.multiFeatureValues(a, c, fb)
+        (fb.map(_.result).toSeq, fb.map(_.rejections), o)
       }
 }

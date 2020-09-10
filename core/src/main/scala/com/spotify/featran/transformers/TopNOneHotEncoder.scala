@@ -97,9 +97,8 @@ private[featran] class TopNOneHotEncoder(
       .composePrepare[String]((_, 1L))
       .andThenPresent { sm =>
         val b = SortedMap.newBuilder[String, Int]
-        sm.heavyHitterKeys.sorted.iterator.zipWithIndex.foreach {
-          case (k, r) =>
-            b += k -> r
+        sm.heavyHitterKeys.sorted.iterator.zipWithIndex.foreach { case (k, r) =>
+          b += k -> r
         }
         b.result()
       }

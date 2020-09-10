@@ -47,8 +47,8 @@ private case class Crossings(map: Crossings.MAP, keys: Set[String]) {
   def filter[T](predicate: String => Boolean): Crossings = {
     val filteredKeys = keys.filter(predicate)
     val b = SortedMap.newBuilder[Crossings.KEY, Crossings.FN]
-    b ++= map.filterKeys {
-      case (k1, k2) => filteredKeys.contains(k1) || filteredKeys.contains(k2)
+    b ++= map.filterKeys { case (k1, k2) =>
+      filteredKeys.contains(k1) || filteredKeys.contains(k2)
     }
     val filteredMap = b.result()
 
@@ -127,24 +127,23 @@ private class CrossingFeatureBuilder[F] private (
   }
   override def result: F = {
     updateDim()
-    crossings.map.foreach {
-      case ((t1, t2), f) =>
-        val d1 = xDims.getOrElse(t1, 0)
-        val d2 = xDims.getOrElse(t2, 0)
-        if (d1 > 0 && d2 > 0) {
-          val q1 = xValues(t1)
-          val q2 = xValues(t2)
-          var prev = -1
-          for (CrossValue(n1, o1, v1) <- q1) {
-            for (CrossValue(n2, o2, v2) <- q2) {
-              val offset = d2 * o1 + o2
-              fb.skip(offset - prev - 1)
-              fb.add(Crossings.name(n1, n2), f(v1, v2))
-              prev = offset
-            }
+    crossings.map.foreach { case ((t1, t2), f) =>
+      val d1 = xDims.getOrElse(t1, 0)
+      val d2 = xDims.getOrElse(t2, 0)
+      if (d1 > 0 && d2 > 0) {
+        val q1 = xValues(t1)
+        val q2 = xValues(t2)
+        var prev = -1
+        for (CrossValue(n1, o1, v1) <- q1) {
+          for (CrossValue(n2, o2, v2) <- q2) {
+            val offset = d2 * o1 + o2
+            fb.skip(offset - prev - 1)
+            fb.add(Crossings.name(n1, n2), f(v1, v2))
+            prev = offset
           }
-          fb.skip(d1 * d2 - prev - 1)
         }
+        fb.skip(d1 * d2 - prev - 1)
+      }
     }
     fb.result
   }

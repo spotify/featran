@@ -88,9 +88,8 @@ private[featran] class HeavyHitters(
       .composePrepare[String]((_, 1L))
       .andThenPresent { sm =>
         val b = Map.newBuilder[String, (Int, Long)]
-        sm.heavyHitterKeys.iterator.zipWithIndex.foreach {
-          case (k, r) =>
-            b += ((k, (r + 1, sketchMapParams.frequency(k, sm.valuesTable))))
+        sm.heavyHitterKeys.iterator.zipWithIndex.foreach { case (k, r) =>
+          b += ((k, (r + 1, sketchMapParams.frequency(k, sm.valuesTable))))
         }
         b.result()
       }
@@ -112,9 +111,8 @@ private[featran] class HeavyHitters(
     case None => fb.skip(2)
   }
   override def encodeAggregator(c: Map[String, (Int, Long)]): String =
-    c.map {
-      case (key, (rank, freq)) =>
-        s"${URLEncoder.encode(key, "UTF-8")}:$rank:$freq"
+    c.map { case (key, (rank, freq)) =>
+      s"${URLEncoder.encode(key, "UTF-8")}:$rank:$freq"
     }.mkString(",")
   override def decodeAggregator(s: String): Map[String, (Int, Long)] = {
     val kvs = s.split(",")

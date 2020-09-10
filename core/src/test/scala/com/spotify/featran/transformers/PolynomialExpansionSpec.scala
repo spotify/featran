@@ -53,11 +53,10 @@ object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
     } yield (n, k)
   }
 
-  property("binomial") = Prop.forAll(genNK) {
-    case (n, k) =>
-      val actual = Try(CombinatoricsUtils.binomialCoefficient(n, k))
-      val expected = Try(cmu.CombinatoricsUtils.binomialCoefficient(n, k))
-      actual.toOption == expected.toOption
+  property("binomial") = Prop.forAll(genNK) { case (n, k) =>
+    val actual = Try(CombinatoricsUtils.binomialCoefficient(n, k))
+    val expected = Try(cmu.CombinatoricsUtils.binomialCoefficient(n, k))
+    actual.toOption == expected.toOption
   }
 
   property("gcd") = Prop.forAll { (x: Int, y: Int) =>

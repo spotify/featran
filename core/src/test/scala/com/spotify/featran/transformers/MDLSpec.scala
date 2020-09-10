@@ -34,13 +34,12 @@ object MDLSpec extends TransformerProp("MDL") {
     val slices = ranges.tail
     val names = slices.indices.map("mdl_" + _)
 
-    val expected = xs.map {
-      case MDLRecord(_, x) =>
-        val array = Array.fill(slices.size)(0.0)
-        val bin = slices.zipWithIndex.find(_._1 > x).map(_._2).getOrElse(slices.length - 1)
+    val expected = xs.map { case MDLRecord(_, x) =>
+      val array = Array.fill(slices.size)(0.0)
+      val bin = slices.zipWithIndex.find(_._1 > x).map(_._2).getOrElse(slices.length - 1)
 
-        array(bin) = 1.0
-        array.toList
+      array(bin) = 1.0
+      array.toList
     }
 
     val missing = Seq.fill(slices.size)(0.0)
