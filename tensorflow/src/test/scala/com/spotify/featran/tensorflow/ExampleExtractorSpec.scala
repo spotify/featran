@@ -37,7 +37,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
   }
 
   implicit val arbStrs: Arbitrary[List[TFStr]] = Arbitrary {
-    Gen.listOfN(100, Arbitrary.arbitrary[(String)].map(v => TFStr(v)))
+    Gen.listOfN(100, Arbitrary.arbitrary[String].map(v => TFStr(v)))
   }
 
   def toExample(features: Features): Example =
