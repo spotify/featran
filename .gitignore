@@ -4,4 +4,5 @@ target
 .DS_Store
 .metals
 .bloop
+.bsp
 .java-version
