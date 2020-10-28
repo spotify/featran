@@ -56,12 +56,18 @@ lazy val commonSettings = Seq(
         "-Yno-adapted-args"
       )
   },
+  scalacOptions ++= {
+    if (isDotty.value)
+      Seq("-source:3.0-migration", "-rewrite", "-Xignore-scala2-macros", "-siteroot", "./docs")
+    else Nil
+  },
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
   testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.0" % CompileTime
+    ("org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.0" % CompileTime)
+      .withDottyCompat(scalaVersion.value)
   ),
   ivyConfigurations += CompileTime,
   unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name))
@@ -163,20 +169,21 @@ lazy val core: Project = project
   .settings(mimaSettings("featran-core"))
   .settings(
     name := "core",
+    scalaVersion := "0.27.0-RC1",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("2.12.12", "2.13.3"),
+    crossScalaVersions := Seq("0.27.0-RC1", "2.12.12", "2.13.3"),
     libraryDependencies ++= Seq(
-      "com.twitter" %% "algebird-core" % algebirdVersion,
-      "org.scalanlp" %% "breeze" % breezeVersion,
-      "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test",
       "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
     ),
     libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core",
-      "io.circe" %% "circe-parser"
-    ).map(_ % circeVersion)
+      "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
+      "com.twitter" %% "algebird-core" % algebirdVersion,
+      "org.scalanlp" %% "breeze" % breezeVersion,
+      "io.circe" %% "circe-core" % circeVersion,
+      "io.circe" %% "circe-parser" % circeVersion
+    ).map(_.withDottyCompat(scalaVersion.value))
   )
 
 lazy val java: Project = project
