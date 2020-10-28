@@ -20,7 +20,6 @@ package com.spotify.featran.json
 import com.spotify.featran.transformers.{MDLRecord, Settings, WeightedLabel}
 import com.spotify.featran.{FlatReader, FlatWriter}
 import io.circe._
-import io.circe.generic.semiauto
 import io.circe.parser.{decode => circeDecode}
 import io.circe.syntax._
 
@@ -74,9 +73,13 @@ private[featran] trait Implicits extends Serializable {
         Json.obj(seq.collect { case (n, Some(json)) => (n, json) }: _*)
     }
 
-  implicit val settingsDecoder: Decoder[Settings] = semiauto.deriveDecoder[Settings]
+  implicit val settingsDecoder: Decoder[Settings] =
+    Decoder.forProduct5("cls", "name", "params", "featureNames", "aggregators")(Settings.apply)
 
-  implicit val settingsEncoder: Encoder[Settings] = semiauto.deriveEncoder[Settings]
+  implicit val settingsEncoder: Encoder[Settings] =
+    Encoder.forProduct5("cls", "name", "params", "featureNames", "aggregators") { s =>
+      (s.cls, s.name, s.params, s.featureNames, s.aggregators)
+    }
 
   implicit val jsonFlatReader: FlatReader[String] = new FlatReader[String] {
     private def toFeature[T: Decoder](name: String): String => Option[T] =
