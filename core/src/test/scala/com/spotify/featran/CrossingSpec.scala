@@ -61,7 +61,7 @@ object CrossingSpec extends Properties("CrossingSpec") {
       f(v._1._2, v._2._3)
     )
 
-  property("dense") = Prop.forAll { xs: List[A] =>
+  property("dense") = Prop.forAll { (xs: List[A]) =>
     val f1 = FeatureSpec
       .of[A]
       .required(t => flatten(t._1))(VectorIdentity("a"))
@@ -82,7 +82,7 @@ object CrossingSpec extends Properties("CrossingSpec") {
     )
   }
 
-  property("dense multi") = Prop.forAll { xs: List[A] =>
+  property("dense multi") = Prop.forAll { (xs: List[A]) =>
     val f1 = FeatureSpec
       .of[A]
       .required(t => flatten(t._1))(VectorIdentity("a"))
@@ -129,7 +129,7 @@ object CrossingSpec extends Properties("CrossingSpec") {
     m1 ++ m2 ++ x
   }
 
-  property("sparse") = Prop.forAll { xs: List[B] =>
+  property("sparse") = Prop.forAll { (xs: List[B]) =>
     val f1 = FeatureSpec
       .of[B]
       .required(t => flatten(t._1))(NHotEncoder("a"))
@@ -150,7 +150,7 @@ object CrossingSpec extends Properties("CrossingSpec") {
     )
   }
 
-  property("sparse multi") = Prop.forAll { xs: List[B] =>
+  property("sparse multi") = Prop.forAll { (xs: List[B]) =>
     val f1 = FeatureSpec
       .of[B]
       .required(t => flatten(t._1))(NHotEncoder("a"))

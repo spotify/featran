@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import org.scalacheck.Prop
 
 object VectorIdentitySpec extends TransformerProp("VectorIdentity") {
-  property("default") = Prop.forAll { xs: List[List[Double]] =>
+  property("default") = Prop.forAll { (xs: List[List[Double]]) =>
     val dim = xs.head.length
     val names = (0 until dim).map("id_" + _)
     val expected = xs.map(_.toSeq)
@@ -29,7 +29,7 @@ object VectorIdentitySpec extends TransformerProp("VectorIdentity") {
     test[List[Double]](VectorIdentity("id"), xs, names, expected, missing, oob)
   }
 
-  property("length") = Prop.forAll { xs: List[List[Double]] =>
+  property("length") = Prop.forAll { (xs: List[List[Double]]) =>
     val msg = "requirement failed: Invalid input length, " +
       s"expected: ${xs.head.length + 1}, actual: ${xs.head.length}"
     testException[List[Double]](VectorIdentity("id", xs.head.length + 1), xs) { e =>

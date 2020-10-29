@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object BinarizerSpec extends TransformerProp("Binarizer") {
-  property("default") = Prop.forAll { xs: List[Double] =>
+  property("default") = Prop.forAll { (xs: List[Double]) =>
     val expected = xs.map(x => Seq(if (x > 0.0) 1.0 else 0.0))
     test(Binarizer("id"), xs, Seq("id"), expected, Seq(0.0))
   }

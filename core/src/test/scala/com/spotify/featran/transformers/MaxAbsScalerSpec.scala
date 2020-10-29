@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object MaxAbsScalerSpec extends TransformerProp("MaxAbsScaler") {
-  property("default") = Prop.forAll { xs: List[Double] =>
+  property("default") = Prop.forAll { (xs: List[Double]) =>
     val max = xs.map(math.abs).max
     val expected = xs.map(x => Seq(x / max))
     val oob = List((lowerBound(-max), Seq(-1.0)), (upperBound(max), Seq(1.0)))

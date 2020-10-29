@@ -32,7 +32,7 @@ object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
       test(PolynomialExpansion("poly", degree), xs, names, expected, missing, oob)
   }
 
-  property("length") = Prop.forAll { xs: List[Array[Double]] =>
+  property("length") = Prop.forAll { (xs: List[Array[Double]]) =>
     val msg = "requirement failed: Invalid input length, " +
       s"expected: ${xs.head.length + 1}, actual: ${xs.head.length}"
     testException[Array[Double]](PolynomialExpansion("id", 2, xs.head.length + 1), xs) { e =>
@@ -71,5 +71,5 @@ object PolynomialExpansionSpec extends TransformerProp("PolynomialExpansion") {
     actual.toOption == expected.toOption
   }
 
-  property("abs") = Prop.forAll { x: Int => CombinatoricsUtils.abs(x) == math.abs(x) }
+  property("abs") = Prop.forAll { (x: Int) => CombinatoricsUtils.abs(x) == math.abs(x) }
 }

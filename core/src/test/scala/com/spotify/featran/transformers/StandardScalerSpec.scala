@@ -26,34 +26,34 @@ object StandardScalerSpec extends TransformerProp("StandardScaler") {
     (mean, math.sqrt(xs.map(x => math.pow(x - mean, 2)).sum / xs.size))
   }
 
-  property("default") = Prop.forAll { xs: List[Double] =>
+  property("default") = Prop.forAll { (xs: List[Double]) =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev + mean))
     test(StandardScaler("std"), xs, Seq("std"), expected, Seq(mean))
   }
 
-  property("withStd withMean") = Prop.forAll { xs: List[Double] =>
+  property("withStd withMean") = Prop.forAll { (xs: List[Double]) =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev))
     val (withStd, withMean) = (true, true)
     test(StandardScaler("std", withStd, withMean), xs, Seq("std"), expected, Seq(0.0))
   }
 
-  property("withStd withoutMean") = Prop.forAll { xs: List[Double] =>
+  property("withStd withoutMean") = Prop.forAll { (xs: List[Double]) =>
     val (mean, stddev) = meanAndStddev(xs)
     val expected = xs.map(x => Seq((x - mean) / stddev + mean))
     val (withStd, withMean) = (true, false)
     test(StandardScaler("std", withStd, withMean), xs, Seq("std"), expected, Seq(mean))
   }
 
-  property("withoutStd withMean") = Prop.forAll { xs: List[Double] =>
+  property("withoutStd withMean") = Prop.forAll { (xs: List[Double]) =>
     val (mean, _) = meanAndStddev(xs)
     val expected = xs.map(x => Seq(x - mean))
     val (withStd, withMean) = (false, true)
     test(StandardScaler("std", withStd, withMean), xs, Seq("std"), expected, Seq(0.0))
   }
 
-  property("withoutStd withoutMean") = Prop.forAll { xs: List[Double] =>
+  property("withoutStd withoutMean") = Prop.forAll { (xs: List[Double]) =>
     val (mean, _) = meanAndStddev(xs)
     val expected = xs.map(Seq(_))
     val (withStd, withMean) = (false, false)

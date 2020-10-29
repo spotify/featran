@@ -22,7 +22,7 @@ import org.scalacheck._
 object OneHotEncoderSpec extends TransformerProp("OneHotEncoder") {
   implicit private val labelArb: Arbitrary[String] = Arbitrary(Gen.alphaStr)
 
-  property("default") = Prop.forAll { xs: List[String] =>
+  property("default") = Prop.forAll { (xs: List[String]) =>
     val cats = xs.distinct.sorted
     val names = cats.map("one_hot_" + _)
     val expected = xs.map(s => cats.map(c => if (s == c) 1.0 else 0.0))
@@ -31,7 +31,7 @@ object OneHotEncoderSpec extends TransformerProp("OneHotEncoder") {
     test(OneHotEncoder("one_hot"), xs, names, expected, missing, oob)
   }
 
-  property("encodeMissingValue") = Prop.forAll { xs: List[String] =>
+  property("encodeMissingValue") = Prop.forAll { (xs: List[String]) =>
     import MissingValue.MissingValueToken
     val cats = xs.distinct.sorted :+ MissingValueToken
     val names = cats.map("one_hot_" + _)

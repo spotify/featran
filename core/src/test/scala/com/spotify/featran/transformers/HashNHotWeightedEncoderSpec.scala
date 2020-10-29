@@ -40,17 +40,17 @@ object HashNHotWeightedEncoderSpec extends TransformerProp("HashNHotWeightedEnco
     Gen.listOfN(10, arb.arbitrary).suchThat(_.nonEmpty) // workaround for shrinking failure
   }
 
-  property("default") = Prop.forAll { xs: List[List[WeightedLabel]] =>
+  property("default") = Prop.forAll { (xs: List[List[WeightedLabel]]) =>
     val size = ceil(estimateSize(xs) * 8.0).toInt
     test(HashNHotWeightedEncoder("n_hot"), size, xs)
   }
 
-  property("size") = Prop.forAll { xs: List[List[WeightedLabel]] =>
+  property("size") = Prop.forAll { (xs: List[List[WeightedLabel]]) =>
     val size = 100
     test(HashNHotWeightedEncoder("n_hot", size), size, xs)
   }
 
-  property("scaling factor") = Prop.forAll { xs: List[List[WeightedLabel]] =>
+  property("scaling factor") = Prop.forAll { (xs: List[List[WeightedLabel]]) =>
     val scalingFactor = 4.0
     val size = ceil(estimateSize(xs) * scalingFactor).toInt
     test(HashNHotWeightedEncoder("n_hot", 0, scalingFactor), size, xs)

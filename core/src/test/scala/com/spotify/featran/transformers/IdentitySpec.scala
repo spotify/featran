@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import org.scalacheck._
 
 object IdentitySpec extends TransformerProp("Identity") {
-  property("default") = Prop.forAll { xs: List[Double] =>
+  property("default") = Prop.forAll { (xs: List[Double]) =>
     test(Identity("id"), xs, Seq("id"), xs.map(Seq(_)), Seq(0.0))
   }
 }

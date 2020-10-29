@@ -20,5 +20,5 @@ package com.spotify.featran.converters
 import org.scalacheck._
 
 object ConverterSpec extends Properties("converters") {
-  property("boolean.asDouble") = Prop.forAll { x: Boolean => x.asDouble == (if (x) 1.0 else 0.0) }
+  property("boolean.asDouble") = Prop.forAll { (x: Boolean) => x.asDouble == (if (x) 1.0 else 0.0) }
 }

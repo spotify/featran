@@ -58,7 +58,7 @@ lazy val commonSettings = Seq(
   },
   scalacOptions ++= {
     if (isDotty.value)
-      Seq("-source:3.0-migration", "-rewrite", "-Xignore-scala2-macros", "-siteroot", "./docs")
+      Seq("-source:3.0-migration", "-siteroot", "./docs")
     else Nil
   },
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
@@ -169,7 +169,6 @@ lazy val core: Project = project
   .settings(mimaSettings("featran-core"))
   .settings(
     name := "core",
-    scalaVersion := "0.27.0-RC1",
     moduleName := "featran-core",
     description := "Feature Transformers",
     crossScalaVersions := Seq("0.27.0-RC1", "2.12.12", "2.13.3"),

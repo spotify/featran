@@ -52,19 +52,19 @@ object HeavyHittersSpec extends TransformerProp("HeavyHitters") {
     test(transformer, xs, names, expected, missing)
   }
 
-  property("default") = Prop.forAll { xs: List[String] =>
+  property("default") = Prop.forAll { (xs: List[String]) =>
     test(HeavyHitters("hh", 10, seed = 1), xs, 10, 0.001, 0.001)
   }
 
-  property("count") = Prop.forAll { xs: List[String] =>
+  property("count") = Prop.forAll { (xs: List[String]) =>
     test(HeavyHitters("hh", 100, seed = 1), xs, 100, 0.001, 0.001)
   }
 
-  property("eps") = Prop.forAll { xs: List[String] =>
+  property("eps") = Prop.forAll { (xs: List[String]) =>
     test(HeavyHitters("hh", 10, eps = 0.01, seed = 1), xs, 10, 0.01, 0.001)
   }
 
-  property("delta") = Prop.forAll { xs: List[String] =>
+  property("delta") = Prop.forAll { (xs: List[String]) =>
     test(HeavyHitters("hh", 10, delta = 0.01, seed = 1), xs, 10, 0.001, 0.01)
   }
 }

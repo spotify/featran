@@ -43,7 +43,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   private val id2 = Identity("id2")
   private val id3 = Identity("id3")
 
-  property("required") = Prop.forAll { xs: List[Record] =>
+  property("required") = Prop.forAll { (xs: List[Record]) =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
@@ -51,7 +51,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("optional") = Prop.forAll { xs: List[Record] =>
+  property("optional") = Prop.forAll { (xs: List[Record]) =>
     val f = FeatureSpec.of[Record].optional(_.optD)(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
@@ -59,7 +59,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("array") = Prop.forAll { xs: List[Record] =>
+  property("array") = Prop.forAll { (xs: List[Record]) =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs.toArray)
     Prop.all(
       f.featureNames.toList == Seq(Seq("id")),
@@ -67,7 +67,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("default") = Prop.forAll { xs: List[Record] =>
+  property("default") = Prop.forAll { (xs: List[Record]) =>
     val f = FeatureSpec.of[Record].optional(_.optD, Some(0.5))(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
@@ -75,7 +75,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("nones") = Prop.forAll { xs: List[Record] =>
+  property("nones") = Prop.forAll { (xs: List[Record]) =>
     val f =
       FeatureSpec.of[Record].optional(_.optD, Some(0.5))(id).extract(xs.map(_.copy(optD = None)))
     Prop.all(
@@ -84,7 +84,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("generator") = Prop.forAll { xs: List[Record] =>
+  property("generator") = Prop.forAll { (xs: List[Record]) =>
     val spec = FeatureSpec.from[Record]
     val f = spec.extract(xs)
     Prop.all(
@@ -95,7 +95,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("composite") = Prop.forAll { xs: List[Record] =>
+  property("composite") = Prop.forAll { (xs: List[Record]) =>
     val f = FeatureSpec
       .of[Record]
       .required(_.d)(Identity("id1"))
@@ -107,7 +107,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("compose") = Prop.forAll { xs: List[RecordWrapper] =>
+  property("compose") = Prop.forAll { (xs: List[RecordWrapper]) =>
     val rSpec = FeatureSpec
       .of[Record]
       .required(_.d)(Identity("id1"))
@@ -124,7 +124,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("original") = Prop.forAll { xs: List[Record] =>
+  property("original") = Prop.forAll { (xs: List[Record]) =>
     val f = FeatureSpec.of[Record].required(_.d)(id).extract(xs)
     Prop.all(
       f.featureNames == Seq(Seq("id")),
@@ -132,7 +132,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("combine") = Prop.forAll { xs: List[Record] =>
+  property("combine") = Prop.forAll { (xs: List[Record]) =>
     val f1 = FeatureSpec.of[Record].required(_.d)(id)
     val f2 = FeatureSpec.of[Record].required(_.d)(id2)
     val result = FeatureSpec.combine(f1, f2).extract(xs)
@@ -142,7 +142,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("extra feature in settings") = Prop.forAll { xs: List[Record] =>
+  property("extra feature in settings") = Prop.forAll { (xs: List[Record]) =>
     val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
     val f2 = FeatureSpec.of[Record].required(_.d)(id)
     val settings = f1.extract(xs).featureSettings
@@ -153,7 +153,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("missing feature in settings") = Prop.forAll { xs: List[Record] =>
+  property("missing feature in settings") = Prop.forAll { (xs: List[Record]) =>
     val f1 = FeatureSpec.of[Record].required(_.d)(id)
     val f2 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
     val settings = f1.extract(xs).featureSettings
@@ -166,7 +166,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("record extractor") = Prop.forAll { xs: List[Record] =>
+  property("record extractor") = Prop.forAll { (xs: List[Record]) =>
     val f1 = FeatureSpec.of[Record].required(_.d)(id)
     val e1 = f1.extract(xs)
     val settings = e1.featureSettings.head
@@ -180,7 +180,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   }
 
   property("extract specified list of features according to predicate") = Prop.forAll {
-    xs: List[Record] =>
+    (xs: List[Record]) =>
       val f = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2)
       val includeFeatures = Set(id.name)
       val extracted = f
@@ -193,7 +193,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   }
 
   property("extract specified list of features according to predicate keeps order") = Prop.forAll {
-    xs: List[Record] =>
+    (xs: List[Record]) =>
       val spec = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
       val filtered = spec
         .filter(feature => Set(id.name, id3.name).contains(feature.transformer.name))
@@ -208,7 +208,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
       )
   }
 
-  property("extract with partial settings") = Prop.forAll { xs: List[Record] =>
+  property("extract with partial settings") = Prop.forAll { (xs: List[Record]) =>
     val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
     val includeList = Set(id.name, id3.name)
     val e1 = f1
@@ -224,7 +224,7 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
     )
   }
 
-  property("record extractor with partial settings") = Prop.forAll { xs: List[Record] =>
+  property("record extractor with partial settings") = Prop.forAll { (xs: List[Record]) =>
     val f1 = FeatureSpec.of[Record].required(_.d)(id).required(_.d)(id2).required(_.d)(id3)
     val includeList = Set(id.name, id3.name)
     val e1 = f1
