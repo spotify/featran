@@ -293,7 +293,7 @@ lazy val numpy: Project = project
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("2.12.12", "2.13.3"),
+    crossScalaVersions := Seq("0.27.0-RC1", "2.12.12", "2.13.3"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -328,10 +328,10 @@ lazy val xgboost: Project = project
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("2.12.12", "2.13.3"),
+    crossScalaVersions := Seq("0.27.0-RC1", "2.12.12", "2.13.3"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
-    )
+    ).map(_.withDottyCompat(scalaVersion.value))
   )
   .dependsOn(
     core,
@@ -348,7 +348,6 @@ lazy val examples: Project = project
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
     libraryDependencies ++= Seq(
-      "com.spotify" %% "scio-core" % scioVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion
     ),
     publish / skip := true
