@@ -17,7 +17,6 @@
 
 import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
 import sbt.Def
-import sbtrelease.ReleaseStateTransformations._
 
 val algebirdVersion = "0.13.7"
 val breezeVersion = "1.1"
@@ -35,6 +34,8 @@ val sparkVersion = "3.0.1"
 val tensorflowVersion = "1.15.0"
 val xgBoostVersion = "0.90"
 val shapelessDatatypeVersion = "0.2.0"
+
+val previousVersion = "0.7.0"
 
 val CompileTime = config("compile-time").hide
 
@@ -72,40 +73,6 @@ lazy val commonSettings = Seq(
 )
 
 lazy val publishSettings = Seq(
-  credentials ++= (for {
-    username <- sys.env.get("SONATYPE_USERNAME")
-    password <- sys.env.get("SONATYPE_PASSWORD")
-  } yield Credentials(
-    "Sonatype Nexus Repository Manager",
-    "oss.sonatype.org",
-    username,
-    password
-  )).toSeq,
-  publishTo := sonatypePublishToBundle.value,
-  releaseCrossBuild := true,
-  releasePublishArtifactsAction := PgpKeys.publishSigned.value,
-  releaseProcess := Seq[ReleaseStep](
-    checkSnapshotDependencies,
-    inquireVersions,
-    runClean,
-    ReleaseStep { st: State =>
-      if (!st.get(ReleaseKeys.skipTests).getOrElse(false)) {
-        releaseStepCommandAndRemaining("+test")(st)
-      } else {
-        st
-      }
-    },
-    setReleaseVersion,
-    commitReleaseVersion,
-    tagRelease,
-    releaseStepCommandAndRemaining("+publishSigned"),
-    releaseStepCommand("sonatypeBundleRelease"),
-    setNextVersion,
-    commitNextVersion,
-    pushChanges
-  ),
-  publishMavenStyle := true,
-  publishArtifact in Test := false,
   sonatypeProfileName := "com.spotify",
   licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
   homepage := Some(url("https://github.com/spotify/featran")),
@@ -444,54 +411,5 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
   Nil
 }
 
-// based on the nice https://github.com/typelevel/cats/blob/master/build.sbt#L208
-def mimaSettings(moduleName: String): Seq[Def.Setting[Set[sbt.ModuleID]]] = {
-  import sbtrelease.Version
-  // Safety Net for Exclusions
-  lazy val excludedVersions: Set[String] = Set()
-  // Safety Net for Inclusions
-  lazy val extraVersions: Set[String] = Set()
-
-  def semverBinCompatVersions(major: Int, minor: Int, patch: Int): Set[(Int, Int, Int)] = {
-    val majorVersions: List[Int] = List(major)
-    val minorVersions: List[Int] =
-      if (major >= 1) {
-        Range(0, minor).inclusive.toList
-      } else {
-        List(minor)
-      }
-
-    def patchVersions(currentMinVersion: Int): List[Int] =
-      if (minor == 0 && patch == 0) {
-        List.empty[Int]
-      } else {
-        if (currentMinVersion != minor) {
-          List(0)
-        } else {
-          Range(0, patch - 1).inclusive.toList
-        }
-      }
-
-    val versions = for {
-      maj <- majorVersions
-      min <- minorVersions
-      pat <- patchVersions(min)
-    } yield (maj, min, pat)
-    versions.toSet
-  }
-
-  def mimaVersions(version: String): Set[String] =
-    Version(version) match {
-      case Some(Version(major, Seq(minor, patch), _)) =>
-        semverBinCompatVersions(major.toInt, minor.toInt, patch.toInt)
-          .map { case (maj, min, pat) => s"${maj}.${min}.${pat}" }
-      case _ =>
-        Set.empty[String]
-    }
-
-  Seq(
-    mimaPreviousArtifacts := (mimaVersions(version.value) ++ extraVersions)
-      .diff(excludedVersions)
-      .map(v => "com.spotify" %% moduleName % v)
-  )
-}
+def mimaSettings(moduleName: String): Seq[Def.Setting[Set[sbt.ModuleID]]] =
+  Seq(mimaPreviousArtifacts += "com.spotify" %% moduleName % previousVersion)

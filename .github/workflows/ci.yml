@@ -1,0 +1,58 @@
+name: ci
+on: [push, pull_request]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - name: cache SBT
+        uses: coursier/cache-action@v3
+      - name: Java 11 setup
+        uses: olafurpg/setup-scala@v7
+        with:
+          java-version: 11
+      - run: sbt "; +scalafmtCheckAll; scalafmtSbtCheck" "; scalafixEnable; scalafixAll --check"
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - name: cache SBT
+        uses: coursier/cache-action@v3
+      - name: java ${{matrix.java}} setup
+        uses: olafurpg/setup-scala@v7
+        with:
+          java-version: ${{matrix.java}}
+      - if: startsWith(matrix.scala,'2.12')
+        run: |
+          sbt coverage "++${{matrix.scala}} test" coverageReport
+          bash <(curl -s https://codecov.io/bash)
+      - if: "!startsWith(matrix.scala,'2.12')"
+        run: sbt "++${{matrix.scala}} test"
+    strategy:
+      matrix:
+        java:
+          - 8
+          - 11
+        scala:
+          - 2.12.12
+          - 2.13.3
+  mimaReport:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.1.0
+      - name: cache SBT
+        uses: coursier/cache-action@v3
+      - name: java ${{matrix.java}} setup
+        uses: olafurpg/setup-scala@v7
+        with:
+          java-version: ${{matrix.java}}
+      - run: sbt "++${{matrix.scala}} mimaReportBinaryIssues"
+    strategy:
+      matrix:
+        java:
+          - 8
+          - 11
+        scala:
+          - 2.12.12
+          - 2.13.3

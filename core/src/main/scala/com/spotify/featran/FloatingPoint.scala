@@ -19,8 +19,6 @@ package com.spotify.featran
 
 import simulacrum.typeclass
 
-import scala.language.implicitConversions
-
 /** Type class for floating point primitives. */
 @typeclass trait FloatingPoint[@specialized(Float, Double) T] extends Serializable {
   def fromDouble(x: Double): T
