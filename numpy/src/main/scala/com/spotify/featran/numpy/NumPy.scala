@@ -20,9 +20,11 @@ package com.spotify.featran.numpy
 import java.io.OutputStream
 
 import simulacrum.typeclass
+import scala.annotation.implicitNotFound
 
 /** Type class for NumPy numeric types. */
-@typeclass trait NumPyType[@specialized(Int, Long, Float, Double) T] {
+@implicitNotFound("Could not find an instance of NumPyType for ${T}")
+@typeclass trait NumPyType[@specialized(Int, Long, Float, Double) T] extends Serializable {
   def descr: String
 
   def sizeOf: Int
@@ -84,6 +86,44 @@ object NumPyType {
     override def write(out: OutputStream, value: Double): Unit =
       out.writeDouble(value)
   }
+
+  /* ======================================================================== */
+  /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
+  /* ======================================================================== */
+
+  /** Summon an instance of [[NumPyType]] for `T`. */
+  @inline def apply[T](implicit instance: NumPyType[T]): NumPyType[T] = instance
+
+  object ops {
+    implicit def toAllNumPyTypeOps[T](target: T)(implicit tc: NumPyType[T]): AllOps[T] {
+      type TypeClassType = NumPyType[T]
+    } = new AllOps[T] {
+      type TypeClassType = NumPyType[T]
+      val self: T = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  trait Ops[@specialized(Int, Long, Float, Double) T] extends Serializable {
+    type TypeClassType <: NumPyType[T]
+    def self: T
+    val typeClassInstance: TypeClassType
+  }
+  trait AllOps[@specialized(Int, Long, Float, Double) T] extends Ops[T]
+  trait ToNumPyTypeOps extends Serializable {
+    implicit def toNumPyTypeOps[T](target: T)(implicit tc: NumPyType[T]): Ops[T] {
+      type TypeClassType = NumPyType[T]
+    } = new Ops[T] {
+      type TypeClassType = NumPyType[T]
+      val self: T = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  object nonInheritedOps extends ToNumPyTypeOps
+
+  /* ======================================================================== */
+  /* END OF SIMULACRUM-MANAGED CODE                                           */
+  /* ======================================================================== */
+
 }
 
 /** Utilities for writing data as NumPy `.npy` files. */

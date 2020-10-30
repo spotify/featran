@@ -21,8 +21,10 @@ import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
 import simulacrum.typeclass
 
 import scala.reflect.ClassTag
+import scala.annotation.implicitNotFound
 
 /** TypeClass for implementing the writer to a flat format keyed by name */
+@implicitNotFound("Could not find an instance of FlatWriter for ${T}")
 @typeclass trait FlatWriter[+T] extends Serializable {
   type IF
 
@@ -41,6 +43,46 @@ import scala.reflect.ClassTag
   def writeStrings(name: String): Option[Seq[String]] => IF
 
   def writer: Seq[IF] => T
+}
+
+object FlatWriter {
+  /* ======================================================================== */
+  /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
+  /* ======================================================================== */
+
+  /** Summon an instance of [[FlatWriter]] for `T`. */
+  @inline def apply[T](implicit instance: FlatWriter[T]): FlatWriter[T] = instance
+
+  object ops {
+    implicit def toAllFlatWriterOps[T](target: T)(implicit tc: FlatWriter[T]): AllOps[T] {
+      type TypeClassType = FlatWriter[T]
+    } = new AllOps[T] {
+      type TypeClassType = FlatWriter[T]
+      val self: T = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  trait Ops[T] extends Serializable {
+    type TypeClassType <: FlatWriter[T]
+    def self: T
+    val typeClassInstance: TypeClassType
+  }
+  trait AllOps[T] extends Ops[T]
+  trait ToFlatWriterOps extends Serializable {
+    implicit def toFlatWriterOps[T](target: T)(implicit tc: FlatWriter[T]): Ops[T] {
+      type TypeClassType = FlatWriter[T]
+    } = new Ops[T] {
+      type TypeClassType = FlatWriter[T]
+      val self: T = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  object nonInheritedOps extends ToFlatWriterOps
+
+  /* ======================================================================== */
+  /* END OF SIMULACRUM-MANAGED CODE                                           */
+  /* ======================================================================== */
+
 }
 
 /**
@@ -68,7 +110,7 @@ private[featran] class FlatConverter[T: ClassTag, A: ClassTag: FlatWriter](spec:
     feature.transformer.unsafeFlatWriter.apply(feature.f(t))
   }
 
-  private[this] val writer = FlatWriter[A].writer
+  private[this] val writer = FlatWriter[A].writer.asInstanceOf[Seq[FlatWriter[A]#IF] => A]
 
   def convert[M[_]: CollectionType](col: M[T]): M[A] =
     col.map(record => writer.apply(fns.iterator.map(f => f(record)).toList))

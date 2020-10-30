@@ -25,6 +25,7 @@ import simulacrum.typeclass
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
+import scala.annotation.implicitNotFound
 
 sealed trait FeatureRejection
 object FeatureRejection {
@@ -39,6 +40,7 @@ object FeatureRejection {
  * Type class for types to build feature into.
  * @tparam T output feature type
  */
+@implicitNotFound("Could not find an instance of FeatureBuilder for ${T}")
 @typeclass trait FeatureBuilder[T] extends Serializable { self =>
 
   private[this] val _rejections: mutable.Map[String, FeatureRejection] =
@@ -293,4 +295,42 @@ object FeatureBuilder {
   }
 
   implicit def mapFB[T: ClassTag: FloatingPoint]: FeatureBuilder[Map[String, T]] = MapFB()
+
+  /* ======================================================================== */
+  /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
+  /* ======================================================================== */
+
+  /** Summon an instance of [[FeatureBuilder]] for `T`. */
+  @inline def apply[T](implicit instance: FeatureBuilder[T]): FeatureBuilder[T] = instance
+
+  object ops {
+    implicit def toAllFeatureBuilderOps[T](target: T)(implicit tc: FeatureBuilder[T]): AllOps[T] {
+      type TypeClassType = FeatureBuilder[T]
+    } = new AllOps[T] {
+      type TypeClassType = FeatureBuilder[T]
+      val self: T = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  trait Ops[T] extends Serializable {
+    type TypeClassType <: FeatureBuilder[T]
+    def self: T
+    val typeClassInstance: TypeClassType
+  }
+  trait AllOps[T] extends Ops[T]
+  trait ToFeatureBuilderOps extends Serializable {
+    implicit def toFeatureBuilderOps[T](target: T)(implicit tc: FeatureBuilder[T]): Ops[T] {
+      type TypeClassType = FeatureBuilder[T]
+    } = new Ops[T] {
+      type TypeClassType = FeatureBuilder[T]
+      val self: T = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  object nonInheritedOps extends ToFeatureBuilderOps
+
+  /* ======================================================================== */
+  /* END OF SIMULACRUM-MANAGED CODE                                           */
+  /* ======================================================================== */
+
 }

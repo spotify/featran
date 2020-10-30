@@ -21,12 +21,14 @@ import simulacrum._
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
+import scala.annotation.implicitNotFound
 
 /**
  * Type class for collections to extract features from.
  * @tparam M collection type
  */
-@typeclass trait CollectionType[M[_]] {
+@implicitNotFound("Could not find an instance of CollectionType for ${M}")
+@typeclass trait CollectionType[M[_]] extends Serializable {
   def pure[A, B: ClassTag](ma: M[A])(a: B): M[B]
 
   def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B]
@@ -87,4 +89,51 @@ object CollectionType {
     override def cross[A, B: ClassTag](ma: Array[A])(mb: Array[B]): Array[(A, B)] =
       ma.map((_, mb.head))
   }
+
+  /* ======================================================================== */
+  /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
+  /* ======================================================================== */
+
+  /** Summon an instance of [[CollectionType]] for `M`. */
+  @inline def apply[M[_]](implicit instance: CollectionType[M]): CollectionType[M] = instance
+
+  object ops {
+    implicit def toAllCollectionTypeOps[M[_], A](
+      target: M[A]
+    )(implicit tc: CollectionType[M]): AllOps[M, A] {
+      type TypeClassType = CollectionType[M]
+    } = new AllOps[M, A] {
+      type TypeClassType = CollectionType[M]
+      val self: M[A] = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  trait Ops[M[_], A] extends Serializable {
+    type TypeClassType <: CollectionType[M]
+    def self: M[A]
+    val typeClassInstance: TypeClassType
+    def pure[B](a: B)(implicit ev$1: ClassTag[B]): M[B] = typeClassInstance.pure[A, B](self)(a)
+    def map[B](f: A => B)(implicit ev$1: ClassTag[B]): M[B] = typeClassInstance.map[A, B](self)(f)
+    def reduce(f: (A, A) => A): M[A] = typeClassInstance.reduce[A](self)(f)
+    def cross[B](mb: M[B])(implicit ev$1: ClassTag[B]): M[(A, B)] =
+      typeClassInstance.cross[A, B](self)(mb)
+  }
+  trait AllOps[M[_], A] extends Ops[M, A]
+  trait ToCollectionTypeOps extends Serializable {
+    implicit def toCollectionTypeOps[M[_], A](
+      target: M[A]
+    )(implicit tc: CollectionType[M]): Ops[M, A] {
+      type TypeClassType = CollectionType[M]
+    } = new Ops[M, A] {
+      type TypeClassType = CollectionType[M]
+      val self: M[A] = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  object nonInheritedOps extends ToCollectionTypeOps
+
+  /* ======================================================================== */
+  /* END OF SIMULACRUM-MANAGED CODE                                           */
+  /* ======================================================================== */
+
 }

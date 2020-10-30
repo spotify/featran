@@ -37,6 +37,8 @@ val shapelessDatatypeVersion = "0.2.0"
 
 val previousVersion = "0.7.0"
 
+ThisBuild / scalafixDependencies += "org.typelevel" %% "simulacrum-scalafix" % "0.5.0"
+
 val CompileTime = config("compile-time").hide
 
 lazy val commonSettings = Seq(
@@ -47,7 +49,7 @@ lazy val commonSettings = Seq(
   scalacOptions ++= commonScalacOptions,
   scalacOptions ++= {
     if (scalaBinaryVersion.value == "2.13")
-      Seq("-Ymacro-annotations")
+      Nil
     else
       Seq(
         "-Xfuture",
@@ -59,15 +61,8 @@ lazy val commonSettings = Seq(
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
   testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
-    "org.typelevel" %% "simulacrum" % simulacrumVersion % CompileTime
+    "org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.0" % CompileTime
   ),
-  libraryDependencies ++= {
-    if (scalaBinaryVersion.value == "2.13") {
-      Nil
-    } else {
-      Seq(compilerPlugin("org.scalamacros" %% "paradise" % "2.1.1" cross CrossVersion.full))
-    }
-  },
   ivyConfigurations += CompileTime,
   unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name))
 )

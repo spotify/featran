@@ -21,12 +21,14 @@ import com.spotify.featran.transformers._
 import simulacrum.typeclass
 
 import scala.reflect.ClassTag
+import scala.annotation.implicitNotFound
 
 /**
  * TypeClass that is used to read data from flat files.  The requirement is that each
  * feature comes from the same type and can be looked up by name.
  * @tparam T The intermediate storage format for each feature.
  */
+@implicitNotFound("Could not find an instance of FlatReader for ${T}")
 @typeclass trait FlatReader[T] extends Serializable {
   def readDouble(name: String): T => Option[Double]
 
@@ -41,6 +43,46 @@ import scala.reflect.ClassTag
   def readString(name: String): T => Option[String]
 
   def readStrings(name: String): T => Option[Seq[String]]
+}
+
+object FlatReader {
+  /* ======================================================================== */
+  /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
+  /* ======================================================================== */
+
+  /** Summon an instance of [[FlatReader]] for `T`. */
+  @inline def apply[T](implicit instance: FlatReader[T]): FlatReader[T] = instance
+
+  object ops {
+    implicit def toAllFlatReaderOps[T](target: T)(implicit tc: FlatReader[T]): AllOps[T] {
+      type TypeClassType = FlatReader[T]
+    } = new AllOps[T] {
+      type TypeClassType = FlatReader[T]
+      val self: T = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  trait Ops[T] extends Serializable {
+    type TypeClassType <: FlatReader[T]
+    def self: T
+    val typeClassInstance: TypeClassType
+  }
+  trait AllOps[T] extends Ops[T]
+  trait ToFlatReaderOps extends Serializable {
+    implicit def toFlatReaderOps[T](target: T)(implicit tc: FlatReader[T]): Ops[T] {
+      type TypeClassType = FlatReader[T]
+    } = new Ops[T] {
+      type TypeClassType = FlatReader[T]
+      val self: T = target
+      val typeClassInstance: TypeClassType = tc
+    }
+  }
+  object nonInheritedOps extends ToFlatReaderOps
+
+  /* ======================================================================== */
+  /* END OF SIMULACRUM-MANAGED CODE                                           */
+  /* ======================================================================== */
+
 }
 
 /**
