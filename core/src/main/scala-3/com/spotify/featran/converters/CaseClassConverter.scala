@@ -30,7 +30,7 @@ object CaseClassConverter {
         featureSpec[A, p.MirroredElemTypes, p.MirroredElemLabels](0)(FeatureSpec.of[A], d)
     }
 
-  inline def featureSpec[A, Elems <: Tuple, Labels <: Tuple](n: Int)(s: FeatureSpec[A], d: DefaultTransform[Double]): FeatureSpec[A] =
+  inline private def featureSpec[A, Elems <: Tuple, Labels <: Tuple](n: Int)(s: FeatureSpec[A], d: DefaultTransform[Double]): FeatureSpec[A] =
       inline erasedValue[Elems] match {
         case _: (elem *: elems1) =>
           inline erasedValue[Labels] match {
