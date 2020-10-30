@@ -67,17 +67,18 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
       )
   }
 
-  property("multi feature extraction based on partial settings") = Prop.forAll { (xs: List[Record]) =>
-    val settings: Seq[String] = MultiFeatureSpec(f, f2)
-      .filter(feature => feature.transformer.name == id.name)
-      .extract(xs)
-      .featureSettings
+  property("multi feature extraction based on partial settings") = Prop.forAll {
+    (xs: List[Record]) =>
+      val settings: Seq[String] = MultiFeatureSpec(f, f2)
+        .filter(feature => feature.transformer.name == id.name)
+        .extract(xs)
+        .featureSettings
 
-    val multi = MultiFeatureSpec(f, f2).extractWithSubsetSettings(xs, settings)
-    Prop.all(
-      multi.featureNames == Seq(Seq(Seq(id.name))),
-      multi.featureValues[Seq[Double]] == xs.map(r => Seq(Seq(r.d)))
-    )
+      val multi = MultiFeatureSpec(f, f2).extractWithSubsetSettings(xs, settings)
+      Prop.all(
+        multi.featureNames == Seq(Seq(Seq(id.name))),
+        multi.featureValues[Seq[Double]] == xs.map(r => Seq(Seq(r.d)))
+      )
   }
 
   property("multi feature extraction map") = Prop.forAll { (xs: List[Record]) =>
