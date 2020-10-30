@@ -17,7 +17,6 @@
 
 package com.spotify.featran
 
-import com.spotify.featran.converters.DefaultTransform
 import com.spotify.featran.transformers.{Settings, Transformer}
 
 import scala.collection.mutable
