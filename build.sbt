@@ -26,7 +26,7 @@ val flinkVersion = "1.11.2"
 val hadoopVersion = "3.3.0"
 val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.15.1"
-val scalatestVersion = "3.2.2"
+val scalatestVersion = "3.2.3"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.10.0-beta1"
 val simulacrumVersion = "1.0.1"
@@ -57,9 +57,7 @@ lazy val commonSettings = Seq(
       )
   },
   scalacOptions ++= {
-    if (isDotty.value)
-      Seq("-source:3.0-migration", "-siteroot", "./docs")
-    else Nil
+    if (isDotty.value) Seq("-source:3.0-migration") else Nil
   },
   scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
@@ -171,7 +169,7 @@ lazy val core: Project = project
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("0.27.0-RC1", "2.12.12", "2.13.3"),
+    crossScalaVersions := Seq("3.0.0-M1", "2.12.12", "2.13.3"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test",
       "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
@@ -293,7 +291,7 @@ lazy val numpy: Project = project
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("0.27.0-RC1", "2.12.12", "2.13.3"),
+    crossScalaVersions := Seq("3.0.0-M1", "2.12.12", "2.13.3"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -328,7 +326,7 @@ lazy val xgboost: Project = project
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("0.27.0-RC1", "2.12.12", "2.13.3"),
+    crossScalaVersions := Seq("3.0.0-M1", "2.12.12", "2.13.3"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     ).map(_.withDottyCompat(scalaVersion.value))
