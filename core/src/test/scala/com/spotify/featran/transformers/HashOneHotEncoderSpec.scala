@@ -30,17 +30,17 @@ object HashOneHotEncoderSpec extends TransformerProp("HashOneHotEncoder") {
     xs.map(m.toHLL(_)).reduce(m.plus).estimatedSize
   }
 
-  property("default") = Prop.forAll { xs: List[String] =>
+  property("default") = Prop.forAll { (xs: List[String]) =>
     val size = ceil(estimateSize(xs) * 8.0).toInt
     test(HashOneHotEncoder("one_hot"), size, xs)
   }
 
-  property("size") = Prop.forAll { xs: List[String] =>
+  property("size") = Prop.forAll { (xs: List[String]) =>
     val size = 100
     test(HashOneHotEncoder("one_hot", size), size, xs)
   }
 
-  property("scaling factor") = Prop.forAll { xs: List[String] =>
+  property("scaling factor") = Prop.forAll { (xs: List[String]) =>
     val scalingFactor = 2.0
     val size = ceil(estimateSize(xs) * scalingFactor).toInt
     test(HashOneHotEncoder("one_hot", 0, scalingFactor), size, xs)

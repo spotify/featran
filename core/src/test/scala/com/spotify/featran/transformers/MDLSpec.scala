@@ -28,7 +28,7 @@ object MDLSpec extends TransformerProp("MDL") {
     } yield MDLRecord(label, value)
   }
 
-  property("default") = Prop.forAll { xs: List[MDLRecord[String]] =>
+  property("default") = Prop.forAll { (xs: List[MDLRecord[String]]) =>
     val ranges =
       new MDLPDiscretizer(xs.map(l => (l.label, l.value))).discretize()
     val slices = ranges.tail

@@ -22,7 +22,7 @@ import org.scalacheck.{Arbitrary, Gen, Prop}
 object PositionEncoderSpec extends TransformerProp("PositionEncoder") {
   implicit private val labelArb: Arbitrary[String] = Arbitrary(Gen.alphaStr)
 
-  property("default") = Prop.forAll { xs: List[String] =>
+  property("default") = Prop.forAll { (xs: List[String]) =>
     val cats = xs.distinct.sorted
     val expected =
       xs.map(s => Seq(cats.zipWithIndex.find(c => s == c._1).map(_._2).getOrElse(0).toDouble))

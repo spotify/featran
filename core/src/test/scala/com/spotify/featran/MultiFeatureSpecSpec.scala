@@ -34,7 +34,7 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
   private val f = FeatureSpec.of[Record].required(_.d)(id)
   private val f2 = FeatureSpec.of[Record].required(_.d)(id2)
 
-  property("multi feature extraction") = Prop.forAll { xs: List[Record] =>
+  property("multi feature extraction") = Prop.forAll { (xs: List[Record]) =>
     val multi = MultiFeatureSpec(f, f2).extract(xs)
     Prop.all(
       multi.featureNames == Seq(Seq(Seq("id"), Seq("id2"))),
@@ -42,7 +42,7 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
     )
   }
 
-  property("multi feature extraction based on predicate") = Prop.forAll { xs: List[Record] =>
+  property("multi feature extraction based on predicate") = Prop.forAll { (xs: List[Record]) =>
     val filtered = MultiFeatureSpec(f, f2)
       .filter(feature => Seq(id.name, id2.name).contains(feature.transformer.name))
       .extract(xs)
@@ -56,7 +56,7 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
   }
 
   property("multi feature extraction based on predicate keeps order") = Prop.forAll {
-    xs: List[Record] =>
+    (xs: List[Record]) =>
       val multi = MultiFeatureSpec(f, f2)
         .filter(feature => feature.transformer.name == id.name)
         .extract(xs)
@@ -67,20 +67,21 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
       )
   }
 
-  property("multi feature extraction based on partial settings") = Prop.forAll { xs: List[Record] =>
-    val settings: Seq[String] = MultiFeatureSpec(f, f2)
-      .filter(feature => feature.transformer.name == id.name)
-      .extract(xs)
-      .featureSettings
+  property("multi feature extraction based on partial settings") = Prop.forAll {
+    (xs: List[Record]) =>
+      val settings: Seq[String] = MultiFeatureSpec(f, f2)
+        .filter(feature => feature.transformer.name == id.name)
+        .extract(xs)
+        .featureSettings
 
-    val multi = MultiFeatureSpec(f, f2).extractWithSubsetSettings(xs, settings)
-    Prop.all(
-      multi.featureNames == Seq(Seq(Seq(id.name))),
-      multi.featureValues[Seq[Double]] == xs.map(r => Seq(Seq(r.d)))
-    )
+      val multi = MultiFeatureSpec(f, f2).extractWithSubsetSettings(xs, settings)
+      Prop.all(
+        multi.featureNames == Seq(Seq(Seq(id.name))),
+        multi.featureValues[Seq[Double]] == xs.map(r => Seq(Seq(r.d)))
+      )
   }
 
-  property("multi feature extraction map") = Prop.forAll { xs: List[Record] =>
+  property("multi feature extraction map") = Prop.forAll { (xs: List[Record]) =>
     val multi = MultiFeatureSpec(f, f2).extract(xs)
     val expected = xs.map(r => Seq(Map("id" -> r.d), Map("id2" -> r.d)))
     Prop.all(
@@ -89,7 +90,7 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
     )
   }
 
-  property("multi feature extraction sparse") = Prop.forAll { xs: List[Record] =>
+  property("multi feature extraction sparse") = Prop.forAll { (xs: List[Record]) =>
     val multi = MultiFeatureSpec(f, f2).extract(xs)
     val expected =
       xs.map(r => Seq(SparseVector(1)((0, r.d)), SparseVector(1)((0, r.d))))
@@ -99,7 +100,7 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
     )
   }
 
-  property("multi feature extraction dense") = Prop.forAll { xs: List[Record] =>
+  property("multi feature extraction dense") = Prop.forAll { (xs: List[Record]) =>
     val multi = MultiFeatureSpec(f, f2).extract(xs)
     val expected = xs.map(r => Seq(DenseVector(r.d), DenseVector(r.d)))
     Prop.all(
@@ -108,7 +109,7 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
     )
   }
 
-  property("multi feature extraction settings") = Prop.forAll { xs: List[Record] =>
+  property("multi feature extraction settings") = Prop.forAll { (xs: List[Record]) =>
     val settings = MultiFeatureSpec(f, f2).extract(xs).featureSettings
     val multi = MultiFeatureSpec(f, f2).extractWithSettings(xs, settings)
     Prop.all(

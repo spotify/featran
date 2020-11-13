@@ -24,7 +24,7 @@ object NGramsSpec extends TransformerProp("NHotEncoder") {
     Gen.choose(1, 5).flatMap(Gen.listOfN(_, Gen.alphaStr))
   }
 
-  property("default") = Prop.forAll { xs: List[List[String]] =>
+  property("default") = Prop.forAll { (xs: List[List[String]]) =>
     val transformer = new NGrams("n_gram", 2, 4, " ")
     val ngrams = xs.map(transformer.ngrams(_))
     val cats = ngrams.flatten.distinct.sorted

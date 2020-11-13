@@ -12,7 +12,7 @@ jobs:
         uses: olafurpg/setup-scala@v7
         with:
           java-version: 11
-      - run: sbt "; +scalafmtCheckAll; scalafmtSbtCheck" "; scalafixEnable; scalafixAll --check"
+      - run: sbt "; scalafmtCheckAll; scalafmtSbtCheck" "; scalafixEnable; scalafixAll --check"
   test:
     runs-on: ubuntu-latest
     steps:
@@ -37,6 +37,7 @@ jobs:
         scala:
           - 2.12.12
           - 2.13.3
+          - 0.27.0-RC1
   mimaReport:
     runs-on: ubuntu-latest
     steps:

@@ -28,7 +28,7 @@ object BucketizerSpec extends TransformerProp("Bucketizer") {
   }
 
   // last bucket should be inclusive
-  property("inclusive") = Prop.forAll { xs: List[Double] =>
+  property("inclusive") = Prop.forAll { (xs: List[Double]) =>
     val (l, u) = (xs.min, xs.max)
     val m = l / 2 + u / 2 // (l + u) might overflow
     val splits = Array(l, m, u)

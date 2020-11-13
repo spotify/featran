@@ -69,23 +69,23 @@ object TopNOneHotEncoderSpec extends TransformerProp("TopNOneHotEncoder") {
     test(transformer, xs, names, expected, missing, oob, rejected)
   }
 
-  property("default") = Prop.forAll { xs: List[String] =>
+  property("default") = Prop.forAll { (xs: List[String]) =>
     test(TopNOneHotEncoder("tn1h", 10, seed = 1), xs)
   }
 
-  property("count") = Prop.forAll { xs: List[String] =>
+  property("count") = Prop.forAll { (xs: List[String]) =>
     test(TopNOneHotEncoder("tn1h", 100, seed = 1), xs)
   }
 
-  property("eps") = Prop.forAll { xs: List[String] =>
+  property("eps") = Prop.forAll { (xs: List[String]) =>
     test(TopNOneHotEncoder("tn1h", 10, eps = 0.01, seed = 1), xs)
   }
 
-  property("delta") = Prop.forAll { xs: List[String] =>
+  property("delta") = Prop.forAll { (xs: List[String]) =>
     test(TopNOneHotEncoder("tn1h", 10, delta = 0.01, seed = 1), xs)
   }
 
-  property("encodeMissingValue") = Prop.forAll { xs: List[String] =>
+  property("encodeMissingValue") = Prop.forAll { (xs: List[String]) =>
     test(TopNOneHotEncoder("tn1h", 10, delta = 0.01, seed = 1, encodeMissingValue = true), xs)
   }
 }

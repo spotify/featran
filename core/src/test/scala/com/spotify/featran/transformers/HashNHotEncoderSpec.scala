@@ -34,17 +34,17 @@ object HashNHotEncoderSpec extends TransformerProp("HashNHotEncoder") {
     Gen.listOfN(10, arb.arbitrary).suchThat(_.nonEmpty) // workaround for shrinking failure
   }
 
-  property("default") = Prop.forAll { xs: List[List[String]] =>
+  property("default") = Prop.forAll { (xs: List[List[String]]) =>
     val size = ceil(estimateSize(xs) * 8.0).toInt
     test(HashNHotEncoder("n_hot"), size, xs)
   }
 
-  property("size") = Prop.forAll { xs: List[List[String]] =>
+  property("size") = Prop.forAll { (xs: List[List[String]]) =>
     val size = 100
     test(HashNHotEncoder("n_hot", size), size, xs)
   }
 
-  property("scaling") = Prop.forAll { xs: List[List[String]] =>
+  property("scaling") = Prop.forAll { (xs: List[List[String]]) =>
     val scalingFactor = 2.0
     val size = ceil(estimateSize(xs) * scalingFactor).toInt
     test(HashNHotEncoder("n_hot", 0, scalingFactor), size, xs)
