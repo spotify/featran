@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.1.0
       - name: cache SBT
-        uses: coursier/cache-action@v3
+        uses: coursier/cache-action@v5
       - name: Java 11 setup
         uses: olafurpg/setup-scala@v7
         with:
@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.1.0
       - name: cache SBT
-        uses: coursier/cache-action@v3
+        uses: coursier/cache-action@v5
       - name: java ${{matrix.java}} setup
         uses: olafurpg/setup-scala@v7
         with:
@@ -43,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2.1.0
       - name: cache SBT
-        uses: coursier/cache-action@v3
+        uses: coursier/cache-action@v5
       - name: java ${{matrix.java}} setup
         uses: olafurpg/setup-scala@v7
         with:
