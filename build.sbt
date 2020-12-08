@@ -59,7 +59,6 @@ lazy val commonSettings = Seq(
   scalacOptions ++= {
     if (isDotty.value) Seq("-source:3.0-migration") else Nil
   },
-  scalacOptions in (Compile, doc) ++= Seq("-skip-packages", "org.apache"),
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
   testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
