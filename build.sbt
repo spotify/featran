@@ -63,7 +63,7 @@ lazy val commonSettings = Seq(
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
   testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
-    ("org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.1" % CompileTime)
+    ("org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.3" % CompileTime)
       .withDottyCompat(scalaVersion.value)
   ),
   ivyConfigurations += CompileTime,
