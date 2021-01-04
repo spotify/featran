@@ -25,7 +25,10 @@ class MultiFeatureSpecSpec extends Properties("MultiFeatureSpec") {
   case class Record(d: Double, optD: Option[Double])
 
   implicit val arbRecords: Arbitrary[List[Record]] = Arbitrary {
-    Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(Record.tupled))
+    Gen.listOfN(
+      100,
+      Arbitrary.arbitrary[(Double, Option[Double])].map { case (d, optD) => Record(d, optD) }
+    )
   }
 
   private val id = Identity("id")

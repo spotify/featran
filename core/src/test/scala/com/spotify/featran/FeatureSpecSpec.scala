@@ -27,7 +27,10 @@ object FeatureSpecSpec extends Properties("FeatureSpec") {
   case class RecordWrapper(record: Record, d: Double)
 
   implicit val arbRecords: Arbitrary[List[Record]] = Arbitrary {
-    Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(Record.tupled))
+    Gen.listOfN(
+      100,
+      Arbitrary.arbitrary[(Double, Option[Double])].map { case (d, optD) => Record(d, optD) }
+    )
   }
 
   implicit val arbWrapperRecords: Arbitrary[List[RecordWrapper]] = Arbitrary {
