@@ -57,7 +57,7 @@ lazy val commonSettings = Seq(
       )
   },
   scalacOptions ++= {
-    if (isDotty.value) Seq("-source:3.0-migration") else Nil
+    if (isDotty.value) Seq("-source:3.0-migration", "-rewrite") else Nil
   },
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
   javacOptions in (Compile, doc) := Seq("-source", "1.8"),
@@ -168,7 +168,7 @@ lazy val core: Project = project
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("3.0.0-M2", "2.12.12", "2.13.4"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.12", "2.13.4"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test",
       "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
@@ -290,7 +290,7 @@ lazy val numpy: Project = project
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("3.0.0-M2", "2.12.12", "2.13.4"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.12", "2.13.4"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -325,7 +325,7 @@ lazy val xgboost: Project = project
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("3.0.0-M2", "2.12.12", "2.13.4"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.12", "2.13.4"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     ).map(_.withDottyCompat(scalaVersion.value))
