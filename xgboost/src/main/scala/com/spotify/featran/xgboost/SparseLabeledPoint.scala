@@ -26,6 +26,7 @@ import ml.dmlc.xgboost4j.LabeledPoint
  */
 final class SparseLabeledPoint private[xgboost] (
   label: Float,
+  size: Int,
   indices: Array[Int],
   values: Array[Float],
   weight: Float = 1f,
@@ -34,5 +35,5 @@ final class SparseLabeledPoint private[xgboost] (
 ) extends Serializable {
   require(indices != null, "Indices can't be null")
   val labeledPoint: LabeledPoint =
-    LabeledPoint(label, indices, values, weight, group, baseMargin)
+    LabeledPoint(label, size, indices, values, weight, group, baseMargin)
 }
