@@ -209,7 +209,7 @@ class FeatureSpec[T] private[featran] (
     new RecordExtractor[T, F](new FeatureSet[T](features, crossings), settings)
 }
 
-private class Feature[T, A, B, C](
+class Feature[T, A, B, C] private[featran] (
   val f: T => Option[A],
   val default: Option[A],
   val transformer: Transformer[A, B, C]
