@@ -24,8 +24,10 @@ jobs:
         with:
           java-version: ${{matrix.java}}
       - if: startsWith(matrix.scala,'2.12')
+        # sbt-scoverage is not yet compatible with 2.12.13
+        # https://github.com/scoverage/sbt-scoverage/issues/319
         run: |
-          sbt coverage "++${{matrix.scala}} test" coverageReport
+          sbt coverage "++2.12.12 test" coverageReport
           bash <(curl -s https://codecov.io/bash)
       - if: "!startsWith(matrix.scala,'2.12')"
         run: sbt "++${{matrix.scala}} test"
