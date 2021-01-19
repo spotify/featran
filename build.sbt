@@ -408,5 +408,13 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
   Nil
 }
 
-def mimaSettings(moduleName: String): Seq[Def.Setting[Set[sbt.ModuleID]]] =
-  Seq(mimaPreviousArtifacts += "com.spotify" %% moduleName % previousVersion)
+def mimaSettings(moduleName: String): Seq[Def.Setting[_]] =
+  Def.settings(
+    mimaPreviousArtifacts := {
+      dynverGitDescribeOutput.value
+        .map(_.ref.value.tail)
+        .filter(VersionNumber(_).matchesSemVer(SemanticSelector(s">=${previousVersion}")))
+        .map("com.spotify" %% moduleName % _)
+        .toSet
+    }
+  )
