@@ -26,8 +26,10 @@ package object xgboost {
     override def init(dimension: Int): Unit =
       underlying.init(dimension)
 
-    override def result: LabeledPoint =
-      LabeledPoint(0.0f, null, underlying.result)
+    override def result: LabeledPoint = {
+      val result = underlying.result
+      LabeledPoint(0.0f, result.length, null, result)
+    }
 
     override def add(name: String, value: Double): Unit =
       underlying.add(name, value)
@@ -52,7 +54,12 @@ package object xgboost {
   ) extends FeatureBuilder[SparseLabeledPoint] {
     override def init(dimension: Int): Unit = underlying.init(dimension)
     override def result: SparseLabeledPoint =
-      new SparseLabeledPoint(0.0f, underlying.result.indices, underlying.result.values)
+      new SparseLabeledPoint(
+        0.0f,
+        underlying.result.length,
+        underlying.result.indices,
+        underlying.result.values
+      )
     override def add(name: String, value: Double): Unit =
       underlying.add(name, value)
     override def skip(): Unit = underlying.skip()

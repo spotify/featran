@@ -32,7 +32,7 @@ val scioVersion = "0.10.0-beta2"
 val simulacrumVersion = "1.0.1"
 val sparkVersion = "3.1.0"
 val tensorflowVersion = "1.15.0"
-val xgBoostVersion = "0.90"
+val xgBoostVersion = "1.3.1"
 val shapelessDatatypeVersion = "0.2.0"
 
 val previousVersion = "0.7.0"
