@@ -35,7 +35,7 @@ val tensorflowVersion = "1.15.0"
 val xgBoostVersion = "1.3.1"
 val shapelessDatatypeVersion = "0.2.0"
 
-val previousVersion = "0.7.0"
+val previousVersion = "0.8.0"
 
 ThisBuild / scalafixDependencies += "org.typelevel" %% "simulacrum-scalafix" % "0.5.0"
 
