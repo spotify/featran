@@ -23,7 +23,7 @@ import breeze.linalg._
 import com.spotify.featran._
 import com.spotify.featran.tensorflow._
 import org.openjdk.jmh.annotations._
-import org.tensorflow.example.Example
+import org.tensorflow.proto.example.Example
 
 @BenchmarkMode(Array(Mode.AverageTime))
 @OutputTimeUnit(TimeUnit.NANOSECONDS)

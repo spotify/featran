@@ -141,7 +141,7 @@ object Examples {
 
     // This requires `"com.spotify" %% "featran-tensorflow"` dependency
     import com.spotify.featran.tensorflow._
-    import org.tensorflow.example.Example
+    import org.tensorflow.proto.example.Example
     val tfExample = f1.featureValues[Example]
 
     // Get feature values as above with rejections and the original input record

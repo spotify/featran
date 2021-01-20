@@ -22,9 +22,9 @@ import _root_.java.util.concurrent.ConcurrentHashMap
 import _root_.java.util.function.Function
 
 import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
-import org.tensorflow.example.{Example, Features}
-import org.tensorflow.{example => tf}
-import shapeless.datatype.tensorflow.TensorFlowType
+import org.tensorflow.proto.example.{Example, Features}
+import org.tensorflow.proto.{example => tf}
+import com.google.protobuf.ByteString
 
 package object tensorflow {
   private[this] object FeatureNameNormalization {
@@ -70,11 +70,8 @@ package object tensorflow {
     override def newBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
   }
 
-  /** [[FeatureBuilder]] for output as TensorFlow `Example` type. */
-  implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
-
-  implicit val exampleFlatReader: FlatReader[tf.Example] = new FlatReader[tf.Example] {
-    import TensorFlowType._
+  private[tensorflow] object TensorFlowType {
+    import scala.collection.JavaConverters._
 
     def toFeature(name: String, ex: tf.Example): Option[tf.Feature] = {
       val fm = ex.getFeatures.getFeatureMap
@@ -84,6 +81,36 @@ package object tensorflow {
         None
       }
     }
+
+    def toFloats(f: tf.Feature): Seq[Float] =
+      f.getFloatList.getValueList.asScala.toSeq.asInstanceOf[Seq[Float]]
+
+    def toDoubles(f: tf.Feature): Seq[Double] = toFloats(f).map(_.toDouble)
+
+    def toByteStrings(f: tf.Feature): Seq[ByteString] = f.getBytesList.getValueList.asScala.toSeq
+
+    def toStrings(f: tf.Feature): Seq[String] = toByteStrings(f).map(_.toStringUtf8)
+
+    def fromFloats(xs: Seq[Float]): tf.Feature.Builder =
+      tf.Feature
+        .newBuilder()
+        .setFloatList(xs.foldLeft(tf.FloatList.newBuilder())(_.addValue(_)).build())
+
+    def fromDoubles(xs: Seq[Double]): tf.Feature.Builder = fromFloats(xs.map(_.toFloat))
+
+    def fromByteStrings(xs: Seq[ByteString]): tf.Feature.Builder =
+      tf.Feature.newBuilder().setBytesList(tf.BytesList.newBuilder().addAllValue(xs.asJava))
+
+    def fromStrings(xs: Seq[String]): tf.Feature.Builder =
+      fromByteStrings(xs.map(ByteString.copyFromUtf8))
+
+  }
+
+  /** [[FeatureBuilder]] for output as TensorFlow `Example` type. */
+  implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
+
+  implicit val exampleFlatReader: FlatReader[tf.Example] = new FlatReader[tf.Example] {
+    import TensorFlowType._
 
     def readDouble(name: String): Example => Option[Double] =
       (ex: Example) => toFeature(name, ex).flatMap(v => toDoubles(v).headOption)

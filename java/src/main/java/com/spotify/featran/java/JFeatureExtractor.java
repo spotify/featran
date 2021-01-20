@@ -21,7 +21,7 @@ import com.spotify.featran.FeatureBuilder;
 import com.spotify.featran.FeatureExtractor;
 import com.spotify.featran.xgboost.SparseLabeledPoint;
 import ml.dmlc.xgboost4j.LabeledPoint;
-import org.tensorflow.example.Example;
+import org.tensorflow.proto.example.Example;
 import scala.reflect.ClassTag;
 
 import java.util.List;

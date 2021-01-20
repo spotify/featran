@@ -20,8 +20,7 @@ package com.spotify.featran.tensorflow
 import com.spotify.featran.transformers._
 import com.spotify.featran.{FeatureSpec, FlatExtractor}
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
-import org.tensorflow.example.{Example, Features}
-import shapeless.datatype.tensorflow._
+import org.tensorflow.proto.example.{Example, Features}
 
 import scala.reflect.ClassTag
 
@@ -33,7 +32,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
   import TensorFlowType._
 
   implicit val arbRecords: Arbitrary[List[TFRecord]] = Arbitrary {
-    Gen.listOfN(100, Arbitrary.arbitrary[(Float, Option[Float])].map(TFRecord.tupled))
+    Gen.listOfN(100, Arbitrary.arbitrary[(Float, Option[Float])].map(r => TFRecord(r._1, r._2)))
   }
 
   implicit val arbStrs: Arbitrary[List[TFStr]] = Arbitrary {
@@ -103,7 +102,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     convertTest(fn, exDouble) _
   }
 
-  property("continuous") = Prop.forAll { xs: List[TFRecord] =>
+  property("continuous") = Prop.forAll { (xs: List[TFRecord]) =>
     val transformers: List[Transformer[Double, _, _]] = List(
       Identity("d"),
       MinMaxScaler("d"),
@@ -126,7 +125,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     convertTest(fn, exDouble) _
   }
 
-  property("vector") = Prop.forAll { xs: List[TFRecord] =>
+  property("vector") = Prop.forAll { (xs: List[TFRecord]) =>
     val transformersSeq: List[Transformer[Seq[Double], _, _]] = List(
       VectorIdentity[Seq]("d")
     )
@@ -147,7 +146,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     convertTest(fn, exStr) _
   }
 
-  property("enums") = Prop.forAll { xs: List[TFStr] =>
+  property("enums") = Prop.forAll { (xs: List[TFStr]) =>
     val transformers: List[Transformer[String, _, _]] = List(
       OneHotEncoder("d"),
       HashOneHotEncoder("d"),
@@ -164,7 +163,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     convertTest(fn, exStr) _
   }
 
-  property("n-enums") = Prop.forAll { xs: List[TFStr] =>
+  property("n-enums") = Prop.forAll { (xs: List[TFStr]) =>
     val transformers: List[Transformer[Seq[String], _, _]] = List(
       NHotEncoder("d"),
       HashNHotEncoder("d"),
@@ -188,7 +187,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     convertTest(fn, cv) _
   }
 
-  property("weighted") = Prop.forAll { xs: List[TFStr] =>
+  property("weighted") = Prop.forAll { (xs: List[TFStr]) =>
     val transformers: List[Transformer[Seq[WeightedLabel], _, _]] = List(
       NHotWeightedEncoder("d"),
       HashNHotWeightedEncoder("d")

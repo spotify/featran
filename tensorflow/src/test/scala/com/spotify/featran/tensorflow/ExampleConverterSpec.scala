@@ -21,11 +21,13 @@ import com.spotify.featran.{FeatureSpec, FlatConverter}
 import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
 import org.scalacheck._
 import com.spotify.featran.transformers._
+import org.tensorflow.proto.example.Example
 
 import scala.collection.JavaConverters._
 
 class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
-  import shapeless.datatype.tensorflow.TensorFlowType._
+  import TensorFlowType._
+
   case class Record(d: Double, optD: Option[Double])
   case class TransformerTypes(
     d: Double,
@@ -37,7 +39,7 @@ class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
   )
 
   implicit val arbRecords: Arbitrary[List[Record]] = Arbitrary {
-    Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(Record.tupled))
+    Gen.listOfN(100, Arbitrary.arbitrary[(Double, Option[Double])].map(r => Record(r._1, r._2)))
   }
 
   implicit val arbTypes: Arbitrary[List[TransformerTypes]] = Arbitrary {
@@ -58,15 +60,15 @@ class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
     )
   }
 
-  property("converter") = Prop.forAll { xs: List[Record] =>
+  property("converter") = Prop.forAll { (xs: List[Record]) =>
     val spec = FeatureSpec.of[Record].required(_.d)(Identity("id"))
-    val f = FlatConverter(spec).convert(xs)
+    val f = FlatConverter[Record, Example](spec).convert(xs)
     Prop.all(
       f.map(_.getFeatures.getFeatureMap.get("id").getFloatList.getValue(0)) == xs.map(_.d.toFloat)
     )
   }
 
-  property("converter all types") = Prop.forAll { xs: List[TransformerTypes] =>
+  property("converter all types") = Prop.forAll { (xs: List[TransformerTypes]) =>
     val spec = FeatureSpec
       .of[TransformerTypes]
       .required(_.d)(Identity("d"))
@@ -76,7 +78,7 @@ class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
       .required(_.we)(NHotWeightedEncoder("we"))
       .required(_.mdl)(MDL("mdl"))
 
-    val f = FlatConverter(spec).convert(xs)
+    val f = FlatConverter[TransformerTypes, Example](spec).convert(xs)
 
     val results = f.map { ex =>
       val fm = ex.getFeatures.getFeatureMap.asScala
