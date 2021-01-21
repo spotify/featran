@@ -19,7 +19,7 @@ package com.spotify.featran.java
 
 import com.spotify.featran.SparseArray
 import com.spotify.featran.xgboost.SparseLabeledPoint
-import org.tensorflow.example.Example
+import org.tensorflow.proto.example.Example
 
 import scala.collection.JavaConverters._
 import scala.concurrent.duration.Duration

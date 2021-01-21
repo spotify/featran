@@ -25,7 +25,7 @@ import com.spotify.featran._
 import com.spotify.featran.tensorflow._
 import com.spotify.featran.xgboost._
 import ml.dmlc.xgboost4j.LabeledPoint
-import org.tensorflow.example.Example
+import org.tensorflow.proto.example.Example
 
 import scala.collection.JavaConverters._
 import scala.reflect.ClassTag

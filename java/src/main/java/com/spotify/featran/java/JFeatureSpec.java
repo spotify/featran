@@ -23,7 +23,7 @@ import com.spotify.featran.FeatureSpec;
 import com.spotify.featran.transformers.Transformer;
 import com.spotify.featran.xgboost.SparseLabeledPoint;
 import ml.dmlc.xgboost4j.LabeledPoint;
-import org.tensorflow.example.Example;
+import org.tensorflow.proto.example.Example;
 import scala.Function1;
 import scala.Function2;
 import scala.Option;

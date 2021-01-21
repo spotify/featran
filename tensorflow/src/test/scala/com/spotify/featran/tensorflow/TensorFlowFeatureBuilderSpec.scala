@@ -19,7 +19,7 @@ package com.spotify.featran.tensorflow
 
 import com.spotify.featran.{FeatureBuilder, SerializableUtils}
 import org.scalacheck._
-import org.tensorflow.example.{Example, Feature, Features, FloatList}
+import org.tensorflow.proto.example.{Example, Feature, Features, FloatList}
 
 object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder") {
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
@@ -54,7 +54,7 @@ object TensorFlowFeatureBuilderSpec extends Properties("TensorFlowFeatureBuilder
     actual == expected
   }
 
-  property("feature names") = Prop.forAll { key: String =>
+  property("feature names") = Prop.forAll { (key: String) =>
     val fb = SerializableUtils.ensureSerializable(FeatureBuilder[Example])
     fb.init(1)
     fb.add(key, 0.0)

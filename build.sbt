@@ -31,9 +31,8 @@ val scaldingVersion = "0.17.4"
 val scioVersion = "0.10.0-beta2"
 val simulacrumVersion = "1.0.1"
 val sparkVersion = "3.1.0"
-val tensorflowVersion = "1.15.0"
+val tensorflowVersion = "0.2.0"
 val xgBoostVersion = "1.3.1"
-val shapelessDatatypeVersion = "0.2.0"
 
 val previousVersion = "0.8.0"
 
@@ -171,10 +170,10 @@ lazy val core: Project = project
     crossScalaVersions := Seq("3.0.0-M3", "2.12.13", "2.13.4"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test",
-      "org.apache.commons" % "commons-math3" % commonsMathVersion % "test"
+      "org.apache.commons" % "commons-math3" % commonsMathVersion % "test",
+      "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     ),
     libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "com.twitter" %% "algebird-core" % algebirdVersion,
       "org.scalanlp" %% "breeze" % breezeVersion,
       "io.circe" %% "circe-core" % circeVersion,
@@ -305,10 +304,11 @@ lazy val tensorflow: Project = project
     name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
-    crossScalaVersions := Seq("2.12.13", "2.13.4"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.13", "2.13.4"),
     libraryDependencies ++= Seq(
-      "org.tensorflow" % "proto" % tensorflowVersion,
-      "me.lyh" %% "shapeless-datatype-tensorflow" % shapelessDatatypeVersion,
+      "org.tensorflow" % "tensorflow-core-api" % tensorflowVersion
+    ),
+    libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )
@@ -328,7 +328,7 @@ lazy val xgboost: Project = project
     crossScalaVersions := Seq("3.0.0-M3", "2.12.13", "2.13.4"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
-    ).map(_.withDottyCompat(scalaVersion.value))
+    )
   )
   .dependsOn(
     core,
