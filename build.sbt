@@ -59,14 +59,14 @@ lazy val commonSettings = Seq(
     if (isDotty.value) Seq("-source:3.0-migration", "-rewrite") else Nil
   },
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
-  javacOptions in (Compile, doc) := Seq("-source", "1.8"),
-  testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
+  Compile / doc / javacOptions := Seq("-source", "1.8"),
+  Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
     ("org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.4" % CompileTime)
       .withDottyCompat(scalaVersion.value)
   ),
   ivyConfigurations += CompileTime,
-  unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name))
+  Compile / unmanagedClasspath ++= update.value.select(configurationFilter(CompileTime.name))
 )
 
 lazy val publishSettings = Seq(
@@ -133,14 +133,14 @@ lazy val root: Project = project
   .settings(featranSettings)
   .settings(
     crossScalaVersions := Seq("2.12.13"),
-    siteSubdirName in ScalaUnidoc := "api",
-    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+    ScalaUnidoc / siteSubdirName := "api",
+    addMappingsToSiteDir(ScalaUnidoc / packageDoc / mappings, ScalaUnidoc / siteSubdirName),
     gitRemoteRepo := "git@github.com:spotify/featran.git",
     // com.spotify.featran.java pollutes namespaces and breaks unidoc class path
-    unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(java) -- inProjects(
+    ScalaUnidoc / unidoc / unidocProjectFilter := inAnyProject -- inProjects(java) -- inProjects(
       examples
     ),
-    mappings in makeSite ++= Seq(
+    makeSite / mappings ++= Seq(
       file("site/index.html") -> "index.html",
       file("examples/target/site/Examples.scala.html") -> "examples/Examples.scala.html"
     ),
@@ -358,9 +358,9 @@ lazy val jmh: Project = project
     crossScalaVersions := Seq("2.12.13"),
     name := "jmh",
     description := "Featran JMH Microbenchmarks",
-    sourceDirectory in Jmh := (sourceDirectory in Test).value,
-    classDirectory in Jmh := (classDirectory in Test).value,
-    dependencyClasspath in Jmh := (dependencyClasspath in Test).value,
+    Jmh / sourceDirectory := (Test / sourceDirectory).value,
+    Jmh / classDirectory := (Test / classDirectory).value,
+    Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
     publish / skip := true
   )
   .dependsOn(
