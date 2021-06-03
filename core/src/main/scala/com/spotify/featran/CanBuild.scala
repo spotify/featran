@@ -62,4 +62,12 @@ object CanBuild {
   implicit def arrayCB[T: ClassTag]: CanBuild[T, Array] = new CanBuild[T, Array] {
     override def apply(): mutable.Builder[T, Array[T]] = Array.newBuilder[T]
   }
+
+  implicit def IntSeqCB: CanBuild[Int, Seq] = new CanBuild[Int, Seq] {
+    override def apply(): mutable.Builder[Int, Seq[Int]] = Seq.newBuilder
+  }
+
+  implicit def IntArrayCB: CanBuild[Int, Array] = new CanBuild[Int, Array] {
+    override def apply(): mutable.Builder[Int, Array[Int]] = Array.newBuilder[Int]
+  }
 }

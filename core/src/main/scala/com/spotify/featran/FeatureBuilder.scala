@@ -109,6 +109,16 @@ object FeatureRejection {
     }
   }
 
+  def addInts[M[_]](names: Iterable[String], values: M[Int])(implicit
+                                                            ev: M[Int] => Seq[Int]
+  ): Unit = {
+    val i = names.iterator
+    val j = values.iterator
+    while (i.hasNext && j.hasNext) {
+      add(i.next(), j.next())
+    }
+  }
+
   /**
    * Skip multiple feature values. The total number of values added and skipped should equal to
    * dimension in [[init]].
