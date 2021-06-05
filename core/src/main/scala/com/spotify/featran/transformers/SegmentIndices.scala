@@ -38,24 +38,14 @@ private[featran] class SegmentIndices(name: String, expectedLength: Int = 0)
     case Some(x) if (x.length != c) =>
       fb.skip(c)
       fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
-    case Some(x) => {
-      val copyOfX = x.clone()
-
-      var tmp: Int = 0
-      copyOfX(0) = 0 //TODO: Set first element to 0, Guard against head being empty or non-zero
-
-      for (index <- 1 until copyOfX.length) { //Skip 0th!
-        val inputValue = copyOfX(index)
-
-        if (inputValue == tmp)
-          copyOfX(index) = copyOfX(index - 1) + 1
-        else
-          copyOfX(index) = 0
-        tmp = inputValue
+    case Some(x) =>
+      val (segmentedIndices, _) = x.zipWithIndex.foldLeft((Array.empty[Int], 0)){
+        case (_, (xElement, 0)) => (Array(0), xElement)
+        case ((segments, previousXElement), (xElement, index)) if (xElement == previousXElement) => (segments ++ Array(segments(index - 1) + 1), xElement)
+        case ((segments, _), (xElement, _))  => (segments ++ Array(0), xElement)
       }
 
-      fb.addInts(names = names(c), values = copyOfX)
-    }
+      fb.addInts(names = names(c), values = segmentedIndices)
     case None => fb.skip(c)
   }
 
