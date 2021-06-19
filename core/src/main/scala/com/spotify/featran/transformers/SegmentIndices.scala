@@ -34,10 +34,12 @@ private[featran] class SegmentIndices(name: String, expectedLength: Int = 0)
   override def featureNames(c: Int): Seq[String] = names(c)
 
   override def buildFeatures(a: Option[Array[Int]], c: Int, fb: FeatureBuilder[_]): Unit = a match {
-    //TODO: Require increasing input (non-strict monotonic)
     case Some(x) if (x.length != c) =>
       fb.skip(c)
       fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
+    case Some(x) if (!isMonotonic(x)) =>
+      fb.skip(c)
+      fb.reject(this, FeatureRejection.InvalidInput("Require an increasing sequence of numbers to use SegementIndices."))
     case Some(x) =>
       val (segmentedIndices, _) = x.zipWithIndex.foldLeft((Array.empty[Int], 0)){
         case (_, (xElement, 0)) => (Array(0), xElement)
@@ -57,5 +59,8 @@ private[featran] class SegmentIndices(name: String, expectedLength: Int = 0)
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readIntArray(name)
 
   override def flatWriter[T](implicit fw: FlatWriter[T]): Option[Array[Int]] => fw.IF = fw.writeIntArray(name)
+
+  private def isMonotonic(arr:Array[Int]): Boolean =
+    (arr, arr.drop(1)).zipped.forall (_ <= _)
 
 }
