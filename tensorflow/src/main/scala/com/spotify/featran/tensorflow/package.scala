@@ -104,9 +104,9 @@ package object tensorflow {
     def fromStrings(xs: Seq[String]): tf.Feature.Builder =
       fromByteStrings(xs.map(ByteString.copyFromUtf8))
 
-    def toInts(f: tf.Feature): Array[Int] = toFloats(f).map(_.toInt).toArray
+    def toInts(f: tf.Feature): Seq[Int] = toFloats(f).map(_.toInt)
 
-    def fromInts(xs: Array[Int]): tf.Feature.Builder = fromFloats(xs.map(_.toFloat))
+    def fromInts(xs: Seq[Int]): tf.Feature.Builder = fromFloats(xs.map(_.toFloat))
   }
 
   /** [[FeatureBuilder]] for output as TensorFlow `Example` type. */
@@ -151,7 +151,7 @@ package object tensorflow {
     def readStrings(name: String): Example => Option[Seq[String]] =
       (ex: Example) => toFeature(name, ex).map(v => toStrings(v))
 
-    def readIntArray(name: String): Example => Option[Array[Int]] = (ex: Example) => toFeature(name, ex).map(v => toInts(v))
+    def readIntArray(name: String): Example => Option[Array[Int]] = (ex: Example) => toFeature(name, ex).map(v => toInts(v).toArray)
   }
 
   implicit val exampleFlatWriter: FlatWriter[Example] = new FlatWriter[tf.Example] {
