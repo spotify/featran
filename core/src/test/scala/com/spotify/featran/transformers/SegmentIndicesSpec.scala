@@ -1,13 +1,11 @@
 package com.spotify.featran.transformers
 
 import com.spotify.featran.FeatureSpec
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
+import org.scalacheck.{Arbitrary, Prop}
 
-object SegmentIndicesSpec extends AnyFlatSpec with Matchers {
+object SegmentIndicesSpec extends TransformerProp("SegmentIndices") {
 
-  def main(args: Array[String]): Unit = {
-    def randomMonotonicIncreasingArray(): Array[Int] = {
+  implicit lazy val randomMonotonicIncreasingArray: Arbitrary[Array[Int]] = Arbitrary {
       val emptyArray = Array.fill(10)(0)
       for (index <- 1 until emptyArray.length) {
         if (math.random() > 0.5) {
@@ -16,26 +14,23 @@ object SegmentIndicesSpec extends AnyFlatSpec with Matchers {
           emptyArray(index) = emptyArray(index - 1)
       }
       emptyArray
-    }
+  }
 
-    val hundredRandomArrays = (1 to 100).toList.map(_ => randomMonotonicIncreasingArray())
+  property("default") = Prop.forAll { (xs: List[Array[Int]]) =>
 
-    val segmentedIndices = FeatureSpec
+    val segmentIndicesSpec = FeatureSpec
       .of[Array[Int]]
       .required(identity)(SegmentIndices("segmented"))
 
-    val expected = hundredRandomArrays.map { testCase =>
+    val expected = xs.map { testCase =>
       testCase.groupBy(identity).toSeq.sortBy(_._1).flatMap { case (_, sameNumber) =>
         sameNumber.indices.toList }
     }
 
-    val result = segmentedIndices.extract(hundredRandomArrays).featureValues[Seq[Int]]
+    val result = segmentIndicesSpec.extract(xs)
+      .featureValues[Array[Int]]
+      .map(_.toSeq)
 
-
-    result should equal(expected)
+    Prop.all(result == expected)
   }
-//  property("default") = Prop.forAll(list[Array[Int]].arbitrary) {
-//    (xs) => //Need test input to be non-strict monotonic increasing
-//
-//  }
 }
