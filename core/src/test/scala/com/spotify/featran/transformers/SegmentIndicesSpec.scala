@@ -5,15 +5,15 @@ import org.scalacheck.{Arbitrary, Prop}
 
 object SegmentIndicesSpec extends TransformerProp("SegmentIndices") {
 
-  implicit lazy val randomMonotonicIncreasingArray: Arbitrary[Array[Int]] = Arbitrary {
-      val emptyArray = Array.fill(10)(0)
-      for (index <- 1 until emptyArray.length) {
+  implicit lazy val randomIncreasingArray: Arbitrary[Array[Int]] = Arbitrary {
+      val increasingArray = Array.fill(10)(0)
+      for (index <- 1 until increasingArray.length) {
         if (math.random() > 0.5) {
-          emptyArray(index) = emptyArray(index - 1) + 1
+          increasingArray(index) = increasingArray(index - 1) + 1
         } else
-          emptyArray(index) = emptyArray(index - 1)
+          increasingArray(index) = increasingArray(index - 1)
       }
-      emptyArray
+      increasingArray
   }
 
   property("default") = Prop.forAll { (xs: List[Array[Int]]) =>
