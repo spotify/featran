@@ -26,8 +26,8 @@ import com.twitter.algebird.{Aggregator, Max}
  *
  * Missing values are transformed to 0.0.
  *
- * When using aggregated feature summary from a previous session, out of bound values are
- * truncated to -1.0 or 1.0 and [[FeatureRejection.OutOfBound]] rejections are reported.
+ * When using aggregated feature summary from a previous session, out of bound values are truncated
+ * to -1.0 or 1.0 and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
 object MaxAbsScaler extends SettingsBuilder {
 
@@ -37,7 +37,8 @@ object MaxAbsScaler extends SettingsBuilder {
 
   /**
    * Create a new [[MaxAbsScaler]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, Max[Double], Double] =
     MaxAbsScaler(setting.name)

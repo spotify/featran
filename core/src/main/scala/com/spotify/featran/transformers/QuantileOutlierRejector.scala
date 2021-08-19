@@ -24,15 +24,15 @@ import com.twitter.algebird._
  * Reject values in the first and/or last quantiles defined by the number of buckets in the
  * `numBuckets` parameter.
  *
- * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
- * of the approximation can be controlled with the `k` parameter.
+ * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision of
+ * the approximation can be controlled with the `k` parameter.
  *
  * All values are transformed to zeros.
  *
  * Values in the first and/or last quantiles are rejected as [[FeatureRejection.Outlier]].
  *
- * When using aggregated feature summary from a previous session, values outside of previously
- * seen `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
+ * When using aggregated feature summary from a previous session, values outside of previously seen
+ * `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
  */
 object QuantileOutlierRejector extends SettingsBuilder {
   import BaseQuantileRejector._
@@ -40,11 +40,15 @@ object QuantileOutlierRejector extends SettingsBuilder {
   /**
    * Create a new [[QuantileOutlierRejector]] instance.
    *
-   * @param rejectLower whether to reject outliers in the first quantile
-   * @param rejectUpper whether to reject outliers in the last quantile
-   * @param numBuckets  number of buckets (quantiles, or categories) into which data points are
-   *                    grouped, must be greater than or equal to 2
-   * @param k           precision of the underlying Algebird QTree approximation
+   * @param rejectLower
+   *   whether to reject outliers in the first quantile
+   * @param rejectUpper
+   *   whether to reject outliers in the last quantile
+   * @param numBuckets
+   *   number of buckets (quantiles, or categories) into which data points are grouped, must be
+   *   greater than or equal to 2
+   * @param k
+   *   precision of the underlying Algebird QTree approximation
    */
   def apply(
     name: String,
@@ -57,7 +61,8 @@ object QuantileOutlierRejector extends SettingsBuilder {
 
   /**
    * Create a new [[QuantileOutlierRejector]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, B, C] =
     QuantileOutlierRejector(setting.name)

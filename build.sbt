@@ -413,7 +413,7 @@ def mimaSettings(moduleName: String): Seq[Def.Setting[_]] =
     mimaPreviousArtifacts := {
       dynverGitDescribeOutput.value
         .map(_.ref.value.tail)
-        .filter(VersionNumber(_).matchesSemVer(SemanticSelector(s">=${previousVersion}")))
+        .filter(VersionNumber(_).matchesSemVer(SemanticSelector(s">=$previousVersion")))
         .map("com.spotify" %% moduleName % _)
         .toSet
     }

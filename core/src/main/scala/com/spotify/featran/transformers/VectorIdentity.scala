@@ -34,7 +34,8 @@ object VectorIdentity extends SettingsBuilder {
 
   /**
    * Create a new [[VectorIdentity]] instance.
-   * @param expectedLength expected length of the input vectors, or 0 to infer from data
+   * @param expectedLength
+   *   expected length of the input vectors, or 0 to infer from data
    */
   def apply[M[_]](name: String, expectedLength: Int = 0)(implicit
     ev: M[Double] => Seq[Double]
@@ -43,7 +44,8 @@ object VectorIdentity extends SettingsBuilder {
 
   /**
    * Create a new [[VectorIdentity]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Seq[Double], Int, Int] = {
     val el = setting.params("expectedLength").toInt

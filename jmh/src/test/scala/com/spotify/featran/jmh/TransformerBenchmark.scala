@@ -31,8 +31,9 @@ class TransformerBenchmark {
 
   import Fixtures._
 
-  def benchmark[A](transformer: Transformer[A, _, _], bh: Blackhole)
-                  (implicit fixture: Seq[A]): Seq[Unit] = {
+  def benchmark[A](transformer: Transformer[A, _, _], bh: Blackhole)(implicit
+    fixture: Seq[A]
+  ): Seq[Unit] = {
     implicit val fb: FeatureBuilder[Unit] = new NoOpFeatureBuilder(bh)
     val fe = FeatureSpec.of[A].required(identity)(transformer).extract(fixture)
     fe.featureValues[Unit]

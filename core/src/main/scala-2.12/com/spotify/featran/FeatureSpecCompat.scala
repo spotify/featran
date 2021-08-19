@@ -25,11 +25,11 @@ import scala.reflect.runtime.universe.TypeTag
 trait FeatureSpecCompat {
 
   /**
-   * Generates a new [[FeatureSpec]] for case class of type `T`.  This method
-   * defaults the transformers based on the types of the fields.
+   * Generates a new [[FeatureSpec]] for case class of type `T`. This method defaults the
+   * transformers based on the types of the fields.
    *
-   * The implicit parameter can be used to change the default of the Transformer used for
-   * continuous values.  When another isn't supplied Identity will be used.
+   * The implicit parameter can be used to change the default of the Transformer used for continuous
+   * values. When another isn't supplied Identity will be used.
    */
   def from[T <: Product: ClassTag: TypeTag](implicit dt: DefaultTransform[Double]): FeatureSpec[T] =
     CaseClassConverter.toSpec[T]

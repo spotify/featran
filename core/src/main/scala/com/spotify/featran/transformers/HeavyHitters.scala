@@ -25,14 +25,13 @@ import com.twitter.algebird.{HeavyHitters => _, _}
 import scala.util.Random
 
 /**
- * Transform a collection of categorical features to 2 columns, one for rank and one for count.
- * Only the top heavyHittersCount items are tracked, with 1.0 being the most frequent rank, 2.0
- * the second most, etc. All other items are transformed to [0.0, 0.0].
+ * Transform a collection of categorical features to 2 columns, one for rank and one for count. Only
+ * the top heavyHittersCount items are tracked, with 1.0 being the most frequent rank, 2.0 the
+ * second most, etc. All other items are transformed to [0.0, 0.0].
  *
- * Ranks and frequencies are estimated with Algebird's SketchMap data structure. With probability
- * at least `1 - delta`, this estimate is within `eps * N` of the true frequency (i.e.,
- * `true frequency <= estimate <= true frequency + eps * N`), where N is the total size of the
- * input collection.
+ * Ranks and frequencies are estimated with Algebird's SketchMap data structure. With probability at
+ * least `1 - delta`, this estimate is within `eps * N` of the true frequency (i.e., `true frequency
+ * <= estimate <= true frequency + eps * N`), where N is the total size of the input collection.
  *
  * Missing values are transformed to [0.0, 0.0].
  */
@@ -40,12 +39,16 @@ object HeavyHitters extends SettingsBuilder {
 
   /**
    * Create a new [[HeavyHitters]] instance.
-   * @param heavyHittersCount number of heavy hitters to keep track of
-   * @param eps one-sided error bound on the error of each point query, i.e. frequency estimate
-   * @param delta a bound on the probability that a query estimate does not lie within some small
-   *              interval (an interval that depends on `eps`) around the truth
-   * @param seed a seed to initialize the random number generator used to create the pairwise
-   *             independent hash functions
+   * @param heavyHittersCount
+   *   number of heavy hitters to keep track of
+   * @param eps
+   *   one-sided error bound on the error of each point query, i.e. frequency estimate
+   * @param delta
+   *   a bound on the probability that a query estimate does not lie within some small interval (an
+   *   interval that depends on `eps`) around the truth
+   * @param seed
+   *   a seed to initialize the random number generator used to create the pairwise independent hash
+   *   functions
    */
   def apply(
     name: String,
@@ -58,7 +61,8 @@ object HeavyHitters extends SettingsBuilder {
 
   /**
    * Create a new [[HeavyHitters]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(
     setting: Settings

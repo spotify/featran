@@ -32,7 +32,8 @@ object Indicator extends SettingsBuilder {
 
   /**
    * Create a new [[Indicator]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] =
     Indicator(setting.name)

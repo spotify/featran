@@ -24,11 +24,11 @@ import scala.collection.{mutable, SortedMap}
 /**
  * Transform a collection of sentences, where each row is a `Seq[String]` of the words / tokens,
  * into a collection containing all the n-grams that can be constructed from each row. The feature
- * representation is an n-hot encoding (see [[NHotEncoder]]) constructed from an expanded
- * vocabulary of all of the generated n-grams.
+ * representation is an n-hot encoding (see [[NHotEncoder]]) constructed from an expanded vocabulary
+ * of all of the generated n-grams.
  *
- * N-grams are generated based on a specified range of `low` to `high` (inclusive) and are joined
- * by the given `sep` (default is " "). For example, with `low = 2`, `high = 3` and `sep = ""`, row
+ * N-grams are generated based on a specified range of `low` to `high` (inclusive) and are joined by
+ * the given `sep` (default is " "). For example, with `low = 2`, `high = 3` and `sep = ""`, row
  * `["a", "b", "c", "d", "e"]` would produce `["ab", "bc", "cd", "de", "abc", "bcd", "cde"]`.
  *
  * As with [[NHotEncoder]], missing values are transformed to [0.0, 0.0, ...].
@@ -38,10 +38,13 @@ object NGrams extends SettingsBuilder {
   /**
    * Create a new [[NGrams]] instance.
    *
-   * @param low the smallest size of the generated *-grams
-   * @param high the largest size of the generated *-grams, or -1 for the full length of the
-   *             input `Seq[String]`
-   * @param sep a string separator used to join individual tokens
+   * @param low
+   *   the smallest size of the generated *-grams
+   * @param high
+   *   the largest size of the generated *-grams, or -1 for the full length of the input
+   *   `Seq[String]`
+   * @param sep
+   *   a string separator used to join individual tokens
    */
   def apply(
     name: String,
@@ -56,7 +59,8 @@ object NGrams extends SettingsBuilder {
 
   /**
    * Create a new [[NGrams]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(
     setting: Settings
