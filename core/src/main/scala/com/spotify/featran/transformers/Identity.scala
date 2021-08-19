@@ -31,7 +31,8 @@ object Identity extends SettingsBuilder {
 
   /**
    * Create a new [[Identity]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] =
     Identity(setting.name)

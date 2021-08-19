@@ -29,7 +29,8 @@ import org.openjdk.jmh.annotations._
 class ExtractorBenchmark {
 
   type A = (Double, String)
-  val fs: FeatureSpec[A] = FeatureSpec.of[A]
+  val fs: FeatureSpec[A] = FeatureSpec
+    .of[A]
     .required(_._1)(StandardScaler("std"))
     .required(_._2)(OneHotEncoder("onehot"))
   val input: Seq[A] = (1 to 10).map(x => (x.toDouble, x.toString))

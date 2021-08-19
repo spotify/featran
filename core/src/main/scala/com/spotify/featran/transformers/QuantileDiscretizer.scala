@@ -25,11 +25,11 @@ import com.twitter.algebird._
 import scala.collection.JavaConverters._
 
 /**
- * Transform a column of continuous features to n columns of binned categorical features. The
- * number of bins is set by the `numBuckets` parameter.
+ * Transform a column of continuous features to n columns of binned categorical features. The number
+ * of bins is set by the `numBuckets` parameter.
  *
- * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
- * of the approximation can be controlled with the `k` parameter.
+ * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision of
+ * the approximation can be controlled with the `k` parameter.
  *
  * Missing values are transformed to zero vectors.
  *
@@ -41,9 +41,11 @@ object QuantileDiscretizer extends SettingsBuilder {
 
   /**
    * Create a new [[QuantileDiscretizer]] instance.
-   * @param numBuckets number of buckets (quantiles, or categories) into which data points are
-   *                   grouped, must be greater than or equal to 2
-   * @param k precision of the underlying Algebird QTree approximation
+   * @param numBuckets
+   *   number of buckets (quantiles, or categories) into which data points are grouped, must be
+   *   greater than or equal to 2
+   * @param k
+   *   precision of the underlying Algebird QTree approximation
    */
   def apply(
     name: String,
@@ -54,7 +56,8 @@ object QuantileDiscretizer extends SettingsBuilder {
 
   /**
    * Create a new [[QuantileDiscretizer]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, B, C] = {
     val numBuckets = setting.params("numBuckets").toInt

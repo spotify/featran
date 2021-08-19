@@ -20,21 +20,21 @@ package com.spotify.featran.transformers
 import com.twitter.algebird.QTreeAggregator
 
 /**
- * Reject values if they fall outside of either `factor * IQR` below the first quartile or
- * `factor * IQR` above the third quartile.
+ * Reject values if they fall outside of either `factor * IQR` below the first quartile or `factor *
+ * IQR` above the third quartile.
  *
  * IQR or inter quartile range is the range between the first and the third quartiles.
  *
- * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision
- * of the approximation can be controlled with the `k` parameter.
+ * The bin ranges are chosen using the Algebird's QTree approximate data structure. The precision of
+ * the approximation can be controlled with the `k` parameter.
  *
  * All values are transformed to zeros.
  *
  * Values `factor * IQR` below the first quartile or `factor * IQR` above the third quartile are
  * rejected as [[FeatureRejection.Outlier]].
  *
- * When using aggregated feature summary from a previous session, values outside of previously
- * seen `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
+ * When using aggregated feature summary from a previous session, values outside of previously seen
+ * `[min, max]` will also report [[FeatureRejection.Outlier]] as rejection.
  */
 object IQROutlierRejector extends SettingsBuilder {
   import BaseQuantileRejector._
@@ -43,9 +43,12 @@ object IQROutlierRejector extends SettingsBuilder {
   /**
    * Create a new [[IQROutlierRejector]] instance.
    *
-   * @param rejectLower whether to reject outliers `factor` * IQR below the first quartile
-   * @param rejectUpper whether to reject outliers `factor` * IQR above the third quartile
-   * @param k           precision of the underlying Algebird QTree approximation
+   * @param rejectLower
+   *   whether to reject outliers `factor` * IQR below the first quartile
+   * @param rejectUpper
+   *   whether to reject outliers `factor` * IQR above the third quartile
+   * @param k
+   *   precision of the underlying Algebird QTree approximation
    */
   def apply(
     name: String,
@@ -58,7 +61,8 @@ object IQROutlierRejector extends SettingsBuilder {
 
   /**
    * Create a new [[IQROutlierRejector]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, B, C] =
     IQROutlierRejector(setting.name)

@@ -31,14 +31,16 @@ object Binarizer extends SettingsBuilder {
 
   /**
    * Create a new [[Binarizer]] instance.
-   * @param threshold threshold to binarize continuous features
+   * @param threshold
+   *   threshold to binarize continuous features
    */
   def apply(name: String, threshold: Double = 0.0): Transformer[Double, Unit, Unit] =
     new Binarizer(name, threshold)
 
   /**
    * Create a new [[Binarizer]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] = {
     val threshold = setting.params("threshold").toDouble

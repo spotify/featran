@@ -34,8 +34,10 @@ object Normalizer extends SettingsBuilder {
 
   /**
    * Create a new [[Normalizer]] instance.
-   * @param p normalization in L^p^ space, must be greater than or equal to 1.0
-   * @param expectedLength expected length of the input vectors, or 0 to infer from data
+   * @param p
+   *   normalization in L^p^ space, must be greater than or equal to 1.0
+   * @param expectedLength
+   *   expected length of the input vectors, or 0 to infer from data
    */
   def apply(
     name: String,
@@ -46,7 +48,8 @@ object Normalizer extends SettingsBuilder {
 
   /**
    * Create a new [[OneHotEncoder]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Array[Double], Int, Int] = {
     val p = setting.params("p").toDouble

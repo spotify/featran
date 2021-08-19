@@ -21,9 +21,9 @@ import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.{Aggregator, Moments}
 
 /**
- * Transform features by normalizing each feature to have unit standard deviation and/or zero
- * mean. When `withStd` is true, it scales the data to unit standard deviation. When `withMean` is
- * true, it centers the data with mean before scaling.
+ * Transform features by normalizing each feature to have unit standard deviation and/or zero mean.
+ * When `withStd` is true, it scales the data to unit standard deviation. When `withMean` is true,
+ * it centers the data with mean before scaling.
  *
  * Missing values are transformed to 0.0 if `withMean` is true or population mean otherwise.
  */
@@ -31,8 +31,10 @@ object StandardScaler extends SettingsBuilder {
 
   /**
    * Create a new [[StandardScaler]] instance.
-   * @param withStd whether to scale the data to unit standard deviation
-   * @param withMean whether to center the data with mean before scaling
+   * @param withStd
+   *   whether to scale the data to unit standard deviation
+   * @param withMean
+   *   whether to center the data with mean before scaling
    */
   def apply(
     name: String,
@@ -43,7 +45,8 @@ object StandardScaler extends SettingsBuilder {
 
   /**
    * Create a new [[StandardScaler]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, Moments, (Double, Double)] = {
     val withStd = setting.params("withStd").toBoolean

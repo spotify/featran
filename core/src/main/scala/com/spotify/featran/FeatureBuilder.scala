@@ -38,7 +38,8 @@ object FeatureRejection {
 
 /**
  * Type class for types to build feature into.
- * @tparam T output feature type
+ * @tparam T
+ *   output feature type
  */
 @implicitNotFound("Could not find an instance of FeatureBuilder for ${T}")
 @typeclass trait FeatureBuilder[T] extends Serializable { self =>
@@ -48,8 +49,10 @@ object FeatureRejection {
 
   /**
    * Reject an input row.
-   * @param transformer transformer rejecting the input
-   * @param reason reason for rejection
+   * @param transformer
+   *   transformer rejecting the input
+   * @param reason
+   *   reason for rejection
    */
   def reject(transformer: Transformer[_, _, _], reason: FeatureRejection): Unit = {
     val name = transformer.name
@@ -69,14 +72,16 @@ object FeatureRejection {
 
   /**
    * Initialize the builder for a record. This should be called only once per input row.
-   * @param dimension total feature dimension
+   * @param dimension
+   *   total feature dimension
    */
   def init(dimension: Int): Unit
 
   /**
    * Prepare the builder for the next transformer. This should be called only once per transformer
    * per input row.
-   * @param transformer the next transformer in line
+   * @param transformer
+   *   the next transformer in line
    */
   def prepare(transformer: Transformer[_, _, _]): Unit = ()
 
@@ -138,8 +143,7 @@ object FeatureRejection {
 }
 
 /**
- * A sparse representation of an array using two arrays for indices and
- * values of non-zero entries.
+ * A sparse representation of an array using two arrays for indices and values of non-zero entries.
  */
 case class SparseArray[@specialized(Float, Double) T](
   indices: Array[Int],

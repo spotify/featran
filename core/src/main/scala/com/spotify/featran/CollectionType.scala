@@ -25,7 +25,8 @@ import scala.annotation.implicitNotFound
 
 /**
  * Type class for collections to extract features from.
- * @tparam M collection type
+ * @tparam M
+ *   collection type
  */
 @implicitNotFound("Could not find an instance of CollectionType for ${M}")
 @typeclass trait CollectionType[M[_]] extends Serializable {

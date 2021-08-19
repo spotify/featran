@@ -22,13 +22,20 @@ package ml.dmlc.xgboost4j
 /**
  * Labeled training data point.
  *
- * @param label Label of this point.
- * @param size Feature dimensionality
- * @param indices Feature indices of this point or `null` if the data is dense.
- * @param values Feature values of this point.
- * @param weight Weight of this point.
- * @param group Group of this point (used for ranking) or -1.
- * @param baseMargin Initial prediction on this point or `Float.NaN`
+ * @param label
+ *   Label of this point.
+ * @param size
+ *   Feature dimensionality
+ * @param indices
+ *   Feature indices of this point or `null` if the data is dense.
+ * @param values
+ *   Feature values of this point.
+ * @param weight
+ *   Weight of this point.
+ * @param group
+ *   Group of this point (used for ranking) or -1.
+ * @param baseMargin
+ *   Initial prediction on this point or `Float.NaN`
  */
 case class LabeledPoint(
   label: Float,

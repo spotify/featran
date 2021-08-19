@@ -45,7 +45,8 @@ object OneHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[OneHotEncoder]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] = {
     val encodeMissingValue = setting.params("encodeMissingValue").toBoolean

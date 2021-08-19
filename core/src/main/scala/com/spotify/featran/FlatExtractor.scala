@@ -24,9 +24,10 @@ import scala.reflect.ClassTag
 import scala.annotation.implicitNotFound
 
 /**
- * TypeClass that is used to read data from flat files.  The requirement is that each
- * feature comes from the same type and can be looked up by name.
- * @tparam T The intermediate storage format for each feature.
+ * TypeClass that is used to read data from flat files. The requirement is that each feature comes
+ * from the same type and can be looked up by name.
+ * @tparam T
+ *   The intermediate storage format for each feature.
  */
 @implicitNotFound("Could not find an instance of FlatReader for ${T}")
 @typeclass trait FlatReader[T] extends Serializable {
@@ -86,33 +87,40 @@ object FlatReader {
 }
 
 /**
- * Sometimes it is useful to store the features in an intermediate state in normally
- * a flat version like Examples or maybe JSON.  This makes it easier to interface with
- * other systems.
+ * Sometimes it is useful to store the features in an intermediate state in normally a flat version
+ * like Examples or maybe JSON. This makes it easier to interface with other systems.
  */
 object FlatExtractor {
 
   /**
-   * This function allows the reading of data from these flat versions by name with a given
-   * settings file to extract the final output.
+   * This function allows the reading of data from these flat versions by name with a given settings
+   * file to extract the final output.
    *
-   * @param settings Setting information
-   * @tparam M Collection Type
-   * @tparam T The intermediate format where the data is stored
-   * @return Class for converting to Features
+   * @param settings
+   *   Setting information
+   * @tparam M
+   *   Collection Type
+   * @tparam T
+   *   The intermediate format where the data is stored
+   * @return
+   *   Class for converting to Features
    */
   @inline def apply[M[_]: CollectionType, T: ClassTag: FlatReader](
     settings: M[String]
   ): FlatExtractor[M, T] = new FlatExtractor[M, T](settings)
 
   /**
-   * Another useful operation is to use the Spec and Information we have to map from
-   * the Scala Object to read the data directly from the intermediate format for parsing
+   * Another useful operation is to use the Spec and Information we have to map from the Scala
+   * Object to read the data directly from the intermediate format for parsing
    *
-   * @param spec Current FeatureSpec
-   * @tparam T The intermediate format where the data is stored
-   * @tparam X The Input Scala Object
-   * @return FeatureSpec for the intermediate format
+   * @param spec
+   *   Current FeatureSpec
+   * @tparam T
+   *   The intermediate format where the data is stored
+   * @tparam X
+   *   The Input Scala Object
+   * @return
+   *   FeatureSpec for the intermediate format
    */
   def flatSpec[T: ClassTag: FlatReader, X: ClassTag](spec: FeatureSpec[X]): FeatureSpec[T] = {
     val features = spec.features.map { feature =>
@@ -124,13 +132,17 @@ object FlatExtractor {
   }
 
   /**
-   * Another useful operation is to use the Spec and Information we have to map from
-   * the Scala Object to read the data directly from the intermediate format for parsing
+   * Another useful operation is to use the Spec and Information we have to map from the Scala
+   * Object to read the data directly from the intermediate format for parsing
    *
-   * @param spec Current FeatureSpec
-   * @tparam T The intermediate format where the data is stored
-   * @tparam X The Input Scala Object
-   * @return FeatureSpec for the intermediate format
+   * @param spec
+   *   Current FeatureSpec
+   * @tparam T
+   *   The intermediate format where the data is stored
+   * @tparam X
+   *   The Input Scala Object
+   * @return
+   *   FeatureSpec for the intermediate format
    */
   def multiFlatSpec[T: ClassTag: FlatReader, X: ClassTag](
     spec: MultiFeatureSpec[X]
