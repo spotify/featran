@@ -32,10 +32,14 @@ trait SettingsBuilder {
  *
  * Input values are converted into intermediate type `B`, aggregated, and converted to summary type
  * `C`. The summary type `C` is then used to transform input values into features.
- * @param name feature name
- * @tparam A input type
- * @tparam B aggregator intermediate type
- * @tparam C aggregator summary type
+ * @param name
+ *   feature name
+ * @tparam A
+ *   input type
+ * @tparam B
+ *   aggregator intermediate type
+ * @tparam C
+ *   aggregator summary type
  */
 abstract class Transformer[-A, B, C](val name: String) extends Serializable { self =>
 
@@ -55,9 +59,12 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
 
   /**
    * Build features from a single input value and an aggregator summary.
-   * @param a input value
-   * @param c aggregator summary
-   * @param fb feature builder
+   * @param a
+   *   input value
+   * @param c
+   *   aggregator summary
+   * @param fb
+   *   feature builder
    */
   def buildFeatures(a: Option[A], c: C, fb: FeatureBuilder[_]): Unit
 
@@ -66,7 +73,8 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
 
   /**
    * Builds a new transformer with an extra input preprocessing step
-   * @param f input preprocessing function
+   * @param f
+   *   input preprocessing function
    */
   def contramap[AA](f: AA => A): Transformer[AA, B, C] = new Transformer[AA, B, C](name) {
     override val aggregator: Aggregator[AA, B, C] = new Aggregator[AA, B, C] {
@@ -133,7 +141,8 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
 
   /**
    * Settings including compile time parameters and runtime aggregator summary.
-   * @param c aggregator summary
+   * @param c
+   *   aggregator summary
    */
   def settings(c: Option[C]): Settings =
     Settings(

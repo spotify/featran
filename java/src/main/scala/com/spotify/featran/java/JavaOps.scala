@@ -19,7 +19,7 @@ package com.spotify.featran.java
 
 import java.lang.{Double => JDouble}
 import java.util.function.BiFunction
-import java.util.{Collections, Optional, List => JList}
+import java.util.{Collections, List => JList, Optional}
 
 import com.spotify.featran._
 import com.spotify.featran.tensorflow._

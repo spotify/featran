@@ -23,8 +23,10 @@ import scala.reflect.ClassTag
 
 /**
  * Encapsulate features extracted from a [[FeatureSpec]].
- * @tparam M input collection type, e.g. `Array`, List
- * @tparam T input record type to extract features from
+ * @tparam M
+ *   input collection type, e.g. `Array`, List
+ * @tparam T
+ *   input record type to extract features from
  */
 class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
   private val fs: M[FeatureSet[T]],
@@ -72,8 +74,9 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]].
-   * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
-   *           `DenseVector[Double]`
+   * @tparam F
+   *   output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
+   *   `DenseVector[Double]`
    */
   def featureValues[F: FeatureBuilder: ClassTag]: M[F] =
     featureResults.map(_.value)
@@ -81,8 +84,9 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]] with
    * rejections keyed on feature name and the original input record.
-   * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
-   *           `DenseVector[Double]`
+   * @tparam F
+   *   output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
+   *   `DenseVector[Double]`
    */
   def featureResults[F: FeatureBuilder: ClassTag]: M[FeatureResult[F, T]] = {
     val fb = FeatureBuilder[F].newBuilder

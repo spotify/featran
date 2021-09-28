@@ -42,7 +42,8 @@ object NHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[NHotEncoder]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(
     setting: Settings

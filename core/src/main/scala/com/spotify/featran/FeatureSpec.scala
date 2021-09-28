@@ -28,7 +28,8 @@ object FeatureSpec extends FeatureSpecCompat {
 
   /**
    * Create a new [[FeatureSpec]] for input record type `T`.
-   * @tparam T input record type to extract features from
+   * @tparam T
+   *   input record type to extract features from
    */
   def of[T]: FeatureSpec[T] = new FeatureSpec[T](Array.empty, Crossings.empty)
 
@@ -41,7 +42,8 @@ object FeatureSpec extends FeatureSpecCompat {
 
 /**
  * Encapsulate specification for feature extraction and transformation.
- * @tparam T input record type to extract features from
+ * @tparam T
+ *   input record type to extract features from
  */
 class FeatureSpec[T] private[featran] (
   private[featran] val features: Array[Feature[T, _, _, _]],
@@ -51,19 +53,26 @@ class FeatureSpec[T] private[featran] (
 
   /**
    * Add a required field specification.
-   * @param f function to extract feature `A` from record `T`
-   * @param t [[com.spotify.featran.transformers.Transformer Transformer]] for extracted feature `A`
-   * @tparam A extracted feature type
+   * @param f
+   *   function to extract feature `A` from record `T`
+   * @param t
+   *   [[com.spotify.featran.transformers.Transformer Transformer]] for extracted feature `A`
+   * @tparam A
+   *   extracted feature type
    */
   def required[A](f: T => A)(t: Transformer[A, _, _]): FeatureSpec[T] =
     optional(t => Some(f(t)))(t)
 
   /**
    * Add an optional field specification.
-   * @param f function to extract feature `Option[A]` from record `T`
-   * @param default default for missing values
-   * @param t [[com.spotify.featran.transformers.Transformer Transformer]] for extracted feature `A`
-   * @tparam A extracted feature type
+   * @param f
+   *   function to extract feature `Option[A]` from record `T`
+   * @param default
+   *   default for missing values
+   * @param t
+   *   [[com.spotify.featran.transformers.Transformer Transformer]] for extracted feature `A`
+   * @tparam A
+   *   extracted feature type
    */
   def optional[A](f: T => Option[A], default: Option[A] = None)(
     t: Transformer[A, _, _]
@@ -72,8 +81,10 @@ class FeatureSpec[T] private[featran] (
 
   /**
    * Cross feature values of two underlying transformers.
-   * @param k names of transformers to be crossed
-   * @param f function to cross feature value pairs
+   * @param k
+   *   names of transformers to be crossed
+   * @param f
+   *   function to cross feature value pairs
    */
   def cross(k: (String, String))(f: (Double, Double) => Double): FeatureSpec[T] = {
     val names: Set[String] = features.iterator.map(_.transformer.name).toSet
@@ -86,9 +97,12 @@ class FeatureSpec[T] private[featran] (
    * Compose with another spec by applying a prepare function to input records first.
    *
    * Useful for reusing an existing spec for a different input record type.
-   * @param spec spec to compose with
-   * @param f function to prepare input records for the other spec
-   * @tparam S input record type of the other spec
+   * @param spec
+   *   spec to compose with
+   * @param f
+   *   function to prepare input records for the other spec
+   * @tparam S
+   *   input record type of the other spec
    */
   def compose[S](spec: FeatureSpec[S])(f: T => S): FeatureSpec[T] = {
     val composedFeatures = spec.features.map { feature =>
@@ -103,8 +117,10 @@ class FeatureSpec[T] private[featran] (
    *
    * This is done in two steps, a `reduce` step over the collection to aggregate feature summary,
    * and a `map` step to transform values using the summary.
-   * @param input input collection
-   * @tparam M input collection type, e.g. `Array`, `List`
+   * @param input
+   *   input collection
+   * @tparam M
+   *   input collection type, e.g. `Array`, `List`
    */
   def extract[M[_]: CollectionType](input: M[T]): FeatureExtractor[M, T] = {
     import CollectionType.ops._
@@ -116,7 +132,8 @@ class FeatureSpec[T] private[featran] (
   /**
    * Creates a new FeatureSpec with only the features that respect the given predicate.
    *
-   * @param predicate Function determining whether or not to include the feature
+   * @param predicate
+   *   Function determining whether or not to include the feature
    */
   def filter(predicate: Feature[T, _, _, _] => Boolean): FeatureSpec[T] = {
     val filteredFeatures = features.filter(predicate)
@@ -135,9 +152,12 @@ class FeatureSpec[T] private[featran] (
    *
    * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
    * in a previous session.
-   * @param input input collection
-   * @param settings JSON settings from a previous session
-   * @tparam M input collection type, e.g. `Array`, `List`
+   * @param input
+   *   input collection
+   * @param settings
+   *   JSON settings from a previous session
+   * @tparam M
+   *   input collection type, e.g. `Array`, `List`
    */
   def extractWithSubsetSettings[M[_]: CollectionType](
     input: M[T],
@@ -162,9 +182,12 @@ class FeatureSpec[T] private[featran] (
    *
    * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
    * in a previous session.
-   * @param input input collection
-   * @param settings JSON settings from a previous session
-   * @tparam M input collection type, e.g. `Array`, `List`
+   * @param input
+   *   input collection
+   * @param settings
+   *   JSON settings from a previous session
+   * @tparam M
+   *   input collection type, e.g. `Array`, `List`
    */
   def extractWithSettings[M[_]: CollectionType](
     input: M[T],
@@ -177,13 +200,14 @@ class FeatureSpec[T] private[featran] (
   }
 
   /**
-   * Extract features from individual records using partial settings. Since the
-   * settings are parsed only once, this is more efficient and is recommended when the input is
-   * from an unbounded source, e.g. a stream of events or a backend service.
+   * Extract features from individual records using partial settings. Since the settings are parsed
+   * only once, this is more efficient and is recommended when the input is from an unbounded
+   * source, e.g. a stream of events or a backend service.
    *
    * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
    * in a previous session.
-   * @param settings JSON settings from a previous session
+   * @param settings
+   *   JSON settings from a previous session
    */
   def extractWithSubsetSettings[F: FeatureBuilder: ClassTag](
     settings: String
@@ -198,12 +222,13 @@ class FeatureSpec[T] private[featran] (
 
   /**
    * Extract features from individual records using settings from a previous session. Since the
-   * settings are parsed only once, this is more efficient and is recommended when the input is
-   * from an unbounded source, e.g. a stream of events or a backend service.
+   * settings are parsed only once, this is more efficient and is recommended when the input is from
+   * an unbounded source, e.g. a stream of events or a backend service.
    *
    * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
    * in a previous session.
-   * @param settings JSON settings from a previous session
+   * @param settings
+   *   JSON settings from a previous session
    */
   def extractWithSettings[F: FeatureBuilder: ClassTag](settings: String): RecordExtractor[T, F] =
     new RecordExtractor[T, F](new FeatureSet[T](features, crossings), settings)

@@ -22,11 +22,11 @@ import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWr
 import scala.collection.SortedMap
 
 /**
- * Transform a collection of categorical features to a single value that is the position
- * of that feature within the complete set of categories.
+ * Transform a collection of categorical features to a single value that is the position of that
+ * feature within the complete set of categories.
  *
- * Missing values are transformed to zeros so may collide with the first position. Rejections can
- * be used to remove this case.
+ * Missing values are transformed to zeros so may collide with the first position. Rejections can be
+ * used to remove this case.
  *
  * When using aggregated feature summary from a previous session, unseen labels are ignored and
  * [[FeatureRejection.Unseen]] rejections are reported.
@@ -39,7 +39,8 @@ object PositionEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[PositionEncoder]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[String, Set[String], SortedMap[String, Int]] =
     PositionEncoder(setting.name)

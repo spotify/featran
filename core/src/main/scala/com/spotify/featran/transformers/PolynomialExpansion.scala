@@ -33,8 +33,10 @@ object PolynomialExpansion extends SettingsBuilder {
 
   /**
    * Create a new [[PolynomialExpansion]] instance.
-   * @param degree the polynomial degree to expand, which should be greater than or equal to 1
-   * @param expectedLength expected length of the input vectors, or 0 to infer from data
+   * @param degree
+   *   the polynomial degree to expand, which should be greater than or equal to 1
+   * @param expectedLength
+   *   expected length of the input vectors, or 0 to infer from data
    */
   def apply(
     name: String,
@@ -45,7 +47,8 @@ object PolynomialExpansion extends SettingsBuilder {
 
   /**
    * Create a new [[PolynomialExpansion]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Array[Double], Int, Int] = {
     val degree = setting.params("degree").toInt

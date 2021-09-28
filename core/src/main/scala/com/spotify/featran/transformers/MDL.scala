@@ -37,29 +37,34 @@ case class MDLRecord[T](label: T, value: Double)
  * The optimum number of bins is computed using Minimum Description Length (MDL), which is an
  * entropy measurement between the values and the targets.
  *
- * The transformer expects an [[MDLRecord]] where the first field is a label and the second value
- * is the scalar that will be transformed into buckets.
+ * The transformer expects an [[MDLRecord]] where the first field is a label and the second value is
+ * the scalar that will be transformed into buckets.
  *
  * MDL is an iterative algorithm so all of the data needed to compute the buckets will be pulled
  * into memory. If you run into memory issues the `sampleRate` parameter should be lowered.
  *
  * References:
  *
- * - Fayyad, U., & Irani, K. (1993). "Multi-interval discretization of continuous-valued attributes
- * for classification learning."
+ *   - Fayyad, U., & Irani, K. (1993). "Multi-interval discretization of continuous-valued
+ *     attributes for classification learning."
  *
- * - https://github.com/sramirez/spark-MDLP-discretization
+ *   - https://github.com/sramirez/spark-MDLP-discretization
  */
 object MDL extends SettingsBuilder {
 
   /**
    * Create an MDL Instance.
    *
-   * @param sampleRate percentage of records to keep to compute the buckets
-   * @param seed seed for the sampler
-   * @param stoppingCriterion stopping criterion for MDL
-   * @param minBinPercentage minimum percent of total data allowed in a single bin
-   * @param maxBins maximum number of thresholds per feature
+   * @param sampleRate
+   *   percentage of records to keep to compute the buckets
+   * @param seed
+   *   seed for the sampler
+   * @param stoppingCriterion
+   *   stopping criterion for MDL
+   * @param minBinPercentage
+   *   minimum percent of total data allowed in a single bin
+   * @param maxBins
+   *   maximum number of thresholds per feature
    */
   def apply[T: ClassTag](
     name: String,
@@ -73,7 +78,8 @@ object MDL extends SettingsBuilder {
 
   /**
    * Create a new [[MDL]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[MDLRecord[String], B[String], C] = {
     val sampleRate = setting.params("sampleRate").toDouble

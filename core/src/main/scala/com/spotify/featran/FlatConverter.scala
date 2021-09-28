@@ -86,10 +86,10 @@ object FlatWriter {
 }
 
 /**
- * Companion to FlatReader.  Sometimes for serialization and compatability reasons it
- * is better to write out data in an intermediate format such as JSON or tf.examples to
- * interface with storage or other systems.  This class uses the functions internal to a spec
- * to write out the data into a new flat format.
+ * Companion to FlatReader. Sometimes for serialization and compatability reasons it is better to
+ * write out data in an intermediate format such as JSON or tf.examples to interface with storage or
+ * other systems. This class uses the functions internal to a spec to write out the data into a new
+ * flat format.
  */
 object FlatConverter {
   @inline def apply[T: ClassTag, A: ClassTag: FlatWriter](

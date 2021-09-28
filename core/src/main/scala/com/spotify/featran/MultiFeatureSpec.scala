@@ -49,8 +49,10 @@ class MultiFeatureSpec[T](
    * This is done in two steps, a `reduce` step over the collection to aggregate feature summary,
    * and a `map` step to transform values using the summary.
    *
-   * @param input input collection
-   * @tparam M input collection type, e.g. `Array`, `List`
+   * @param input
+   *   input collection
+   * @tparam M
+   *   input collection type, e.g. `Array`, `List`
    */
   def extract[M[_]: CollectionType](input: M[T]): MultiFeatureExtractor[M, T] = {
     import CollectionType.ops._
@@ -62,7 +64,8 @@ class MultiFeatureSpec[T](
   /**
    * Creates a new MultiFeatureSpec with only the features that respect the given predicate.
    *
-   * @param predicate Function determining whether or not to include the feature
+   * @param predicate
+   *   Function determining whether or not to include the feature
    */
   def filter(predicate: Feature[T, _, _, _] => Boolean): MultiFeatureSpec[T] = {
     val filteredFeatures = features.filter(predicate)
@@ -83,9 +86,12 @@ class MultiFeatureSpec[T](
    *
    * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
    * in a previous session.
-   * @param input input collection
-   * @param settings JSON settings from a previous session
-   * @tparam M input collection type, e.g. `Array`, `List`
+   * @param input
+   *   input collection
+   * @param settings
+   *   JSON settings from a previous session
+   * @tparam M
+   *   input collection type, e.g. `Array`, `List`
    */
   def extractWithSettings[M[_]: CollectionType](
     input: M[T],
@@ -102,9 +108,12 @@ class MultiFeatureSpec[T](
    *
    * This bypasses the `reduce` step in [[extract]] and uses feature summary from settings exported
    * in a previous session.
-   * @param input input collection
-   * @param settings JSON settings from a previous session
-   * @tparam M input collection type, e.g. `Array`, `List`
+   * @param input
+   *   input collection
+   * @param settings
+   *   JSON settings from a previous session
+   * @tparam M
+   *   input collection type, e.g. `Array`, `List`
    */
   def extractWithSubsetSettings[M[_]: CollectionType](
     input: M[T],

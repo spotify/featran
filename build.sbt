@@ -18,20 +18,20 @@
 import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
 import sbt.Def
 
-val algebirdVersion = "0.13.7"
-val breezeVersion = "1.1"
-val circeVersion = "0.13.0"
+val algebirdVersion = "0.13.8"
+val breezeVersion = "1.3"
+val circeVersion = "0.14.1"
 val commonsMathVersion = "3.6.1"
-val flinkVersion = "1.12.2"
-val hadoopVersion = "3.3.0"
+val flinkVersion = "1.13.2"
+val hadoopVersion = "3.3.1"
 val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.15.3"
 val scalatestVersion = "3.2.3"
 val scaldingVersion = "0.17.4"
-val scioVersion = "0.10.2"
+val scioVersion = "0.11.0"
 val simulacrumVersion = "1.0.1"
-val sparkVersion = "3.1.1"
-val tensorflowVersion = "0.3.1"
+val sparkVersion = "3.1.2"
+val tensorflowVersion = "0.3.3"
 val xgBoostVersion = "1.3.1"
 
 val previousVersion = "0.8.0"
@@ -44,7 +44,7 @@ lazy val commonSettings = Seq(
   organization := "com.spotify",
   name := "featran",
   description := "Feature Transformers",
-  scalaVersion := "2.12.13",
+  scalaVersion := "2.12.15",
   scalacOptions ++= commonScalacOptions,
   scalacOptions ++= {
     if (scalaBinaryVersion.value == "2.13")
@@ -59,14 +59,14 @@ lazy val commonSettings = Seq(
     if (isDotty.value) Seq("-source:3.0-migration", "-rewrite") else Nil
   },
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
-  javacOptions in (Compile, doc) := Seq("-source", "1.8"),
-  testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
+  Compile / doc / javacOptions := Seq("-source", "1.8"),
+  Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
     ("org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.4" % CompileTime)
       .withDottyCompat(scalaVersion.value)
   ),
   ivyConfigurations += CompileTime,
-  unmanagedClasspath in Compile ++= update.value.select(configurationFilter(CompileTime.name))
+  Compile / unmanagedClasspath ++= update.value.select(configurationFilter(CompileTime.name))
 )
 
 lazy val publishSettings = Seq(
@@ -132,15 +132,15 @@ lazy val root: Project = project
   .enablePlugins(GhpagesPlugin, ScalaUnidocPlugin)
   .settings(featranSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.13"),
-    siteSubdirName in ScalaUnidoc := "api",
-    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+    crossScalaVersions := Seq("2.12.15"),
+    ScalaUnidoc / siteSubdirName := "api",
+    addMappingsToSiteDir(ScalaUnidoc / packageDoc / mappings, ScalaUnidoc / siteSubdirName),
     gitRemoteRepo := "git@github.com:spotify/featran.git",
     // com.spotify.featran.java pollutes namespaces and breaks unidoc class path
-    unidocProjectFilter in (ScalaUnidoc, unidoc) := inAnyProject -- inProjects(java) -- inProjects(
+    ScalaUnidoc / unidoc / unidocProjectFilter := inAnyProject -- inProjects(java) -- inProjects(
       examples
     ),
-    mappings in makeSite ++= Seq(
+    makeSite / mappings ++= Seq(
       file("site/index.html") -> "index.html",
       file("examples/target/site/Examples.scala.html") -> "examples/Examples.scala.html"
     ),
@@ -167,7 +167,7 @@ lazy val core: Project = project
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.13", "2.13.5"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.6"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test",
       "org.apache.commons" % "commons-math3" % commonsMathVersion % "test",
@@ -189,7 +189,7 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq("2.12.13", "2.13.5"),
+    crossScalaVersions := Seq("2.12.15", "2.13.6"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -210,7 +210,7 @@ lazy val flink: Project = project
     name := "flink",
     moduleName := "featran-flink",
     description := "Feature Transformers - Flink",
-    crossScalaVersions := Seq("2.12.13"),
+    crossScalaVersions := Seq("2.12.15"),
     libraryDependencies ++= Seq(
       "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
       "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
@@ -231,7 +231,7 @@ lazy val scalding: Project = project
     moduleName := "featran-scalding",
     description := "Feature Transformers - Scalding",
     resolvers += "Concurrent Maven Repo" at "https://conjars.org/repo",
-    crossScalaVersions := Seq("2.12.13"),
+    crossScalaVersions := Seq("2.12.15"),
     libraryDependencies ++= Seq(
       "com.twitter" %% "scalding-core" % scaldingVersion % "provided",
       "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
@@ -251,7 +251,7 @@ lazy val scio: Project = project
     name := "scio",
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
-    crossScalaVersions := Seq("2.12.13", "2.13.5"),
+    crossScalaVersions := Seq("2.12.15", "2.13.6"),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -270,7 +270,7 @@ lazy val spark: Project = project
     name := "spark",
     moduleName := "featran-spark",
     description := "Feature Transformers - Spark",
-    crossScalaVersions := Seq("2.12.13"),
+    crossScalaVersions := Seq("2.12.15"),
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -289,7 +289,7 @@ lazy val numpy: Project = project
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.13", "2.13.5"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.6"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -304,7 +304,7 @@ lazy val tensorflow: Project = project
     name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.13", "2.13.5"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.6"),
     libraryDependencies ++= Seq(
       "org.tensorflow" % "tensorflow-core-api" % tensorflowVersion
     ),
@@ -325,7 +325,7 @@ lazy val xgboost: Project = project
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.13", "2.13.5"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.6"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
@@ -340,7 +340,7 @@ lazy val examples: Project = project
   .settings(featranSettings)
   .settings(soccoSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.13", "2.13.5"),
+    crossScalaVersions := Seq("2.12.15", "2.13.6"),
     name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
@@ -355,12 +355,12 @@ lazy val jmh: Project = project
   .in(file("jmh"))
   .settings(featranSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.13"),
+    crossScalaVersions := Seq("2.12.15"),
     name := "jmh",
     description := "Featran JMH Microbenchmarks",
-    sourceDirectory in Jmh := (sourceDirectory in Test).value,
-    classDirectory in Jmh := (classDirectory in Test).value,
-    dependencyClasspath in Jmh := (dependencyClasspath in Test).value,
+    Jmh / sourceDirectory := (Test / sourceDirectory).value,
+    Jmh / classDirectory := (Test / classDirectory).value,
+    Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
     publish / skip := true
   )
   .dependsOn(
@@ -413,7 +413,7 @@ def mimaSettings(moduleName: String): Seq[Def.Setting[_]] =
     mimaPreviousArtifacts := {
       dynverGitDescribeOutput.value
         .map(_.ref.value.tail)
-        .filter(VersionNumber(_).matchesSemVer(SemanticSelector(s">=${previousVersion}")))
+        .filter(VersionNumber(_).matchesSemVer(SemanticSelector(s">=$previousVersion")))
         .map("com.spotify" %% moduleName % _)
         .toSet
     }

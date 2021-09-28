@@ -26,8 +26,8 @@ import scala.collection.mutable.{Map => MMap, Set => MSet}
 case class WeightedLabel(name: String, value: Double)
 
 /**
- * Transform a collection of weighted categorical features to columns of weight sums, with at most
- * N values.
+ * Transform a collection of weighted categorical features to columns of weight sums, with at most N
+ * values.
  *
  * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
  * [[NHotEncoder]].
@@ -49,7 +49,8 @@ object NHotWeightedEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[NHotWeightedEncoder]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(
     setting: Settings

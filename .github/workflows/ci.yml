@@ -9,7 +9,7 @@ jobs:
       - name: cache SBT
         uses: coursier/cache-action@v6
       - name: Java 11 setup
-        uses: olafurpg/setup-scala@v10
+        uses: olafurpg/setup-scala@v13
         with:
           java-version: 1.11.0
       - run: sbt "; scalafmtCheckAll; scalafmtSbtCheck" "; scalafixEnable; scalafixAll --check"
@@ -20,7 +20,7 @@ jobs:
       - name: cache SBT
         uses: coursier/cache-action@v6
       - name: java ${{matrix.java}} setup
-        uses: olafurpg/setup-scala@v10
+        uses: olafurpg/setup-scala@v13
         with:
           java-version: ${{matrix.java}}
       - if: startsWith(matrix.scala,'2.12')
@@ -37,7 +37,7 @@ jobs:
           - 1.8.0
           - 1.11.0
         scala:
-          - 2.12.13
+          - 2.12.15
           - 2.13.5
           - 3.0.0-M3
   mimaReport:
@@ -47,7 +47,7 @@ jobs:
       - name: cache SBT
         uses: coursier/cache-action@v6
       - name: java ${{matrix.java}} setup
-        uses: olafurpg/setup-scala@v10
+        uses: olafurpg/setup-scala@v13
         with:
           java-version: ${{matrix.java}}
       - run: sbt "++${{matrix.scala}} mimaReportBinaryIssues"
@@ -57,5 +57,5 @@ jobs:
           - 1.8.0
           - 1.11.0
         scala:
-          - 2.12.13
+          - 2.12.15
           - 2.13.5

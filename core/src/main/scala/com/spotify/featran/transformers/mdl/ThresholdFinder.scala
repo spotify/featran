@@ -68,11 +68,13 @@ private[transformers] class ThresholdFinder(
   }
 
   /**
-   * Evaluates boundary points and selects the most relevant candidates (sequential version).
-   * Here, the evaluation is bounded by partition as the number of points is small enough.
+   * Evaluates boundary points and selects the most relevant candidates (sequential version). Here,
+   * the evaluation is bounded by partition as the number of points is small enough.
    *
-   * @param candidates candidates points (point, class histogram)
-   * @return sequence of threshold values
+   * @param candidates
+   *   candidates points (point, class histogram)
+   * @return
+   *   sequence of threshold values
    */
   def findThresholds(candidates: Seq[(Float, Array[Long])]): Seq[Float] = {
     val queue = new mutable.Queue[((Float, Float), Option[Float])]
@@ -126,10 +128,14 @@ private[transformers] class ThresholdFinder(
   /**
    * Compute entropy minimization for candidate points in a range and select the best one according
    * to MDLP criterion (sequential version).
-   * @param candidates array of candidate points (point, class histogram)
-   * @param lastSelected last selected threshold
-   * @param nLabels number of classes
-   * @return the minimum-entropy cut point
+   * @param candidates
+   *   array of candidate points (point, class histogram)
+   * @param lastSelected
+   *   last selected threshold
+   * @param nLabels
+   *   number of classes
+   * @return
+   *   the minimum-entropy cut point
    */
   private def evalThresholds(
     candidates: Seq[(Float, Array[Long])],

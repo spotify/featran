@@ -20,10 +20,12 @@ package com.spotify.featran
 import scala.reflect.ClassTag
 
 /**
- * Encapsulate features extracted from a [[MultiFeatureSpec]].
- * Allows separation back into specs by names or vectors.
- * @tparam M input collection type, e.g. `Array`, List
- * @tparam T input record type to extract features from
+ * Encapsulate features extracted from a [[MultiFeatureSpec]]. Allows separation back into specs by
+ * names or vectors.
+ * @tparam M
+ *   input collection type, e.g. `Array`, List
+ * @tparam T
+ *   input record type to extract features from
  */
 class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
   private val fs: M[MultiFeatureSet[T]],
@@ -38,8 +40,8 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
   /**
    * JSON settings of the [[MultiFeatureSpec]] and aggregated feature summary.
    *
-   * This can be used with [[MultiFeatureSpec.extractWithSettings]] to bypass the `reduce` step
-   * when extracting new records of the same type.
+   * This can be used with [[MultiFeatureSpec.extractWithSettings]] to bypass the `reduce` step when
+   * extracting new records of the same type.
    */
   @transient lazy val featureSettings: M[String] = extractor.featureSettings
 
@@ -49,8 +51,9 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
 
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]].
-   * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
-   *           `DenseVector[Double]`
+   * @tparam F
+   *   output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
+   *   `DenseVector[Double]`
    */
   def featureValues[F: FeatureBuilder: ClassTag]: M[Seq[F]] =
     featureResults.map(_._1)
@@ -58,8 +61,9 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
   /**
    * Values of the extracted features, in the same order as names in [[featureNames]] with
    * rejections keyed on feature name and the original input record.
-   * @tparam F output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
-   *           `DenseVector[Double]`
+   * @tparam F
+   *   output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
+   *   `DenseVector[Double]`
    */
   def featureResults[F: FeatureBuilder: ClassTag]
     : M[(Seq[F], Seq[Map[String, FeatureRejection]], T)] =

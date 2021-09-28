@@ -21,20 +21,21 @@ import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWr
 import com.twitter.algebird.{Aggregator, Max, Min}
 
 /**
- * Transform features by rescaling each feature to a specific range [`min`, `max`] (default
- * [0, 1]).
+ * Transform features by rescaling each feature to a specific range [`min`, `max`] (default [0, 1]).
  *
  * Missing values are transformed to `min`.
  *
- * When using aggregated feature summary from a previous session, out of bound values are
- * truncated to `min` or `max` and [[FeatureRejection.OutOfBound]] rejections are reported.
+ * When using aggregated feature summary from a previous session, out of bound values are truncated
+ * to `min` or `max` and [[FeatureRejection.OutOfBound]] rejections are reported.
  */
 object MinMaxScaler extends SettingsBuilder {
 
   /**
    * Create a new [[MinMaxScaler]] instance.
-   * @param min lower bound after transformation, shared by all features
-   * @param max upper bound after transformation, shared by all features
+   * @param min
+   *   lower bound after transformation, shared by all features
+   * @param max
+   *   upper bound after transformation, shared by all features
    */
   def apply(
     name: String,
@@ -45,7 +46,8 @@ object MinMaxScaler extends SettingsBuilder {
 
   /**
    * Create a new [[MinMaxScaler]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, (Min[Double], Max[Double]), C] = {
     val min = setting.params("min").toDouble

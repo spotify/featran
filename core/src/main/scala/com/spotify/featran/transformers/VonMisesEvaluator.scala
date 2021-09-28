@@ -22,9 +22,9 @@ import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
 
 /**
- * Transform a column of continuous features that represent the mean of a von Mises distribution
- * to n columns of continuous features. The number n represent the number of points to evaluate
- * the von Mises distribution. The von Mises pdf is given by
+ * Transform a column of continuous features that represent the mean of a von Mises distribution to
+ * n columns of continuous features. The number n represent the number of points to evaluate the von
+ * Mises distribution. The von Mises pdf is given by
  *
  * f(x | mu, kappa, scale) = exp(kappa * cos(scale*(x-mu)) / (2*pi*Io(kappa))
  *
@@ -34,9 +34,12 @@ object VonMisesEvaluator extends SettingsBuilder {
 
   /**
    * Create a new [[VonMisesEvaluator]] instance.
-   * @param kappa measure of concentration
-   * @param scale scaling factor
-   * @param points points to evaluate the distribution with
+   * @param kappa
+   *   measure of concentration
+   * @param scale
+   *   scaling factor
+   * @param points
+   *   points to evaluate the distribution with
    */
   def apply(
     name: String,
@@ -48,7 +51,8 @@ object VonMisesEvaluator extends SettingsBuilder {
 
   /**
    * Create a new [[VonMisesEvaluator]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[Double, Unit, Unit] = {
     val params = setting.params

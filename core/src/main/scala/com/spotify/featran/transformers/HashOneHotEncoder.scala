@@ -30,8 +30,8 @@ import scala.util.hashing.MurmurHash3
  *
  * Missing values are transformed to zero vectors.
  *
- * If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce
- * the number of collisions.
+ * If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce the
+ * number of collisions.
  *
  * Rough table of relationship of scaling factor to % collisions, measured from a corpus of 466544
  * English words:
@@ -42,23 +42,25 @@ import scala.util.hashing.MurmurHash3
  *                 2     17.9934%
  *                 4     10.5686%
  *                 8      5.7236%
- *                16      3.0019%
- *                32      1.5313%
- *                64      0.7864%
+ *                 16      3.0019%
+ *                 32      1.5313%
+ *                 64      0.7864%
  *               128      0.3920%
  *               256      0.1998%
  *               512      0.0975%
- *              1024      0.0478%
- *              2048      0.0236%
- *              4096      0.0071%
+ *               1024      0.0478%
+ *               2048      0.0236%
+ *               4096      0.0071%
  * }}}
  */
 object HashOneHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[HashOneHotEncoder]] instance.
-   * @param hashBucketSize number of buckets, or 0 to infer from data with HyperLogLog
-   * @param sizeScalingFactor when hashBucketSize is 0, scale HLL estimate by this amount
+   * @param hashBucketSize
+   *   number of buckets, or 0 to infer from data with HyperLogLog
+   * @param sizeScalingFactor
+   *   when hashBucketSize is 0, scale HLL estimate by this amount
    */
   def apply(
     name: String,
@@ -69,7 +71,8 @@ object HashOneHotEncoder extends SettingsBuilder {
 
   /**
    * Create a new [[HashOneHotEncoder]] from a settings object
-   * @param setting Settings object
+   * @param setting
+   *   Settings object
    */
   def fromSettings(setting: Settings): Transformer[String, HLL, Int] = {
     val hashBucketSize = setting.params("hashBucketSize").toInt
