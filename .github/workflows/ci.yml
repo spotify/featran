@@ -5,7 +5,7 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.3.5
       - name: cache SBT
         uses: coursier/cache-action@v6
       - name: Java 11 setup
@@ -16,7 +16,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.3.5
       - name: cache SBT
         uses: coursier/cache-action@v6
       - name: java ${{matrix.java}} setup
@@ -43,7 +43,7 @@ jobs:
   mimaReport:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v2.3.5
       - name: cache SBT
         uses: coursier/cache-action@v6
       - name: java ${{matrix.java}} setup
