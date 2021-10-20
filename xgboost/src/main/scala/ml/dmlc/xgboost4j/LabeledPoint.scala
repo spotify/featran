@@ -56,8 +56,7 @@ case class LabeledPoint(
     "feature dimensionality must be greater equal than size of indices"
   )
 
-  def this(label: Float, size: Int, indices: Array[Int], values: Array[Float]) = {
+  def this(label: Float, size: Int, indices: Array[Int], values: Array[Float]) =
     // [[weight]] default duplicated to disambiguate the constructor call.
     this(label, size, indices, values, 1.0f)
-  }
 }
