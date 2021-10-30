@@ -94,9 +94,9 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
       self.flatWriter[T].compose(x => x.map(f))
   }
 
-  //================================================================================
+  // ================================================================================
   // Special cases when value is missing in all rows
-  //================================================================================
+  // ================================================================================
 
   def optFeatureDimension(c: Option[C]): Int = c match {
     case Some(x) => featureDimension(x)
@@ -126,9 +126,9 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
   def unsafeFlatWriter[T](implicit fw: FlatWriter[T]): Option[Any] => fw.IF =
     (o: Option[Any]) => flatWriter.apply(o.asInstanceOf[Option[A]]).asInstanceOf[fw.IF]
 
-  //================================================================================
+  // ================================================================================
   // Transformer parameter and aggregator persistence
-  //================================================================================
+  // ================================================================================
 
   /** Encode aggregator summary of the current extraction. */
   def encodeAggregator(c: C): String

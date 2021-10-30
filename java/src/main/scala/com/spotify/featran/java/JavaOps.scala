@@ -110,9 +110,9 @@ private object JavaOps {
   ): RecordExtractor[T, SparseLabeledPoint] =
     fs.extractWithSubsetSettings(settings)
 
-  //================================================================================
+  // ================================================================================
   // Wrappers for FeatureSpec
-  //================================================================================
+  // ================================================================================
 
   def extract[T](fs: FeatureSpec[T], input: JList[T]): FeatureExtractor[JList, T] =
     fs.extract(input)
@@ -175,9 +175,9 @@ private object JavaOps {
   ): RecordExtractor[T, SparseLabeledPoint] =
     fs.extractWithSettings(settings)
 
-  //================================================================================
+  // ================================================================================
   // Wrappers for FeatureExtractor
-  //================================================================================
+  // ================================================================================
 
   def featureSettings[T](fe: FeatureExtractor[JList, T]): String =
     fe.featureSettings.get(0)
@@ -226,9 +226,9 @@ private object JavaOps {
   ): JList[SparseLabeledPoint] =
     fe.featureValues[SparseLabeledPoint]
 
-  //================================================================================
+  // ================================================================================
   // Wrappers for RecordExtractor
-  //================================================================================
+  // ================================================================================
 
   def featureNames[F, T](fe: RecordExtractor[T, F]): JList[String] =
     fe.featureNames.asJava
