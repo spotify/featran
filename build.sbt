@@ -167,7 +167,7 @@ lazy val core: Project = project
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.6"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.7"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test",
       "org.apache.commons" % "commons-math3" % commonsMathVersion % "test",
@@ -189,7 +189,7 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq("2.12.15", "2.13.6"),
+    crossScalaVersions := Seq("2.12.15", "2.13.7"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -251,7 +251,7 @@ lazy val scio: Project = project
     name := "scio",
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
-    crossScalaVersions := Seq("2.12.15", "2.13.6"),
+    crossScalaVersions := Seq("2.12.15", "2.13.7"),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -289,7 +289,7 @@ lazy val numpy: Project = project
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.6"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.7"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -304,7 +304,7 @@ lazy val tensorflow: Project = project
     name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.6"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.7"),
     libraryDependencies ++= Seq(
       "org.tensorflow" % "tensorflow-core-api" % tensorflowVersion
     ),
@@ -325,7 +325,7 @@ lazy val xgboost: Project = project
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.6"),
+    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.7"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
@@ -340,7 +340,7 @@ lazy val examples: Project = project
   .settings(featranSettings)
   .settings(soccoSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.15", "2.13.6"),
+    crossScalaVersions := Seq("2.12.15", "2.13.7"),
     name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
