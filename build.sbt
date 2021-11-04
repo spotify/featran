@@ -18,7 +18,7 @@
 import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
 import sbt.Def
 
-val algebirdVersion = "0.13.8"
+val algebirdVersion = "0.13.9"
 val breezeVersion = "1.3"
 val circeVersion = "0.14.1"
 val commonsMathVersion = "3.6.1"
