@@ -18,8 +18,8 @@
 import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
 import sbt.Def
 
-val algebirdVersion = "0.13.8"
-val breezeVersion = "2.0"
+val algebirdVersion = "0.13.9"
+val breezeVersion = "1.3"
 val circeVersion = "0.14.1"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.14.0"
@@ -28,9 +28,9 @@ val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.15.3"
 val scalatestVersion = "3.2.3"
 val scaldingVersion = "0.17.4"
-val scioVersion = "0.11.0"
+val scioVersion = "0.11.1"
 val simulacrumVersion = "1.0.1"
-val sparkVersion = "3.1.2"
+val sparkVersion = "3.2.0"
 val tensorflowVersion = "0.3.3"
 val xgBoostVersion = "1.3.1"
 
