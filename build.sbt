@@ -30,7 +30,7 @@ val scalatestVersion = "3.2.3"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.11.7"
 val simulacrumVersion = "1.0.1"
-val sparkVersion = "3.2.1"
+val sparkVersion = "3.3.0"
 val tensorflowVersion = "0.4.1"
 val xgBoostVersion = "1.3.1"
 
