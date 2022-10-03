@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Resource
 metadata:
-  name: scio-idea-plugin
+  name: featran
 spec:
   type: resource
   owner: flatmap
