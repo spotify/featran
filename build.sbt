@@ -20,7 +20,7 @@ import sbt.Def
 
 val algebirdVersion = "0.13.9"
 val breezeVersion = "1.3"
-val circeVersion = "0.14.1"
+val circeVersion = "0.14.3"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.14.4"
 val hadoopVersion = "3.3.3"
