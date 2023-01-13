@@ -30,6 +30,6 @@ trait FeatureSpecCompat {
    * The implicit parameter can be used to change the default of the Transformer used for
    * continuous values.  When another isn't supplied Identity will be used.
    */
-  inline def from[T <: Product](implicit m: Mirror.Of[T], dt: DefaultTransform[Double]): FeatureSpec[T] =
+  inline def from[T <: Product](implicit m: Mirror.ProductOf[T], dt: DefaultTransform[Double]): FeatureSpec[T] =
     CaseClassConverter.toSpec[T]
 }

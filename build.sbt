@@ -15,8 +15,12 @@
  * under the License.
  */
 
-import com.typesafe.sbt.SbtGit.GitKeys.gitRemoteRepo
-import sbt.Def
+import laika.ast.Styles
+import laika.helium.config._
+import laika.helium.Helium
+import laika.io.model.InputTree
+import laika.markdown.github.GitHubFlavor
+import laika.parse.code.SyntaxHighlighting
 
 val algebirdVersion = "0.13.9"
 val breezeVersion = "1.3"
@@ -26,7 +30,7 @@ val flinkVersion = "1.14.4"
 val hadoopVersion = "3.3.3"
 val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.15.3"
-val scalatestVersion = "3.2.3"
+val scalatestVersion = "3.2.15"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.11.7"
 val simulacrumVersion = "1.0.1"
@@ -34,116 +38,104 @@ val sparkVersion = "3.2.1"
 val tensorflowVersion = "0.4.1"
 val xgBoostVersion = "1.3.1"
 
-val previousVersion = "0.8.0"
+// project
+ThisBuild / tlBaseVersion := "0.8"
+ThisBuild / organization := "com.spotify"
+ThisBuild / organizationName := "Spotify AB"
+ThisBuild / startYear := Some(2016)
+ThisBuild / licenses := Seq(License.Apache2)
+ThisBuild / homepage := Some(url("https://github.com/spotify/featran"))
+ThisBuild / developers := List(
+  Developer(
+    id = "sinisa_lyh",
+    name = "Neville Li",
+    email = "neville.lyh@gmail.com",
+    url = url("https://twitter.com/sinisa_lyh")
+  ),
+  Developer(
+    id = "rwhitcomb",
+    name = "Richard Whitcomb",
+    email = "richwhitjr@gmail.com",
+    url = url("https://twitter.com/rwhitcomb")
+  ),
+  Developer(
+    id = "ravwojdyla",
+    name = "Rafal Wojdyla",
+    email = "ravwojdyla@gmail.com",
+    url = url("https://twitter.com/ravwojdyla")
+  ),
+  Developer(
+    id = "fallonfofallon",
+    name = "Fallon Chen",
+    email = "fallon@spotify.com",
+    url = url("https://twitter.com/fallonfofallon")
+  ),
+  Developer(
+    id = "andrew_martin92",
+    name = "Andrew Martin",
+    email = "andrewsmartin.mg@gmail.com",
+    url = url("https://twitter.com/andrew_martin92")
+  ),
+  Developer(
+    id = "regadas",
+    name = "Filipe Regadas",
+    email = "filiperegadas@gmail.com",
+    url = url("https://twitter.com/regadas")
+  ),
+  Developer(
+    id = "slhansen",
+    name = "Samantha Hansen",
+    email = "slhansen@spotify.com",
+    url = url("https://github.com/slhansen")
+  )
+)
 
-ThisBuild / scalafixDependencies += "org.typelevel" %% "simulacrum-scalafix" % "0.5.0"
+// compiler options
+val scala3 = "3.2.1"
+val scala213 = "2.13.10"
+val scala212 = "2.12.15"
+ThisBuild / crossScalaVersions := Seq(scala3, scala213, scala212)
+ThisBuild / scalaVersion := scala212
+
+// site
+ThisBuild / tlSitePublishBranch := None
+ThisBuild / tlSitePublishTags := true
 
 val CompileTime = config("compile-time").hide
 
 lazy val commonSettings = Seq(
-  organization := "com.spotify",
-  name := "featran",
   description := "Feature Transformers",
-  scalaVersion := "2.12.15",
-  scalacOptions ++= commonScalacOptions,
-  scalacOptions ++= {
-    if (scalaBinaryVersion.value == "2.13")
-      Nil
-    else
-      Seq(
-        "-Xfuture",
-        "-Yno-adapted-args"
-      )
-  },
-  scalacOptions ++= {
-    if (isDotty.value) Seq("-source:3.0-migration", "-rewrite") else Nil
-  },
-  javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked"),
-  Compile / doc / javacOptions := Seq("-source", "1.8"),
+  tlFatalWarningsInCi := false,
+  tlJdkRelease := Some(8),
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
     ("org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.4" % CompileTime)
-      .withDottyCompat(scalaVersion.value)
+      .cross(CrossVersion.for3Use2_13)
   ),
   ivyConfigurations += CompileTime,
   Compile / unmanagedClasspath ++= update.value.select(configurationFilter(CompileTime.name))
 )
 
-lazy val publishSettings = Seq(
-  sonatypeProfileName := "com.spotify",
-  licenses := Seq("Apache 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-  homepage := Some(url("https://github.com/spotify/featran")),
-  scmInfo := Some(
-    ScmInfo(
-      url("https://github.com/spotify/featran.git"),
-      "scm:git:git@github.com:spotify/featran.git"
-    )
-  ),
-  developers := List(
-    Developer(
-      id = "sinisa_lyh",
-      name = "Neville Li",
-      email = "neville.lyh@gmail.com",
-      url = url("https://twitter.com/sinisa_lyh")
+lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
+  Seq(
+    scalacOptions ++= Seq(
+      "-P:socco:out:examples/target/site",
+      "-P:socco:package_com.spotify.featran:http://spotify.github.io/featran/api",
+      "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
     ),
-    Developer(
-      id = "rwhitcomb",
-      name = "Richard Whitcomb",
-      email = "richwhitjr@gmail.com",
-      url = url("https://twitter.com/rwhitcomb")
-    ),
-    Developer(
-      id = "ravwojdyla",
-      name = "Rafal Wojdyla",
-      email = "ravwojdyla@gmail.com",
-      url = url("https://twitter.com/ravwojdyla")
-    ),
-    Developer(
-      id = "fallonfofallon",
-      name = "Fallon Chen",
-      email = "fallon@spotify.com",
-      url = url("https://twitter.com/fallonfofallon")
-    ),
-    Developer(
-      id = "andrew_martin92",
-      name = "Andrew Martin",
-      email = "andrewsmartin.mg@gmail.com",
-      url = url("https://twitter.com/andrew_martin92")
-    ),
-    Developer(
-      id = "regadas",
-      name = "Filipe Regadas",
-      email = "filiperegadas@gmail.com",
-      url = url("https://twitter.com/regadas")
-    ),
-    Developer(
-      id = "slhansen",
-      name = "Samantha Hansen",
-      email = "slhansen@spotify.com",
-      url = url("https://github.com/slhansen")
-    )
+    autoCompilerPlugins := true,
+    addCompilerPlugin(("io.regadas" %% "socco-ng" % "0.1.7").cross(CrossVersion.full))
   )
-)
-
-lazy val featranSettings = commonSettings ++ publishSettings
+} else {
+  Nil
+}
 
 lazy val root: Project = project
   .in(file("."))
-  .enablePlugins(GhpagesPlugin, ScalaUnidocPlugin)
-  .settings(featranSettings)
+  .settings(commonSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.15"),
-    ScalaUnidoc / siteSubdirName := "api",
-    addMappingsToSiteDir(ScalaUnidoc / packageDoc / mappings, ScalaUnidoc / siteSubdirName),
-    gitRemoteRepo := "git@github.com:spotify/featran.git",
-    // com.spotify.featran.java pollutes namespaces and breaks unidoc class path
-    ScalaUnidoc / unidoc / unidocProjectFilter := inAnyProject -- inProjects(java) -- inProjects(
-      examples
-    ),
-    makeSite / mappings ++= Seq(
-      file("site/index.html") -> "index.html",
-      file("examples/target/site/Examples.scala.html") -> "examples/Examples.scala.html"
-    ),
+    name := "featran",
+    crossScalaVersions := Seq(scala212),
     publish / skip := true,
     mimaFailOnNoPrevious := false
   )
@@ -156,18 +148,17 @@ lazy val root: Project = project
     spark,
     numpy,
     tensorflow,
-    xgboost
+    xgboost,
+    unidocs
   )
 
 lazy val core: Project = project
   .in(file("core"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-core"))
+  .settings(commonSettings)
   .settings(
     name := "core",
     moduleName := "featran-core",
     description := "Feature Transformers",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.8"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test",
       "org.apache.commons" % "commons-math3" % commonsMathVersion % "test",
@@ -178,18 +169,17 @@ lazy val core: Project = project
       "org.scalanlp" %% "breeze" % breezeVersion,
       "io.circe" %% "circe-core" % circeVersion,
       "io.circe" %% "circe-parser" % circeVersion
-    ).map(_.withDottyCompat(scalaVersion.value))
+    ).map(_.cross(CrossVersion.for3Use2_13))
   )
 
 lazy val java: Project = project
   .in(file("java"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-java"))
+  .settings(commonSettings)
   .settings(
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq("2.12.15", "2.13.8"),
+    crossScalaVersions := Seq(scala213, scala212),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -204,13 +194,12 @@ lazy val java: Project = project
 
 lazy val flink: Project = project
   .in(file("flink"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-flink"))
+  .settings(commonSettings)
   .settings(
     name := "flink",
     moduleName := "featran-flink",
     description := "Feature Transformers - Flink",
-    crossScalaVersions := Seq("2.12.15"),
+    crossScalaVersions := Seq(scala212),
     libraryDependencies ++= Seq(
       "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
       "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
@@ -224,14 +213,13 @@ lazy val flink: Project = project
 
 lazy val scalding: Project = project
   .in(file("scalding"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-scalding"))
+  .settings(commonSettings)
   .settings(
     name := "scalding",
     moduleName := "featran-scalding",
     description := "Feature Transformers - Scalding",
     resolvers += "Concurrent Maven Repo" at "https://conjars.org/repo",
-    crossScalaVersions := Seq("2.12.15"),
+    crossScalaVersions := Seq(scala212),
     libraryDependencies ++= Seq(
       "com.twitter" %% "scalding-core" % scaldingVersion % "provided",
       "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
@@ -245,13 +233,12 @@ lazy val scalding: Project = project
 
 lazy val scio: Project = project
   .in(file("scio"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-scio"))
+  .settings(commonSettings)
   .settings(
     name := "scio",
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
-    crossScalaVersions := Seq("2.12.15", "2.13.8"),
+    crossScalaVersions := Seq(scala213, scala212),
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -264,13 +251,12 @@ lazy val scio: Project = project
 
 lazy val spark: Project = project
   .in(file("spark"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-spark"))
+  .settings(commonSettings)
   .settings(
     name := "spark",
     moduleName := "featran-spark",
     description := "Feature Transformers - Spark",
-    crossScalaVersions := Seq("2.12.15"),
+    crossScalaVersions := Seq(scala212),
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -283,13 +269,11 @@ lazy val spark: Project = project
 
 lazy val numpy: Project = project
   .in(file("numpy"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-numpy"))
+  .settings(commonSettings)
   .settings(
     name := "numpy",
     moduleName := "featran-numpy",
     description := "Feature Transformers - NumPy",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.8"),
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
@@ -298,13 +282,11 @@ lazy val numpy: Project = project
 
 lazy val tensorflow: Project = project
   .in(file("tensorflow"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-tensorflow"))
+  .settings(commonSettings)
   .settings(
     name := "tensorflow",
     moduleName := "featran-tensorflow",
     description := "Feature Transformers - TensorFlow",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.8"),
     libraryDependencies ++= Seq(
       "org.tensorflow" % "tensorflow-core-api" % tensorflowVersion
     ),
@@ -319,13 +301,11 @@ lazy val tensorflow: Project = project
 
 lazy val xgboost: Project = project
   .in(file("xgboost"))
-  .settings(featranSettings)
-  .settings(mimaSettings("featran-xgboost"))
+  .settings(commonSettings)
   .settings(
     name := "xgboost",
     moduleName := "featran-xgboost",
     description := "Feature Transformers - XGBoost",
-    crossScalaVersions := Seq("3.0.0-M3", "2.12.15", "2.13.8"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
@@ -337,14 +317,15 @@ lazy val xgboost: Project = project
 
 lazy val examples: Project = project
   .in(file("examples"))
-  .settings(featranSettings)
+  .settings(commonSettings)
   .settings(soccoSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.15", "2.13.8"),
     name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
+    crossScalaVersions := Seq(scala213, scala212),
     libraryDependencies ++= Seq(
+      "com.spotify" %% "scio-core" % scioVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion
     ),
     publish / skip := true
@@ -353,11 +334,12 @@ lazy val examples: Project = project
 
 lazy val jmh: Project = project
   .in(file("jmh"))
-  .settings(featranSettings)
+  .settings(commonSettings)
   .settings(
-    crossScalaVersions := Seq("2.12.15"),
     name := "jmh",
+    moduleName := "featran-docs",
     description := "Featran JMH Microbenchmarks",
+    crossScalaVersions := Seq(scala212),
     Jmh / sourceDirectory := (Test / sourceDirectory).value,
     Jmh / classDirectory := (Test / classDirectory).value,
     Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
@@ -369,52 +351,50 @@ lazy val jmh: Project = project
   )
   .enablePlugins(JmhPlugin)
 
-lazy val commonScalacOptions = Seq(
-  "-deprecation",
-  "-encoding",
-  "UTF-8",
-  "-feature",
-  "-language:higherKinds",
-  "-language:implicitConversions",
-  "-unchecked",
-  "-Ywarn-unused",
-  "-Ywarn-dead-code",
-  "-Xcheckinit",
-  "-Xlint:adapted-args",
-  "-Xlint:delayedinit-select",
-  "-Xlint:doc-detached",
-  "-Xlint:inaccessible",
-  "-Xlint:infer-any",
-  "-Xlint:missing-interpolator",
-  "-Xlint:nullary-unit",
-  "-Xlint:option-implicit",
-  "-Xlint:poly-implicit-overload",
-  "-Xlint:private-shadow",
-  "-Xlint:stars-align",
-  "-Xlint:type-parameter-shadow"
-)
-
-lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
-  Seq(
-    scalacOptions ++= Seq(
-      "-P:socco:out:examples/target/site",
-      "-P:socco:package_com.spotify.featran:http://spotify.github.io/featran/api",
-      "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
-    ),
-    autoCompilerPlugins := true,
-    addCompilerPlugin("com.criteo.socco" %% "socco-plugin" % "0.1.9")
+lazy val site = project
+  .in(file("site"))
+  .enablePlugins(TypelevelSitePlugin)
+  .settings(
+    name := "site",
+    moduleName := "featran-site",
+    crossScalaVersions := Seq(scala212),
+    laikaInputs := InputTree[cats.effect.IO]
+      .addDirectory("docs", laika.ast.Path.Root)
+      .addDirectory((examples / target).value / "site", laika.ast.Path.Root / "examples")
+      .addDirectory((unidocs / crossTarget).value / "unidoc", laika.ast.Path.Root / "api"),
+    laikaTheme := Helium.defaults.all
+      .metadata(
+        title = Some("featran"),
+        language = Some("en")
+      )
+      .site
+      .topNavigationBar(
+        navLinks = List(
+          IconLink.internal(
+            laika.ast.Path.Root / "api" / "index.html",
+            HeliumIcon.api,
+            options = Styles("svg-link")
+          ),
+          IconLink.external(
+            scmInfo.value.get.browseUrl.toString,
+            HeliumIcon.github,
+            options = Styles("svg-link")
+          )
+        )
+      )
+      .build,
+    laikaExtensions := Seq(GitHubFlavor, SyntaxHighlighting)
   )
-} else {
-  Nil
-}
+  .dependsOn(examples, unidocs)
 
-def mimaSettings(moduleName: String): Seq[Def.Setting[_]] =
-  Def.settings(
-    mimaPreviousArtifacts := {
-      dynverGitDescribeOutput.value
-        .map(_.ref.value.tail)
-        .filter(VersionNumber(_).matchesSemVer(SemanticSelector(s">=$previousVersion")))
-        .map("com.spotify" %% moduleName % _)
-        .toSet
-    }
+lazy val unidocs = project
+  .in(file("unidocs"))
+  .enablePlugins(TypelevelUnidocPlugin)
+  .settings(
+    name := "docs",
+    moduleName := "featran-docs",
+    crossScalaVersions := Seq(scala212),
+    ScalaUnidoc / unidoc / unidocProjectFilter := inAnyProject --
+      inProjects(java) --
+      inProjects(examples)
   )
