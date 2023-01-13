@@ -103,10 +103,24 @@ ThisBuild / tlSitePublishTags := true
 
 val CompileTime = config("compile-time").hide
 
+lazy val currentYear = _root_.java.time.LocalDate.now().getYear
+lazy val keepExistingHeader =
+  HeaderCommentStyle.cStyleBlockComment.copy(commentCreator =
+    (text: String, existingText: Option[String]) =>
+      existingText
+        .getOrElse(HeaderCommentStyle.cStyleBlockComment.commentCreator(text))
+        .trim()
+  )
+
 lazy val commonSettings = Seq(
   description := "Feature Transformers",
   tlFatalWarningsInCi := false,
   tlJdkRelease := Some(8),
+  headerLicense := Some(HeaderLicense.ALv2(currentYear.toString, organizationName.value)),
+  headerMappings ++= Map(
+    HeaderFileType.scala -> keepExistingHeader,
+    HeaderFileType.java -> keepExistingHeader
+  ),
   Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "3"),
   libraryDependencies ++= Seq(
     ("org.typelevel" %% "simulacrum-scalafix-annotations" % "0.5.4" % CompileTime)
