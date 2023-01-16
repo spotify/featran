@@ -276,6 +276,8 @@ jobs:
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
       - name: Generate site
+        env:
+          SOCCO: True
         run: sbt '++ ${{ matrix.scala }}' site/tlSite
 
       - name: Publish site

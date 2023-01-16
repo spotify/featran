@@ -112,10 +112,6 @@ ThisBuild / githubWorkflowBuild := Seq(
   WorkflowStep.Sbt(List("test"), cond = Some(s"!($coverageCond)"))
 )
 
-// site
-ThisBuild / tlSitePublishBranch := None
-ThisBuild / tlSitePublishTags := true
-
 val CompileTime = config("compile-time").hide
 
 lazy val currentYear = _root_.java.time.LocalDate.now().getYear
@@ -199,6 +195,11 @@ lazy val core: Project = project
 
 lazy val java: Project = project
   .in(file("java"))
+  .dependsOn(
+    core % "compile->compile;test->test",
+    tensorflow,
+    xgboost
+  )
   .settings(commonSettings)
   .settings(
     name := "java",
@@ -210,15 +211,12 @@ lazy val java: Project = project
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )
-  .dependsOn(
-    core,
-    core % "test->test",
-    tensorflow,
-    xgboost
-  )
 
 lazy val flink: Project = project
   .in(file("flink"))
+  .dependsOn(
+    core % "compile->compile;test->test",
+  )
   .settings(commonSettings)
   .settings(
     name := "flink",
@@ -231,13 +229,12 @@ lazy val flink: Project = project
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )
-  .dependsOn(
-    core,
-    core % "test->test"
-  )
 
 lazy val scalding: Project = project
   .in(file("scalding"))
+  .dependsOn(
+    core % "compile->compile;test->test",
+  )
   .settings(commonSettings)
   .settings(
     name := "scalding",
@@ -251,13 +248,12 @@ lazy val scalding: Project = project
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )
-  .dependsOn(
-    core,
-    core % "test->test"
-  )
 
 lazy val scio: Project = project
   .in(file("scio"))
+  .dependsOn(
+    core % "compile->compile;test->test",
+  )
   .settings(commonSettings)
   .settings(
     name := "scio",
@@ -269,13 +265,12 @@ lazy val scio: Project = project
       "com.spotify" %% "scio-test" % scioVersion % "test"
     )
   )
-  .dependsOn(
-    core,
-    core % "test->test"
-  )
 
 lazy val spark: Project = project
   .in(file("spark"))
+  .dependsOn(
+    core % "compile->compile;test->test",
+  )
   .settings(commonSettings)
   .settings(
     name := "spark",
@@ -287,13 +282,10 @@ lazy val spark: Project = project
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )
-  .dependsOn(
-    core,
-    core % "test->test"
-  )
 
 lazy val numpy: Project = project
   .in(file("numpy"))
+  .dependsOn(core)
   .settings(commonSettings)
   .settings(
     name := "numpy",
@@ -303,10 +295,12 @@ lazy val numpy: Project = project
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )
-  .dependsOn(core)
 
 lazy val tensorflow: Project = project
   .in(file("tensorflow"))
+  .dependsOn(
+    core % "compile->compile;test->test",
+  )
   .settings(commonSettings)
   .settings(
     name := "tensorflow",
@@ -319,13 +313,12 @@ lazy val tensorflow: Project = project
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )
-  .dependsOn(
-    core,
-    core % "test->test"
-  )
 
 lazy val xgboost: Project = project
   .in(file("xgboost"))
+  .dependsOn(
+    core % "compile->compile;test->test",
+  )
   .settings(commonSettings)
   .settings(
     name := "xgboost",
@@ -335,13 +328,14 @@ lazy val xgboost: Project = project
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     )
   )
-  .dependsOn(
-    core,
-    core % "test->test"
-  )
 
 lazy val examples: Project = project
   .in(file("examples"))
+  .dependsOn(
+    core,
+    scio,
+    tensorflow
+  )
   .settings(commonSettings)
   .settings(soccoSettings)
   .settings(
@@ -355,10 +349,14 @@ lazy val examples: Project = project
     ),
     publish / skip := true
   )
-  .dependsOn(core, scio, tensorflow)
 
 lazy val jmh: Project = project
   .in(file("jmh"))
+  .enablePlugins(JmhPlugin)
+  .dependsOn(
+    core,
+    tensorflow
+  )
   .settings(commonSettings)
   .settings(
     name := "jmh",
@@ -370,23 +368,32 @@ lazy val jmh: Project = project
     Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
     publish / skip := true
   )
-  .dependsOn(
-    core,
-    tensorflow
-  )
-  .enablePlugins(JmhPlugin)
 
 lazy val site = project
   .in(file("site"))
   .enablePlugins(TypelevelSitePlugin)
+  .dependsOn(
+    examples,
+    unidocs
+  )
   .settings(
     name := "site",
     moduleName := "featran-site",
     crossScalaVersions := Seq(scala212),
+    tlSitePublishBranch := None,
+    tlSitePublishTags := true,
+    tlSiteGenerate := Seq(
+      WorkflowStep.Sbt(
+        List(s"${thisProject.value.id}/${tlSite.key.toString}"),
+        name = Some("Generate site"),
+        env = Map("SOCCO" -> "True")
+      )
+    ),
+    laikaIncludeAPI := true,
+    laikaGenerateAPI / mappings := (unidocs / ScalaUnidoc / packageDoc / mappings).value,
     laikaInputs := InputTree[cats.effect.IO]
       .addDirectory("docs", laika.ast.Path.Root)
-      .addDirectory((examples / target).value / "site", laika.ast.Path.Root / "examples")
-      .addDirectory((unidocs / crossTarget).value / "unidoc", laika.ast.Path.Root / "api"),
+      .addDirectory((examples / target).value / "site", laika.ast.Path.Root / "examples"),
     laikaTheme := Helium.defaults.all
       .metadata(
         title = Some("featran"),
@@ -410,7 +417,6 @@ lazy val site = project
       .build,
     laikaExtensions := Seq(GitHubFlavor, SyntaxHighlighting)
   )
-  .dependsOn(examples, unidocs)
 
 lazy val unidocs = project
   .in(file("unidocs"))
