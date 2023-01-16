@@ -391,6 +391,7 @@ lazy val site = project
     ),
     laikaIncludeAPI := true,
     laikaGenerateAPI / mappings := (unidocs / ScalaUnidoc / packageDoc / mappings).value,
+    Global / excludeLintKeys += laikaGenerateAPI / mappings, // false warning
     laikaInputs := InputTree[cats.effect.IO]
       .addDirectory("docs", laika.ast.Path.Root)
       .addDirectory((examples / target).value / "site", laika.ast.Path.Root / "examples"),
@@ -421,6 +422,7 @@ lazy val site = project
 lazy val unidocs = project
   .in(file("unidocs"))
   .enablePlugins(TypelevelUnidocPlugin)
+  .settings(commonSettings)
   .settings(
     name := "docs",
     moduleName := "featran-docs",
