@@ -90,12 +90,27 @@ ThisBuild / developers := List(
   )
 )
 
-// compiler options
+// scala versions
 val scala3 = "3.2.1"
 val scala213 = "2.13.10"
 val scala212 = "2.12.15"
-ThisBuild / crossScalaVersions := Seq(scala3, scala213, scala212)
-ThisBuild / scalaVersion := scala212
+
+// github actions
+val java11 = JavaSpec.corretto("11")
+val java8 = JavaSpec.corretto("8")
+val coverageCond = Seq(
+  s"matrix.scala == '$scala212'",
+  s"matrix.java == '${java11.render}'"
+).mkString(" && ")
+
+ThisBuild / scalaVersion := scala212 // version to use with java matrix
+ThisBuild / githubWorkflowJavaVersions := Seq(java11, java8)
+ThisBuild / githubWorkflowScalaVersions := Seq(scala3, scala213, scala212)
+ThisBuild / githubWorkflowBuild := Seq(
+  WorkflowStep.Sbt(List("coverage", "test", "coverageAggregate"), cond = Some(coverageCond)),
+  WorkflowStep.Run(List("bash <(curl -s https://codecov.io/bash)"), cond = Some(coverageCond)),
+  WorkflowStep.Sbt(List("test"), cond = Some(s"!($coverageCond)"))
+)
 
 // site
 ThisBuild / tlSitePublishBranch := None
@@ -116,6 +131,8 @@ lazy val commonSettings = Seq(
   description := "Feature Transformers",
   tlFatalWarningsInCi := false,
   tlJdkRelease := Some(8),
+  crossScalaVersions := Seq(scala3, scala213, scala212),
+  scalaVersion := crossScalaVersions.value.head,
   headerLicense := Some(HeaderLicense.ALv2(currentYear.toString, organizationName.value)),
   headerMappings ++= Map(
     HeaderFileType.scala -> keepExistingHeader,
@@ -146,13 +163,7 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
 
 lazy val root: Project = project
   .in(file("."))
-  .settings(commonSettings)
-  .settings(
-    name := "featran",
-    crossScalaVersions := Seq(scala212),
-    publish / skip := true,
-    mimaFailOnNoPrevious := false
-  )
+  .enablePlugins(NoPublishPlugin)
   .aggregate(
     core,
     java,
