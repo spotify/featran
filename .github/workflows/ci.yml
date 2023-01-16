@@ -28,7 +28,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [3.2.1, 2.13.10, 2.12.15]
+        scala: [3.2.1, 2.13.10, 2.12.17]
         java: [corretto@11, corretto@8]
         exclude:
           - scala: 3.2.1
@@ -89,13 +89,13 @@ jobs:
       - name: Check that workflows are up to date
         run: sbt githubWorkflowCheck
 
-      - if: matrix.scala == '2.12.15' && matrix.java == 'corretto@11'
+      - if: matrix.scala == '2.12.17' && matrix.java == 'corretto@11'
         run: sbt '++ ${{ matrix.scala }}' coverage test coverageAggregate
 
-      - if: matrix.scala == '2.12.15' && matrix.java == 'corretto@11'
+      - if: matrix.scala == '2.12.17' && matrix.java == 'corretto@11'
         run: 'bash <(curl -s https://codecov.io/bash)'
 
-      - if: '!(matrix.scala == ''2.12.15'' && matrix.java == ''corretto@11'')'
+      - if: '!(matrix.scala == ''2.12.17'' && matrix.java == ''corretto@11'')'
         run: sbt '++ ${{ matrix.scala }}' test
 
       - name: Make target directories
@@ -120,7 +120,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.12.15]
+        scala: [2.12.17]
         java: [corretto@11]
     runs-on: ${{ matrix.os }}
     steps:
@@ -193,12 +193,12 @@ jobs:
           tar xf targets.tar
           rm targets.tar
 
-      - name: Download target directories (2.12.15)
+      - name: Download target directories (2.12.17)
         uses: actions/download-artifact@v3
         with:
-          name: target-${{ matrix.os }}-${{ matrix.java }}-2.12.15
+          name: target-${{ matrix.os }}-${{ matrix.java }}-2.12.17
 
-      - name: Inflate target directories (2.12.15)
+      - name: Inflate target directories (2.12.17)
         run: |
           tar xf targets.tar
           rm targets.tar
@@ -222,7 +222,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.12.15]
+        scala: [2.12.17]
         java: [corretto@11]
     runs-on: ${{ matrix.os }}
     steps:

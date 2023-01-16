@@ -93,19 +93,21 @@ ThisBuild / developers := List(
 // scala versions
 val scala3 = "3.2.1"
 val scala213 = "2.13.10"
-val scala212 = "2.12.15"
+val scala212 = "2.12.17"
+val defaultScala = scala212
 
 // github actions
 val java11 = JavaSpec.corretto("11")
 val java8 = JavaSpec.corretto("8")
+val defaultJava = java11
 val coverageCond = Seq(
-  s"matrix.scala == '$scala212'",
-  s"matrix.java == '${java11.render}'"
+  s"matrix.scala == '$defaultScala'",
+  s"matrix.java == '${defaultJava.render}'"
 ).mkString(" && ")
 
-ThisBuild / scalaVersion := scala212 // version to use with java matrix
+ThisBuild / scalaVersion := defaultScala
+ThisBuild / crossScalaVersions := Seq(scala3, scala213, scala212)
 ThisBuild / githubWorkflowJavaVersions := Seq(java11, java8)
-ThisBuild / githubWorkflowScalaVersions := Seq(scala3, scala213, scala212)
 ThisBuild / githubWorkflowBuild := Seq(
   WorkflowStep.Sbt(List("coverage", "test", "coverageAggregate"), cond = Some(coverageCond)),
   WorkflowStep.Run(List("bash <(curl -s https://codecov.io/bash)"), cond = Some(coverageCond)),
@@ -127,8 +129,7 @@ lazy val commonSettings = Seq(
   description := "Feature Transformers",
   tlFatalWarningsInCi := false,
   tlJdkRelease := Some(8),
-  crossScalaVersions := Seq(scala3, scala213, scala212),
-  scalaVersion := crossScalaVersions.value.head,
+  tlSkipIrrelevantScalas := true,
   headerLicense := Some(HeaderLicense.ALv2(currentYear.toString, organizationName.value)),
   headerMappings ++= Map(
     HeaderFileType.scala -> keepExistingHeader,
@@ -151,7 +152,7 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
       "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
     ),
     autoCompilerPlugins := true,
-    addCompilerPlugin(("io.regadas" %% "socco-ng" % "0.1.7").cross(CrossVersion.full))
+    addCompilerPlugin(("io.regadas" %% "socco-ng" % "0.1.8").cross(CrossVersion.full))
   )
 } else {
   Nil
