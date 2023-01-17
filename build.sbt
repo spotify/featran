@@ -107,6 +107,7 @@ val coverageCond = Seq(
 
 ThisBuild / scalaVersion := defaultScala
 ThisBuild / crossScalaVersions := Seq(scala3, scala213, scala212)
+ThisBuild / githubWorkflowTargetBranches := Seq("main")
 ThisBuild / githubWorkflowJavaVersions := Seq(java11, java8)
 ThisBuild / githubWorkflowBuild := Seq(
   WorkflowStep.Sbt(List("coverage", "test", "coverageAggregate"), cond = Some(coverageCond)),
