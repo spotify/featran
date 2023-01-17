@@ -107,11 +107,23 @@ val coverageCond = Seq(
 
 ThisBuild / scalaVersion := defaultScala
 ThisBuild / crossScalaVersions := Seq(scala3, scala213, scala212)
+ThisBuild / githubWorkflowTargetBranches := Seq("main")
 ThisBuild / githubWorkflowJavaVersions := Seq(java11, java8)
 ThisBuild / githubWorkflowBuild := Seq(
-  WorkflowStep.Sbt(List("coverage", "test", "coverageAggregate"), cond = Some(coverageCond)),
-  WorkflowStep.Run(List("bash <(curl -s https://codecov.io/bash)"), cond = Some(coverageCond)),
-  WorkflowStep.Sbt(List("test"), cond = Some(s"!($coverageCond)"))
+  WorkflowStep.Sbt(
+    List("coverage", "test", "coverageAggregate"),
+    name = Some("Build project"),
+    cond = Some(coverageCond)
+  ),
+  WorkflowStep.Run(
+    List("bash <(curl -s https://codecov.io/bash)"),
+    name = Some("Upload coverage report"),
+    cond = Some(coverageCond)
+  ),
+  WorkflowStep.Sbt(
+    List("test"),
+    name = Some("Build project"),
+    cond = Some(s"!($coverageCond)"))
 )
 
 val CompileTime = config("compile-time").hide

@@ -9,9 +9,9 @@ name: Continuous Integration
 
 on:
   pull_request:
-    branches: ['**', '!update/**', '!pr/**']
+    branches: [main]
   push:
-    branches: ['**', '!update/**', '!pr/**']
+    branches: [main]
     tags: [v*]
 
 env:
@@ -89,13 +89,16 @@ jobs:
       - name: Check that workflows are up to date
         run: sbt githubWorkflowCheck
 
-      - if: matrix.scala == '2.12.17' && matrix.java == 'corretto@11'
+      - name: Build project
+        if: matrix.scala == '2.12.17' && matrix.java == 'corretto@11'
         run: sbt '++ ${{ matrix.scala }}' coverage test coverageAggregate
 
-      - if: matrix.scala == '2.12.17' && matrix.java == 'corretto@11'
+      - name: Upload coverage report
+        if: matrix.scala == '2.12.17' && matrix.java == 'corretto@11'
         run: 'bash <(curl -s https://codecov.io/bash)'
 
-      - if: '!(matrix.scala == ''2.12.17'' && matrix.java == ''corretto@11'')'
+      - name: Build project
+        if: '!(matrix.scala == ''2.12.17'' && matrix.java == ''corretto@11'')'
         run: sbt '++ ${{ matrix.scala }}' test
 
       - name: Make target directories
