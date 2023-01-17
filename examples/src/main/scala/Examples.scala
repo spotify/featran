@@ -194,7 +194,7 @@ object Examples {
     // Save settings as text file
     fs.featureSettings.saveAsTextFile("settings")
 
-    sc.close()
+    sc.run().waitUntilFinish()
   }
 
   // # Random input data
@@ -206,7 +206,7 @@ object Examples {
     f <- Arbitrary.arbitrary[Float]
     d1 <- Arbitrary.arbitrary[Double]
     d2 <- Arbitrary.arbitrary[Option[Double]]
-    d3 <- Gen.choose(0, 24)
+    d3 <- Gen.choose[Double](0, 24)
     s1 <- Gen.alphaStr.map(_.take(5))
     n <- Gen.choose(0, 10)
     s2 <- Gen.listOfN(n, Gen.alphaStr.map(_.take(5)))
