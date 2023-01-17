@@ -34,7 +34,7 @@ val scalatestVersion = "3.2.15"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.11.14"
 val simulacrumVersion = "1.0.1"
-val sparkVersion = "3.2.1"
+val sparkVersion = "3.3.1"
 val tensorflowVersion = "0.4.2"
 val xgBoostVersion = "1.3.1"
 
@@ -277,7 +277,7 @@ lazy val spark: Project = project
     name := "spark",
     moduleName := "featran-spark",
     description := "Feature Transformers - Spark",
-    crossScalaVersions := Seq(scala212),
+    crossScalaVersions := Seq(scala213, scala212),
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
