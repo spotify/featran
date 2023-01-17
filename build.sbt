@@ -23,7 +23,7 @@ import laika.markdown.github.GitHubFlavor
 import laika.parse.code.SyntaxHighlighting
 
 val algebirdVersion = "0.13.9"
-val breezeVersion = "1.3"
+val breezeVersion = "2.1.0"
 val circeVersion = "0.14.3"
 val commonsMathVersion = "3.6.1"
 val flinkVersion = "1.14.4"

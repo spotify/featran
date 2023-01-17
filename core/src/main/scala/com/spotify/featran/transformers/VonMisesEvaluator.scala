@@ -17,9 +17,10 @@
 
 package com.spotify.featran.transformers
 
-import breeze.stats.distributions.VonMises
+import breeze.stats.distributions.{VonMises, Rand}
 import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
+
 
 /**
  * Transform a column of continuous features that represent the mean of a von Mises distribution to
@@ -65,7 +66,7 @@ object VonMisesEvaluator extends SettingsBuilder {
 
   def getProbability(x: Double, mu: Double, kappa: Double, scale: Double): Double = {
     val muScaled = mu * scale
-    val vm = VonMises(muScaled, kappa)
+    val vm = VonMises(muScaled, kappa)(Rand)
     vm.pdf(scale * x)
   }
 }
