@@ -73,7 +73,7 @@ private[featran] class Normalizer(name: String, val p: Double, val expectedLengt
           fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
         } else {
           val dv = DenseVector(x)
-          fb.add(names(c), (dv / norm(dv, p))(DenseVector.dv_s_Op_Double_OpDiv).data)
+          fb.add(names(c), (dv / norm(dv, p)).data)
         }
       case None => fb.skip(c)
     }

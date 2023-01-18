@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import breeze.stats.distributions.VonMises
+import breeze.stats.distributions.{VonMises, Rand}
 import org.scalacheck._
 
 object VonMisesEvaluatorSpec extends TransformerProp("VonMisesEvaluator") {
@@ -34,7 +34,7 @@ object VonMisesEvaluatorSpec extends TransformerProp("VonMisesEvaluator") {
     val dim = points.size
     val names = (0 until dim).map("vm_" + _)
     val missing = (0 until dim).map(_ => 0.0)
-    val expected = xs.map(mu => points.map(p => VonMises(mu * Scale, kappa).pdf(Scale * p)))
+    val expected = xs.map(mu => points.map(p => VonMises(mu * Scale, kappa)(Rand).pdf(Scale * p)))
     test(VonMisesEvaluator("vm", kappa, Scale, points.toArray), xs, names, expected, missing)
   }
 }

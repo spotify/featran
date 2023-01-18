@@ -26,7 +26,7 @@ object NormalizerSpec extends TransformerProp("Normalizer") {
       val names = (0 until 10).map("norm_" + _)
       val expected = xs.map { x =>
         val dv = DenseVector(x)
-        (dv / norm(dv, p))(DenseVector.dv_s_Op_Double_OpDiv).data.toSeq
+        (dv / norm(dv, p)).data.toSeq
       }
       val missing = (0 until 10).map(_ => 0.0)
       val oob = List((xs.head :+ 1.0, missing)) // vector of different dimension
