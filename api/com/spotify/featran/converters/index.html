@@ -301,11 +301,11 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/spotify/featran/blob/v0.8.0/core/src/main/scala/com/spotify/featran/converters/package.scala" target="_blank">package.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div></div>
         
 
@@ -354,7 +354,7 @@
         <div id="types" class="types members">
               <h3>Type Members</h3>
               <ol><li name="com.spotify.featran.converters.DefaultTransform" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="DefaultTransform[T]extendsAnywithSerializable"></a><a id="DefaultTransform[T]:DefaultTransform[T]"></a>
+      <a id="DefaultTransform[T]extendsSerializable"></a><a id="DefaultTransform[T]:DefaultTransform[T]"></a>
       <span class="permalink">
       <a href="../../../../com/spotify/featran/converters/DefaultTransform.html" title="Permalink">
         <i class="material-icons"></i>
@@ -365,15 +365,21 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="Default Type Class used by the from generator for Case Class Conversions" href="DefaultTransform.html"><span class="name">DefaultTransform</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Default Type Class used by the from generator for Case Class Conversions" href="DefaultTransform.html"><span class="name">DefaultTransform</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Default Type Class used by the from generator for Case Class Conversions
-</p><div class="fullcomment"><div class="comment cmt"><p>Default Type Class used by the from generator for Case Class Conversions
-</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">Default Type Class used by the from generator for Case Class Conversions</p><div class="fullcomment"><div class="comment cmt"><p>Default Type Class used by the from generator for Case Class Conversions</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@implicitNotFound</span><span class="args">(<span>
       
       <span class="defval" name="&quot;Could not find an instance of DefaultTransform for ${T}&quot;">...</span>
+    </span>)</span>
+              
+                <span class="name">@typeclass</span><span class="args">(<span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$1">...</span>
+    </span>, <span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$2">...</span>
     </span>)</span>
               
         </dd></dl></div>
@@ -389,7 +395,7 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="" href="package$$RichBoolean.html"><span class="name">RichBoolean</span></a><span class="result"> extends <span class="extype" name="scala.AnyVal">AnyVal</span></span>
+        <a title="" href="package$$RichBoolean.html"><span class="name">RichBoolean</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/AnyVal.html#scala.AnyVal" class="extype" name="scala.AnyVal">AnyVal</a></span>
       </span>
       
       
@@ -413,7 +419,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">identityDefault</span><span class="result">: <a href="DefaultTransform.html" class="extype" name="com.spotify.featran.converters.DefaultTransform">DefaultTransform</a>[<span class="extype" name="scala.Double">Double</span>]</span>
+        <span class="name">identityDefault</span><span class="result">: <a href="DefaultTransform.html" class="extype" name="com.spotify.featran.converters.DefaultTransform">DefaultTransform</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Double.html#scala.Double" class="extype" name="scala.Double">Double</a>]</span>
       </span>
       
       
@@ -445,7 +451,7 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="DefaultTransform$.html"><span class="name">DefaultTransform</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="DefaultTransform$.html"><span class="name">DefaultTransform</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -460,9 +466,9 @@
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+              <h3>Inherited from <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+              <h3>Inherited from <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>

@@ -297,11 +297,11 @@
       </h4>
 
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/spotify/featran/blob/v0.8.0/tensorflow/src/main/scala/com/spotify/featran/tensorflow/package.scala" target="_blank">package.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div></div>
         
 
@@ -361,12 +361,12 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="package$$NamedTFFeature.html"><span class="name">NamedTFFeature</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="f">f: <span class="extype" name="org.tensorflow.example.Feature">org.tensorflow.example.Feature</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="package$$NamedTFFeature.html"><span class="name">NamedTFFeature</span></a><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="f">f: <span class="extype" name="org.tensorflow.proto.example.Feature">org.tensorflow.proto.example.Feature</span></span>)</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
     </li><li name="com.spotify.featran.tensorflow.TensorFlowFeatureBuilder" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TensorFlowFeatureBuilderextendsFeatureBuilder[org.tensorflow.example.Example]withProductwithSerializable"></a><a id="TensorFlowFeatureBuilder:TensorFlowFeatureBuilder"></a>
+      <a id="TensorFlowFeatureBuilderextendsFeatureBuilder[org.tensorflow.proto.example.Example]withProductwithSerializable"></a><a id="TensorFlowFeatureBuilder:TensorFlowFeatureBuilder"></a>
       <span class="permalink">
       <a href="../../../../com/spotify/featran/tensorflow/package$$TensorFlowFeatureBuilder.html" title="Permalink">
         <i class="material-icons"></i>
@@ -377,7 +377,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="package$$TensorFlowFeatureBuilder.html"><span class="name">TensorFlowFeatureBuilder</span></a><span class="params">(<span name="underlying">underlying: <span class="extype" name="org.tensorflow.example.Features.Builder">Builder</span> = <span class="symbol">tf.Features.newBuilder()</span></span>)</span><span class="result"> extends <a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="org.tensorflow.example.Example">Example</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="package$$TensorFlowFeatureBuilder.html"><span class="name">TensorFlowFeatureBuilder</span></a><span class="params">(<span name="underlying">underlying: <span class="extype" name="org.tensorflow.proto.example.Features.Builder">Builder</span> = <span class="symbol"><span class="name"><a href="../../../../org/index.html">tf.Features.newBuilder()</a></span></span></span>)</span><span class="result"> extends <a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="org.tensorflow.proto.example.Example">Example</span>] with <a href="https://www.scala-lang.org/api/2.12.17/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -390,9 +390,9 @@
               <h3>Value Members</h3>
               <ol>
                 <li name="com.spotify.featran.tensorflow#exampleFlatReader" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="exampleFlatReader:com.spotify.featran.FlatReader[org.tensorflow.example.Example]"></a><a id="exampleFlatReader:FlatReader[Example]"></a>
+      <a id="exampleFlatReader:com.spotify.featran.FlatReader[org.tensorflow.proto.example.Example]"></a><a id="exampleFlatReader:FlatReader[Example]"></a>
       <span class="permalink">
-      <a href="../../../../com/spotify/featran/tensorflow/index.html#exampleFlatReader:com.spotify.featran.FlatReader[org.tensorflow.example.Example]" title="Permalink">
+      <a href="../../../../com/spotify/featran/tensorflow/index.html#exampleFlatReader:com.spotify.featran.FlatReader[org.tensorflow.proto.example.Example]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -401,14 +401,14 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">exampleFlatReader</span><span class="result">: <a href="../FlatReader.html" class="extype" name="com.spotify.featran.FlatReader">FlatReader</a>[<span class="extype" name="org.tensorflow.example.Example">Example</span>]</span>
+        <span class="name">exampleFlatReader</span><span class="result">: <a href="../FlatReader.html" class="extype" name="com.spotify.featran.FlatReader">FlatReader</a>[<span class="extype" name="org.tensorflow.proto.example.Example">Example</span>]</span>
       </span>
       
       
     </li><li name="com.spotify.featran.tensorflow#exampleFlatWriter" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="exampleFlatWriter:com.spotify.featran.FlatWriter[org.tensorflow.example.Example]"></a><a id="exampleFlatWriter:FlatWriter[Example]"></a>
+      <a id="exampleFlatWriter:com.spotify.featran.FlatWriter[org.tensorflow.proto.example.Example]"></a><a id="exampleFlatWriter:FlatWriter[Example]"></a>
       <span class="permalink">
-      <a href="../../../../com/spotify/featran/tensorflow/index.html#exampleFlatWriter:com.spotify.featran.FlatWriter[org.tensorflow.example.Example]" title="Permalink">
+      <a href="../../../../com/spotify/featran/tensorflow/index.html#exampleFlatWriter:com.spotify.featran.FlatWriter[org.tensorflow.proto.example.Example]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -417,14 +417,14 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">exampleFlatWriter</span><span class="result">: <a href="../FlatWriter.html" class="extype" name="com.spotify.featran.FlatWriter">FlatWriter</a>[<span class="extype" name="org.tensorflow.example.Example">Example</span>]</span>
+        <span class="name">exampleFlatWriter</span><span class="result">: <a href="../FlatWriter.html" class="extype" name="com.spotify.featran.FlatWriter">FlatWriter</a>[<span class="extype" name="org.tensorflow.proto.example.Example">Example</span>]</span>
       </span>
       
       
     </li><li name="com.spotify.featran.tensorflow#tensorFlowFeatureBuilder" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="tensorFlowFeatureBuilder:com.spotify.featran.FeatureBuilder[org.tensorflow.example.Example]"></a><a id="tensorFlowFeatureBuilder:FeatureBuilder[Example]"></a>
+      <a id="tensorFlowFeatureBuilder:com.spotify.featran.FeatureBuilder[org.tensorflow.proto.example.Example]"></a><a id="tensorFlowFeatureBuilder:FeatureBuilder[Example]"></a>
       <span class="permalink">
-      <a href="../../../../com/spotify/featran/tensorflow/index.html#tensorFlowFeatureBuilder:com.spotify.featran.FeatureBuilder[org.tensorflow.example.Example]" title="Permalink">
+      <a href="../../../../com/spotify/featran/tensorflow/index.html#tensorFlowFeatureBuilder:com.spotify.featran.FeatureBuilder[org.tensorflow.proto.example.Example]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -433,7 +433,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">tensorFlowFeatureBuilder</span><span class="result">: <a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="org.tensorflow.example.Example">Example</span>]</span>
+        <span class="name">tensorFlowFeatureBuilder</span><span class="result">: <a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a>[<span class="extype" name="org.tensorflow.proto.example.Example">Example</span>]</span>
       </span>
       
       <p class="shortcomment cmt"><a href="../FeatureBuilder.html" class="extype" name="com.spotify.featran.FeatureBuilder">FeatureBuilder</a> for output as TensorFlow <code>Example</code> type.</p>
@@ -448,9 +448,9 @@
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+              <h3>Inherited from <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+              <h3>Inherited from <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>

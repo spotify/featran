@@ -262,6 +262,10 @@
       
       
     </li><li class="current-entities indented3">
+                        <a class="object" href="CanBuild$.html" title=""></a>
+                        <a class="trait" href="CanBuild.html" title=""></a>
+                        <a href="CanBuild.html" title="">CanBuild</a>
+                      </li><li class="current-entities indented3">
                         <a class="object" href="CollectionType$.html" title=""></a>
                         <a class="trait" href="CollectionType.html" title="Type class for collections to extract features from."></a>
                         <a href="CollectionType.html" title="Type class for collections to extract features from.">CollectionType</a>
@@ -269,6 +273,10 @@
                         <span class="separator"></span>
                         <a class="object" href="CrossingFeatureBuilder$.html" title=""></a>
                         <a href="CrossingFeatureBuilder$.html" title="">CrossingFeatureBuilder</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="class" href="Feature.html" title=""></a>
+                        <a href="Feature.html" title="">Feature</a>
                       </li><li class="current-entities indented3">
                         <a class="object" href="FeatureBuilder$.html" title=""></a>
                         <a class="trait" href="FeatureBuilder.html" title="Type class for types to build feature into."></a>
@@ -289,6 +297,10 @@
                         <a class="object" href="FeatureSpec$.html" title="Companion object for FeatureSpec."></a>
                         <a class="class" href="FeatureSpec.html" title="Encapsulate specification for feature extraction and transformation."></a>
                         <a href="FeatureSpec.html" title="Encapsulate specification for feature extraction and transformation.">FeatureSpec</a>
+                      </li><li class="current-entities indented3">
+                        <span class="separator"></span>
+                        <a class="trait" href="FeatureSpecCompat.html" title=""></a>
+                        <a href="FeatureSpecCompat.html" title="">FeatureSpecCompat</a>
                       </li><li class="current-entities indented3">
                         <span class="separator"></span>
                         <a class="object" href="FlatConverter$.html" title="Companion to FlatReader."></a>
@@ -392,8 +404,24 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.spotify.featran.CollectionType" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="CollectionType[M[_]]extendsAnywithSerializable"></a><a id="CollectionType[M[_]]:CollectionType[M]"></a>
+              <ol><li name="com.spotify.featran.CanBuild" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CanBuild[T,M[_]]extendsSerializable"></a><a id="CanBuild[T,M[_]]:CanBuild[T,M]"></a>
+      <span class="permalink">
+      <a href="../../../com/spotify/featran/CanBuild.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CanBuild.html"><span class="name">CanBuild</span></a><span class="tparams">[<span name="T">T</span>, <span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="com.spotify.featran.CollectionType" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="CollectionType[M[_]]extendsSerializable"></a><a id="CollectionType[M[_]]:CollectionType[M]"></a>
       <span class="permalink">
       <a href="../../../com/spotify/featran/CollectionType.html" title="Permalink">
         <i class="material-icons"></i>
@@ -404,16 +432,41 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="Type class for collections to extract features from." href="CollectionType.html"><span class="name">CollectionType</span></a><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Type class for collections to extract features from." href="CollectionType.html"><span class="name">CollectionType</span></a><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Type class for collections to extract features from.</p><div class="fullcomment"><div class="comment cmt"><p>Type class for collections to extract features from.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>collection type</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">Type class for collections to extract features from.</p><div class="fullcomment"><div class="comment cmt"><p>Type class for collections to extract features from.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>
+  collection type</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@implicitNotFound</span><span class="args">(<span>
       
       <span class="defval" name="&quot;Could not find an instance of CollectionType for ${M}&quot;">...</span>
     </span>)</span>
               
+                <span class="name">@typeclass</span><span class="args">(<span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$1">...</span>
+    </span>, <span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$2">...</span>
+    </span>)</span>
+              
         </dd></dl></div>
+    </li><li name="com.spotify.featran.Feature" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Feature[T,A,B,C]extendsSerializable"></a><a id="Feature[T,A,B,C]:Feature[T,A,B,C]"></a>
+      <span class="permalink">
+      <a href="../../../com/spotify/featran/Feature.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="Feature.html"><span class="name">Feature</span></a><span class="tparams">[<span name="T">T</span>, <span name="A">A</span>, <span name="B">B</span>, <span name="C">C</span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
     </li><li name="com.spotify.featran.FeatureBuilder" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="FeatureBuilder[T]extendsSerializable"></a><a id="FeatureBuilder[T]:FeatureBuilder[T]"></a>
       <span class="permalink">
@@ -426,13 +479,22 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="Type class for types to build feature into." href="FeatureBuilder.html"><span class="name">FeatureBuilder</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Type class for types to build feature into." href="FeatureBuilder.html"><span class="name">FeatureBuilder</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Type class for types to build feature into.</p><div class="fullcomment"><div class="comment cmt"><p>Type class for types to build feature into.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>output feature type</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">Type class for types to build feature into.</p><div class="fullcomment"><div class="comment cmt"><p>Type class for types to build feature into.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>
+  output feature type</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@implicitNotFound</span><span class="args">(<span>
       
       <span class="defval" name="&quot;Could not find an instance of FeatureBuilder for ${T}&quot;">...</span>
+    </span>)</span>
+              
+                <span class="name">@typeclass</span><span class="args">(<span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$1">...</span>
+    </span>, <span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$2">...</span>
     </span>)</span>
               
         </dd></dl></div>
@@ -448,10 +510,12 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Encapsulate features extracted from a FeatureSpec." href="FeatureExtractor.html"><span class="name">FeatureExtractor</span></a><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Encapsulate features extracted from a FeatureSpec." href="FeatureExtractor.html"><span class="name">FeatureExtractor</span></a><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="T">T</span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Encapsulate features extracted from a <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Encapsulate features extracted from a <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>input collection type, e.g. <code>Array</code>, List</p></dd><dt class="tparam">T</dt><dd class="cmt"><p>input record type to extract features from</p></dd></dl></div>
+      <p class="shortcomment cmt">Encapsulate features extracted from a <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Encapsulate features extracted from a <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>
+  input collection type, e.g. <code>Array</code>, List</p></dd><dt class="tparam">T</dt><dd class="cmt"><p>
+  input record type to extract features from</p></dd></dl></div>
     </li><li name="com.spotify.featran.FeatureRejection" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="FeatureRejectionextendsAnyRef"></a><a id="FeatureRejection:FeatureRejection"></a>
       <span class="permalink">
@@ -464,7 +528,7 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="" href="FeatureRejection.html"><span class="name">FeatureRejection</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a title="" href="FeatureRejection.html"><span class="name">FeatureRejection</span></a><span class="result"> extends <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       
@@ -480,7 +544,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="" href="FeatureResult.html"><span class="name">FeatureResult</span></a><span class="tparams">[<span name="F">F</span>, <span name="T">T</span>]</span><span class="params">(<span name="value">value: <span class="extype" name="com.spotify.featran.FeatureResult.F">F</span></span>, <span name="rejections">rejections: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="FeatureRejection.html" class="extype" name="com.spotify.featran.FeatureRejection">FeatureRejection</a>]</span>, <span name="original">original: <span class="extype" name="com.spotify.featran.FeatureResult.T">T</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="FeatureResult.html"><span class="name">FeatureResult</span></a><span class="tparams">[<span name="F">F</span>, <span name="T">T</span>]</span><span class="params">(<span name="value">value: <span class="extype" name="com.spotify.featran.FeatureResult.F">F</span></span>, <span name="rejections">rejections: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="FeatureRejection.html" class="extype" name="com.spotify.featran.FeatureRejection">FeatureRejection</a>]</span>, <span name="original">original: <span class="extype" name="com.spotify.featran.FeatureResult.T">T</span></span>)</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -496,10 +560,27 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Encapsulate specification for feature extraction and transformation." href="FeatureSpec.html"><span class="name">FeatureSpec</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a title="Encapsulate specification for feature extraction and transformation." href="FeatureSpec.html"><span class="name">FeatureSpec</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
-      <p class="shortcomment cmt">Encapsulate specification for feature extraction and transformation.</p><div class="fullcomment"><div class="comment cmt"><p>Encapsulate specification for feature extraction and transformation.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>input record type to extract features from</p></dd></dl></div>
+      <p class="shortcomment cmt">Encapsulate specification for feature extraction and transformation.</p><div class="fullcomment"><div class="comment cmt"><p>Encapsulate specification for feature extraction and transformation.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>
+  input record type to extract features from</p></dd></dl></div>
+    </li><li name="com.spotify.featran.FeatureSpecCompat" visbl="pub" class="indented0 " data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FeatureSpecCompatextendsAnyRef"></a><a id="FeatureSpecCompat:FeatureSpecCompat"></a>
+      <span class="permalink">
+      <a href="../../../com/spotify/featran/FeatureSpecCompat.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="FeatureSpecCompat.html"><span class="name">FeatureSpecCompat</span></a><span class="result"> extends <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
+      </span>
+      
+      
     </li><li name="com.spotify.featran.FlatReader" visbl="pub" class="indented0 " data-isabs="true" fullComment="yes" group="Ungrouped">
       <a id="FlatReader[T]extendsSerializable"></a><a id="FlatReader[T]:FlatReader[T]"></a>
       <span class="permalink">
@@ -512,14 +593,23 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="TypeClass that is used to read data from flat files." href="FlatReader.html"><span class="name">FlatReader</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="TypeClass that is used to read data from flat files." href="FlatReader.html"><span class="name">FlatReader</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">TypeClass that is used to read data from flat files.</p><div class="fullcomment"><div class="comment cmt"><p>TypeClass that is used to read data from flat files.  The requirement is that each
-feature comes from the same type and can be looked up by name.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>The intermediate storage format for each feature.</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">TypeClass that is used to read data from flat files.</p><div class="fullcomment"><div class="comment cmt"><p>TypeClass that is used to read data from flat files. The requirement is that each feature comes
+from the same type and can be looked up by name.</p></div><dl class="paramcmts block"><dt class="tparam">T</dt><dd class="cmt"><p>
+  The intermediate storage format for each feature.</p></dd></dl><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@implicitNotFound</span><span class="args">(<span>
       
       <span class="defval" name="&quot;Could not find an instance of FlatReader for ${T}&quot;">...</span>
+    </span>)</span>
+              
+                <span class="name">@typeclass</span><span class="args">(<span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$1">...</span>
+    </span>, <span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$2">...</span>
     </span>)</span>
               
         </dd></dl></div>
@@ -535,15 +625,21 @@ feature comes from the same type and can be looked up by name.</p></div><dl clas
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="TypeClass for implementing the writer to a flat format keyed by name" href="FlatWriter.html"><span class="name">FlatWriter</span></a><span class="tparams">[<span name="T">+T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="TypeClass for implementing the writer to a flat format keyed by name" href="FlatWriter.html"><span class="name">FlatWriter</span></a><span class="tparams">[<span name="T">+T</span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">TypeClass for implementing the writer to a flat format keyed by name
-</p><div class="fullcomment"><div class="comment cmt"><p>TypeClass for implementing the writer to a flat format keyed by name
-</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">TypeClass for implementing the writer to a flat format keyed by name</p><div class="fullcomment"><div class="comment cmt"><p>TypeClass for implementing the writer to a flat format keyed by name</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@implicitNotFound</span><span class="args">(<span>
       
       <span class="defval" name="&quot;Could not find an instance of FlatWriter for ${T}&quot;">...</span>
+    </span>)</span>
+              
+                <span class="name">@typeclass</span><span class="args">(<span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$1">...</span>
+    </span>, <span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$2">...</span>
     </span>)</span>
               
         </dd></dl></div>
@@ -559,14 +655,21 @@ feature comes from the same type and can be looked up by name.</p></div><dl clas
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a title="Type class for floating point primitives." href="FloatingPoint.html"><span class="name">FloatingPoint</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Type class for floating point primitives." href="FloatingPoint.html"><span class="name">FloatingPoint</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Type class for floating point primitives.</p><div class="fullcomment"><div class="comment cmt"><p>Type class for floating point primitives.
-</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
+      <p class="shortcomment cmt">Type class for floating point primitives.</p><div class="fullcomment"><div class="comment cmt"><p>Type class for floating point primitives.</p></div><dl class="attributes block"> <dt>Annotations</dt><dd>
                 <span class="name">@implicitNotFound</span><span class="args">(<span>
       
       <span class="defval" name="&quot;Could not find an instance of FloatingPoint for ${T}&quot;">...</span>
+    </span>)</span>
+              
+                <span class="name">@typeclass</span><span class="args">(<span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$1">...</span>
+    </span>, <span>
+      
+      <span class="defval" name="simulacrum.this.typeclass.&lt;init&gt;$default$2">...</span>
     </span>)</span>
               
         </dd></dl></div>
@@ -582,11 +685,13 @@ feature comes from the same type and can be looked up by name.</p></div><dl clas
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Encapsulate features extracted from a MultiFeatureSpec." href="MultiFeatureExtractor.html"><span class="name">MultiFeatureExtractor</span></a><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Encapsulate features extracted from a MultiFeatureSpec." href="MultiFeatureExtractor.html"><span class="name">MultiFeatureExtractor</span></a><span class="tparams">[<span name="M">M<span class="tparams">[<span name="_">_</span>]</span></span>, <span name="T">T</span>]</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Encapsulate features extracted from a <a href="MultiFeatureSpec.html" class="extype" name="com.spotify.featran.MultiFeatureSpec">MultiFeatureSpec</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Encapsulate features extracted from a <a href="MultiFeatureSpec.html" class="extype" name="com.spotify.featran.MultiFeatureSpec">MultiFeatureSpec</a>.
-Allows separation back into specs by names or vectors.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>input collection type, e.g. <code>Array</code>, List</p></dd><dt class="tparam">T</dt><dd class="cmt"><p>input record type to extract features from</p></dd></dl></div>
+      <p class="shortcomment cmt">Encapsulate features extracted from a <a href="MultiFeatureSpec.html" class="extype" name="com.spotify.featran.MultiFeatureSpec">MultiFeatureSpec</a>.</p><div class="fullcomment"><div class="comment cmt"><p>Encapsulate features extracted from a <a href="MultiFeatureSpec.html" class="extype" name="com.spotify.featran.MultiFeatureSpec">MultiFeatureSpec</a>. Allows separation back into specs by
+names or vectors.</p></div><dl class="paramcmts block"><dt class="tparam">M</dt><dd class="cmt"><p>
+  input collection type, e.g. <code>Array</code>, List</p></dd><dt class="tparam">T</dt><dd class="cmt"><p>
+  input record type to extract features from</p></dd></dl></div>
     </li><li name="com.spotify.featran.MultiFeatureSpec" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="MultiFeatureSpec[T]extendsAnyRef"></a><a id="MultiFeatureSpec[T]:MultiFeatureSpec[T]"></a>
       <span class="permalink">
@@ -599,7 +704,7 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Wrapper for FeatureSpec that allows for combination and separation of different specs." href="MultiFeatureSpec.html"><span class="name">MultiFeatureSpec</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a title="Wrapper for FeatureSpec that allows for combination and separation of different specs." href="MultiFeatureSpec.html"><span class="name">MultiFeatureSpec</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       <p class="shortcomment cmt">Wrapper for <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a> that allows for combination and separation of different specs.</p>
@@ -615,7 +720,7 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A SparseArray with names of non-zero entries." href="NamedSparseArray.html"><span class="name">NamedSparseArray</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="indices">indices: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="values">values: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.spotify.featran.NamedSparseArray.T">T</span>]</span>, <span name="length">length: <span class="extype" name="scala.Int">Int</span></span>, <span name="names">names: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="A SparseArray with names of non-zero entries." href="NamedSparseArray.html"><span class="name">NamedSparseArray</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="indices">indices: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>]</span>, <span name="values">values: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<span class="extype" name="com.spotify.featran.NamedSparseArray.T">T</span>]</span>, <span name="length">length: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>, <span name="names">names: <a href="../../../scala/index.html#Seq[+A]=Seq[A]" class="extmbr" name="scala.Seq">Seq</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>)</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A <a href="SparseArray.html" class="extype" name="com.spotify.featran.SparseArray">SparseArray</a> with names of non-zero entries.</p>
@@ -631,7 +736,7 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a title="Encapsulate RecordExtractor for extracting individual records." href="RecordExtractor.html"><span class="name">RecordExtractor</span></a><span class="tparams">[<span name="T">T</span>, <span name="F">F</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a title="Encapsulate RecordExtractor for extracting individual records." href="RecordExtractor.html"><span class="name">RecordExtractor</span></a><span class="tparams">[<span name="T">T</span>, <span name="F">F</span>]</span><span class="result"> extends <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       <p class="shortcomment cmt">Encapsulate <a href="RecordExtractor.html" class="extype" name="com.spotify.featran.RecordExtractor">RecordExtractor</a> for extracting individual records.</p>
@@ -647,7 +752,7 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a title="A sparse representation of an array using two arrays for indices and values of non-zero entries." href="SparseArray.html"><span class="name">SparseArray</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="indices">indices: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="values">values: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="com.spotify.featran.SparseArray.T">T</span>]</span>, <span name="length">length: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="A sparse representation of an array using two arrays for indices and values of non-zero entries." href="SparseArray.html"><span class="name">SparseArray</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="indices">indices: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>]</span>, <span name="values">values: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<span class="extype" name="com.spotify.featran.SparseArray.T">T</span>]</span>, <span name="length">length: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a> with <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       <p class="shortcomment cmt">A sparse representation of an array using two arrays for indices and values of non-zero entries.</p>
@@ -659,7 +764,23 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <div class="values members">
               <h3>Value Members</h3>
               <ol>
-                <li name="com.spotify.featran.CollectionType" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+                <li name="com.spotify.featran.CanBuild" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CanBuild"></a><a id="CanBuild:CanBuild"></a>
+      <span class="permalink">
+      <a href="../../../com/spotify/featran/CanBuild$.html" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a title="" href="CanBuild$.html"><span class="name">CanBuild</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
+      </span>
+      
+      
+    </li><li name="com.spotify.featran.CollectionType" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="CollectionType"></a><a id="CollectionType:CollectionType"></a>
       <span class="permalink">
       <a href="../../../com/spotify/featran/CollectionType$.html" title="Permalink">
@@ -671,7 +792,7 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="CollectionType$.html"><span class="name">CollectionType</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="CollectionType$.html"><span class="name">CollectionType</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -687,7 +808,7 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="CrossingFeatureBuilder$.html"><span class="name">CrossingFeatureBuilder</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="CrossingFeatureBuilder$.html"><span class="name">CrossingFeatureBuilder</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -703,7 +824,7 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="FeatureBuilder$.html"><span class="name">FeatureBuilder</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="FeatureBuilder$.html"><span class="name">FeatureBuilder</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -735,7 +856,7 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="Companion object for FeatureSpec." href="FeatureSpec$.html"><span class="name">FeatureSpec</span></a>
+        <a title="Companion object for FeatureSpec." href="FeatureSpec$.html"><span class="name">FeatureSpec</span></a><span class="result"> extends <a href="FeatureSpecCompat.html" class="extype" name="com.spotify.featran.FeatureSpecCompat">FeatureSpecCompat</a></span>
       </span>
       
       <p class="shortcomment cmt">Companion object for <a href="FeatureSpec.html" class="extype" name="com.spotify.featran.FeatureSpec">FeatureSpec</a>.</p>
@@ -751,13 +872,13 @@ Allows separation back into specs by names or vectors.</p></div><dl class="param
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="Companion to FlatReader." href="FlatConverter$.html"><span class="name">FlatConverter</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Companion to FlatReader." href="FlatConverter$.html"><span class="name">FlatConverter</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Companion to FlatReader.</p><div class="fullcomment"><div class="comment cmt"><p>Companion to FlatReader.  Sometimes for serialization and compatability reasons it
-is better to write out data in an intermediate format such as JSON or tf.examples to
-interface with storage or other systems.  This class uses the functions internal to a spec
-to write out the data into a new flat format.
+      <p class="shortcomment cmt">Companion to FlatReader.</p><div class="fullcomment"><div class="comment cmt"><p>Companion to FlatReader. Sometimes for serialization and compatability reasons it is better to
+write out data in an intermediate format such as JSON or tf.examples to interface with storage or
+other systems. This class uses the functions internal to a spec to write out the data into a new
+flat format.
 </p></div></div>
     </li><li name="com.spotify.featran.FlatExtractor" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="FlatExtractor"></a><a id="FlatExtractor:FlatExtractor"></a>
@@ -771,13 +892,12 @@ to write out the data into a new flat format.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="Sometimes it is useful to store the features in an intermediate state in normally a flat version like Examples or maybe JSON." href="FlatExtractor$.html"><span class="name">FlatExtractor</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="Sometimes it is useful to store the features in an intermediate state in normally a flat version like Examples or maybe JSON." href="FlatExtractor$.html"><span class="name">FlatExtractor</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
-      <p class="shortcomment cmt">Sometimes it is useful to store the features in an intermediate state in normally
-a flat version like Examples or maybe JSON.</p><div class="fullcomment"><div class="comment cmt"><p>Sometimes it is useful to store the features in an intermediate state in normally
-a flat version like Examples or maybe JSON.  This makes it easier to interface with
-other systems.
+      <p class="shortcomment cmt">Sometimes it is useful to store the features in an intermediate state in normally a flat version
+like Examples or maybe JSON.</p><div class="fullcomment"><div class="comment cmt"><p>Sometimes it is useful to store the features in an intermediate state in normally a flat version
+like Examples or maybe JSON. This makes it easier to interface with other systems.
 </p></div></div>
     </li><li name="com.spotify.featran.FlatReader" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="FlatReader"></a><a id="FlatReader:FlatReader"></a>
@@ -791,7 +911,7 @@ other systems.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="FlatReader$.html"><span class="name">FlatReader</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="FlatReader$.html"><span class="name">FlatReader</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -807,7 +927,7 @@ other systems.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="FlatWriter$.html"><span class="name">FlatWriter</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="FlatWriter$.html"><span class="name">FlatWriter</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       
@@ -823,7 +943,7 @@ other systems.
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a title="" href="FloatingPoint$.html"><span class="name">FloatingPoint</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a title="" href="FloatingPoint$.html"><span class="name">FloatingPoint</span></a><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       
       

@@ -271,7 +271,8 @@ hr {
           </section>
           
               <section class="">
-                <div class="comment "><h1 id="imports" class="title">Imports</h1></p></div>
+                <div class="comment ">
+<h1 id="imports" class="section">Imports</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
@@ -286,19 +287,22 @@ hr {
               </section>
             
               <section class="">
-                <div class="comment "><h1 id="input" class="title">Input</h1></p></div>
+                <div class="comment ">
+<h1 id="input" class="section">Input</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
               <section class="">
                 <div class="comment "><p>Input record type</p></p></div>
-                <div class="code ">  <span class="keyword">case class</span> <span class="identifier">Record</span>(<span class="identifier">b</span>: <span class="identifier">Boolean</span>,
-                    <span class="identifier">f</span>: <span class="identifier">Float</span>,
-                    <span class="identifier">d1</span>: <span class="identifier">Double</span>,
-                    <span class="identifier">d2</span>: <span class="identifier">Option</span>[<span class="identifier">Double</span>],
-                    <span class="identifier">d3</span>: <span class="identifier">Double</span>,
-                    <span class="identifier">s1</span>: <span class="identifier">String</span>,
-                    <span class="identifier">s2</span>: <span class="identifier">List</span>[<span class="identifier">String</span>])
+                <div class="code ">  <span class="keyword">case class</span> <span class="identifier">Record</span>(
+    <span class="identifier">b</span>: <span class="identifier">Boolean</span>,
+    <span class="identifier">f</span>: <span class="identifier">Float</span>,
+    <span class="identifier">d1</span>: <span class="identifier">Double</span>,
+    <span class="identifier">d2</span>: <span class="identifier">Option</span>[<span class="identifier">Double</span>],
+    <span class="identifier">d3</span>: <span class="identifier">Double</span>,
+    <span class="identifier">s1</span>: <span class="identifier">String</span>,
+    <span class="identifier">s2</span>: <span class="identifier">List</span>[<span class="identifier">String</span>]
+  )
 &nbsp;</div>
               </section>
             
@@ -312,7 +316,8 @@ hr {
               </section>
             
               <section class="">
-                <div class="comment "><h1 id="feature-specification" class="title">Feature specification</h1></p></div>
+                <div class="comment ">
+<h1 id="feature-specification" class="section">Feature specification</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
@@ -358,8 +363,8 @@ Bucketize into 3 bins</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><p>Scale by absolute max value, scale between [0.0, 1.0] and scale between custom min and
-max</p></p></div>
+                <div class="comment ">Scale by absolute max value, scale between [0.0, 1.0] and scale between custom min and
+max</p></div>
                 <div class="code ">      .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">d1</span>)(<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/MaxAbsScaler$.html#apply(name:String):com.spotify.featran.transformers.Transformer[Double,com.twitter.algebird.Max[Double],Double]" data-tooltip="<span>com.spotify.featran.transformers.MaxAbsScaler.apply(name: String): com.spotify.featran.transformers.Transformer[Double,com.twitter.algebird.Max[Double],Double]</span>">MaxAbsScaler</a></span>(<span class="string">"abs"</span>))
       .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">d1</span>)(<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/MinMaxScaler$.html#apply(name:String,min:Double,max:Double):com.spotify.featran.transformers.Transformer[Double,(com.twitter.algebird.Min[Double],com.twitter.algebird.Max[Double]),com.spotify.featran.transformers.MinMaxScaler.C]" data-tooltip="<span>com.spotify.featran.transformers.MinMaxScaler.apply(name: String, min: Double, max: Double)com.spotify.featran.transformers.Transformer[Double,(com.twitter.algebird.Min[Double], com.twitter.algebird.Max[Double]),com.spotify.featran.transformers.MinMaxScaler.C]</span>">MinMaxScaler</a></span>(<span class="string">"min_max1"</span>))
       .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">d1</span>)(<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/MinMaxScaler$.html#apply(name:String,min:Double,max:Double):com.spotify.featran.transformers.Transformer[Double,(com.twitter.algebird.Min[Double],com.twitter.algebird.Max[Double]),com.spotify.featran.transformers.MinMaxScaler.C]" data-tooltip="<span>com.spotify.featran.transformers.MinMaxScaler.apply(name: String, min: Double, max: Double)com.spotify.featran.transformers.Transformer[Double,(com.twitter.algebird.Min[Double], com.twitter.algebird.Max[Double]),com.spotify.featran.transformers.MinMaxScaler.C]</span>">MinMaxScaler</a></span>(<span class="string">"min_max2"</span>, <span class="number">0.0</span>, <span class="number">100.0</span>))
@@ -367,12 +372,16 @@ max</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><p>Evaluate von Mises distribution (mu = d3, kappa = 2) at values 0, 4, .., 24
-(rescaled using scale=pi/12 to be in the interval [0, 2pi])</p></p></div>
-                <div class="code ">      .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">d3</span>)(<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/VonMisesEvaluator$.html#apply(name:String,kappa:Double,scale:Double,points:Array[Double]):com.spotify.featran.transformers.Transformer[Double,Unit,Unit]" data-tooltip="<span>com.spotify.featran.transformers.VonMisesEvaluator.apply(name: String, kappa: Double, scale: Double, points: Array[Double]): com.spotify.featran.transformers.Transformer[Double,Unit,Unit]</span>">VonMisesEvaluator</a></span>(<span class="string">"von_mises"</span>,
-                                        <span class="number">2.0</span>,
-                                        <span class="identifier">math</span>.<span class="identifier">Pi</span> <span class="identifier">/</span> <span class="number">12</span>,
-                                        <span class="identifier">Array</span>(<span class="number">0.0</span>, <span class="number">4.0</span>, <span class="number">8.0</span>, <span class="number">12.0</span>, <span class="number">16.0</span>, <span class="number">20.0</span>, <span class="number">24.0</span>)))
+                <div class="comment ">Evaluate von Mises distribution (mu = d3, kappa = 2) at values 0, 4, .., 24
+(rescaled using scale=pi/12 to be in the interval [0, 2pi])</p></div>
+                <div class="code ">      .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">d3</span>)(
+        <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/VonMisesEvaluator$.html#apply(name:String,kappa:Double,scale:Double,points:Array[Double]):com.spotify.featran.transformers.Transformer[Double,Unit,Unit]" data-tooltip="<span>com.spotify.featran.transformers.VonMisesEvaluator.apply(name: String, kappa: Double, scale: Double, points: Array[Double]): com.spotify.featran.transformers.Transformer[Double,Unit,Unit]</span>">VonMisesEvaluator</a></span>(
+          <span class="string">"von_mises"</span>,
+          <span class="number">2.0</span>,
+          <span class="identifier">math</span>.<span class="identifier">Pi</span> <span class="identifier">/</span> <span class="number">12</span>,
+          <span class="identifier">Array</span>(<span class="number">0.0</span>, <span class="number">4.0</span>, <span class="number">8.0</span>, <span class="number">12.0</span>, <span class="number">16.0</span>, <span class="number">20.0</span>, <span class="number">24.0</span>)
+        )
+      )
 &nbsp;</div>
               </section>
             
@@ -396,8 +405,9 @@ max</p></p></div>
                 <div class="comment "><p>Encoders that hash features into buckets to reduce CPU and memory overhead</p></p></div>
                 <div class="code ">      .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">s1</span>)(<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/HashOneHotEncoder$.html#apply(name:String,hashBucketSize:Int,sizeScalingFactor:Double):com.spotify.featran.transformers.Transformer[String,com.twitter.algebird.HLL,Int]" data-tooltip="<span>com.spotify.featran.transformers.HashOneHotEncoder.apply(name: String, hashBucketSize: Int, sizeScalingFactor: Double): com.spotify.featran.transformers.Transformer[String,com.twitter.algebird.HLL,Int]</span>">HashOneHotEncoder</a></span>(<span class="string">"hash_one_hot"</span>))
       .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">s2</span>)(<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/HashNHotEncoder$.html#apply(name:String,hashBucketSize:Int,sizeScalingFactor:Double):com.spotify.featran.transformers.Transformer[Seq[String],com.twitter.algebird.HLL,Int]" data-tooltip="<span>com.spotify.featran.transformers.HashNHotEncoder.apply(name: String, hashBucketSize: Int, sizeScalingFactor: Double): com.spotify.featran.transformers.Transformer[Seq[String],com.twitter.algebird.HLL,Int]</span>">HashNHotEncoder</a></span>(<span class="string">"hash_n_hot"</span>))
-      .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">s2</span>.<span class="identifier">map</span>(<span class="identifier">s</span> => <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/WeightedLabel$.html#apply(name:String,value:Double):com.spotify.featran.transformers.WeightedLabel" data-tooltip="<span>com.spotify.featran.transformers.WeightedLabel.apply(name: String, value: Double): com.spotify.featran.transformers.WeightedLabel</span>">WeightedLabel</a></span>(<span class="identifier">s</span>, <span class="number">0.5</span>)))(<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/HashNHotWeightedEncoder$.html#apply(name:String,hashBucketSize:Int,sizeScalingFactor:Double):com.spotify.featran.transformers.Transformer[Seq[com.spotify.featran.transformers.WeightedLabel],com.twitter.algebird.HLL,Int]" data-tooltip="<span>com.spotify.featran.transformers.HashNHotWeightedEncoder.apply(name: String, hashBucketSize: Int, sizeScalingFactor: Double): com.spotify.featran.transformers.Transformer[Seq[com.spotify.featran.transformers.WeightedLabel],com.twitter.algebird.HLL,Int]</span>">HashNHotWeightedEncoder</a></span>(
-        <span class="string">"hash_n_hot_weighted"</span>))
+      .<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#required[A](f:T=>A)(t:com.spotify.featran.transformers.Transformer[A,_,_]):com.spotify.featran.FeatureSpec[T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.required[A](f: T => A)(t: com.spotify.featran.transformers.Transformer[A, _, _]): com.spotify.featran.FeatureSpec[T]</span>">required</a></span>(_.<span class="identifier">s2</span>.<span class="identifier">map</span>(<span class="identifier">s</span> => <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/WeightedLabel$.html#apply(name:String,value:Double):com.spotify.featran.transformers.WeightedLabel" data-tooltip="<span>com.spotify.featran.transformers.WeightedLabel.apply(name: String, value: Double): com.spotify.featran.transformers.WeightedLabel</span>">WeightedLabel</a></span>(<span class="identifier">s</span>, <span class="number">0.5</span>)))(
+        <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/transformers/HashNHotWeightedEncoder$.html#apply(name:String,hashBucketSize:Int,sizeScalingFactor:Double):com.spotify.featran.transformers.Transformer[Seq[com.spotify.featran.transformers.WeightedLabel],com.twitter.algebird.HLL,Int]" data-tooltip="<span>com.spotify.featran.transformers.HashNHotWeightedEncoder.apply(name: String, hashBucketSize: Int, sizeScalingFactor: Double): com.spotify.featran.transformers.Transformer[Seq[com.spotify.featran.transformers.WeightedLabel],com.twitter.algebird.HLL,Int]</span>">HashNHotWeightedEncoder</a></span>(<span class="string">"hash_n_hot_weighted"</span>)
+      )
 &nbsp;</div>
               </section>
             
@@ -424,7 +434,8 @@ discretize into 4 quantiles</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><h1 id="feature-extraction" class="title">Feature extraction</h1></p></div>
+                <div class="comment ">
+<h1 id="feature-extraction" class="section">Feature extraction</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
@@ -436,7 +447,7 @@ settings from an input collection of records.</p></p></div>
             
               <section class="">
                 <div class="comment "><p>Extract features from <code>Seq[Record]</code></p></p></div>
-                <div class="code ">    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[List,Examples.Record]</span>">f1</a></span>: <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor</span>">FeatureExtractor</a></span>[<span class="identifier">List</span>, <span class="identifier">Record</span>] = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html" data-tooltip="<span>com.spotify.featran.FeatureSpec[Examples.Record]</span>">spec</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#extract[M[_]](input:M[T])(implicitevidence$3:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.extract[M[_]](input: M[T])(implicit evidence$3: com.spotify.featran.CollectionType[M]): com.spotify.featran.FeatureExtractor[M,T]</span>">extract</a></span>(<span class="identifier">records</span>)
+                <div class="code ">    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[List,Examples.Record]</span>">f1</a></span>: <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor</span>">FeatureExtractor</a></span>[<span class="identifier">List</span>, <span class="identifier">Record</span>] = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html" data-tooltip="<span>com.spotify.featran.FeatureSpec[Examples.Record]</span>">spec</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#extract[M[_]](input:M[T])(implicitevidence$1:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.extract[M[_]](input: M[T])(implicit evidence$1: com.spotify.featran.CollectionType[M]): com.spotify.featran.FeatureExtractor[M,T]</span>">extract</a></span>(<span class="identifier">records</span>)
 &nbsp;</div>
               </section>
             
@@ -463,7 +474,7 @@ settings from an input collection of records.</p></p></div>
               <section class="">
                 <div class="comment "><p>This requires <code>&quot;com.spotify&quot; %% &quot;featran-tensorflow&quot;</code> dependency</p></p></div>
                 <div class="code ">    <span class="keyword">import</span> <span class="identifier">com</span>.<span class="identifier">spotify</span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/index.html" data-tooltip="<span>com.spotify.featran</span>">featran</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/tensorflow/index.html" data-tooltip="<span>com.spotify.featran.tensorflow</span>">tensorflow</a></span>._
-    <span class="keyword">import</span> <span class="identifier">org</span>.<span class="identifier">tensorflow</span>.<span class="identifier">example</span>.<span class="identifier">Example</span>
+    <span class="keyword">import</span> <span class="identifier">org</span>.<span class="identifier">tensorflow</span>.<span class="identifier">proto</span>.<span class="identifier">example</span>.<span class="identifier">Example</span>
     <span class="keyword">val</span> <span class="identifier">tfExample</span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[List,Examples.Record]</span>">f1</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html#featureValues[F](implicitevidence$2:com.spotify.featran.FeatureBuilder[F],implicitevidence$3:scala.reflect.ClassTag[F]):M[F]" data-tooltip="<span>com.spotify.featran.FeatureExtractor.featureValues[F](implicit evidence$2: com.spotify.featran.FeatureBuilder[F], implicit evidence$3: scala.reflect.ClassTag[F]): M[F]</span>">featureValues</a></span>[<span class="identifier">Example</span>]
 &nbsp;</div>
               </section>
@@ -478,7 +489,8 @@ settings from an input collection of records.</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><h1 id="feature-settings" class="title">Feature settings</h1></p></div>
+                <div class="comment ">
+<h1 id="feature-settings" class="section">Feature settings</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
@@ -501,7 +513,7 @@ necessary to use a previous saved settings.</p></p></div>
               <section class="">
                 <div class="comment "><p>Extract features from new records, but reuse previously saved settings. This bypasses
 the reduce step that aggregates feature settings from the dataset.</p></p></div>
-                <div class="code ">    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[List,Examples.Record]</span>">f2</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html" data-tooltip="<span>com.spotify.featran.FeatureSpec[Examples.Record]</span>">spec</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#extractWithSettings[M[_]](input:M[T],settings:M[String])(implicitevidence$5:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.extractWithSettings[M[_]](input: M[T], settings: M[String])(implicit evidence$5: com.spotify.featran.CollectionType[M]): com.spotify.featran.FeatureExtractor[M,T]</span>">extractWithSettings</a></span>(<span class="identifier">recordsGen</span>.<span class="identifier">sample</span>.<span class="identifier">get</span>, <span class="identifier">settings</span>)
+                <div class="code ">    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[List,Examples.Record]</span>">f2</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html" data-tooltip="<span>com.spotify.featran.FeatureSpec[Examples.Record]</span>">spec</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#extractWithSettings[M[_]](input:M[T],settings:M[String])(implicitevidence$3:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.extractWithSettings[M[_]](input: M[T], settings: M[String])(implicit evidence$3: com.spotify.featran.CollectionType[M]): com.spotify.featran.FeatureExtractor[M,T]</span>">extractWithSettings</a></span>(<span class="identifier">recordsGen</span>.<span class="identifier">sample</span>.<span class="identifier">get</span>, <span class="identifier">settings</span>)
 &nbsp;</div>
               </section>
             
@@ -512,7 +524,8 @@ the reduce step that aggregates feature settings from the dataset.</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><h1 id="extract-from-an-unbounded-source" class="title">Extract from an unbounded source</h1></p></div>
+                <div class="comment ">
+<h1 id="extract-from-an-unbounded-source" class="section">Extract from an unbounded source</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
@@ -520,7 +533,7 @@ the reduce step that aggregates feature settings from the dataset.</p></p></div>
                 <div class="comment "><p>The record extractor is more efficient and recommended when extracting features from an
 unbounded source, e.g. a stream of events or a backend service. This extractor parses the
 settings only once and can process one input record at a time.</p></p></div>
-                <div class="code ">    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/RecordExtractor.html" data-tooltip="<span>com.spotify.featran.RecordExtractor[Examples.Record,Seq[Double]]</span>">recordExtractor</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html" data-tooltip="<span>com.spotify.featran.FeatureSpec[Examples.Record]</span>">spec</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#extractWithSettings[F](settings:String)(implicitevidence$8:com.spotify.featran.FeatureBuilder[F],implicitevidence$9:scala.reflect.ClassTag[F]):com.spotify.featran.RecordExtractor[T,F]" data-tooltip="<span>com.spotify.featran.FeatureSpec.extractWithSettings[F](settings: String)(implicit evidence$8: com.spotify.featran.FeatureBuilder[F], implicit evidence$9: scala.reflect.ClassTag[F]): com.spotify.featran.RecordExtractor[T,F]</span>">extractWithSettings</a></span>[<span class="identifier">Seq</span>[<span class="identifier">Double</span>]](<span class="identifier">settings</span>.<span class="identifier">head</span>)
+                <div class="code ">    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/RecordExtractor.html" data-tooltip="<span>com.spotify.featran.RecordExtractor[Examples.Record,Seq[Double]]</span>">recordExtractor</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html" data-tooltip="<span>com.spotify.featran.FeatureSpec[Examples.Record]</span>">spec</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#extractWithSettings[F](settings:String)(implicitevidence$6:com.spotify.featran.FeatureBuilder[F],implicitevidence$7:scala.reflect.ClassTag[F]):com.spotify.featran.RecordExtractor[T,F]" data-tooltip="<span>com.spotify.featran.FeatureSpec.extractWithSettings[F](settings: String)(implicit evidence$6: com.spotify.featran.FeatureBuilder[F], implicit evidence$7: scala.reflect.ClassTag[F]): com.spotify.featran.RecordExtractor[T,F]</span>">extractWithSettings</a></span>[<span class="identifier">Seq</span>[<span class="identifier">Double</span>]](<span class="identifier">settings</span>.<span class="identifier">head</span>)
 &nbsp;</div>
               </section>
             
@@ -531,7 +544,8 @@ settings only once and can process one input record at a time.</p></p></div>
               </section>
             
               <section class="">
-                <div class="comment "><h1 id="extraction-with-scio" class="title">Extraction with Scio</h1></p></div>
+                <div class="comment ">
+<h1 id="extraction-with-scio" class="section">Extraction with Scio</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
@@ -539,7 +553,7 @@ settings only once and can process one input record at a time.</p></p></div>
                 <div class="comment "><p>Create input <code>SCollection[Record]</code></p></p></div>
                 <div class="code ">    <span class="keyword">import</span> <span class="identifier">com</span>.<span class="identifier">spotify</span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/index.html" data-tooltip="<span>com.spotify.scio</span>">scio</a></span>._
     <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html" data-tooltip="<span>com.spotify.scio.ScioContext</span>">sc</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext$.html#apply():com.spotify.scio.ScioContext" data-tooltip="<span>com.spotify.scio.ScioContext.apply(): com.spotify.scio.ScioContext</span>">ScioContext</a></span>()
-    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html" data-tooltip="<span>com.spotify.scio.values.SCollection[Examples.Record]</span>">scoll</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html" data-tooltip="<span>com.spotify.scio.ScioContext</span>">sc</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html#parallelize[T](elems:Iterable[T])(implicitevidence$25:com.spotify.scio.coders.Coder[T]):com.spotify.scio.values.SCollection[T]" data-tooltip="<span>com.spotify.scio.ScioContext.parallelize[T](elems: Iterable[T])(implicit evidence$25: com.spotify.scio.coders.Coder[T]): com.spotify.scio.values.SCollection[T]</span>">parallelize</a></span>(<span class="identifier">records</span>)
+    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html" data-tooltip="<span>com.spotify.scio.values.SCollection[Examples.Record]</span>">scoll</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html" data-tooltip="<span>com.spotify.scio.ScioContext</span>">sc</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html#parallelize[T](elems:Iterable[T])(implicitevidence$8:com.spotify.scio.coders.Coder[T]):com.spotify.scio.values.SCollection[T]" data-tooltip="<span>com.spotify.scio.ScioContext.parallelize[T](elems: Iterable[T])(implicit evidence$8: com.spotify.scio.coders.Coder[T]): com.spotify.scio.values.SCollection[T]</span>">parallelize</a></span>(<span class="identifier">records</span>)
 &nbsp;</div>
               </section>
             
@@ -547,21 +561,22 @@ settings only once and can process one input record at a time.</p></p></div>
                 <div class="comment "><p>Extract features from <code>SCollection[Record]</code>.
 This requires <code>&quot;com.spotify&quot; %% &quot;featran-scio&quot;</code> dependency.</p></p></div>
                 <div class="code ">    <span class="keyword">import</span> <span class="identifier">com</span>.<span class="identifier">spotify</span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/index.html" data-tooltip="<span>com.spotify.featran</span>">featran</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/scio/index.html" data-tooltip="<span>com.spotify.featran.scio</span>">scio</a></span>._
-    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[com.spotify.scio.values.SCollection,Examples.Record]</span>">fs</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html" data-tooltip="<span>com.spotify.featran.FeatureSpec[Examples.Record]</span>">spec</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#extract[M[_]](input:M[T])(implicitevidence$3:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.extract[M[_]](input: M[T])(implicit evidence$3: com.spotify.featran.CollectionType[M]): com.spotify.featran.FeatureExtractor[M,T]</span>">extract</a></span>(<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html" data-tooltip="<span>com.spotify.scio.values.SCollection[Examples.Record]</span>">scoll</a></span>)
+    <span class="keyword">val</span> <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[com.spotify.scio.values.SCollection,Examples.Record]</span>">fs</a></span> = <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html" data-tooltip="<span>com.spotify.featran.FeatureSpec[Examples.Record]</span>">spec</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureSpec.html#extract[M[_]](input:M[T])(implicitevidence$1:com.spotify.featran.CollectionType[M]):com.spotify.featran.FeatureExtractor[M,T]" data-tooltip="<span>com.spotify.featran.FeatureSpec.extract[M[_]](input: M[T])(implicit evidence$1: com.spotify.featran.CollectionType[M]): com.spotify.featran.FeatureExtractor[M,T]</span>">extract</a></span>(<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html" data-tooltip="<span>com.spotify.scio.values.SCollection[Examples.Record]</span>">scoll</a></span>)
 &nbsp;</div>
               </section>
             
               <section class="">
                 <div class="comment "><p>Save settings as text file</p></p></div>
-                <div class="code ">    <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[com.spotify.scio.values.SCollection,Examples.Record]</span>">fs</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html#featureSettings:M[String]" data-tooltip="<span>com.spotify.featran.FeatureExtractor.featureSettings: M[String]</span>">featureSettings</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html#saveAsTextFile(path:String,numShards:Int,suffix:String,compression:org.apache.beam.sdk.io.Compression)(implicitct:scala.reflect.ClassTag[T]):scala.concurrent.Future[com.spotify.scio.io.Tap[String]]" data-tooltip="<span>com.spotify.scio.values.SCollection.saveAsTextFile(path: String, numShards: Int, suffix: String, compression: org.apache.beam.sdk.io.Compression)(implicit ct: scala.reflect.ClassTag[T]): scala.concurrent.Future[com.spotify.scio.io.Tap[String]]</span>">saveAsTextFile</a></span>(<span class="string">"settings"</span>)
+                <div class="code ">    <span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html" data-tooltip="<span>com.spotify.featran.FeatureExtractor[com.spotify.scio.values.SCollection,Examples.Record]</span>">fs</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/featran/api/com/spotify/featran/FeatureExtractor.html#featureSettings:M[String]" data-tooltip="<span>com.spotify.featran.FeatureExtractor.featureSettings: M[String]</span>">featureSettings</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/values/SCollection.html#saveAsTextFile(path:String,numShards:Int,suffix:String,compression:org.apache.beam.sdk.io.Compression,header:Option[String],footer:Option[String],shardNameTemplate:String,tempDirectory:String)(implicitct:scala.reflect.ClassTag[T]):com.spotify.scio.io.ClosedTap[String]" data-tooltip="<span>com.spotify.scio.values.SCollection.saveAsTextFile(path: String, numShards: Int, suffix: String, compression: org.apache.beam.sdk.io.Compression, header: Option[String], footer: Option[String], shardNameTemplate: String, tempDirectory: String)(implicit ct: scala.reflect.ClassTag[T]): com.spotify.scio.io.ClosedTap[String]</span>">saveAsTextFile</a></span>(<span class="string">"settings"</span>)
 
-    <span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html" data-tooltip="<span>com.spotify.scio.ScioContext</span>">sc</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html#close():com.spotify.scio.ScioResult" data-tooltip="<span>com.spotify.scio.ScioContext.close(): com.spotify.scio.ScioResult</span>">close</a></span>()
+    <span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html" data-tooltip="<span>com.spotify.scio.ScioContext</span>">sc</a></span>.<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioContext.html#run():com.spotify.scio.ScioExecutionContext" data-tooltip="<span>com.spotify.scio.ScioContext.run(): com.spotify.scio.ScioExecutionContext</span>">run</a></span>().<span class="identifier"><a target="doc" href="http://spotify.github.io/scio/api/com/spotify/scio/ScioExecutionContext.html#waitUntilFinish(duration:scala.concurrent.duration.Duration,cancelJob:Boolean):com.spotify.scio.ScioResult" data-tooltip="<span>com.spotify.scio.ScioExecutionContext.waitUntilFinish(duration: scala.concurrent.duration.Duration, cancelJob: Boolean): com.spotify.scio.ScioResult</span>">waitUntilFinish</a></span>()
   }
 &nbsp;</div>
               </section>
             
               <section class="">
-                <div class="comment "><h1 id="random-input-data" class="title">Random input data</h1></p></div>
+                <div class="comment ">
+<h1 id="random-input-data" class="section">Random input data</h1></p></div>
                 <div class="code empty">&nbsp;</div>
               </section>
             
@@ -573,7 +588,7 @@ This requires <code>&quot;com.spotify&quot; %% &quot;featran-scio&quot;</code> d
     <span class="identifier">f</span> &lt;- <span class="identifier">Arbitrary</span>.<span class="identifier">arbitrary</span>[<span class="identifier">Float</span>]
     <span class="identifier">d1</span> &lt;- <span class="identifier">Arbitrary</span>.<span class="identifier">arbitrary</span>[<span class="identifier">Double</span>]
     <span class="identifier">d2</span> &lt;- <span class="identifier">Arbitrary</span>.<span class="identifier">arbitrary</span>[<span class="identifier">Option</span>[<span class="identifier">Double</span>]]
-    <span class="identifier">d3</span> &lt;- <span class="identifier">Gen</span>.<span class="identifier">choose</span>(<span class="number">0</span>, <span class="number">24</span>)
+    <span class="identifier">d3</span> &lt;- <span class="identifier">Gen</span>.<span class="identifier">choose</span>[<span class="identifier">Double</span>](<span class="number">0</span>, <span class="number">24</span>)
     <span class="identifier">s1</span> &lt;- <span class="identifier">Gen</span>.<span class="identifier">alphaStr</span>.<span class="identifier">map</span>(_.<span class="identifier">take</span>(<span class="number">5</span>))
     <span class="identifier">n</span> &lt;- <span class="identifier">Gen</span>.<span class="identifier">choose</span>(<span class="number">0</span>, <span class="number">10</span>)
     <span class="identifier">s2</span> &lt;- <span class="identifier">Gen</span>.<span class="identifier">listOfN</span>(<span class="identifier">n</span>, <span class="identifier">Gen</span>.<span class="identifier">alphaStr</span>.<span class="identifier">map</span>(_.<span class="identifier">take</span>(<span class="number">5</span>)))

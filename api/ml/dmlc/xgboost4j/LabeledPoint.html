@@ -144,17 +144,24 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">LabeledPoint</span><span class="params">(<span name="label">label: <span class="extype" name="scala.Float">Float</span></span>, <span name="indices">indices: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="values">values: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Float">Float</span>]</span>, <span name="weight">weight: <span class="extype" name="scala.Float">Float</span> = <span class="symbol">1f</span></span>, <span name="group">group: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">-1</span></span>, <span name="baseMargin">baseMargin: <span class="extype" name="scala.Float">Float</span> = <span class="symbol">Float.NaN</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span> with <span class="extype" name="scala.Product">Product</span></span>
+        <span class="name">LabeledPoint</span><span class="params">(<span name="label">label: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a></span>, <span name="size">size: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>, <span name="indices">indices: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>]</span>, <span name="values">values: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a>]</span>, <span name="weight">weight: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a> = <span class="symbol">1f</span></span>, <span name="group">group: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a> = <span class="symbol">-1</span></span>, <span name="baseMargin">baseMargin: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a> = <span class="symbol"><span class="name"><a href="../../../scala/index.html">Float.NaN</a></span></span></span>)</span><span class="result"> extends <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a> with <a href="https://www.scala-lang.org/api/2.12.17/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Labeled training data point.
-</p></div><dl class="paramcmts block"><dt class="param">label</dt><dd class="cmt"><p>Label of this point.</p></dd><dt class="param">indices</dt><dd class="cmt"><p>Feature indices of this point or <code>null</code> if the data is dense.</p></dd><dt class="param">values</dt><dd class="cmt"><p>Feature values of this point.</p></dd><dt class="param">weight</dt><dd class="cmt"><p>Weight of this point.</p></dd><dt class="param">group</dt><dd class="cmt"><p>Group of this point (used for ranking) or -1.</p></dd><dt class="param">baseMargin</dt><dd class="cmt"><p>Initial prediction on this point or <code>Float.NaN</code></p></dd></dl><div class="toggleContainer block">
+</p></div><dl class="paramcmts block"><dt class="param">label</dt><dd class="cmt"><p>
+  Label of this point.</p></dd><dt class="param">size</dt><dd class="cmt"><p>
+  Feature dimensionality</p></dd><dt class="param">indices</dt><dd class="cmt"><p>
+  Feature indices of this point or <code>null</code> if the data is dense.</p></dd><dt class="param">values</dt><dd class="cmt"><p>
+  Feature values of this point.</p></dd><dt class="param">weight</dt><dd class="cmt"><p>
+  Weight of this point.</p></dd><dt class="param">group</dt><dd class="cmt"><p>
+  Group of this point (used for ranking) or -1.</p></dd><dt class="param">baseMargin</dt><dd class="cmt"><p>
+  Initial prediction on this point or <code>Float.NaN</code></p></dd></dl><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/spotify/featran/blob/v0.8.0/xgboost/src/main/scala/ml/dmlc/xgboost4j/LabeledPoint.scala" target="_blank">LabeledPoint.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="https://www.scala-lang.org/api/2.12.17/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a>, <a href="https://www.scala-lang.org/api/2.12.17/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a>, <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div></div>
         
 
@@ -201,9 +208,9 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="ml.dmlc.xgboost4j.LabeledPoint#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(label:Float,indices:Array[Int],values:Array[Float]):ml.dmlc.xgboost4j.LabeledPoint"></a><a id="&lt;init&gt;:LabeledPoint"></a>
+      <a id="&lt;init&gt;(label:Float,size:Int,indices:Array[Int],values:Array[Float]):ml.dmlc.xgboost4j.LabeledPoint"></a><a id="&lt;init&gt;:LabeledPoint"></a>
       <span class="permalink">
-      <a href="../../../ml/dmlc/xgboost4j/LabeledPoint.html#&lt;init&gt;(label:Float,indices:Array[Int],values:Array[Float]):ml.dmlc.xgboost4j.LabeledPoint" title="Permalink">
+      <a href="../../../ml/dmlc/xgboost4j/LabeledPoint.html#&lt;init&gt;(label:Float,size:Int,indices:Array[Int],values:Array[Float]):ml.dmlc.xgboost4j.LabeledPoint" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -212,14 +219,14 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">LabeledPoint</span><span class="params">(<span name="label">label: <span class="extype" name="scala.Float">Float</span></span>, <span name="indices">indices: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="values">values: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Float">Float</span>]</span>)</span>
+        <span class="name">LabeledPoint</span><span class="params">(<span name="label">label: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a></span>, <span name="size">size: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>, <span name="indices">indices: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>]</span>, <span name="values">values: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a>]</span>)</span>
       </span>
       
       
     </li><li name="ml.dmlc.xgboost4j.LabeledPoint#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="&lt;init&gt;(label:Float,indices:Array[Int],values:Array[Float],weight:Float,group:Int,baseMargin:Float):ml.dmlc.xgboost4j.LabeledPoint"></a><a id="&lt;init&gt;:LabeledPoint"></a>
+      <a id="&lt;init&gt;(label:Float,size:Int,indices:Array[Int],values:Array[Float],weight:Float,group:Int,baseMargin:Float):ml.dmlc.xgboost4j.LabeledPoint"></a><a id="&lt;init&gt;:LabeledPoint"></a>
       <span class="permalink">
-      <a href="../../../ml/dmlc/xgboost4j/LabeledPoint.html#&lt;init&gt;(label:Float,indices:Array[Int],values:Array[Float],weight:Float,group:Int,baseMargin:Float):ml.dmlc.xgboost4j.LabeledPoint" title="Permalink">
+      <a href="../../../ml/dmlc/xgboost4j/LabeledPoint.html#&lt;init&gt;(label:Float,size:Int,indices:Array[Int],values:Array[Float],weight:Float,group:Int,baseMargin:Float):ml.dmlc.xgboost4j.LabeledPoint" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -228,10 +235,17 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">LabeledPoint</span><span class="params">(<span name="label">label: <span class="extype" name="scala.Float">Float</span></span>, <span name="indices">indices: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="values">values: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Float">Float</span>]</span>, <span name="weight">weight: <span class="extype" name="scala.Float">Float</span> = <span class="symbol">1f</span></span>, <span name="group">group: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">-1</span></span>, <span name="baseMargin">baseMargin: <span class="extype" name="scala.Float">Float</span> = <span class="symbol">Float.NaN</span></span>)</span>
+        <span class="name">LabeledPoint</span><span class="params">(<span name="label">label: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a></span>, <span name="size">size: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>, <span name="indices">indices: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>]</span>, <span name="values">values: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a>]</span>, <span name="weight">weight: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a> = <span class="symbol">1f</span></span>, <span name="group">group: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a> = <span class="symbol">-1</span></span>, <span name="baseMargin">baseMargin: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a> = <span class="symbol"><span class="name"><a href="../../../scala/index.html">Float.NaN</a></span></span></span>)</span>
       </span>
       
-      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">label</dt><dd class="cmt"><p>Label of this point.</p></dd><dt class="param">indices</dt><dd class="cmt"><p>Feature indices of this point or <code>null</code> if the data is dense.</p></dd><dt class="param">values</dt><dd class="cmt"><p>Feature values of this point.</p></dd><dt class="param">weight</dt><dd class="cmt"><p>Weight of this point.</p></dd><dt class="param">group</dt><dd class="cmt"><p>Group of this point (used for ranking) or -1.</p></dd><dt class="param">baseMargin</dt><dd class="cmt"><p>Initial prediction on this point or <code>Float.NaN</code></p></dd></dl></div>
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">label</dt><dd class="cmt"><p>
+  Label of this point.</p></dd><dt class="param">size</dt><dd class="cmt"><p>
+  Feature dimensionality</p></dd><dt class="param">indices</dt><dd class="cmt"><p>
+  Feature indices of this point or <code>null</code> if the data is dense.</p></dd><dt class="param">values</dt><dd class="cmt"><p>
+  Feature values of this point.</p></dd><dt class="param">weight</dt><dd class="cmt"><p>
+  Weight of this point.</p></dd><dt class="param">group</dt><dd class="cmt"><p>
+  Group of this point (used for ranking) or -1.</p></dd><dt class="param">baseMargin</dt><dd class="cmt"><p>
+  Initial prediction on this point or <code>Float.NaN</code></p></dd></dl></div>
     </li></ol>
             </div>
 
@@ -254,7 +268,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -270,7 +284,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -286,7 +300,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -318,7 +332,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">baseMargin</span><span class="result">: <span class="extype" name="scala.Float">Float</span></span>
+        <span class="name">baseMargin</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a></span>
       </span>
       
       
@@ -334,7 +348,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<span class="extype" name="java.lang">lang</span>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -358,7 +372,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -374,7 +388,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<span class="extype" name="java.lang">lang</span>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -415,7 +429,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">group</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">group</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       
@@ -431,7 +445,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">indices</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Int">Int</span>]</span>
+        <span class="name">indices</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a>]</span>
       </span>
       
       
@@ -447,7 +461,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -463,7 +477,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">label</span><span class="result">: <span class="extype" name="scala.Float">Float</span></span>
+        <span class="name">label</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a></span>
       </span>
       
       
@@ -479,7 +493,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -495,7 +509,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -514,13 +528,29 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
+    </li><li name="ml.dmlc.xgboost4j.LabeledPoint#size" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="size:Int"></a>
+      <span class="permalink">
+      <a href="../../../ml/dmlc/xgboost4j/LabeledPoint.html#size:Int" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">size</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
@@ -549,7 +579,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">values</span><span class="result">: <span class="extype" name="scala.Array">Array</span>[<span class="extype" name="scala.Float">Float</span>]</span>
+        <span class="name">values</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Array.html#scala.Array" class="extype" name="scala.Array">Array</a>[<a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a>]</span>
       </span>
       
       
@@ -565,7 +595,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -587,7 +617,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -609,7 +639,7 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -633,7 +663,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">weight</span><span class="result">: <span class="extype" name="scala.Float">Float</span></span>
+        <span class="name">weight</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Float.html#scala.Float" class="extype" name="scala.Float">Float</a></span>
       </span>
       
       
@@ -648,17 +678,17 @@
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.Product">
-              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+              <h3>Inherited from <a href="https://www.scala-lang.org/api/2.12.17/scala/Product.html#scala.Product" class="extype" name="scala.Product">Product</a></h3>
             </div><div class="parent" name="scala.Equals">
-              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+              <h3>Inherited from <a href="https://www.scala-lang.org/api/2.12.17/scala/Equals.html#scala.Equals" class="extype" name="scala.Equals">Equals</a></h3>
             </div><div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+              <h3>Inherited from <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+              <h3>Inherited from <a href="../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+              <h3>Inherited from <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>

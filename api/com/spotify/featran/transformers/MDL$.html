@@ -276,22 +276,22 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">MDL</span><span class="result"> extends <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">MDL</span><span class="result"> extends <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a> with <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></span>
       </span>
       </h4>
 
       
           <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Transform a column of continuous labelled features to n columns of binned categorical features.
 The optimum number of bins is computed using Minimum Description Length (MDL), which is an
-entropy measurement between the values and the targets.</p><p>The transformer expects an <a href="MDLRecord.html" class="extype" name="com.spotify.featran.transformers.MDLRecord">MDLRecord</a> where the first field is a label and the second value
-is the scalar that will be transformed into buckets.</p><p>MDL is an iterative algorithm so all of the data needed to compute the buckets will be pulled
-into memory. If you run into memory issues the <code>sampleRate</code> parameter should be lowered.</p><p>References:</p><p>- Fayyad, U., &amp; Irani, K. (1993). &quot;Multi-interval discretization of continuous-valued attributes
-for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDLP-discretization
-</p></div><div class="toggleContainer block">
+entropy measurement between the values and the targets.</p><p>The transformer expects an <a href="MDLRecord.html" class="extype" name="com.spotify.featran.transformers.MDLRecord">MDLRecord</a> where the first field is a label and the second value is
+the scalar that will be transformed into buckets.</p><p>MDL is an iterative algorithm so all of the data needed to compute the buckets will be pulled
+into memory. If you run into memory issues the <code>sampleRate</code> parameter should be lowered.</p><p>References:</p><ul><li>Fayyad, U., &amp; Irani, K. (1993). &quot;Multi-interval discretization of continuous-valued
+    attributes for classification learning.&quot;</li><li>https://github.com/sramirez/spark-MDLP-discretization
+</li></ul></div><dl class="attributes block"> <dt>Source</dt><dd><a href="https://github.com/spotify/featran/blob/v0.8.0/core/src/main/scala/com/spotify/featran/transformers/MDL.scala" target="_blank">MDL.scala</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a>, <span class="extype" name="java.io.Serializable">Serializable</span>, <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a>, <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a>, <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></div>
         </div></div>
         
 
@@ -356,7 +356,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -372,7 +372,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -388,7 +388,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -404,11 +404,16 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sampleRate">sampleRate: <span class="extype" name="scala.Double">Double</span> = <span class="symbol">1.0</span></span>, <span name="stoppingCriterion">stoppingCriterion: <span class="extype" name="scala.Double">Double</span> = <span class="symbol"><span class="name"><a href="../../../index.html">DefaultStoppingCriterion</a></span></span></span>, <span name="minBinPercentage">minBinPercentage: <span class="extype" name="scala.Double">Double</span> = <span class="symbol"><span class="name"><a href="../../../index.html">DefaultMinBinPercentage</a></span></span></span>, <span name="maxBins">maxBins: <span class="extype" name="scala.Int">Int</span> = <span class="symbol"><span class="name"><a href="../../../index.html">DefaultMaxBins</a></span></span></span>, <span name="seed">seed: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">Random.nextInt()</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <span class="extype" name="scala.reflect.ClassTag">ClassTag</span>[<span class="extype" name="com.spotify.featran.transformers.MDL.apply.T">T</span>]</span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<a href="MDLRecord.html" class="extype" name="com.spotify.featran.transformers.MDLRecord">MDLRecord</a>[<span class="extype" name="com.spotify.featran.transformers.MDL.apply.T">T</span>], <span class="extype" name="com.spotify.featran.transformers.MDL.B">B</span>[<span class="extype" name="com.spotify.featran.transformers.MDL.apply.T">T</span>], <span class="extype" name="com.spotify.featran.transformers.MDL.C">C</span>]</span>
+        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="name">name: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="sampleRate">sampleRate: <a href="https://www.scala-lang.org/api/2.12.17/scala/Double.html#scala.Double" class="extype" name="scala.Double">Double</a> = <span class="symbol">1.0</span></span>, <span name="stoppingCriterion">stoppingCriterion: <a href="https://www.scala-lang.org/api/2.12.17/scala/Double.html#scala.Double" class="extype" name="scala.Double">Double</a> = <span class="symbol"><span class="name"><a href="../../../index.html">DefaultStoppingCriterion</a></span></span></span>, <span name="minBinPercentage">minBinPercentage: <a href="https://www.scala-lang.org/api/2.12.17/scala/Double.html#scala.Double" class="extype" name="scala.Double">Double</a> = <span class="symbol"><span class="name"><a href="../../../index.html">DefaultMinBinPercentage</a></span></span></span>, <span name="maxBins">maxBins: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a> = <span class="symbol"><span class="name"><a href="../../../index.html">DefaultMaxBins</a></span></span></span>, <span name="seed">seed: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a> = <span class="symbol"><span class="name"><a href="../../../../scala/index.html">Random.nextInt()</a></span></span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/reflect/ClassTag.html#scala.reflect.ClassTag" class="extype" name="scala.reflect.ClassTag">ClassTag</a>[<span class="extype" name="com.spotify.featran.transformers.MDL.apply.T">T</span>]</span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<a href="MDLRecord.html" class="extype" name="com.spotify.featran.transformers.MDLRecord">MDLRecord</a>[<span class="extype" name="com.spotify.featran.transformers.MDL.apply.T">T</span>], <span class="extype" name="com.spotify.featran.transformers.MDL.B">B</span>[<span class="extype" name="com.spotify.featran.transformers.MDL.apply.T">T</span>], <span class="extype" name="com.spotify.featran.transformers.MDL.C">C</span>]</span>
       </span>
       
       <p class="shortcomment cmt">Create an MDL Instance.</p><div class="fullcomment"><div class="comment cmt"><p>Create an MDL Instance.
-</p></div><dl class="paramcmts block"><dt class="param">sampleRate</dt><dd class="cmt"><p>percentage of records to keep to compute the buckets</p></dd><dt class="param">stoppingCriterion</dt><dd class="cmt"><p>stopping criterion for MDL</p></dd><dt class="param">minBinPercentage</dt><dd class="cmt"><p>minimum percent of total data allowed in a single bin</p></dd><dt class="param">maxBins</dt><dd class="cmt"><p>maximum number of thresholds per feature</p></dd><dt class="param">seed</dt><dd class="cmt"><p>seed for the sampler</p></dd></dl></div>
+</p></div><dl class="paramcmts block"><dt class="param">sampleRate</dt><dd class="cmt"><p>
+  percentage of records to keep to compute the buckets</p></dd><dt class="param">stoppingCriterion</dt><dd class="cmt"><p>
+  stopping criterion for MDL</p></dd><dt class="param">minBinPercentage</dt><dd class="cmt"><p>
+  minimum percent of total data allowed in a single bin</p></dd><dt class="param">maxBins</dt><dd class="cmt"><p>
+  maximum number of thresholds per feature</p></dd><dt class="param">seed</dt><dd class="cmt"><p>
+  seed for the sampler</p></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
@@ -437,7 +442,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<span class="extype" name="java.lang">lang</span>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -461,7 +466,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -477,7 +482,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
@@ -493,7 +498,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<span class="extype" name="java.lang">lang</span>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -518,7 +523,8 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="name">fromSettings</span><span class="params">(<span name="setting">setting: <a href="Settings.html" class="extype" name="com.spotify.featran.transformers.Settings">Settings</a></span>)</span><span class="result">: <a href="Transformer.html" class="extype" name="com.spotify.featran.transformers.Transformer">Transformer</a>[<a href="MDLRecord.html" class="extype" name="com.spotify.featran.transformers.MDLRecord">MDLRecord</a>[<span class="extype" name="scala.Predef.String">String</span>], <span class="extype" name="com.spotify.featran.transformers.MDL.B">B</span>[<span class="extype" name="scala.Predef.String">String</span>], <span class="extype" name="com.spotify.featran.transformers.MDL.C">C</span>]</span>
       </span>
       
-      <p class="shortcomment cmt">Create a new <span class="extype" name="MDL">MDL</span> from a settings object</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="MDL">MDL</span> from a settings object</p></div><dl class="paramcmts block"><dt class="param">setting</dt><dd class="cmt"><p>Settings object</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.spotify.featran.transformers.MDL">MDL</a> → <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></dd></dl></div>
+      <p class="shortcomment cmt">Create a new <span class="extype" name="MDL">MDL</span> from a settings object</p><div class="fullcomment"><div class="comment cmt"><p>Create a new <span class="extype" name="MDL">MDL</span> from a settings object</p></div><dl class="paramcmts block"><dt class="param">setting</dt><dd class="cmt"><p>
+  Settings object</p></dd></dl><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.spotify.featran.transformers.MDL">MDL</a> → <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
@@ -550,7 +556,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
@@ -569,7 +575,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
@@ -585,7 +591,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Boolean.html#scala.Boolean" class="extype" name="scala.Boolean">Boolean</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
@@ -601,7 +607,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -620,7 +626,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -671,7 +677,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -693,7 +699,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>, <span name="arg1">arg1: <a href="https://www.scala-lang.org/api/2.12.17/scala/Int.html#scala.Int" class="extype" name="scala.Int">Int</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -715,7 +721,7 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <a href="https://www.scala-lang.org/api/2.12.17/scala/Long.html#scala.Long" class="extype" name="scala.Long">Long</a></span>)</span><span class="result">: <a href="https://www.scala-lang.org/api/2.12.17/scala/Unit.html#scala.Unit" class="extype" name="scala.Unit">Unit</a></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
@@ -738,15 +744,15 @@ for classification learning.&quot;</p><p>- https://github.com/sramirez/spark-MDL
 
         <div id="inheritedMembers">
         <div class="parent" name="scala.Serializable">
-              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+              <h3>Inherited from <a href="https://www.scala-lang.org/api/2.12.17/scala/Serializable.html#scala.Serializable" class="extype" name="scala.Serializable">Serializable</a></h3>
             </div><div class="parent" name="java.io.Serializable">
               <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
             </div><div class="parent" name="com.spotify.featran.transformers.SettingsBuilder">
               <h3>Inherited from <a href="SettingsBuilder.html" class="extype" name="com.spotify.featran.transformers.SettingsBuilder">SettingsBuilder</a></h3>
             </div><div class="parent" name="scala.AnyRef">
-              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+              <h3>Inherited from <a href="../../../../scala/index.html#AnyRef=Object" class="extmbr" name="scala.AnyRef">AnyRef</a></h3>
             </div><div class="parent" name="scala.Any">
-              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+              <h3>Inherited from <a href="https://www.scala-lang.org/api/2.12.17/scala/Any.html#scala.Any" class="extype" name="scala.Any">Any</a></h3>
             </div>
         
         </div>
