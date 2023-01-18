@@ -26,7 +26,7 @@ val algebirdVersion = "0.13.9"
 val breezeVersion = "1.3"
 val circeVersion = "0.14.3"
 val commonsMathVersion = "3.6.1"
-val flinkVersion = "1.14.4"
+val flinkVersion = "1.16.0"
 val hadoopVersion = "3.3.4"
 val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.17.0"
@@ -238,7 +238,7 @@ lazy val flink: Project = project
     crossScalaVersions := Seq(scala212),
     libraryDependencies ++= Seq(
       "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
-      "org.apache.flink" %% "flink-clients" % flinkVersion % "provided",
+      "org.apache.flink" % "flink-clients" % flinkVersion % "provided",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
   )
