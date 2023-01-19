@@ -94,18 +94,18 @@ ThisBuild / developers := List(
 val scala3 = "3.2.1"
 val scala213 = "2.13.10"
 val scala212 = "2.12.17"
-val defaultScala = scala212
+val scalaDefault = scala212
 
 // github actions
 val java11 = JavaSpec.corretto("11")
 val java8 = JavaSpec.corretto("8")
-val defaultJava = java11
+val javaDefault = java11
 val coverageCond = Seq(
-  s"matrix.scala == '$defaultScala'",
-  s"matrix.java == '${defaultJava.render}'"
+  s"matrix.scala == '$scalaDefault'",
+  s"matrix.java == '${javaDefault.render}'"
 ).mkString(" && ")
 
-ThisBuild / scalaVersion := defaultScala
+ThisBuild / scalaVersion := scalaDefault
 ThisBuild / crossScalaVersions := Seq(scala3, scala213, scala212)
 ThisBuild / githubWorkflowTargetBranches := Seq("main")
 ThisBuild / githubWorkflowJavaVersions := Seq(java11, java8)
@@ -138,7 +138,6 @@ lazy val keepExistingHeader =
   )
 
 lazy val commonSettings = Seq(
-  description := "Feature Transformers",
   tlFatalWarningsInCi := false,
   tlJdkRelease := Some(8),
   tlSkipIrrelevantScalas := true,
@@ -173,6 +172,10 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
 lazy val root: Project = project
   .in(file("."))
   .enablePlugins(NoPublishPlugin)
+  .settings(
+    name := "featran",
+    description := "Feature Transformers",
+  )
   .aggregate(
     core,
     java,
