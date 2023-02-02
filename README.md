@@ -1,7 +1,7 @@
 featran
 =======
 
-[![Build Status](https://img.shields.io/github/workflow/status/spotify/featran/ci)](https://github.com/spotify/featran/actions?query=workflow%3Aci)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/spotify/featran/ci.yml?branch=main)](https://github.com/spotify/featran/actions?query=workflow%3Aci)
 [![codecov.io](https://codecov.io/github/spotify/featran/coverage.svg?branch=master)](https://codecov.io/github/spotify/featran?branch=master)
 [![Maven Central](https://img.shields.io/maven-central/v/com.spotify/featran-core_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/com.spotify/featran-core_2.12)
 [![Scaladoc](https://img.shields.io/badge/scaladoc-latest-blue.svg)](https://spotify.github.io/featran/api/com/spotify/featran/index.html)
