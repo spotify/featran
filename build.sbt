@@ -221,8 +221,11 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq(scala213, scala212),
+    // for scala3 we need to compile scala code 1st
+    Compile / compileOrder := CompileOrder.ScalaThenJava,
+    Test / compileOrder := CompileOrder.JavaThenScala,
     libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-java8-compat" % "1.0.2",
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )

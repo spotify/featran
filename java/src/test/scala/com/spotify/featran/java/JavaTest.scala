@@ -19,13 +19,13 @@ package com.spotify.featran.java
 
 import com.spotify.featran.SparseArray
 import com.spotify.featran.xgboost.SparseLabeledPoint
-import org.tensorflow.proto.example.Example
-
-import scala.collection.JavaConverters._
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import org.tensorflow.proto.example.Example
+
+import scala.jdk.CollectionConverters._
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 class JavaTest extends AnyFlatSpec with Matchers {
   import com.spotify.featran.Fixtures._
