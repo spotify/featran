@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Spotify AB.
+ * Copyright 2023 Spotify AB.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,8 @@
  * under the License.
  */
 
-package com.spotify.featran.java;
+package com.spotify.featran.java
 
-import java.io.Serializable;
-import java.util.function.Function;
+import java.util.function.{Function => JFunction}
 
-public interface SerializableFunction<InputT, OutputT> extends Function<InputT, OutputT>, Serializable {}
+trait SerializableFunction[I, O] extends JFunction[I, O] with Serializable
