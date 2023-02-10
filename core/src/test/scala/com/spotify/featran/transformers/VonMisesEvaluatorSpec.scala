@@ -17,7 +17,7 @@
 
 package com.spotify.featran.transformers
 
-import breeze.stats.distributions.{VonMises, Rand}
+import breeze.stats.distributions.{Rand, VonMises}
 import org.scalacheck._
 
 object VonMisesEvaluatorSpec extends TransformerProp("VonMisesEvaluator") {
