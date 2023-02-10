@@ -17,10 +17,9 @@
 
 package com.spotify.featran.transformers
 
-import breeze.stats.distributions.{VonMises, Rand}
+import breeze.stats.distributions.{Rand, VonMises}
 import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
-
 
 /**
  * Transform a column of continuous features that represent the mean of a von Mises distribution to
