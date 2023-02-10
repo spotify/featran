@@ -20,7 +20,6 @@ package com.spotify.featran.java
 import java.lang.{Double => JDouble}
 import java.util.function.BiFunction
 import java.util.{Collections, List => JList, Optional}
-import java.util.function.{Function => JFunction}
 
 import com.spotify.featran._
 import com.spotify.featran.tensorflow._
@@ -28,18 +27,18 @@ import com.spotify.featran.xgboost._
 import ml.dmlc.xgboost4j.LabeledPoint
 import org.tensorflow.proto.example.Example
 
-
-import scala.jdk.CollectionConverters._
-import scala.compat.java8.OptionConverters._
-import scala.compat.java8.FunctionConverters._
+import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
 
 private object JavaOps {
-  def requiredFn[I, O](f: JFunction[I, O]): I => O =
-    f.asScala
+  def requiredFn[I, O](f: SerializableFunction[I, O]): I => O =
+    (input: I) => f(input)
 
-  def optionalFn[I, O](f: JFunction[I, Optional[O]]): I => Option[O] =
-    f.asScala.andThen(_.asScala)
+  def optionalFn[I, O](f: SerializableFunction[I, Optional[O]]): I => Option[O] =
+    (input: I) => {
+      val o = f(input)
+      if (o.isPresent) Some(o.get()) else None
+    }
 
   def crossFn(f: BiFunction[JDouble, JDouble, JDouble]): (Double, Double) => Double =
     (a, b) => f(a, b)

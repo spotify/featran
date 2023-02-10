@@ -18,6 +18,7 @@
 package com.spotify.featran.java;
 
 import java.io.Serializable;
-import java.util.function.Function;
 
-public interface SerializableFunction<InputT, OutputT> extends Function<InputT, OutputT>, Serializable {}
+public interface SerializableFunction<InputT, OutputT> extends Serializable {
+  OutputT apply(InputT input);
+}
