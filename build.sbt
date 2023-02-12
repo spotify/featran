@@ -30,6 +30,7 @@ val flinkVersion = "1.16.0"
 val hadoopVersion = "3.3.4"
 val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.17.0"
+val scalaCollectionCompatVersion = "2.9.0"
 val scalatestVersion = "3.2.15"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.11.14"
@@ -223,6 +224,7 @@ lazy val java: Project = project
     description := "Feature Transformers - java",
     tlVersionIntroduced := Map("3" -> "0.8.1"),
     libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-collection-compat" % scalaCollectionCompatVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
     )
