@@ -35,6 +35,10 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
 ) extends Serializable {
   import FeatureSpec.ARRAY, CollectionType.ops._, json._
 
+  // copy constructor
+  private[featran] def this(other: FeatureExtractor[M, T]) =
+    this(other.fs, other.input, other.settings)
+
   @transient private[featran] lazy val as: M[(T, ARRAY)] =
     input.cross(fs).map { case (in, spec) => (in, spec.unsafeGet(in)) }
 

@@ -221,7 +221,7 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq(scala213, scala212),
+    tlVersionIntroduced := Map("3" -> "0.8.1"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"

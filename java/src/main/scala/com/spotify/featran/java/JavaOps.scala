@@ -27,18 +27,22 @@ import com.spotify.featran.xgboost._
 import ml.dmlc.xgboost4j.LabeledPoint
 import org.tensorflow.proto.example.Example
 
-import scala.collection.JavaConverters._
+import scala.jdk.OptionConverters._
+import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag
 
 private object JavaOps {
+
+  // java does not support higher-kind types
+  // specialize FeatureExtractor for java.util.List in the scala code
+  class JListFeatureExtractor[T](other: FeatureExtractor[JList, T])
+      extends FeatureExtractor[JList, T](other)
+
   def requiredFn[I, O](f: SerializableFunction[I, O]): I => O =
     (input: I) => f(input)
 
   def optionalFn[I, O](f: SerializableFunction[I, Optional[O]]): I => Option[O] =
-    (input: I) => {
-      val o = f(input)
-      if (o.isPresent) Some(o.get()) else None
-    }
+    (input: I) => f(input).toScala
 
   def crossFn(f: BiFunction[JDouble, JDouble, JDouble]): (Double, Double) => Double =
     (a, b) => f(a, b)
@@ -117,12 +121,22 @@ private object JavaOps {
   def extract[T](fs: FeatureSpec[T], input: JList[T]): FeatureExtractor[JList, T] =
     fs.extract(input)
 
+  def javaExtract[T](fs: FeatureSpec[T], input: JList[T]): JListFeatureExtractor[T] =
+    new JListFeatureExtractor(extract(fs, input))
+
   def extractWithSettings[T](
     fs: FeatureSpec[T],
     input: JList[T],
     settings: String
   ): FeatureExtractor[JList, T] =
     fs.extractWithSettings(input, Collections.singletonList(settings))
+
+  def javaExtractWithSettings[T](
+    fs: FeatureSpec[T],
+    input: JList[T],
+    settings: String
+  ): JListFeatureExtractor[T] =
+    new JListFeatureExtractor(extractWithSettings(fs, input, settings))
 
   def extractWithSettingsFloat[T](
     fs: FeatureSpec[T],

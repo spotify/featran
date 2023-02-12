@@ -71,7 +71,7 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Java wrapper for {@link FeatureSpec#optional(Function1, Transformer)}.
+   * Java wrapper for {@link FeatureSpec#optional(Function1, Option, Transformer)}.
    */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final Transformer<A, ?, ?> t) {
@@ -81,7 +81,7 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Java wrapper for {@link FeatureSpec#optional(Function1, Transformer)}.
+   * Java wrapper for {@link FeatureSpec#optional(Function1, Option, Transformer)}.
    */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final A defaultValue,
@@ -104,14 +104,14 @@ public class JFeatureSpec<T> {
    * Java wrapper for {@link FeatureSpec#extract(Object, CollectionType)}.
    */
   public JFeatureExtractor<T> extract(List<T> input) {
-    return new JFeatureExtractor<>(JavaOps.extract(self, input));
+    return new JFeatureExtractor<>(JavaOps.javaExtract(self, input));
   }
 
   /**
    * Java wrapper for {@link FeatureSpec#extractWithSettings(Object, Object, CollectionType)}.
    */
   public JFeatureExtractor<T> extractWithSettings(List<T> input, String settings) {
-    return new JFeatureExtractor<>(JavaOps.extractWithSettings(self, input, settings));
+    return new JFeatureExtractor<>(JavaOps.javaExtractWithSettings(self, input, settings));
   }
 
   /**
