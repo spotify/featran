@@ -40,7 +40,7 @@ val tensorflowVersion = "0.4.2"
 val xgBoostVersion = "1.3.1"
 
 // project
-ThisBuild / tlBaseVersion := "0.8"
+ThisBuild / tlBaseVersion := "0.9"
 ThisBuild / organization := "com.spotify"
 ThisBuild / organizationName := "Spotify AB"
 ThisBuild / startYear := Some(2016)
@@ -224,7 +224,6 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    tlVersionIntroduced := Map("3" -> "0.8.1"),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"

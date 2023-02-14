@@ -33,11 +33,6 @@ import scala.reflect.ClassTag
 
 private object JavaOps {
 
-  // java does not support higher-kind types
-  // specialize FeatureExtractor for java.util.List in the scala code
-  class JListFeatureExtractor[T](other: FeatureExtractor[JList, T])
-      extends FeatureExtractor[JList, T](other)
-
   def requiredFn[I, O](f: SerializableFunction[I, O]): I => O =
     (input: I) => f(input)
 
@@ -118,25 +113,15 @@ private object JavaOps {
   // Wrappers for FeatureSpec
   // ================================================================================
 
-  def extract[T](fs: FeatureSpec[T], input: JList[T]): FeatureExtractor[JList, T] =
-    fs.extract(input)
-
-  def javaExtract[T](fs: FeatureSpec[T], input: JList[T]): JListFeatureExtractor[T] =
-    new JListFeatureExtractor(extract(fs, input))
+  def extract[T](fs: FeatureSpec[T], input: JList[T]): JListFeatureExtractor[T] =
+    new JListFeatureExtractor(fs.extract(input))
 
   def extractWithSettings[T](
     fs: FeatureSpec[T],
     input: JList[T],
     settings: String
-  ): FeatureExtractor[JList, T] =
-    fs.extractWithSettings(input, Collections.singletonList(settings))
-
-  def javaExtractWithSettings[T](
-    fs: FeatureSpec[T],
-    input: JList[T],
-    settings: String
   ): JListFeatureExtractor[T] =
-    new JListFeatureExtractor(extractWithSettings(fs, input, settings))
+    new JListFeatureExtractor(fs.extractWithSettings(input, Collections.singletonList(settings)))
 
   def extractWithSettingsFloat[T](
     fs: FeatureSpec[T],

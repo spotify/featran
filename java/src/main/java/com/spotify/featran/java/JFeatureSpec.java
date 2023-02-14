@@ -104,14 +104,14 @@ public class JFeatureSpec<T> {
    * Java wrapper for {@link FeatureSpec#extract(Object, CollectionType)}.
    */
   public JFeatureExtractor<T> extract(List<T> input) {
-    return new JFeatureExtractor<>(JavaOps.javaExtract(self, input));
+    return new JFeatureExtractor<>(JavaOps.extract(self, input));
   }
 
   /**
    * Java wrapper for {@link FeatureSpec#extractWithSettings(Object, Object, CollectionType)}.
    */
   public JFeatureExtractor<T> extractWithSettings(List<T> input, String settings) {
-    return new JFeatureExtractor<>(JavaOps.javaExtractWithSettings(self, input, settings));
+    return new JFeatureExtractor<>(JavaOps.extractWithSettings(self, input, settings));
   }
 
   /**

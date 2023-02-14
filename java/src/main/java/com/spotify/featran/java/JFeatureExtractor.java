@@ -34,9 +34,9 @@ import java.util.List;
  */
 public class JFeatureExtractor<T> {
 
-  private final JavaOps.JListFeatureExtractor<T> self;
+  private final JListFeatureExtractor<T> self;
 
-  JFeatureExtractor(JavaOps.JListFeatureExtractor<T> self) {
+  JFeatureExtractor(JListFeatureExtractor<T> self) {
     this.self = self;
   }
 
