@@ -55,7 +55,7 @@ object HeavyHitters extends SettingsBuilder {
     heavyHittersCount: Int,
     eps: Double = 0.001,
     delta: Double = 0.001,
-    seed: Int = Random.nextInt
+    seed: Int = Random.nextInt()
   ): Transformer[String, SketchMap[String, Long], Map[String, (Int, Long)]] =
     new HeavyHitters(name, heavyHittersCount, eps, delta, seed)
 
@@ -108,8 +108,8 @@ private[featran] class HeavyHitters(
     case Some(x) =>
       c.get(x) match {
         case Some((rank, freq)) =>
-          fb.add(s"${name}_rank", rank)
-          fb.add(s"${name}_freq", freq)
+          fb.add(s"${name}_rank", rank.toDouble)
+          fb.add(s"${name}_freq", freq.toDouble)
         case None => fb.skip(2)
       }
     case None => fb.skip(2)

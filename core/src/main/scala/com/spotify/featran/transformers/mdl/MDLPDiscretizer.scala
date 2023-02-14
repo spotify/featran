@@ -17,10 +17,12 @@
 
 package com.spotify.featran.transformers.mdl
 
-import scala.collection.JavaConverters._
+import scala.annotation.nowarn
+import scala.jdk.CollectionConverters._
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
+@nowarn("msg=evidence parameter evidence\\$. of type scala.reflect.ClassTag\\[.\\] in class MDLPDiscretizer is never used")
 private[transformers] class MDLPDiscretizer[T: ClassTag](
   data: Seq[(T, Double)],
   stoppingCriterion: Double = MDLPDiscretizer.DefaultStoppingCriterion,

@@ -20,7 +20,7 @@ package com.spotify.featran.transformers
 import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.HLL
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
  * Transform a collection of weighted categorical features to columns of weight sums, with at most N

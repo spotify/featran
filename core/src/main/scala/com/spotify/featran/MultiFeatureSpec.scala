@@ -123,7 +123,7 @@ class MultiFeatureSpec[T](
     import CollectionType.ops._
 
     val featureSet = settings.map { s =>
-      val settingsJson = decode[Seq[Settings]](s).right.get
+      val settingsJson = decode[Seq[Settings]](s).toOption.get
       val predicate: Feature[T, _, _, _] => Boolean =
         f => settingsJson.exists(x => x.name == f.transformer.name)
 

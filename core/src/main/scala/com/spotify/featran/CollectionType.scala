@@ -59,17 +59,20 @@ object CollectionType {
 
       override def reduce[A](ma: M[A])(f: (A, A) => A): M[A] = {
         val builder = cb().asInstanceOf[mutable.Builder[A, M[A]]]
-        if (ma.nonEmpty) {
-          builder += ma.asInstanceOf[Iterable[A]].reduce(f)
+        val mai = ti(ma).asInstanceOf[Iterable[A]]
+        if (mai.nonEmpty) {
+          builder += mai.reduce(f)
         }
         builder.result()
       }
 
       override def cross[A, B: ClassTag](ma: M[A])(mb: M[B]): M[(A, B)] = {
         val builder = cb().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
-        if (mb.nonEmpty) {
-          val b = mb.asInstanceOf[Iterable[B]].head
-          ma.asInstanceOf[Iterable[A]].foreach(a => builder += ((a, b)))
+        val mai = ti(ma).asInstanceOf[Iterable[A]]
+        val mbi = ti(mb).asInstanceOf[Iterable[B]]
+        if (mbi.nonEmpty) {
+          val b = mbi.head
+          mai.foreach(a => builder += (a -> b))
         }
         builder.result()
       }

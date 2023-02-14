@@ -25,7 +25,7 @@ class ThresholdFinderTest extends AnyFlatSpec with Matchers {
     val finder =
       new ThresholdFinder(nLabels = 3, stoppingCriterion = 0, maxBins = 100, minBinWeight = 1)
 
-    val feature = Array(
+    val feature = Seq(
       (5.0f, Array(1L, 2L, 3L)),
       (4.0f, Array(5L, 4L, 20L)),
       (3.5f, Array(3L, 20L, 12L)),

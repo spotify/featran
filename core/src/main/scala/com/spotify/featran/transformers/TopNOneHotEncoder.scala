@@ -58,7 +58,7 @@ object TopNOneHotEncoder extends SettingsBuilder {
     n: Int,
     eps: Double = 0.001,
     delta: Double = 0.001,
-    seed: Int = Random.nextInt,
+    seed: Int = Random.nextInt(),
     encodeMissingValue: Boolean = false
   ): Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
     new TopNOneHotEncoder(name, n, eps, delta, seed, encodeMissingValue)

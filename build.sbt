@@ -139,7 +139,6 @@ lazy val keepExistingHeader =
   )
 
 lazy val commonSettings = Seq(
-  tlFatalWarningsInCi := false,
   tlJdkRelease := Some(8),
   tlSkipIrrelevantScalas := true,
   headerLicense := Some(HeaderLicense.ALv2(currentYear.toString, organizationName.value)),

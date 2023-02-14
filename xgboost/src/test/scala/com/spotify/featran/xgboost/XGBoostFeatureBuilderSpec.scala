@@ -21,12 +21,14 @@ import com.spotify.featran.{FeatureBuilder, SerializableUtils, SparseArray}
 import ml.dmlc.xgboost4j.LabeledPoint
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
 
+import scala.annotation.nowarn
 import scala.reflect.ClassTag
 
 object XGBoostFeatureBuilderSpec extends Properties("XGBoostFeatureBuilder") {
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
+  @nowarn("msg=evidence parameter evidence\\$. of type scala.reflect.ClassTag\\[.\\] in method test is never used")
   private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], builder: FeatureBuilder[F])(
     toSeq: F => Seq[Float]
   ): Prop = {

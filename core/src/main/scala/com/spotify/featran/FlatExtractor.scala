@@ -21,7 +21,7 @@ import com.spotify.featran.transformers._
 import simulacrum.typeclass
 
 import scala.reflect.ClassTag
-import scala.annotation.implicitNotFound
+import scala.annotation.{implicitNotFound, nowarn}
 
 /**
  * TypeClass that is used to read data from flat files. The requirement is that each feature comes
@@ -122,6 +122,7 @@ object FlatExtractor {
    * @return
    *   FeatureSpec for the intermediate format
    */
+   @nowarn("msg=evidence parameter evidence\\$. of type scala.reflect.ClassTag\\[.\\] in method flatSpec is never used")
   def flatSpec[T: ClassTag: FlatReader, X: ClassTag](spec: FeatureSpec[X]): FeatureSpec[T] = {
     val features = spec.features.map { feature =>
       val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
@@ -144,6 +145,7 @@ object FlatExtractor {
    * @return
    *   FeatureSpec for the intermediate format
    */
+  @nowarn("msg=evidence parameter evidence\\$. of type scala.reflect.ClassTag\\[.\\] in method multiFlatSpec is never used")
   def multiFlatSpec[T: ClassTag: FlatReader, X: ClassTag](
     spec: MultiFeatureSpec[X]
   ): MultiFeatureSpec[T] = {
@@ -156,6 +158,7 @@ object FlatExtractor {
   }
 }
 
+@nowarn("msg=evidence parameter evidence\\$.+ of type scala.reflect.ClassTag\\[.\\] in class FlatExtractor is never used")
 private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](
   settings: M[String]
 ) extends Serializable {
@@ -165,9 +168,9 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
 
   @transient private[this] val converters = settings.map { str =>
     val runtimeMirror = universe.runtimeMirror(getClass.getClassLoader)
-    val jsonOpt = decode[Seq[Settings]](str)
-    assert(jsonOpt.isRight, "Unable to parse the settings files.")
-    jsonOpt.right.get.map { setting =>
+    val jsonOpt = decode[Seq[Settings]](str).toOption
+    assert(jsonOpt.isDefined, "Unable to parse the settings files.")
+    jsonOpt.get.map { setting =>
       val transformer = runtimeMirror
         .reflectModule(runtimeMirror.staticModule(setting.cls))
         .instance
@@ -188,6 +191,7 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
   def featureValues[F: FeatureBuilder: ClassTag](records: M[T]): M[F] =
     featureResults(records).map(_._1)
 
+  @nowarn("msg=evidence parameter evidence\\$.+ of type scala.reflect.ClassTag\\[.\\] in method featureResults is never used")
   def featureResults[F: FeatureBuilder: ClassTag](
     records: M[T]
   ): M[(F, Map[String, FeatureRejection])] = {

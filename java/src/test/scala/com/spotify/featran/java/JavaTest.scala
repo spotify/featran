@@ -21,7 +21,7 @@ import com.spotify.featran.SparseArray
 import com.spotify.featran.xgboost.SparseLabeledPoint
 import org.tensorflow.proto.example.Example
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -34,7 +34,7 @@ class JavaTest extends AnyFlatSpec with Matchers {
     val m = e.getFeatures.getFeatureMap
     names.map { n =>
       val f = m.get(n)
-      if (f == null) 0.0 else f.getFloatList.getValue(0)
+      if (f == null) 0.0 else f.getFloatList.getValue(0).toDouble
     }
   }
 

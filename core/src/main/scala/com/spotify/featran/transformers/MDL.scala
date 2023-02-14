@@ -17,15 +17,15 @@
 
 package com.spotify.featran.transformers
 
-import java.util.{TreeMap => JTreeMap}
-
-import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer._
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird._
 
-import scala.collection.JavaConverters._
-import scala.collection.mutable
+import java.util.{TreeMap => JTreeMap}
+import scala.collection.compat.BuildFrom
+import scala.collection.compat.immutable.ArraySeq
+import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag
 import scala.util.Random
 
@@ -91,7 +91,7 @@ object MDL extends SettingsBuilder {
   }
 
   // Use WrappedArray to workaround Beam immutability enforcement
-  private type B[T] = mutable.WrappedArray[MDLRecord[T]]
+  private type B[T] = ArraySeq[MDLRecord[T]]
   private type C = JTreeMap[Double, Int]
 }
 
@@ -133,13 +133,15 @@ private[featran] class MDL[T: ClassTag](
   override val aggregator: Aggregator[MDLRecord[T], B[T], C] =
     new Aggregator[MDLRecord[T], B[T], C] {
       override def prepare(input: MDLRecord[T]): B[T] =
-        mutable.WrappedArray
-          .make[MDLRecord[T]](
-            if (rng.nextDouble() < sampleRate) Array(input) else Array.empty[MDLRecord[T]]
-          )
+        if (rng.nextDouble() < sampleRate) ArraySeq(input) else ArraySeq.empty[MDLRecord[T]]
 
       override def semigroup: Semigroup[B[T]] = new Semigroup[B[T]] {
-        override def plus(x: B[T], y: B[T]): B[T] = x ++ y
+        override def plus(x: B[T], y: B[T]): B[T] = {
+          // fix in https://github.com/scala/scala-collection-compat/pull/581
+          val b = implicitly[BuildFrom[ArraySeq[_], MDLRecord[T], ArraySeq[MDLRecord[T]]]].newBuilder(x)
+          b ++= y
+          b.result()
+        }
       }
 
       override def present(reduction: B[T]): C = {

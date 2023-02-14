@@ -20,6 +20,8 @@ package com.spotify.featran.transformers
 import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.{Aggregator, Semigroup}
 
+import scala.annotation.nowarn
+
 trait SettingsBuilder {
   def fromSettings(settings: Settings): Transformer[_, _, _]
 }
@@ -69,6 +71,8 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
   def buildFeatures(a: Option[A], c: C, fb: FeatureBuilder[_]): Unit
 
   protected def nameAt(n: Int): String = name + '_' + n
+
+  @nowarn
   protected def names(n: Int): Stream[String] = (0 until n).toStream.map(nameAt)
 
   /**
@@ -201,13 +205,14 @@ private object Aggregators {
   )(implicit ev: M[T] => Seq[T]): Aggregator[M[T], Int, Int] =
     new Aggregator[M[T], Int, Int] {
       override def prepare(input: M[T]): Int = {
+        val actualLength = ev(input).length
         if (expectedLength > 0) {
           require(
-            input.length == expectedLength,
-            s"Invalid input length, expected: $expectedLength, actual: ${input.length}"
+            actualLength == expectedLength,
+            s"Invalid input length, expected: $expectedLength, actual: $actualLength"
           )
         }
-        input.length
+        actualLength
       }
       override def semigroup: Semigroup[Int] = Semigroup.from { (x, y) =>
         require(x == y, s"Different input lengths, $x != $y")

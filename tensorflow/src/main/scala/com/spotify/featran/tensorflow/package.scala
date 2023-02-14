@@ -17,94 +17,11 @@
 
 package com.spotify.featran
 
-import _root_.java.util.regex.Pattern
-import _root_.java.util.concurrent.ConcurrentHashMap
-import _root_.java.util.function.Function
-
 import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
 import org.tensorflow.proto.example.{Example, Features}
 import org.tensorflow.proto.{example => tf}
-import com.google.protobuf.ByteString
 
 package object tensorflow {
-  private[this] object FeatureNameNormalization {
-    private[this] val NamePattern = Pattern.compile("[^A-Za-z0-9_]")
-
-    val normalize: String => String = {
-      lazy val cache = new ConcurrentHashMap[String, String]()
-      fn =>
-        cache.computeIfAbsent(
-          fn,
-          new Function[String, String] {
-            override def apply(n: String): String =
-              NamePattern.matcher(n).replaceAll("_")
-          }
-        )
-    }
-  }
-
-  final case class NamedTFFeature(name: String, f: tf.Feature)
-
-  final case class TensorFlowFeatureBuilder(
-    @transient private var underlying: tf.Features.Builder = tf.Features.newBuilder()
-  ) extends FeatureBuilder[tf.Example] {
-    override def init(dimension: Int): Unit = {
-      if (underlying == null) {
-        underlying = tf.Features.newBuilder()
-      }
-      underlying.clear()
-    }
-    override def add(name: String, value: Double): Unit = {
-      val feature = tf.Feature
-        .newBuilder()
-        .setFloatList(tf.FloatList.newBuilder().addValue(value.toFloat))
-        .build()
-      val normalized = FeatureNameNormalization.normalize(name)
-      underlying.putFeature(normalized, feature)
-    }
-    override def skip(): Unit = ()
-    override def skip(n: Int): Unit = ()
-    override def result: tf.Example =
-      tf.Example.newBuilder().setFeatures(underlying).build()
-
-    override def newBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
-  }
-
-  private[tensorflow] object TensorFlowType {
-    import scala.collection.JavaConverters._
-
-    def toFeature(name: String, ex: tf.Example): Option[tf.Feature] = {
-      val fm = ex.getFeatures.getFeatureMap
-      if (fm.containsKey(name)) {
-        Some(fm.get(name))
-      } else {
-        None
-      }
-    }
-
-    def toFloats(f: tf.Feature): Seq[Float] =
-      f.getFloatList.getValueList.asScala.toSeq.asInstanceOf[Seq[Float]]
-
-    def toDoubles(f: tf.Feature): Seq[Double] = toFloats(f).map(_.toDouble)
-
-    def toByteStrings(f: tf.Feature): Seq[ByteString] = f.getBytesList.getValueList.asScala.toSeq
-
-    def toStrings(f: tf.Feature): Seq[String] = toByteStrings(f).map(_.toStringUtf8)
-
-    def fromFloats(xs: Seq[Float]): tf.Feature.Builder =
-      tf.Feature
-        .newBuilder()
-        .setFloatList(xs.foldLeft(tf.FloatList.newBuilder())(_.addValue(_)).build())
-
-    def fromDoubles(xs: Seq[Double]): tf.Feature.Builder = fromFloats(xs.map(_.toFloat))
-
-    def fromByteStrings(xs: Seq[ByteString]): tf.Feature.Builder =
-      tf.Feature.newBuilder().setBytesList(tf.BytesList.newBuilder().addAllValue(xs.asJava))
-
-    def fromStrings(xs: Seq[String]): tf.Feature.Builder =
-      fromByteStrings(xs.map(ByteString.copyFromUtf8))
-
-  }
 
   /** [[FeatureBuilder]] for output as TensorFlow `Example` type. */
   implicit def tensorFlowFeatureBuilder: FeatureBuilder[tf.Example] = TensorFlowFeatureBuilder()
@@ -182,8 +99,9 @@ package object tensorflow {
       }
 
     override def writeDoubleArray(name: String): Option[Array[Double]] => List[NamedTFFeature] =
-      (v: Option[Array[Double]]) => {
-        v.toList.flatMap(values => List(NamedTFFeature(name, fromDoubles(values).build())))
+      (v: Option[Array[Double]]) => v.toList.flatMap { values =>
+        val f = fromDoubles(values.toSeq).build()
+        List(NamedTFFeature(name, f))
       }
 
     override def writeString(name: String): Option[String] => List[NamedTFFeature] =

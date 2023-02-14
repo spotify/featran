@@ -22,7 +22,7 @@ import java.util.{TreeMap => JTreeMap}
 import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
  * Transform a column of continuous features to n columns of binned categorical features. The number

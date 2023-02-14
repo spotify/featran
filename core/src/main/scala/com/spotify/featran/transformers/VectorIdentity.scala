@@ -62,9 +62,10 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
   override def featureNames(c: Int): Seq[String] = names(c)
   override def buildFeatures(a: Option[M[Double]], c: Int, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
-      if (x.length != c) {
+      val length = ev(x).length
+      if (length != c) {
         fb.skip(c)
-        fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
+        fb.reject(this, FeatureRejection.WrongDimension(c, length))
       } else {
         fb.add(names(c), x)
       }
@@ -79,5 +80,5 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubles(name)
 
   override def flatWriter[T](implicit fw: FlatWriter[T]): Option[M[Double]] => fw.IF =
-    (v: Option[M[Double]]) => fw.writeDoubles(name)(v.map(_.toSeq))
+    (v: Option[M[Double]]) => fw.writeDoubles(name)(v.map(ev))
 }
