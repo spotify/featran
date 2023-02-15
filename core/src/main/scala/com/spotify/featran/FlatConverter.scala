@@ -102,7 +102,7 @@ object FlatConverter {
     FlatConverter(new FeatureSpec[T](spec.features, spec.crossings))
 }
 
-@nowarn("msg=evidence parameter evidence\\$. of type scala.reflect.ClassTag\\[.\\] in class FlatConverter is never used")
+@nowarn("msg=evidence parameter evidence.* of type scala.reflect.ClassTag\\[.\\] .* is never used")
 private[featran] class FlatConverter[T: ClassTag, A: ClassTag: FlatWriter](spec: FeatureSpec[T])
     extends Serializable {
   import CollectionType.ops._

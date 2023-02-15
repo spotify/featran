@@ -138,7 +138,8 @@ private[featran] class MDL[T: ClassTag](
       override def semigroup: Semigroup[B[T]] = new Semigroup[B[T]] {
         override def plus(x: B[T], y: B[T]): B[T] = {
           // fix in https://github.com/scala/scala-collection-compat/pull/581
-          val b = implicitly[BuildFrom[ArraySeq[_], MDLRecord[T], ArraySeq[MDLRecord[T]]]].newBuilder(x)
+          val b =
+            implicitly[BuildFrom[ArraySeq[_], MDLRecord[T], ArraySeq[MDLRecord[T]]]].newBuilder(x)
           b ++= y
           b.result()
         }

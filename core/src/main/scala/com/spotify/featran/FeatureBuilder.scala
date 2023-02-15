@@ -272,8 +272,7 @@ object FeatureBuilder {
   implicit def denseVectorFB[T: ClassTag: FloatingPoint]: FeatureBuilder[DenseVector[T]] =
     FeatureBuilder[Array[T]].map(DenseVector(_))
 
-  implicit def sparseVectorFB[T: ClassTag: FloatingPoint: Zero]
-    : FeatureBuilder[SparseVector[T]] =
+  implicit def sparseVectorFB[T: ClassTag: FloatingPoint: Zero]: FeatureBuilder[SparseVector[T]] =
     FeatureBuilder[SparseArray[T]].map { a =>
       new SparseVector(a.indices, a.values, a.indices.length, a.length)
     }

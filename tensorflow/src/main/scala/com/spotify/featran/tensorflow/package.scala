@@ -99,10 +99,11 @@ package object tensorflow {
       }
 
     override def writeDoubleArray(name: String): Option[Array[Double]] => List[NamedTFFeature] =
-      (v: Option[Array[Double]]) => v.toList.flatMap { values =>
-        val f = fromDoubles(values.toSeq).build()
-        List(NamedTFFeature(name, f))
-      }
+      (v: Option[Array[Double]]) =>
+        v.toList.flatMap { values =>
+          val f = fromDoubles(values.toSeq).build()
+          List(NamedTFFeature(name, f))
+        }
 
     override def writeString(name: String): Option[String] => List[NamedTFFeature] =
       (v: Option[String]) => {

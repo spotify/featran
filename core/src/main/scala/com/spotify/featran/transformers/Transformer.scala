@@ -72,7 +72,7 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
 
   protected def nameAt(n: Int): String = name + '_' + n
 
-  @nowarn
+  @nowarn("cat=deprecation")
   protected def names(n: Int): Stream[String] = (0 until n).toStream.map(nameAt)
 
   /**

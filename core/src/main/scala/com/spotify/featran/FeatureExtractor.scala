@@ -93,7 +93,9 @@ class FeatureExtractor[M[_]: CollectionType, T] private[featran] (
    *   output data type, e.g. `Array[Float]`, `Array[Double]`, `DenseVector[Float]`,
    *   `DenseVector[Double]`
    */
-  @nowarn("msg=evidence parameter evidence\\$. of type scala.reflect.ClassTag\\[.\\] in method featureResults is never used")
+  @nowarn(
+    "msg=evidence parameter evidence.* of type scala.reflect.ClassTag\\[.\\] .* is never used"
+  )
   def featureResults[F: FeatureBuilder: ClassTag]: M[FeatureResult[F, T]] = {
     val fb = FeatureBuilder[F].newBuilder
     as.cross(aggregate).cross(fs).map { case (((o, a), c), spec) =>

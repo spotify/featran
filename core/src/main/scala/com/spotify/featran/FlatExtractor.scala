@@ -122,7 +122,9 @@ object FlatExtractor {
    * @return
    *   FeatureSpec for the intermediate format
    */
-   @nowarn("msg=evidence parameter evidence\\$. of type scala.reflect.ClassTag\\[.\\] in method flatSpec is never used")
+  @nowarn(
+    "msg=evidence parameter evidence.* of type scala.reflect.ClassTag\\[.\\] .* is never used"
+  )
   def flatSpec[T: ClassTag: FlatReader, X: ClassTag](spec: FeatureSpec[X]): FeatureSpec[T] = {
     val features = spec.features.map { feature =>
       val t = feature.transformer.asInstanceOf[Transformer[Any, _, _]]
@@ -145,7 +147,9 @@ object FlatExtractor {
    * @return
    *   FeatureSpec for the intermediate format
    */
-  @nowarn("msg=evidence parameter evidence\\$. of type scala.reflect.ClassTag\\[.\\] in method multiFlatSpec is never used")
+  @nowarn(
+    "msg=evidence parameter evidence.* of type scala.reflect.ClassTag\\[.\\] .* is never used"
+  )
   def multiFlatSpec[T: ClassTag: FlatReader, X: ClassTag](
     spec: MultiFeatureSpec[X]
   ): MultiFeatureSpec[T] = {
@@ -158,7 +162,7 @@ object FlatExtractor {
   }
 }
 
-@nowarn("msg=evidence parameter evidence\\$.+ of type scala.reflect.ClassTag\\[.\\] in class FlatExtractor is never used")
+@nowarn("msg=evidence parameter evidence.* of type scala.reflect.ClassTag\\[.\\] .* is never used")
 private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatReader](
   settings: M[String]
 ) extends Serializable {
@@ -191,7 +195,9 @@ private[featran] class FlatExtractor[M[_]: CollectionType, T: ClassTag: FlatRead
   def featureValues[F: FeatureBuilder: ClassTag](records: M[T]): M[F] =
     featureResults(records).map(_._1)
 
-  @nowarn("msg=evidence parameter evidence\\$.+ of type scala.reflect.ClassTag\\[.\\] in method featureResults is never used")
+  @nowarn(
+    "msg=evidence parameter evidence.* of type scala.reflect.ClassTag\\[.\\] .* is never used"
+  )
   def featureResults[F: FeatureBuilder: ClassTag](
     records: M[T]
   ): M[(F, Map[String, FeatureRejection])] = {

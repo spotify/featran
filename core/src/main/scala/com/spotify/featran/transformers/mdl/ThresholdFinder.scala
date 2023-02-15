@@ -116,9 +116,8 @@ private[transformers] class ThresholdFinder(
       if (duplicate) {
         None
       } else {
-        val (criterionValue, weightedHs, leftSum, rightSum) = {
+        val (criterionValue, weightedHs, leftSum, rightSum) =
           calcCriterionValue(bucketInfo, leftFreqs.toSeq, rightFreqs.toSeq)
-        }
         val criterion =
           criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
         if (criterion) Some((weightedHs, cand)) else None
