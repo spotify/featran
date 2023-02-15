@@ -17,6 +17,7 @@
 
 package com.spotify.featran.transformers.mdl
 
+import scala.collection.compat.immutable.ArraySeq
 import scala.collection.mutable
 
 private[transformers] class ThresholdFinder(
@@ -106,7 +107,7 @@ private[transformers] class ThresholdFinder(
     lastSelected: Option[Float],
     totals: Array[Long]
   ): Seq[(Double, Float)] = {
-    val bucketInfo = new BucketInfo(totals.toSeq)
+    val bucketInfo = new BucketInfo(ArraySeq.unsafeWrapArray(totals))
     entropyFreqs.flatMap { case (cand, _, leftFreqs, rightFreqs) =>
       val duplicate = lastSelected match {
         case None       => false
@@ -117,7 +118,11 @@ private[transformers] class ThresholdFinder(
         None
       } else {
         val (criterionValue, weightedHs, leftSum, rightSum) =
-          calcCriterionValue(bucketInfo, leftFreqs.toSeq, rightFreqs.toSeq)
+          calcCriterionValue(
+            bucketInfo,
+            ArraySeq.unsafeWrapArray(leftFreqs),
+            ArraySeq.unsafeWrapArray(rightFreqs)
+          )
         val criterion =
           criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
         if (criterion) Some((weightedHs, cand)) else None

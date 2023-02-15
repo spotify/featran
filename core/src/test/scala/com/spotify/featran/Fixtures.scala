@@ -19,14 +19,16 @@ package com.spotify.featran
 
 import java.io.File
 import java.lang.reflect.Modifier
-
 import com.spotify.featran.transformers._
 
+import scala.collection.compat.immutable.ArraySeq
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 import scala.collection.immutable
 
 object Fixtures {
+  implicit val arrayConverter: Array[Double] => Seq[Double] = ArraySeq.unsafeWrapArray
+
   val TestData: Seq[(String, Int)] = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
 
   val TestSpec: FeatureSpec[(String, Int)] = FeatureSpec
@@ -81,8 +83,8 @@ object Fixtures {
     .of[Record]
     .required(_.x)(Identity("x"))
     .optional(_.xo)(Identity("xo"))
-    .required(_.v)(VectorIdentity[Array]("v")(_.toSeq))
-    .optional(_.vo)(VectorIdentity[Array]("vo")(_.toSeq))
+    .required(_.v)(VectorIdentity[Array]("v"))
+    .optional(_.vo)(VectorIdentity[Array]("vo"))
 
   // cover all transformers here
   private val RecordSpec2 = FeatureSpec
@@ -110,7 +112,7 @@ object Fixtures {
     .required(_.x)(QuantileOutlierRejector("quantile_filter"))
     .required(_.x)(StandardScaler("standard"))
     .required(_.s1)(TopNOneHotEncoder("tn1h", 10, 0.001, 0.001, 1))
-    .required(_.v)(VectorIdentity[Array]("vec-id")(_.toSeq))
+    .required(_.v)(VectorIdentity[Array]("vec-id"))
     .required(_.x)(VonMisesEvaluator("von-mises", 1.0, 0.01, Array(0.0, 1.0, 2.0)))
 
   val RecordSpec: MultiFeatureSpec[Record] = MultiFeatureSpec(RecordSpec1, RecordSpec2)
