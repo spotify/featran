@@ -26,12 +26,12 @@ import com.spotify.featran.{FlatReader, FlatWriter}
  */
 object Indicator extends SettingsBuilder {
 
-  /** Create a new [[Indicator]] instance. */
+  /** Create a new [[Indicator$]] instance. */
   def apply(name: String): Transformer[Double, Unit, Unit] =
     new Indicator(name)
 
   /**
-   * Create a new [[Indicator]] from a settings object
+   * Create a new [[Indicator$]] from a settings object
    * @param setting
    *   Settings object
    */

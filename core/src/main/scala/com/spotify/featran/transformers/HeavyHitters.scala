@@ -37,7 +37,7 @@ import scala.util.Random
 object HeavyHitters extends SettingsBuilder {
 
   /**
-   * Create a new [[HeavyHitters]] instance.
+   * Create a new [[HeavyHitters$]] instance.
    * @param heavyHittersCount
    *   number of heavy hitters to keep track of
    * @param eps
@@ -59,7 +59,7 @@ object HeavyHitters extends SettingsBuilder {
     new HeavyHitters(name, heavyHittersCount, eps, delta, seed)
 
   /**
-   * Create a new [[HeavyHitters]] from a settings object
+   * Create a new [[HeavyHitters$]] from a settings object
    * @param setting
    *   Settings object
    */

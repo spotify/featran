@@ -35,7 +35,7 @@ import scala.collection.compat.immutable.ArraySeq
 object Normalizer extends SettingsBuilder {
 
   /**
-   * Create a new [[Normalizer]] instance.
+   * Create a new [[Normalizer$]] instance.
    * @param p
    *   normalization in L^p^ space, must be greater than or equal to 1.0
    * @param expectedLength
@@ -49,7 +49,7 @@ object Normalizer extends SettingsBuilder {
     new Normalizer(name, p, expectedLength)
 
   /**
-   * Create a new [[OneHotEncoder]] from a settings object
+   * Create a new [[Normalizer$]] from a settings object
    * @param setting
    *   Settings object
    */

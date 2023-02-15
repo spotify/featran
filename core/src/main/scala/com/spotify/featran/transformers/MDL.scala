@@ -29,7 +29,7 @@ import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag
 import scala.util.Random
 
-/** Labelled feature for [[MDL]]. */
+/** Labelled feature for [[MDL$]]. */
 case class MDLRecord[T](label: T, value: Double)
 
 /**
@@ -53,7 +53,7 @@ case class MDLRecord[T](label: T, value: Double)
 object MDL extends SettingsBuilder {
 
   /**
-   * Create an MDL Instance.
+   * Create a new [[MDL$]] instance.
    *
    * @param sampleRate
    *   percentage of records to keep to compute the buckets
@@ -77,7 +77,7 @@ object MDL extends SettingsBuilder {
     new MDL(name, sampleRate, stoppingCriterion, minBinPercentage, maxBins, seed)
 
   /**
-   * Create a new [[MDL]] from a settings object
+   * Create a new [[MDL$]] from a settings object
    * @param setting
    *   Settings object
    */

@@ -34,7 +34,7 @@ import scala.collection.compat.immutable.ArraySeq
 object PolynomialExpansion extends SettingsBuilder {
 
   /**
-   * Create a new [[PolynomialExpansion]] instance.
+   * Create a new [[PolynomialExpansion$]] instance.
    * @param degree
    *   the polynomial degree to expand, which should be greater than or equal to 1
    * @param expectedLength
@@ -48,7 +48,7 @@ object PolynomialExpansion extends SettingsBuilder {
     new PolynomialExpansion(name, degree, expectedLength)
 
   /**
-   * Create a new [[PolynomialExpansion]] from a settings object
+   * Create a new [[PolynomialExpansion$]] from a settings object
    * @param setting
    *   Settings object
    */

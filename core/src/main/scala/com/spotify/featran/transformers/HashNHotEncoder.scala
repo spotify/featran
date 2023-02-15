@@ -24,7 +24,7 @@ import scala.collection.SortedSet
 
 /**
  * Transform a collection of categorical features to binary columns, with at most N one-values.
- * Similar to [[NHotEncoder]] but uses MurmursHash3 to hash features into buckets to reduce CPU and
+ * Similar to [[NHotEncoder$]] but uses MurmursHash3 to hash features into buckets to reduce CPU and
  * memory overhead.
  *
  * Missing values are transformed to zero vectors.
@@ -55,7 +55,7 @@ import scala.collection.SortedSet
 object HashNHotEncoder extends SettingsBuilder {
 
   /**
-   * Create a new [[HashNHotEncoder]] instance.
+   * Create a new [[HashNHotEncoder$]] instance.
    * @param hashBucketSize
    *   number of buckets, or 0 to infer from data with HyperLogLog
    * @param sizeScalingFactor
@@ -69,7 +69,7 @@ object HashNHotEncoder extends SettingsBuilder {
     new HashNHotEncoder(name, hashBucketSize, sizeScalingFactor)
 
   /**
-   * Create a new [[HashNHotEncoder]] from a settings object
+   * Create a new [[HashNHotEncoder$]] from a settings object
    * @param setting
    *   Settings object
    */

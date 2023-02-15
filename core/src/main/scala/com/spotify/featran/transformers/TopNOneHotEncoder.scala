@@ -37,7 +37,7 @@ import scala.util.Random
 object TopNOneHotEncoder extends SettingsBuilder {
 
   /**
-   * Create a new [[TopNOneHotEncoder]] instance.
+   * Create a new [[TopNOneHotEncoder$]] instance.
    *
    * @param n
    *   number of items to keep track of
@@ -63,7 +63,7 @@ object TopNOneHotEncoder extends SettingsBuilder {
     new TopNOneHotEncoder(name, n, eps, delta, seed, encodeMissingValue)
 
   /**
-   * Create a new [[TopNOneHotEncoder]] from a settings object
+   * Create a new [[TopNOneHotEncoder$]] from a settings object
    * @param setting
    *   Settings object
    */

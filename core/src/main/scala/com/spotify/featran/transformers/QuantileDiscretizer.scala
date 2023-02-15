@@ -40,7 +40,7 @@ import scala.jdk.CollectionConverters._
 object QuantileDiscretizer extends SettingsBuilder {
 
   /**
-   * Create a new [[QuantileDiscretizer]] instance.
+   * Create a new [[QuantileDiscretizer$]] instance.
    * @param numBuckets
    *   number of buckets (quantiles, or categories) into which data points are grouped, must be
    *   greater than or equal to 2
@@ -55,7 +55,7 @@ object QuantileDiscretizer extends SettingsBuilder {
     new QuantileDiscretizer(name, numBuckets, k)
 
   /**
-   * Create a new [[QuantileDiscretizer]] from a settings object
+   * Create a new [[QuantileDiscretizer$]] from a settings object
    * @param setting
    *   Settings object
    */

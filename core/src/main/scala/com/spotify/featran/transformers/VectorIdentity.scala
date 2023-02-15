@@ -23,7 +23,7 @@ import com.twitter.algebird.Aggregator
 /**
  * Takes fixed length vectors by passing them through.
  *
- * Similar to [[Identity]] but for a sequence of doubles.
+ * Similar to [[Identity$]] but for a sequence of doubles.
  *
  * Missing values are transformed to zero vectors.
  *
@@ -33,7 +33,7 @@ import com.twitter.algebird.Aggregator
 object VectorIdentity extends SettingsBuilder {
 
   /**
-   * Create a new [[VectorIdentity]] instance.
+   * Create a new [[VectorIdentity$]] instance.
    * @param expectedLength
    *   expected length of the input vectors, or 0 to infer from data
    */
@@ -43,7 +43,7 @@ object VectorIdentity extends SettingsBuilder {
     new VectorIdentity(name, expectedLength)(ev)
 
   /**
-   * Create a new [[VectorIdentity]] from a settings object
+   * Create a new [[VectorIdentity$]] from a settings object
    * @param setting
    *   Settings object
    */

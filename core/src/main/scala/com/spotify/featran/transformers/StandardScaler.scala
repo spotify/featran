@@ -30,7 +30,7 @@ import com.twitter.algebird.{Aggregator, Moments}
 object StandardScaler extends SettingsBuilder {
 
   /**
-   * Create a new [[StandardScaler]] instance.
+   * Create a new [[StandardScaler$]] instance.
    * @param withStd
    *   whether to scale the data to unit standard deviation
    * @param withMean
@@ -44,7 +44,7 @@ object StandardScaler extends SettingsBuilder {
     new StandardScaler(name, withStd, withMean)
 
   /**
-   * Create a new [[StandardScaler]] from a settings object
+   * Create a new [[StandardScaler$]] from a settings object
    * @param setting
    *   Settings object
    */

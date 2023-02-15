@@ -36,7 +36,7 @@ import scala.collection.SortedMap
  */
 object OneHotEncoder extends SettingsBuilder {
 
-  /** Create a new [[OneHotEncoder]] instance. */
+  /** Create a new [[OneHotEncoder$]] instance. */
   def apply(
     name: String,
     encodeMissingValue: Boolean = false
@@ -44,7 +44,7 @@ object OneHotEncoder extends SettingsBuilder {
     new OneHotEncoder(name, encodeMissingValue)
 
   /**
-   * Create a new [[OneHotEncoder]] from a settings object
+   * Create a new [[OneHotEncoder$]] from a settings object
    * @param setting
    *   Settings object
    */

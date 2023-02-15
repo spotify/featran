@@ -35,7 +35,7 @@ import scala.collection.compat.immutable.ArraySeq
 object VonMisesEvaluator extends SettingsBuilder {
 
   /**
-   * Create a new [[VonMisesEvaluator]] instance.
+   * Create a new [[VonMisesEvaluator$]] instance.
    * @param kappa
    *   measure of concentration
    * @param scale
@@ -52,7 +52,7 @@ object VonMisesEvaluator extends SettingsBuilder {
     new VonMisesEvaluator(name, kappa, scale, points)
 
   /**
-   * Create a new [[VonMisesEvaluator]] from a settings object
+   * Create a new [[VonMisesEvaluator$]] from a settings object
    * @param setting
    *   Settings object
    */
