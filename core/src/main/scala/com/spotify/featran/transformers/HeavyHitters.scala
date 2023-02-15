@@ -18,7 +18,6 @@
 package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
-
 import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.{HeavyHitters => _, _}
 

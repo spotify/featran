@@ -21,7 +21,7 @@ import simulacrum._
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
-import scala.annotation.implicitNotFound
+import scala.annotation.{implicitNotFound, nowarn}
 
 /**
  * Type class for collections to extract features from.
@@ -42,7 +42,7 @@ import scala.annotation.implicitNotFound
 object CollectionType {
   implicit def scalaCollectionType[M[_]](implicit
     cb: CanBuild[_, M],
-    ti: M[_] => Iterable[_]
+    @nowarn ti: M[_] => Iterable[_]
   ): CollectionType[M] =
     new CollectionType[M] {
       override def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B] = {

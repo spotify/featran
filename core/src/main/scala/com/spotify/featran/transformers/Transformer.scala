@@ -51,7 +51,7 @@ abstract class Transformer[-A, B, C](val name: String) extends Serializable { se
     require(value >= lower && value <= upper, s"$name $value not in the range[$lower, $upper]")
 
   /** Aggregator for computing input values into a summary. */
-  val aggregator: Aggregator[A, B, C]
+  def aggregator: Aggregator[A, B, C]
 
   /** Number of generated features given an aggregator summary. */
   def featureDimension(c: C): Int
