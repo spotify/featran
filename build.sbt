@@ -30,6 +30,7 @@ val flinkVersion = "1.16.0"
 val hadoopVersion = "3.3.4"
 val paradiseVersion = "2.1.1"
 val scalacheckVersion = "1.17.0"
+val scalaCollectionCompatVersion = "2.9.0"
 val scalatestVersion = "3.2.15"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.11.14"
@@ -39,7 +40,7 @@ val tensorflowVersion = "0.4.2"
 val xgBoostVersion = "1.3.1"
 
 // project
-ThisBuild / tlBaseVersion := "0.8"
+ThisBuild / tlBaseVersion := "0.9"
 ThisBuild / organization := "com.spotify"
 ThisBuild / organizationName := "Spotify AB"
 ThisBuild / startYear := Some(2016)
@@ -172,6 +173,7 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
 lazy val root: Project = project
   .in(file("."))
   .enablePlugins(NoPublishPlugin)
+  .settings(commonSettings)
   .settings(
     name := "featran",
     description := "Feature Transformers",
@@ -202,6 +204,7 @@ lazy val core: Project = project
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test"
     ),
     libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-collection-compat" % scalaCollectionCompatVersion,
       "com.twitter" %% "algebird-core" % algebirdVersion,
       "org.scalanlp" %% "breeze" % breezeVersion,
       "io.circe" %% "circe-core" % circeVersion,
@@ -221,7 +224,6 @@ lazy val java: Project = project
     name := "java",
     moduleName := "featran-java",
     description := "Feature Transformers - java",
-    crossScalaVersions := Seq(scala213, scala212),
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -239,6 +241,7 @@ lazy val flink: Project = project
     moduleName := "featran-flink",
     description := "Feature Transformers - Flink",
     crossScalaVersions := Seq(scala212),
+    scalaVersion := scalaDefault,
     libraryDependencies ++= Seq(
       "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
       "org.apache.flink" % "flink-clients" % flinkVersion % "provided",
@@ -258,6 +261,7 @@ lazy val scalding: Project = project
     description := "Feature Transformers - Scalding",
     resolvers += "Concurrent Maven Repo" at "https://conjars.org/repo",
     crossScalaVersions := Seq(scala212),
+    scalaVersion := scalaDefault,
     libraryDependencies ++= Seq(
       "com.twitter" %% "scalding-core" % scaldingVersion % "provided",
       "org.apache.hadoop" % "hadoop-client" % hadoopVersion % "provided",
@@ -276,6 +280,7 @@ lazy val scio: Project = project
     moduleName := "featran-scio",
     description := "Feature Transformers - Scio",
     crossScalaVersions := Seq(scala213, scala212),
+    scalaVersion := scalaDefault,
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion % "provided",
       "com.spotify" %% "scio-test" % scioVersion % "test"
@@ -293,6 +298,7 @@ lazy val spark: Project = project
     moduleName := "featran-spark",
     description := "Feature Transformers - Spark",
     crossScalaVersions := Seq(scala213, scala212),
+    scalaVersion := scalaDefault,
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
@@ -359,6 +365,7 @@ lazy val examples: Project = project
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
     crossScalaVersions := Seq(scala213, scala212),
+    scalaVersion := scalaDefault,
     libraryDependencies ++= Seq(
       "com.spotify" %% "scio-core" % scioVersion,
       "org.scalacheck" %% "scalacheck" % scalacheckVersion
@@ -379,6 +386,7 @@ lazy val jmh: Project = project
     moduleName := "featran-docs",
     description := "Featran JMH Microbenchmarks",
     crossScalaVersions := Seq(scala212),
+    scalaVersion := scalaDefault,
     Jmh / sourceDirectory := (Test / sourceDirectory).value,
     Jmh / classDirectory := (Test / classDirectory).value,
     Jmh / dependencyClasspath := (Test / dependencyClasspath).value,
@@ -396,6 +404,7 @@ lazy val site = project
     name := "site",
     moduleName := "featran-site",
     crossScalaVersions := Seq(scala212),
+    scalaVersion := scalaDefault,
     tlSitePublishBranch := None,
     tlSitePublishTags := true,
     tlSiteGenerate := Seq(
@@ -442,7 +451,8 @@ lazy val unidocs = project
   .settings(
     name := "docs",
     moduleName := "featran-docs",
-    crossScalaVersions := Seq(scala212),
+    crossScalaVersions := Seq(scalaDefault),
+    scalaVersion := scalaDefault,
     ScalaUnidoc / unidoc / unidocProjectFilter := inAnyProject --
       inProjects(java) --
       inProjects(examples)

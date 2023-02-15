@@ -71,7 +71,7 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Java wrapper for {@link FeatureSpec#optional(Function1, Transformer)}.
+   * Java wrapper for {@link FeatureSpec#optional(Function1, Option, Transformer)}.
    */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final Transformer<A, ?, ?> t) {
@@ -81,7 +81,7 @@ public class JFeatureSpec<T> {
   }
 
   /**
-   * Java wrapper for {@link FeatureSpec#optional(Function1, Transformer)}.
+   * Java wrapper for {@link FeatureSpec#optional(Function1, Option, Transformer)}.
    */
   public <A> JFeatureSpec<T> optional(final SerializableFunction<T, Optional<A>> f,
                                       final A defaultValue,
