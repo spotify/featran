@@ -21,7 +21,7 @@ import simulacrum._
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
-import scala.annotation.{implicitNotFound, nowarn}
+import scala.annotation.implicitNotFound
 
 /**
  * Type class for collections to extract features from.
@@ -40,9 +40,8 @@ import scala.annotation.{implicitNotFound, nowarn}
 }
 
 object CollectionType {
-  implicit def scalaCollectionType[M[_]](implicit
-    cb: CanBuild[_, M],
-    @nowarn ti: M[_] => Iterable[_]
+  implicit def scalaCollectionType[M[_] <: Iterable[_]](implicit
+    cb: CanBuild[_, M]
   ): CollectionType[M] =
     new CollectionType[M] {
       override def map[A, B: ClassTag](ma: M[A])(f: A => B): M[B] = {
@@ -59,20 +58,17 @@ object CollectionType {
 
       override def reduce[A](ma: M[A])(f: (A, A) => A): M[A] = {
         val builder = cb().asInstanceOf[mutable.Builder[A, M[A]]]
-        val mai = ti(ma).asInstanceOf[Iterable[A]]
-        if (mai.nonEmpty) {
-          builder += mai.reduce(f)
+        if (ma.nonEmpty) {
+          builder += ma.asInstanceOf[Iterable[A]].reduce(f)
         }
         builder.result()
       }
 
       override def cross[A, B: ClassTag](ma: M[A])(mb: M[B]): M[(A, B)] = {
         val builder = cb().asInstanceOf[mutable.Builder[(A, B), M[(A, B)]]]
-        val mai = ti(ma).asInstanceOf[Iterable[A]]
-        val mbi = ti(mb).asInstanceOf[Iterable[B]]
-        if (mbi.nonEmpty) {
-          val b = mbi.head
-          mai.foreach(a => builder += (a -> b))
+        if (mb.nonEmpty) {
+          val b = mb.asInstanceOf[Iterable[B]].head
+          ma.asInstanceOf[Iterable[A]].foreach(a => builder += ((a, b)))
         }
         builder.result()
       }
