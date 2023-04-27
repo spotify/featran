@@ -83,8 +83,8 @@ object Fixtures {
     .of[Record]
     .required(_.x)(Identity("x"))
     .optional(_.xo)(Identity("xo"))
-    .required(_.v)(VectorIdentity[Array]("v"))
-    .optional(_.vo)(VectorIdentity[Array]("vo"))
+    .required(_.v)(VectorIdentity("v"))
+    .optional(_.vo)(VectorIdentity("vo"))
 
   // cover all transformers here
   private val RecordSpec2 = FeatureSpec
@@ -112,7 +112,7 @@ object Fixtures {
     .required(_.x)(QuantileOutlierRejector("quantile_filter"))
     .required(_.x)(StandardScaler("standard"))
     .required(_.s1)(TopNOneHotEncoder("tn1h", 10, 0.001, 0.001, 1))
-    .required(_.v)(VectorIdentity[Array]("vec-id"))
+    .required(_.v)(VectorIdentity("vec-id"))
     .required(_.x)(VonMisesEvaluator("von-mises", 1.0, 0.01, Array(0.0, 1.0, 2.0)))
 
   val RecordSpec: MultiFeatureSpec[Record] = MultiFeatureSpec(RecordSpec1, RecordSpec2)
