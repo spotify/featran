@@ -24,8 +24,8 @@ import scala.jdk.CollectionConverters._
 
 /**
  * Transform a collection of weighted categorical features to columns of weight sums, with at most N
- * values. Similar to [[NHotWeightedEncoder$]] but uses MurmursHash3 to hash features into buckets to
- * reduce CPU and memory overhead.
+ * values. Similar to [[NHotWeightedEncoder$]] but uses MurmursHash3 to hash features into buckets
+ * to reduce CPU and memory overhead.
  *
  * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
  * [[NHotEncoder$]].

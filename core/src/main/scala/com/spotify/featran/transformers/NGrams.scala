@@ -24,8 +24,8 @@ import scala.collection.{mutable, SortedMap}
 /**
  * Transform a collection of sentences, where each row is a `Seq[String]` of the words / tokens,
  * into a collection containing all the n-grams that can be constructed from each row. The feature
- * representation is an n-hot encoding (see [[NHotEncoder$]]) constructed from an expanded vocabulary
- * of all of the generated n-grams.
+ * representation is an n-hot encoding (see [[NHotEncoder$]]) constructed from an expanded
+ * vocabulary of all of the generated n-grams.
  *
  * N-grams are generated based on a specified range of `low` to `high` (inclusive) and are joined by
  * the given `sep` (default is " "). For example, with `low = 2`, `high = 3` and `sep = ""`, row

@@ -23,7 +23,6 @@ import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird._
 
 import java.util.{TreeMap => JTreeMap}
-import scala.collection.compat.BuildFrom
 import scala.collection.compat.immutable.ArraySeq
 import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag
@@ -135,15 +134,7 @@ private[featran] class MDL[T: ClassTag](
       override def prepare(input: MDLRecord[T]): B[T] =
         if (rng.nextDouble() < sampleRate) ArraySeq(input) else ArraySeq.empty[MDLRecord[T]]
 
-      override def semigroup: Semigroup[B[T]] = new Semigroup[B[T]] {
-        override def plus(x: B[T], y: B[T]): B[T] = {
-          // fix in https://github.com/scala/scala-collection-compat/pull/581
-          val b =
-            implicitly[BuildFrom[ArraySeq[_], MDLRecord[T], ArraySeq[MDLRecord[T]]]].newBuilder(x)
-          b ++= y
-          b.result()
-        }
-      }
+      override def semigroup: Semigroup[B[T]] = _ ++ _
 
       override def present(reduction: B[T]): C = {
         val ranges = new MDLPDiscretizer[T](
