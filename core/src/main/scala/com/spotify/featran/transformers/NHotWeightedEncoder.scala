@@ -30,7 +30,7 @@ case class WeightedLabel(name: String, value: Double)
  * values.
  *
  * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
- * [[NHotEncoder]].
+ * [[NHotEncoder$]].
  *
  * Missing values are either transformed to zero vectors or encoded as a missing value.
  *
@@ -40,7 +40,7 @@ case class WeightedLabel(name: String, value: Double)
  */
 object NHotWeightedEncoder extends SettingsBuilder {
 
-  /** Create a new [[NHotWeightedEncoder]] instance. */
+  /** Create a new [[NHotWeightedEncoder$]] instance. */
   def apply(
     name: String,
     encodeMissingValue: Boolean = false
@@ -48,7 +48,7 @@ object NHotWeightedEncoder extends SettingsBuilder {
     new NHotWeightedEncoder(name, encodeMissingValue)
 
   /**
-   * Create a new [[NHotWeightedEncoder]] from a settings object
+   * Create a new [[NHotWeightedEncoder$]] from a settings object
    * @param setting
    *   Settings object
    */

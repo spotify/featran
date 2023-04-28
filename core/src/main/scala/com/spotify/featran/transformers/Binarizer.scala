@@ -30,7 +30,7 @@ import com.spotify.featran.{FlatReader, FlatWriter}
 object Binarizer extends SettingsBuilder {
 
   /**
-   * Create a new [[Binarizer]] instance.
+   * Create a new [[Binarizer$]] instance.
    * @param threshold
    *   threshold to binarize continuous features
    */
@@ -38,7 +38,7 @@ object Binarizer extends SettingsBuilder {
     new Binarizer(name, threshold)
 
   /**
-   * Create a new [[Binarizer]] from a settings object
+   * Create a new [[Binarizer$]] from a settings object
    * @param setting
    *   Settings object
    */

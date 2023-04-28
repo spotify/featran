@@ -21,11 +21,13 @@ import com.spotify.featran.transformers.{NHotEncoder, VectorIdentity}
 import org.scalacheck._
 
 import scala.collection.SortedSet
+import scala.collection.compat.immutable.ArraySeq
 
 object CrossingSpec extends Properties("CrossingSpec") {
   implicit def arbList[T: Arbitrary]: Arbitrary[List[T]] =
     Arbitrary(Gen.listOfN(10, Arbitrary.arbitrary[T]))
 
+  implicit val arrayConverter: Array[Double] => Seq[Double] = ArraySeq.unsafeWrapArray
   implicit val arbDouble: Arbitrary[Double] = Arbitrary(Gen.choose(-1.0, 1.0))
 
   type A = ((Double, Double), (Double, Double, Double))

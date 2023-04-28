@@ -18,7 +18,6 @@
 package com.spotify.featran.transformers
 
 import java.net.{URLDecoder, URLEncoder}
-
 import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.{Aggregator, SketchMap, SketchMapParams}
 
@@ -38,7 +37,7 @@ import scala.util.Random
 object TopNOneHotEncoder extends SettingsBuilder {
 
   /**
-   * Create a new [[TopNOneHotEncoder]] instance.
+   * Create a new [[TopNOneHotEncoder$]] instance.
    *
    * @param n
    *   number of items to keep track of
@@ -58,13 +57,13 @@ object TopNOneHotEncoder extends SettingsBuilder {
     n: Int,
     eps: Double = 0.001,
     delta: Double = 0.001,
-    seed: Int = Random.nextInt,
+    seed: Int = Random.nextInt(),
     encodeMissingValue: Boolean = false
   ): Transformer[String, SketchMap[String, Long], SortedMap[String, Int]] =
     new TopNOneHotEncoder(name, n, eps, delta, seed, encodeMissingValue)
 
   /**
-   * Create a new [[TopNOneHotEncoder]] from a settings object
+   * Create a new [[TopNOneHotEncoder$]] from a settings object
    * @param setting
    *   Settings object
    */

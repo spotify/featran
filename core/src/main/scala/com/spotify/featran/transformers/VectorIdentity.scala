@@ -23,7 +23,7 @@ import com.twitter.algebird.Aggregator
 /**
  * Takes fixed length vectors by passing them through.
  *
- * Similar to [[Identity]] but for a sequence of doubles.
+ * Similar to [[Identity$]] but for a sequence of doubles.
  *
  * Missing values are transformed to zero vectors.
  *
@@ -33,7 +33,7 @@ import com.twitter.algebird.Aggregator
 object VectorIdentity extends SettingsBuilder {
 
   /**
-   * Create a new [[VectorIdentity]] instance.
+   * Create a new [[VectorIdentity$]] instance.
    * @param expectedLength
    *   expected length of the input vectors, or 0 to infer from data
    */
@@ -43,7 +43,7 @@ object VectorIdentity extends SettingsBuilder {
     new VectorIdentity(name, expectedLength)(ev)
 
   /**
-   * Create a new [[VectorIdentity]] from a settings object
+   * Create a new [[VectorIdentity$]] from a settings object
    * @param setting
    *   Settings object
    */
@@ -62,9 +62,10 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
   override def featureNames(c: Int): Seq[String] = names(c)
   override def buildFeatures(a: Option[M[Double]], c: Int, fb: FeatureBuilder[_]): Unit = a match {
     case Some(x) =>
-      if (x.length != c) {
+      val length = ev(x).length
+      if (length != c) {
         fb.skip(c)
-        fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
+        fb.reject(this, FeatureRejection.WrongDimension(c, length))
       } else {
         fb.add(names(c), x)
       }
@@ -79,5 +80,5 @@ private[featran] class VectorIdentity[M[_]](name: String, val expectedLength: In
   override def flatRead[T: FlatReader]: T => Option[Any] = FlatReader[T].readDoubles(name)
 
   override def flatWriter[T](implicit fw: FlatWriter[T]): Option[M[Double]] => fw.IF =
-    (v: Option[M[Double]]) => fw.writeDoubles(name)(v.map(_.toSeq))
+    (v: Option[M[Double]]) => fw.writeDoubles(name)(v.map(ev))
 }

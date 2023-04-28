@@ -167,7 +167,7 @@ class FeatureSpec[T] private[featran] (
     import CollectionType.ops._
 
     val featureSet = settings.map { s =>
-      val settingsJson = decode[Seq[Settings]](s).right.get
+      val settingsJson = decode[Seq[Settings]](s).toOption.get
       val predicate: Feature[T, _, _, _] => Boolean =
         f => settingsJson.exists(x => x.name == f.transformer.name)
 
@@ -214,7 +214,7 @@ class FeatureSpec[T] private[featran] (
   ): RecordExtractor[T, F] = {
     import json._
 
-    val s = decode[Seq[Settings]](settings).right.get
+    val s = decode[Seq[Settings]](settings).toOption.get
     val predicate: Feature[T, _, _, _] => Boolean = f => s.exists(x => x.name == f.transformer.name)
 
     new RecordExtractor[T, F](filter(predicate).featureSet, settings)

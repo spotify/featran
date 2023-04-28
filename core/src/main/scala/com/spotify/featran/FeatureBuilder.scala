@@ -18,7 +18,6 @@
 package com.spotify.featran
 
 import breeze.linalg.{DenseVector, SparseVector}
-import breeze.math.Semiring
 import breeze.storage.Zero
 import com.spotify.featran.transformers.Transformer
 import simulacrum.typeclass
@@ -108,7 +107,7 @@ object FeatureRejection {
     ev: M[Double] => Seq[Double]
   ): Unit = {
     val i = names.iterator
-    val j = values.iterator
+    val j = ev(values).iterator
     while (i.hasNext && j.hasNext) {
       add(i.next(), j.next())
     }
@@ -273,8 +272,7 @@ object FeatureBuilder {
   implicit def denseVectorFB[T: ClassTag: FloatingPoint]: FeatureBuilder[DenseVector[T]] =
     FeatureBuilder[Array[T]].map(DenseVector(_))
 
-  implicit def sparseVectorFB[T: ClassTag: FloatingPoint: Semiring: Zero]
-    : FeatureBuilder[SparseVector[T]] =
+  implicit def sparseVectorFB[T: ClassTag: FloatingPoint: Zero]: FeatureBuilder[SparseVector[T]] =
     FeatureBuilder[SparseArray[T]].map { a =>
       new SparseVector(a.indices, a.values, a.indices.length, a.length)
     }

@@ -31,7 +31,7 @@ import com.twitter.algebird.{Aggregator, Max, Min}
 object MinMaxScaler extends SettingsBuilder {
 
   /**
-   * Create a new [[MinMaxScaler]] instance.
+   * Create a new [[MinMaxScaler$]] instance.
    * @param min
    *   lower bound after transformation, shared by all features
    * @param max
@@ -45,7 +45,7 @@ object MinMaxScaler extends SettingsBuilder {
     new MinMaxScaler(name, min, max)
 
   /**
-   * Create a new [[MinMaxScaler]] from a settings object
+   * Create a new [[MinMaxScaler$]] from a settings object
    * @param setting
    *   Settings object
    */

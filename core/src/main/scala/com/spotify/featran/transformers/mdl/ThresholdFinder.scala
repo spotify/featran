@@ -17,6 +17,7 @@
 
 package com.spotify.featran.transformers.mdl
 
+import scala.collection.compat.immutable.ArraySeq
 import scala.collection.mutable
 
 private[transformers] class ThresholdFinder(
@@ -33,7 +34,7 @@ private[transformers] class ThresholdFinder(
     lazy val hs: Double = entropy(totals, s)
 
     // number of distinct classes in bucket
-    lazy val k: Long = totals.count(_ != 0)
+    lazy val k: Long = totals.count(_ != 0).toLong
   }
 
   private val LOG2 = math.log(2)
@@ -63,8 +64,8 @@ private[transformers] class ThresholdFinder(
     val weightedHs = (s1 * hs1 + s2 * hs2) / bucketInfo.s
     val gain = bucketInfo.hs - weightedHs
     val diff = bucketInfo.k * bucketInfo.hs - k1 * hs1 - k2 * hs2
-    val delta = log2(math.pow(3, bucketInfo.k) - 2) - diff
-    (gain - (log2(bucketInfo.s - 1) + delta) / bucketInfo.s, weightedHs, s1, s2)
+    val delta = log2(math.pow(3, bucketInfo.k.toDouble) - 2) - diff
+    (gain - (log2((bucketInfo.s - 1).toDouble) + delta) / bucketInfo.s, weightedHs, s1, s2)
   }
 
   /**
@@ -83,7 +84,7 @@ private[transformers] class ThresholdFinder(
     var result = List(Float.NegativeInfinity) // # points = # bins - 1
 
     while (queue.nonEmpty && result.length < maxBins) {
-      val (bounds, lastThresh) = queue.dequeue
+      val (bounds, lastThresh) = queue.dequeue()
       // Filter the candidates between the last limits added to the queue
       val newCandidates = candidates.filter { case (th, _) =>
         th > bounds._1 && th < bounds._2
@@ -106,7 +107,7 @@ private[transformers] class ThresholdFinder(
     lastSelected: Option[Float],
     totals: Array[Long]
   ): Seq[(Double, Float)] = {
-    val bucketInfo = new BucketInfo(totals)
+    val bucketInfo = new BucketInfo(ArraySeq.unsafeWrapArray(totals))
     entropyFreqs.flatMap { case (cand, _, leftFreqs, rightFreqs) =>
       val duplicate = lastSelected match {
         case None       => false
@@ -117,7 +118,11 @@ private[transformers] class ThresholdFinder(
         None
       } else {
         val (criterionValue, weightedHs, leftSum, rightSum) =
-          calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
+          calcCriterionValue(
+            bucketInfo,
+            ArraySeq.unsafeWrapArray(leftFreqs),
+            ArraySeq.unsafeWrapArray(rightFreqs)
+          )
         val criterion =
           criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
         if (criterion) Some((weightedHs, cand)) else None

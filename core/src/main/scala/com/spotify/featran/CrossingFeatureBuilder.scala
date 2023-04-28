@@ -47,7 +47,7 @@ private case class Crossings(map: Crossings.MAP, keys: Set[String]) {
   def filter[T](predicate: String => Boolean): Crossings = {
     val filteredKeys = keys.filter(predicate)
     val b = SortedMap.newBuilder[Crossings.KEY, Crossings.FN]
-    b ++= map.filterKeys { case (k1, k2) =>
+    b ++= map.filter { case ((k1, k2), _) =>
       filteredKeys.contains(k1) || filteredKeys.contains(k2)
     }
     val filteredMap = b.result()
@@ -109,7 +109,7 @@ private class CrossingFeatureBuilder[F] private (
   ): Unit = {
     if (xEnabled) {
       val i = names.iterator
-      val j = values.iterator
+      val j = ev(values).iterator
       while (i.hasNext && j.hasNext) {
         xQueue.enqueue(CrossValue(i.next(), xOffset, j.next()))
         xOffset += 1

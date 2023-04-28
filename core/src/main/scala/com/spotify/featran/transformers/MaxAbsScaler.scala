@@ -31,12 +31,12 @@ import com.twitter.algebird.{Aggregator, Max}
  */
 object MaxAbsScaler extends SettingsBuilder {
 
-  /** Create a new [[MaxAbsScaler]] instance. */
+  /** Create a new [[MaxAbsScaler$]] instance. */
   def apply(name: String): Transformer[Double, Max[Double], Double] =
     new MaxAbsScaler(name)
 
   /**
-   * Create a new [[MaxAbsScaler]] from a settings object
+   * Create a new [[MaxAbsScaler$]] from a settings object
    * @param setting
    *   Settings object
    */

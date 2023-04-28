@@ -20,13 +20,11 @@ package com.spotify.featran
 import breeze.linalg.{DenseVector, SparseVector}
 import org.scalacheck._
 
-import scala.reflect.ClassTag
-
 object FeatureBuilderSpec extends Properties("FeatureBuilder") {
   private def list[T](implicit arb: Arbitrary[Option[T]]): Gen[List[Option[T]]] =
     Gen.listOfN(100, arb.arbitrary)
 
-  private def test[T: ClassTag: Numeric, F](xs: List[Option[T]], builder: FeatureBuilder[F])(
+  private def test[T: Numeric, F](xs: List[Option[T]], builder: FeatureBuilder[F])(
     toSeq: F => Seq[T]
   ): Prop = {
     val fb = SerializableUtils.ensureSerializable(builder)

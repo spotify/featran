@@ -20,15 +20,15 @@ package com.spotify.featran.transformers
 import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.HLL
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
  * Transform a collection of weighted categorical features to columns of weight sums, with at most N
- * values. Similar to [[NHotWeightedEncoder]] but uses MurmursHash3 to hash features into buckets to
- * reduce CPU and memory overhead.
+ * values. Similar to [[NHotWeightedEncoder$]] but uses MurmursHash3 to hash features into buckets
+ * to reduce CPU and memory overhead.
  *
  * Weights of the same labels in a row are summed instead of 1.0 as is the case with the normal
- * [[NHotEncoder]].
+ * [[NHotEncoder$]].
  *
  * If hashBucketSize is inferred with HLL, the estimate is scaled by sizeScalingFactor to reduce the
  * number of collisions.
@@ -56,7 +56,7 @@ import scala.collection.JavaConverters._
 object HashNHotWeightedEncoder extends SettingsBuilder {
 
   /**
-   * Create a new [[HashNHotWeightedEncoder]] instance.
+   * Create a new [[HashNHotWeightedEncoder$]] instance.
    * @param hashBucketSize
    *   number of buckets, or 0 to infer from data with HyperLogLog
    * @param sizeScalingFactor
@@ -70,7 +70,7 @@ object HashNHotWeightedEncoder extends SettingsBuilder {
     new HashNHotWeightedEncoder(name, hashBucketSize, sizeScalingFactor)
 
   /**
-   * Create a new [[HashOneHotEncoder]] from a settings object
+   * Create a new [[HashOneHotEncoder$]] from a settings object
    * @param setting
    *   Settings object
    */

@@ -23,7 +23,7 @@ import org.scalacheck._
 import com.spotify.featran.transformers._
 import org.tensorflow.proto.example.Example
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class ExampleConverterSpec extends Properties("ExampleConverterSpec") {
   import TensorFlowType._

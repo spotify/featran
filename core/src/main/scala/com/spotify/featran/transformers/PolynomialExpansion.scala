@@ -20,6 +20,8 @@ package com.spotify.featran.transformers
 import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
 
+import scala.collection.compat.immutable.ArraySeq
+
 /**
  * Transform vector features by expanding them into a polynomial space, which is formulated by an
  * n-degree combination of original dimensions.
@@ -32,7 +34,7 @@ import com.twitter.algebird.Aggregator
 object PolynomialExpansion extends SettingsBuilder {
 
   /**
-   * Create a new [[PolynomialExpansion]] instance.
+   * Create a new [[PolynomialExpansion$]] instance.
    * @param degree
    *   the polynomial degree to expand, which should be greater than or equal to 1
    * @param expectedLength
@@ -46,7 +48,7 @@ object PolynomialExpansion extends SettingsBuilder {
     new PolynomialExpansion(name, degree, expectedLength)
 
   /**
-   * Create a new [[PolynomialExpansion]] from a settings object
+   * Create a new [[PolynomialExpansion$]] from a settings object
    * @param setting
    *   Settings object
    */
@@ -105,7 +107,8 @@ private[featran] class PolynomialExpansion(name: String, val degree: Int, val ex
     extends Transformer[Array[Double], Int, Int](name) {
   require(degree >= 1, "degree must be >= 1")
   override val aggregator: Aggregator[Array[Double], Int, Int] =
-    Aggregators.seqLength(expectedLength)
+    Aggregators.seqLength[Double, Array](expectedLength)(ArraySeq.unsafeWrapArray)
+
   override def featureDimension(c: Int): Int =
     PolynomialExpansion.getPolySize(c, degree) - 1
   override def featureNames(c: Int): Seq[String] = names(featureDimension(c))
@@ -117,7 +120,7 @@ private[featran] class PolynomialExpansion(name: String, val degree: Int, val ex
           fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
         } else {
           val data = PolynomialExpansion.expand(x, degree)
-          fb.add(names(featureDimension(c)), data)
+          fb.add[Array](names(featureDimension(c)), data)(ArraySeq.unsafeWrapArray)
         }
       case None => fb.skip(featureDimension(c))
     }
@@ -138,9 +141,9 @@ private object CombinatoricsUtils {
   def binomialCoefficient(n: Int, k: Int): Long = {
     checkBinomial(n, k)
     if (n == k || k == 0) {
-      1
+      1L
     } else if (k == 1 || k == n - 1) {
-      n
+      n.toLong
     } else if (k > n / 2) {
       // Use symmetry for large k
       binomialCoefficient(n, n - k)
@@ -185,7 +188,7 @@ private object CombinatoricsUtils {
         var j = 1
         while (j <= k) {
           val d = gcd(i, j)
-          result = mulAndCheck(result / (j / d), i / d)
+          result = mulAndCheck(result / (j / d), (i / d).toLong)
           i += 1
           j += 1
         }
@@ -201,8 +204,8 @@ private object CombinatoricsUtils {
     } else {
       var a = p
       var b = q
-      var al: Long = a
-      var bl: Long = b
+      var al = a.toLong
+      var bl = b.toLong
       var useLong = false
       if (a < 0) {
         if (a == Int.MinValue) {

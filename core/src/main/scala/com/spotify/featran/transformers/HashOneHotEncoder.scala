@@ -25,7 +25,7 @@ import scala.util.hashing.MurmurHash3
 
 /**
  * Transform a collection of categorical features to binary columns, with at most a single
- * one-value. Similar to [[OneHotEncoder]] but uses MurmursHash3 to hash features into buckets to
+ * one-value. Similar to [[OneHotEncoder$]] but uses MurmursHash3 to hash features into buckets to
  * reduce CPU and memory overhead.
  *
  * Missing values are transformed to zero vectors.
@@ -56,7 +56,7 @@ import scala.util.hashing.MurmurHash3
 object HashOneHotEncoder extends SettingsBuilder {
 
   /**
-   * Create a new [[HashOneHotEncoder]] instance.
+   * Create a new [[HashOneHotEncoder$]] instance.
    * @param hashBucketSize
    *   number of buckets, or 0 to infer from data with HyperLogLog
    * @param sizeScalingFactor
@@ -70,7 +70,7 @@ object HashOneHotEncoder extends SettingsBuilder {
     new HashOneHotEncoder(name, hashBucketSize, sizeScalingFactor)
 
   /**
-   * Create a new [[HashOneHotEncoder]] from a settings object
+   * Create a new [[HashOneHotEncoder$]] from a settings object
    * @param setting
    *   Settings object
    */

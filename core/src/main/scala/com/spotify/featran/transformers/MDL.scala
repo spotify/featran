@@ -17,19 +17,18 @@
 
 package com.spotify.featran.transformers
 
-import java.util.{TreeMap => JTreeMap}
-
-import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer
 import com.spotify.featran.transformers.mdl.MDLPDiscretizer._
+import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird._
 
-import scala.collection.JavaConverters._
-import scala.collection.mutable
+import java.util.{TreeMap => JTreeMap}
+import scala.collection.compat.immutable.ArraySeq
+import scala.jdk.CollectionConverters._
 import scala.reflect.ClassTag
 import scala.util.Random
 
-/** Labelled feature for [[MDL]]. */
+/** Labelled feature for [[MDL$]]. */
 case class MDLRecord[T](label: T, value: Double)
 
 /**
@@ -53,7 +52,7 @@ case class MDLRecord[T](label: T, value: Double)
 object MDL extends SettingsBuilder {
 
   /**
-   * Create an MDL Instance.
+   * Create a new [[MDL$]] instance.
    *
    * @param sampleRate
    *   percentage of records to keep to compute the buckets
@@ -77,7 +76,7 @@ object MDL extends SettingsBuilder {
     new MDL(name, sampleRate, stoppingCriterion, minBinPercentage, maxBins, seed)
 
   /**
-   * Create a new [[MDL]] from a settings object
+   * Create a new [[MDL$]] from a settings object
    * @param setting
    *   Settings object
    */
@@ -91,7 +90,7 @@ object MDL extends SettingsBuilder {
   }
 
   // Use WrappedArray to workaround Beam immutability enforcement
-  private type B[T] = mutable.WrappedArray[MDLRecord[T]]
+  private type B[T] = ArraySeq[MDLRecord[T]]
   private type C = JTreeMap[Double, Int]
 }
 
@@ -133,14 +132,9 @@ private[featran] class MDL[T: ClassTag](
   override val aggregator: Aggregator[MDLRecord[T], B[T], C] =
     new Aggregator[MDLRecord[T], B[T], C] {
       override def prepare(input: MDLRecord[T]): B[T] =
-        mutable.WrappedArray
-          .make[MDLRecord[T]](
-            if (rng.nextDouble() < sampleRate) Array(input) else Array.empty[MDLRecord[T]]
-          )
+        if (rng.nextDouble() < sampleRate) ArraySeq(input) else ArraySeq.empty[MDLRecord[T]]
 
-      override def semigroup: Semigroup[B[T]] = new Semigroup[B[T]] {
-        override def plus(x: B[T], y: B[T]): B[T] = x ++ y
-      }
+      override def semigroup: Semigroup[B[T]] = _ ++ _
 
       override def present(reduction: B[T]): C = {
         val ranges = new MDLPDiscretizer[T](

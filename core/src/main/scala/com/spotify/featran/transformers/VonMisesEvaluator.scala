@@ -21,6 +21,8 @@ import breeze.stats.distributions.{Rand, VonMises}
 import com.spotify.featran.{FeatureBuilder, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
 
+import scala.collection.compat.immutable.ArraySeq
+
 /**
  * Transform a column of continuous features that represent the mean of a von Mises distribution to
  * n columns of continuous features. The number n represent the number of points to evaluate the von
@@ -33,7 +35,7 @@ import com.twitter.algebird.Aggregator
 object VonMisesEvaluator extends SettingsBuilder {
 
   /**
-   * Create a new [[VonMisesEvaluator]] instance.
+   * Create a new [[VonMisesEvaluator$]] instance.
    * @param kappa
    *   measure of concentration
    * @param scale
@@ -50,7 +52,7 @@ object VonMisesEvaluator extends SettingsBuilder {
     new VonMisesEvaluator(name, kappa, scale, points)
 
   /**
-   * Create a new [[VonMisesEvaluator]] from a settings object
+   * Create a new [[VonMisesEvaluator$]] from a settings object
    * @param setting
    *   Settings object
    */
@@ -87,9 +89,8 @@ private[featran] class VonMisesEvaluator(
   override def buildFeatures(a: Option[Double], c: Unit, fb: FeatureBuilder[_]): Unit = a match {
     case Some(mu) =>
       checkRange("mu", mu, 0.0, upperBound)
-      val probs =
-        points.map(VonMisesEvaluator.getProbability(_, mu, kappa, scale))
-      fb.add(names(points.length), probs)
+      val probs = points.map(VonMisesEvaluator.getProbability(_, mu, kappa, scale))
+      fb.add[Array](names(points.length), probs)(ArraySeq.unsafeWrapArray)
     case None => fb.skip(points.length)
   }
 

@@ -33,12 +33,12 @@ import scala.collection.SortedMap
  */
 object PositionEncoder extends SettingsBuilder {
 
-  /** Create a new [[PositionEncoder]] instance. */
+  /** Create a new [[PositionEncoder$]] instance. */
   def apply(name: String): Transformer[String, Set[String], SortedMap[String, Int]] =
     new PositionEncoder(name)
 
   /**
-   * Create a new [[PositionEncoder]] from a settings object
+   * Create a new [[PositionEncoder$]] from a settings object
    * @param setting
    *   Settings object
    */

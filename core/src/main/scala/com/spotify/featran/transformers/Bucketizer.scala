@@ -44,7 +44,7 @@ import com.twitter.algebird.Aggregator
 object Bucketizer extends SettingsBuilder {
 
   /**
-   * Create a new [[Bucketizer]] instance.
+   * Create a new [[Bucketizer$]] instance.
    * @param splits
    *   parameter for mapping continuous features into buckets
    */
@@ -52,7 +52,7 @@ object Bucketizer extends SettingsBuilder {
     new Bucketizer(name, splits)
 
   /**
-   * Create a new [[Bucketizer]] from a settings object
+   * Create a new [[Bucketizer$]] from a settings object
    * @param setting
    *   Settings object
    */

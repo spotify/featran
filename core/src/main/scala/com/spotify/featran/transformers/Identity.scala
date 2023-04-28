@@ -26,11 +26,11 @@ import com.spotify.featran.{FlatReader, FlatWriter}
  */
 object Identity extends SettingsBuilder {
 
-  /** Create a new [[Identity]] instance. */
+  /** Create a new [[Identity$]] instance. */
   def apply(name: String): Transformer[Double, Unit, Unit] = new Identity(name)
 
   /**
-   * Create a new [[Identity]] from a settings object
+   * Create a new [[Identity$]] from a settings object
    * @param setting
    *   Settings object
    */

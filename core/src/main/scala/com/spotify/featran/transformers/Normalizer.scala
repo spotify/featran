@@ -21,6 +21,8 @@ import breeze.linalg._
 import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird.Aggregator
 
+import scala.collection.compat.immutable.ArraySeq
+
 /**
  * Transform vector features by normalizing each vector to have unit norm. Parameter `p` specifies
  * the p-norm used for normalization (default 2).
@@ -33,7 +35,7 @@ import com.twitter.algebird.Aggregator
 object Normalizer extends SettingsBuilder {
 
   /**
-   * Create a new [[Normalizer]] instance.
+   * Create a new [[Normalizer$]] instance.
    * @param p
    *   normalization in L^p^ space, must be greater than or equal to 1.0
    * @param expectedLength
@@ -47,7 +49,7 @@ object Normalizer extends SettingsBuilder {
     new Normalizer(name, p, expectedLength)
 
   /**
-   * Create a new [[OneHotEncoder]] from a settings object
+   * Create a new [[Normalizer$]] from a settings object
    * @param setting
    *   Settings object
    */
@@ -62,7 +64,7 @@ private[featran] class Normalizer(name: String, val p: Double, val expectedLengt
     extends Transformer[Array[Double], Int, Int](name) {
   require(p >= 1.0, "p must be >= 1.0")
   override val aggregator: Aggregator[Array[Double], Int, Int] =
-    Aggregators.seqLength(expectedLength)
+    Aggregators.seqLength[Double, Array](expectedLength)(ArraySeq.unsafeWrapArray)
   override def featureDimension(c: Int): Int = c
   override def featureNames(c: Int): Seq[String] = names(c)
   override def buildFeatures(a: Option[Array[Double]], c: Int, fb: FeatureBuilder[_]): Unit =
@@ -73,7 +75,7 @@ private[featran] class Normalizer(name: String, val p: Double, val expectedLengt
           fb.reject(this, FeatureRejection.WrongDimension(c, x.length))
         } else {
           val dv = DenseVector(x)
-          fb.add(names(c), (dv / norm(dv, p)).data)
+          fb.add[Array](names(c), (dv / norm(dv, p)).data)(ArraySeq.unsafeWrapArray)
         }
       case None => fb.skip(c)
     }

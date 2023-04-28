@@ -24,19 +24,19 @@ import scala.collection.{mutable, SortedMap}
 /**
  * Transform a collection of sentences, where each row is a `Seq[String]` of the words / tokens,
  * into a collection containing all the n-grams that can be constructed from each row. The feature
- * representation is an n-hot encoding (see [[NHotEncoder]]) constructed from an expanded vocabulary
- * of all of the generated n-grams.
+ * representation is an n-hot encoding (see [[NHotEncoder$]]) constructed from an expanded
+ * vocabulary of all of the generated n-grams.
  *
  * N-grams are generated based on a specified range of `low` to `high` (inclusive) and are joined by
  * the given `sep` (default is " "). For example, with `low = 2`, `high = 3` and `sep = ""`, row
  * `["a", "b", "c", "d", "e"]` would produce `["ab", "bc", "cd", "de", "abc", "bcd", "cde"]`.
  *
- * As with [[NHotEncoder]], missing values are transformed to [0.0, 0.0, ...].
+ * As with [[NHotEncoder$]], missing values are transformed to [0.0, 0.0, ...].
  */
 object NGrams extends SettingsBuilder {
 
   /**
-   * Create a new [[NGrams]] instance.
+   * Create a new [[NGrams$]] instance.
    *
    * @param low
    *   the smallest size of the generated *-grams
@@ -58,7 +58,7 @@ object NGrams extends SettingsBuilder {
   }
 
   /**
-   * Create a new [[NGrams]] from a settings object
+   * Create a new [[NGrams$]] from a settings object
    * @param setting
    *   Settings object
    */
@@ -107,7 +107,7 @@ private[featran] class NGrams(name: String, val low: Int, val high: Int, val sep
   }
 
   private def mkNGram(xs: mutable.Queue[String], sep: String): String = {
-    val sb = StringBuilder.newBuilder
+    val sb = new StringBuilder()
     val i = xs.iterator
     sb.append(i.next())
     while (i.hasNext) {

@@ -19,14 +19,16 @@ package com.spotify.featran
 
 import java.io.File
 import java.lang.reflect.Modifier
-
 import com.spotify.featran.transformers._
 
-import scala.collection.JavaConverters._
+import scala.collection.compat.immutable.ArraySeq
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 import scala.collection.immutable
 
 object Fixtures {
+  implicit val arrayConverter: Array[Double] => Seq[Double] = ArraySeq.unsafeWrapArray
+
   val TestData: Seq[(String, Int)] = Seq("a", "b", "c", "d", "e") zip Seq(0, 1, 2, 3, 4)
 
   val TestSpec: FeatureSpec[(String, Int)] = FeatureSpec

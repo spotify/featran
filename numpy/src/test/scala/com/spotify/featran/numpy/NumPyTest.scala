@@ -18,9 +18,10 @@
 package com.spotify.featran.numpy
 
 import java.io.{ByteArrayOutputStream, OutputStream}
-
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+
+import scala.annotation.nowarn
 
 class NumPyTest extends AnyFlatSpec with Matchers {
   private def test(f: OutputStream => Unit)(expectedFile: String): Unit = {
@@ -42,7 +43,7 @@ class NumPyTest extends AnyFlatSpec with Matchers {
       out.toByteArray
     }
 
-    actual shouldBe expected
+    actual shouldBe expected: @nowarn
   }
 
   "NumPy" should "work with 1-dimensional arrays" in {

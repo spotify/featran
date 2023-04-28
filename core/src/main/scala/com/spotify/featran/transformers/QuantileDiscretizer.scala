@@ -22,7 +22,7 @@ import java.util.{TreeMap => JTreeMap}
 import com.spotify.featran.{FeatureBuilder, FeatureRejection, FlatReader, FlatWriter}
 import com.twitter.algebird._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 /**
  * Transform a column of continuous features to n columns of binned categorical features. The number
@@ -40,7 +40,7 @@ import scala.collection.JavaConverters._
 object QuantileDiscretizer extends SettingsBuilder {
 
   /**
-   * Create a new [[QuantileDiscretizer]] instance.
+   * Create a new [[QuantileDiscretizer$]] instance.
    * @param numBuckets
    *   number of buckets (quantiles, or categories) into which data points are grouped, must be
    *   greater than or equal to 2
@@ -55,7 +55,7 @@ object QuantileDiscretizer extends SettingsBuilder {
     new QuantileDiscretizer(name, numBuckets, k)
 
   /**
-   * Create a new [[QuantileDiscretizer]] from a settings object
+   * Create a new [[QuantileDiscretizer$]] from a settings object
    * @param setting
    *   Settings object
    */

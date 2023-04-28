@@ -37,9 +37,8 @@ object HeavyHittersSpec extends TransformerProp("HeavyHitters") {
   ): Prop = {
     val params = SketchMapParams[String](seed, eps, delta, count)(_.getBytes)
     val aggregator = SketchMap.aggregator[String, Long](params)
-    val sm =
-      xs.map(x => aggregator.prepare((x, 1L))).reduce(aggregator.monoid.plus)
-    val m = sm.heavyHitterKeys.zipWithIndex.toMap.mapValues(_ + 1)
+    val sm = xs.map(x => aggregator.prepare((x, 1L))).reduce(aggregator.monoid.plus)
+    val m = sm.heavyHitterKeys.zipWithIndex.map { case (x, idx) => x -> (idx + 1) }.toMap
     val expected = xs.map { x =>
       m.get(x) match {
         case Some(rank) =>

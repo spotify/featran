@@ -20,7 +20,7 @@ package com.spotify.featran
 import com.spotify.scio.coders.Coder
 import com.spotify.scio.values.SCollection
 
-import scala.reflect.{classTag, ClassTag}
+import scala.reflect.ClassTag
 
 package object scio {
 

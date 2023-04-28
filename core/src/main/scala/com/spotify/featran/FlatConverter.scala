@@ -21,7 +21,7 @@ import com.spotify.featran.transformers.{MDLRecord, WeightedLabel}
 import simulacrum.typeclass
 
 import scala.reflect.ClassTag
-import scala.annotation.implicitNotFound
+import scala.annotation.{implicitNotFound, nowarn}
 
 /** TypeClass for implementing the writer to a flat format keyed by name */
 @implicitNotFound("Could not find an instance of FlatWriter for ${T}")
@@ -102,6 +102,7 @@ object FlatConverter {
     FlatConverter(new FeatureSpec[T](spec.features, spec.crossings))
 }
 
+@nowarn("msg=evidence parameter evidence.* of type scala.reflect.ClassTag\\[.\\] .* is never used")
 private[featran] class FlatConverter[T: ClassTag, A: ClassTag: FlatWriter](spec: FeatureSpec[T])
     extends Serializable {
   import CollectionType.ops._

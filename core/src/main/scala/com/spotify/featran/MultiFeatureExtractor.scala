@@ -17,6 +17,7 @@
 
 package com.spotify.featran
 
+import scala.collection.compat.immutable.ArraySeq
 import scala.reflect.ClassTag
 
 /**
@@ -73,6 +74,8 @@ class MultiFeatureExtractor[M[_]: CollectionType, T] private[featran] (
       .map { case (((o, a), c), featureSet) =>
         val fb = featureSet.multiFeatureBuilders
         featureSet.multiFeatureValues(a, c, fb)
-        (fb.map(_.result).toSeq, fb.map(_.rejections), o)
+        val res = ArraySeq.unsafeWrapArray(fb.map(_.result))
+        val rej = ArraySeq.unsafeWrapArray(fb.map(_.rejections))
+        (res, rej, o)
       }
 }
