@@ -121,10 +121,7 @@ ThisBuild / githubWorkflowBuild := Seq(
     name = Some("Upload coverage report"),
     cond = Some(coverageCond)
   ),
-  WorkflowStep.Sbt(
-    List("test"),
-    name = Some("Build project"),
-    cond = Some(s"!($coverageCond)"))
+  WorkflowStep.Sbt(List("test"), name = Some("Build project"), cond = Some(s"!($coverageCond)"))
 )
 
 val CompileTime = config("compile-time").hide
@@ -175,7 +172,7 @@ lazy val root: Project = project
   .settings(commonSettings)
   .settings(
     name := "featran",
-    description := "Feature Transformers",
+    description := "Feature Transformers"
   )
   .aggregate(
     core,
@@ -226,13 +223,15 @@ lazy val java: Project = project
     libraryDependencies ++= Seq(
       "org.scalacheck" %% "scalacheck" % scalacheckVersion % "test",
       "org.scalatest" %% "scalatest" % scalatestVersion % "test"
-    )
+    ),
+    // ignore javadoc warnings
+    Compile / doc / scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") }
   )
 
 lazy val flink: Project = project
   .in(file("flink"))
   .dependsOn(
-    core % "compile->compile;test->test",
+    core % "compile->compile;test->test"
   )
   .settings(commonSettings)
   .settings(
@@ -251,7 +250,7 @@ lazy val flink: Project = project
 lazy val scalding: Project = project
   .in(file("scalding"))
   .dependsOn(
-    core % "compile->compile;test->test",
+    core % "compile->compile;test->test"
   )
   .settings(commonSettings)
   .settings(
@@ -271,7 +270,7 @@ lazy val scalding: Project = project
 lazy val scio: Project = project
   .in(file("scio"))
   .dependsOn(
-    core % "compile->compile;test->test",
+    core % "compile->compile;test->test"
   )
   .settings(commonSettings)
   .settings(
@@ -289,7 +288,7 @@ lazy val scio: Project = project
 lazy val spark: Project = project
   .in(file("spark"))
   .dependsOn(
-    core % "compile->compile;test->test",
+    core % "compile->compile;test->test"
   )
   .settings(commonSettings)
   .settings(
@@ -320,7 +319,7 @@ lazy val numpy: Project = project
 lazy val tensorflow: Project = project
   .in(file("tensorflow"))
   .dependsOn(
-    core % "compile->compile;test->test",
+    core % "compile->compile;test->test"
   )
   .settings(commonSettings)
   .settings(
@@ -338,7 +337,7 @@ lazy val tensorflow: Project = project
 lazy val xgboost: Project = project
   .in(file("xgboost"))
   .dependsOn(
-    core % "compile->compile;test->test",
+    core % "compile->compile;test->test"
   )
   .settings(commonSettings)
   .settings(
