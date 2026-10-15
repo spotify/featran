@@ -85,6 +85,7 @@ private[featran] class QuantileDiscretizer(name: String, val numBuckets: Int, va
         val k = l / 2 + u / 2 // (l + u) might overflow
         if (!m.containsKey(k)) { // in case of too few distinct values
           m.put(k, i - 1)
+          ()
         }
       }
       m.put(qt.upperBound, numBuckets - 1)

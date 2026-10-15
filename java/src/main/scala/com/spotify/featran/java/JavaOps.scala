@@ -17,6 +17,7 @@
 
 package com.spotify.featran.java
 
+import scala.annotation.nowarn
 import java.lang.{Double => JDouble}
 import java.util.function.BiFunction
 import java.util.{Collections, List => JList, Optional}
@@ -239,6 +240,7 @@ class FloatSparseArray private[java] (
   override val values: Array[Float],
   length: Int
 ) extends SparseArray[Float](indices, values, length) {
+  @nowarn("msg=parameterless method toDense")
   def toDense: Array[Float] = super.toDense
 }
 
@@ -248,6 +250,7 @@ class DoubleSparseArray private[java] (
   override val values: Array[Double],
   length: Int
 ) extends SparseArray[Double](indices, values, length) {
+  @nowarn("msg=parameterless method toDense")
   def toDense: Array[Double] = super.toDense
 }
 
@@ -258,6 +261,7 @@ class FloatNamedSparseArray private[java] (
   length: Int,
   names: Seq[String]
 ) extends NamedSparseArray[Float](indices, values, length, names) {
+  @nowarn("msg=parameterless method toDense")
   def toDense: Array[Float] = super.toDense
 }
 
@@ -268,5 +272,6 @@ class DoubleNamedSparseArray private[java] (
   length: Int,
   names: Seq[String]
 ) extends NamedSparseArray[Double](indices, values, length, names) {
+  @nowarn("msg=parameterless method toDense")
   def toDense: Array[Double] = super.toDense
 }

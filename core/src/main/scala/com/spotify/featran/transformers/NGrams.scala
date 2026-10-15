@@ -112,6 +112,7 @@ private[featran] class NGrams(name: String, val low: Int, val high: Int, val sep
     sb.append(i.next())
     while (i.hasNext) {
       sb.append(sep).append(i.next())
+      ()
     }
     sb.mkString
   }

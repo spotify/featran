@@ -137,24 +137,34 @@ lazy val keepExistingHeader =
 
 // sbt-typelevel 0.5+ dropped tlSkipIrrelevantScalas; skip modules that don't build for the
 // Scala version core was switched to (e.g. 2.12-only modules under `++ 3`)
+lazy val irrelevantScala = Def.setting {
+  !crossScalaVersions.value.contains((LocalProject("core") / scalaVersion).value)
+}
+
 def skipIfIrrelevant[T](task: TaskKey[T]) =
-  task / skip := (task / skip).value ||
-    !crossScalaVersions.value.contains((LocalProject("core") / scalaVersion).value)
+  task / skip := (task / skip).value || irrelevantScala.value
 
 lazy val skipIrrelevantScalas = Seq(
+  Compile / compile := {
+    if (irrelevantScala.value) sbt.internal.inc.Analysis.Empty
+    else (Compile / compile).value
+  },
+  Test / compile := {
+    if (irrelevantScala.value) sbt.internal.inc.Analysis.Empty
+    else (Test / compile).value
+  },
   Test / test := {
-    if ((Test / test / skip).value) ()
+    if (irrelevantScala.value) ()
     else (Test / test).value
   },
-  skipIfIrrelevant(compile),
-  skipIfIrrelevant(test),
-  skipIfIrrelevant(update),
   skipIfIrrelevant(publishLocal),
   skipIfIrrelevant(publish)
 )
 
 lazy val commonSettings = skipIrrelevantScalas ++ Seq(
   tlJdkRelease := Some(17),
+  // Scala 3 flags unused context bounds, which are part of the public API here
+  scalacOptions ++= (if (tlIsScala3.value) Seq("-Wconf:msg=unused implicit parameter:s") else Nil),
   // Spark, Flink, Scalding and Beam reflect into JDK internals
   Test / fork := true,
   Test / javaOptions ++= Seq(
@@ -190,7 +200,9 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
       "-P:socco:package_com.spotify.scio:http://spotify.github.io/scio/api"
     ),
     autoCompilerPlugins := true,
-    addCompilerPlugin(("io.regadas" %% "socco-ng" % "0.1.8").cross(CrossVersion.full))
+    // socco-ng is published per full Scala version; 2.12.20 is the newest 2.12 it supports
+    scalaVersion := "2.12.20",
+    addCompilerPlugin(("io.regadas" %% "socco-ng" % "0.1.15").cross(CrossVersion.full))
   )
 } else {
   Nil
@@ -385,7 +397,6 @@ lazy val examples: Project = project
     tensorflow
   )
   .settings(commonSettings)
-  .settings(soccoSettings)
   .settings(
     name := "examples",
     moduleName := "featran-examples",
@@ -398,6 +409,7 @@ lazy val examples: Project = project
     ),
     publish / skip := true
   )
+  .settings(soccoSettings)
 
 lazy val jmh: Project = project
   .in(file("jmh"))
