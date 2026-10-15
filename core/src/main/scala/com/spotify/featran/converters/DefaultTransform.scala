@@ -17,6 +17,7 @@
 
 package com.spotify.featran.converters
 
+import com.spotify.featran.transformers.Identity
 import com.spotify.featran.transformers.Transformer
 import simulacrum.typeclass
 import scala.annotation.implicitNotFound
@@ -28,6 +29,10 @@ import scala.annotation.implicitNotFound
 }
 
 object DefaultTransform {
+  implicit val identityDefault: DefaultTransform[Double] = new DefaultTransform[Double] {
+    final def apply(featureName: String): Transformer[Double, _, _] = Identity(featureName)
+  }
+
   /* ======================================================================== */
   /* THE FOLLOWING CODE IS MANAGED BY SIMULACRUM; PLEASE DO NOT EDIT!!!!      */
   /* ======================================================================== */

@@ -19,8 +19,8 @@ import laika.ast.Styles
 import laika.helium.config._
 import laika.helium.Helium
 import laika.io.model.InputTree
-import laika.markdown.github.GitHubFlavor
-import laika.parse.code.SyntaxHighlighting
+import laika.format.Markdown.GitHubFlavor
+import laika.config.SyntaxHighlighting
 
 val algebirdVersion = "0.13.9"
 val breezeVersion = "2.1.0"
@@ -35,7 +35,7 @@ val scalatestVersion = "3.2.15"
 val scaldingVersion = "0.17.4"
 val scioVersion = "0.15.10"
 val simulacrumVersion = "1.0.1"
-val sparkVersion = "3.3.1"
+val sparkVersion = "3.5.9"
 val tensorflowVersion = "0.4.2"
 val xgBoostVersion = "1.3.1"
 
@@ -92,24 +92,24 @@ ThisBuild / developers := List(
 )
 
 // scala versions
-val scala3 = "3.2.1"
-val scala213 = "2.13.10"
-val scala212 = "2.12.17"
+val scala3 = "3.3.8"
+val scala213 = "2.13.18"
+val scala212 = "2.12.21"
 val scalaDefault = scala212
 
 // github actions
-val java11 = JavaSpec.corretto("11")
-val java8 = JavaSpec.corretto("8")
-val javaDefault = java11
+val java17 = JavaSpec.corretto("17")
+val java21 = JavaSpec.corretto("21")
+val javaDefault = java17
 val coverageCond = Seq(
-  s"matrix.scala == '$scalaDefault'",
+  s"matrix.scala == '${CrossVersion.binaryScalaVersion(scalaDefault)}'",
   s"matrix.java == '${javaDefault.render}'"
 ).mkString(" && ")
 
 ThisBuild / scalaVersion := scalaDefault
 ThisBuild / crossScalaVersions := Seq(scala3, scala213, scala212)
 ThisBuild / githubWorkflowTargetBranches := Seq("main")
-ThisBuild / githubWorkflowJavaVersions := Seq(java11, java8)
+ThisBuild / githubWorkflowJavaVersions := Seq(java17, java21)
 ThisBuild / githubWorkflowBuild := Seq(
   WorkflowStep.Sbt(
     List("coverage", "test", "coverageAggregate"),
@@ -135,9 +135,39 @@ lazy val keepExistingHeader =
         .trim()
   )
 
-lazy val commonSettings = Seq(
-  tlJdkRelease := Some(8),
-  tlSkipIrrelevantScalas := true,
+// sbt-typelevel 0.5+ dropped tlSkipIrrelevantScalas; skip modules that don't build for the
+// Scala version core was switched to (e.g. 2.12-only modules under `++ 3`)
+def skipIfIrrelevant[T](task: TaskKey[T]) =
+  task / skip := (task / skip).value ||
+    !crossScalaVersions.value.contains((LocalProject("core") / scalaVersion).value)
+
+lazy val skipIrrelevantScalas = Seq(
+  Test / test := {
+    if ((Test / test / skip).value) ()
+    else (Test / test).value
+  },
+  skipIfIrrelevant(compile),
+  skipIfIrrelevant(test),
+  skipIfIrrelevant(update),
+  skipIfIrrelevant(publishLocal),
+  skipIfIrrelevant(publish)
+)
+
+lazy val commonSettings = skipIrrelevantScalas ++ Seq(
+  tlJdkRelease := Some(17),
+  // Spark, Flink, Scalding and Beam reflect into JDK internals
+  Test / fork := true,
+  Test / javaOptions ++= Seq(
+    "java.lang",
+    "java.lang.invoke",
+    "java.nio",
+    "java.util",
+    "java.util.concurrent",
+    "sun.nio.ch",
+    "sun.nio.cs",
+    "sun.security.action",
+    "sun.util.calendar"
+  ).map(pkg => s"--add-opens=java.base/$pkg=ALL-UNNAMED"),
   headerLicense := Some(HeaderLicense.ALv2(currentYear.toString, organizationName.value)),
   headerMappings ++= Map(
     HeaderFileType.scala -> keepExistingHeader,
@@ -166,9 +196,7 @@ lazy val soccoSettings = if (sys.env.contains("SOCCO")) {
   Nil
 }
 
-lazy val root: Project = project
-  .in(file("."))
-  .enablePlugins(NoPublishPlugin)
+lazy val root = tlCrossRootProject
   .settings(commonSettings)
   .settings(
     name := "featran",
@@ -417,7 +445,7 @@ lazy val site = project
     Global / excludeLintKeys += laikaGenerateAPI / mappings, // false warning
     laikaInputs := InputTree[cats.effect.IO]
       .addDirectory("docs", laika.ast.Path.Root)
-      .addDirectory((examples / target).value / "site", laika.ast.Path.Root / "examples"),
+      .addDirectory(((examples / target).value / "site").toString, laika.ast.Path.Root / "examples"),
     laikaTheme := Helium.defaults.all
       .metadata(
         title = Some("featran"),
