@@ -401,6 +401,8 @@ lazy val examples: Project = project
     name := "examples",
     moduleName := "featran-examples",
     description := "Feature Transformers - examples",
+    // examples assign values only to illustrate the API
+    scalacOptions += "-Wconf:cat=unused:s",
     crossScalaVersions := Seq(scala213, scala212),
     scalaVersion := scalaDefault,
     libraryDependencies ++= Seq(
