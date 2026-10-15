@@ -17,14 +17,11 @@
 
 package com.spotify.featran
 
-import com.spotify.featran.transformers.{Identity, Transformer}
-
 package object converters {
   implicit class RichBoolean(private val self: Boolean) extends AnyVal {
     final def asDouble: Double = if (self) 1.0 else 0.0
   }
 
-  implicit val identityDefault: DefaultTransform[Double] = new DefaultTransform[Double] {
-    final def apply(featureName: String): Transformer[Double, _, _] = Identity(featureName)
-  }
+  // the implicit lives in the DefaultTransform companion; Scala 3 does not search package objects
+  val identityDefault: DefaultTransform[Double] = DefaultTransform.identityDefault
 }

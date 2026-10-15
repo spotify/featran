@@ -51,6 +51,7 @@ object ExampleExtractorSpec extends Properties("ExampleExtractorSpec") {
     features.putFeature("d", fromFloats(Seq(r.d)).build())
     if (r.optD.isDefined) {
       features.putFeature("optD", fromFloats(r.optD.toList).build())
+      ()
     }
 
     toExample(features.build())

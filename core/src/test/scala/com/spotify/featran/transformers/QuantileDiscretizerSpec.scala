@@ -36,6 +36,7 @@ object QuantileDiscretizerSpec extends TransformerProp("QuantileDiscretizer") {
         val k = l / 2 + u / 2 // (l + u) might overflow
         if (!m.containsKey(k)) {
           m.put(k, i - 1)
+          ()
         }
       }
       m.put(qt.upperBound, numBuckets - 1)

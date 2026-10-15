@@ -82,7 +82,9 @@ object FeatureRejection {
    * @param transformer
    *   the next transformer in line
    */
-  def prepare(transformer: Transformer[_, _, _]): Unit = ()
+  def prepare(transformer: Transformer[_, _, _]): Unit = {
+    val _ = transformer
+  }
 
   /** Gather builder result for a result. This should be called only once per input row. */
   def result: T
